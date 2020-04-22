@@ -10,7 +10,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Library.fs" />
+    <Compile Include="NearlyEquatable.fs" />
+    <Compile Include="Point.fs" />
+    <Compile Include="Line.fs" />
+    <Compile Include="Geometry.fs" />
+    <Compile Include="Folding.fs" />
+    <Compile Include="LineSegment.fs" />
+    <Compile Include="Paper.fs" />
+    <Compile Include="DisplayTarget.fs" />
+    <Compile Include="PluginInterfaces.fs" />
+    <Compile Include="SelectorTool.fs" />
   </ItemGroup>
 
 </Project>

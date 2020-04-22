@@ -45,7 +45,7 @@ namespace Orimath.App
             return true;
         }
 
-        protected bool SetValueRef<T>(ref T storage, T value, [CallerMemberName] string? propertyName = null)
+        protected bool SetValueRef<T>(ref T? storage, T? value, [CallerMemberName] string? propertyName = null)
             where T : class
         {
             if (ReferenceEquals(storage, value))
