@@ -1,0 +1,10 @@
+.vs
+/**/log/*
+*.aps
+*.cache
+*.eto
+*.suo
+*.user
+packages
+/**/bin/*
+/**/obj/*
