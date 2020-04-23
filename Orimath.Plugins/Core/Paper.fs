@@ -1,13 +1,12 @@
 ﻿namespace Orimath.Core
 
-type Edge internal (line: LineSegment, layer: Layer option) =
-    member __.Line = line
-    member __.Layer = layer
-
-and Layer internal (edges: Edge list, lines: LineSegment list, points: Point list) =
-    member __.Edges = edges
-    member __.Lines = lines
-    member __.Points = points
-
-type Paper internal (layers: Layer list) =
+type Paper private (layers: Layer list) =
     member __.Layers = layers
+
+    static member Create(layers: seq<Layer>) =
+        let layers = asList layers
+        if layers.Length < 1
+        then invalidArg "layers" "少なくとも1つのレイヤーが必要です。"
+        else Paper(layers)
+
+    static member FromSize(width: float, height: float) = Paper([ Layer.FromSize(width, height) ])

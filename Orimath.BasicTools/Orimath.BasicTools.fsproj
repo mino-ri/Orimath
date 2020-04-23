@@ -10,8 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Workspace.fs" />
-    <Compile Include="LayerModule.fs" />
+    <Compile Include="Folding.fs" />
   </ItemGroup>
 
   <ItemGroup>

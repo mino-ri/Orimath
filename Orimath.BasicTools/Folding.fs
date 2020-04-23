@@ -1,4 +1,5 @@
-﻿module Orimath.Core.Folding
+﻿module Orimath.BasicTools.Folding
+open Orimath.Core
 open NearlyEquatable
 
 [<CompiledName("FromAxiom1Option")>]
@@ -14,35 +15,35 @@ let axiom3 (line1: Line) (line2: Line) =
     let isParallel = line1.Slope = line2.Slope
     if isParallel && line1.Intercept = line2.Intercept then []
     else
-        let result1 = Line.Create(line1.A + line2.A, line1.B + line2.B, line1.C + line2.C)
+        let result1 = Line.Create(line1.XFactor + line2.XFactor, line1.YFactor + line2.YFactor, line1.Intercept + line2.Intercept)
         if isParallel then
             [result1]
         else
             [
                 result1
-                Line.Create(line1.A - line2.A, line1.B - line2.B, line1.C - line2.C)
+                Line.Create(line1.XFactor - line2.XFactor, line1.YFactor - line2.YFactor, line1.Intercept - line2.Intercept)
             ]
 
 [<CompiledName("FromAxiom4")>]
-let axiom4 point line = Line.Create(-line.B, line.A, line.B * point.X - line.A * point.Y)
+let axiom4 point (line: Line) = Line.Create(-line.YFactor, line.XFactor, line.YFactor * point.X - line.XFactor * point.Y)
 
 [<CompiledName("FromAxiom5FSharpList")>]
 let axiom5 ontoLine passPoint ontoPoint =
     if Line.contains ontoLine ontoPoint then []
     else
-        let n = (ontoLine.A * passPoint.X + ontoLine.B * passPoint.Y + ontoLine.C)
+        let n = (ontoLine.XFactor * passPoint.X + ontoLine.YFactor * passPoint.Y + ontoLine.Intercept)
         let dist = (passPoint.X - ontoPoint.X) * (passPoint.X - ontoPoint.X) + (passPoint.Y - ontoPoint.Y) * (passPoint.Y - ontoPoint.Y)
         let delta = dist - n * n
         if delta < 0.0 then
             []
         elif delta = 0.0 then
-            [ axiom2 ontoPoint { X = passPoint.X - ontoLine.A * n; Y = passPoint.Y - ontoLine.B * n } ]
+            [ axiom2 ontoPoint { X = passPoint.X - ontoLine.XFactor * n; Y = passPoint.Y - ontoLine.YFactor * n } ]
             |> List.choose id
         else
             let s = (sqrt delta)
             [
-                axiom2 ontoPoint { X = passPoint.X - (ontoLine.A * n + ontoLine.B * s); Y = passPoint.Y - (ontoLine.B * n - ontoLine.A * s) }
-                axiom2 ontoPoint { X = passPoint.X - (ontoLine.A * n - ontoLine.B * s); Y = passPoint.Y - (ontoLine.B * n + ontoLine.A * s) }
+                axiom2 ontoPoint { X = passPoint.X - (ontoLine.XFactor * n + ontoLine.YFactor * s); Y = passPoint.Y - (ontoLine.YFactor * n - ontoLine.XFactor * s) }
+                axiom2 ontoPoint { X = passPoint.X - (ontoLine.XFactor * n - ontoLine.YFactor * s); Y = passPoint.Y - (ontoLine.YFactor * n + ontoLine.XFactor * s) }
             ]
             |> List.choose id
 
@@ -102,16 +103,16 @@ let axiom6 (line1: Line) (point1: Point) (line2: Line) (point2: Point) =
             xfs |> List.map(fun xf ->
                 let c = -(x1 * xf) - y1 + (n1 * (xf * xf + 1.0)) / (2.0 * (a1 * xf + b1))
                 if rev then Line.Create(yf, xf, c) else Line.Create(xf, yf, c))
-    let result = getFactors line1.A line1.B line1.C point1.X point1.Y line2.A line2.B line2.C point2.X point2.Y false
+    let result = getFactors line1.XFactor line1.YFactor line1.Intercept point1.X point1.Y line2.XFactor line2.YFactor line2.Intercept point2.X point2.Y false
     result
 
 [<CompiledName("FromAxiom7Option")>]
-let axiom7 passLine ontoLine ontoPoint =
+let axiom7 (passLine: Line) (ontoLine: Line) ontoPoint =
     if Line.contains ontoLine ontoPoint then None
     else
-        let c = passLine.B * ontoPoint.X - passLine.A * ontoPoint.Y -
-                (ontoLine.A * ontoPoint.X + ontoLine.B * ontoPoint.Y + ontoLine.C) / (2.0 * (ontoLine.A * passLine.B - passLine.A * ontoLine.B))
-        Some(Line.Create(-passLine.B, passLine.A, c))
+        let c = passLine.YFactor * ontoPoint.X - passLine.XFactor * ontoPoint.Y -
+                (ontoLine.XFactor * ontoPoint.X + ontoLine.YFactor * ontoPoint.Y + ontoLine.Intercept) / (2.0 * (ontoLine.XFactor * passLine.YFactor - passLine.XFactor * ontoLine.YFactor))
+        Some(Line.Create(-passLine.YFactor, passLine.XFactor, c))
 
 [<CompiledName("FromAxiom1")>]       
 let axiom1Nullable p1 p2 = axiom1 p1 p2 |> Option.toNullable

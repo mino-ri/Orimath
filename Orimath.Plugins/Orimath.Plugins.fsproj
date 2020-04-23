@@ -10,17 +10,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Core\InternalModule.fs" />
     <Compile Include="Core\NearlyEquatable.fs" />
     <Compile Include="Core\Point.fs" />
     <Compile Include="Core\Line.fs" />
     <Compile Include="Core\LineSegment.fs" />
-    <Compile Include="Core\LineModule.fs" />
-    <Compile Include="Core\LineSegmentModule.fs" />
-    <Compile Include="Core\PointModule.fs" />
-    <Compile Include="Core\Folding.fs" />
+    <Compile Include="Core\Layer.fs" />
     <Compile Include="Core\Paper.fs" />
-    <Compile Include="Core\LayerModule.fs" />
-    <Compile Include="Core\DisplayTarget.fs" />
+    <Compile Include="Plugins\DisplayTarget.fs" />
     <Compile Include="Plugins\PluginInterfaces.fs" />
     <Compile Include="Plugins\WorkspaceModule.fs" />
     <Compile Include="Plugins\SelectorTool.fs" />

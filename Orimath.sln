@@ -5,11 +5,15 @@ VisualStudioVersion = 16.0.29728.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orimath", "Orimath\Orimath.csproj", "{B1AA25F5-0A81-49C6-9CDF-25F1837D938D}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Orimath.Plugins", "Orimath.Plugins\Orimath.Plugins.fsproj", "{2409A66C-F39E-4FB3-A3BE-A8AC478A026F}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Orimath.Plugins", "Orimath.Plugins\Orimath.Plugins.fsproj", "{2409A66C-F39E-4FB3-A3BE-A8AC478A026F}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Orimath.Core", "Orimath.Core\Orimath.Core.fsproj", "{979788AF-BC18-4C50-B2BD-6E9FE240800F}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Orimath.Core", "Orimath.Core\Orimath.Core.fsproj", "{979788AF-BC18-4C50-B2BD-6E9FE240800F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orimath.App", "Orimath.App\Orimath.App.csproj", "{0094B30E-E3E7-4119-8871-1F80A97E1F49}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orimath.App", "Orimath.App\Orimath.App.csproj", "{0094B30E-E3E7-4119-8871-1F80A97E1F49}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Orimath.BasicTools", "Orimath.BasicTools\Orimath.BasicTools.fsproj", "{68CF77EB-BC78-4AE3-A901-BE4B9A5F52A3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{52E052D0-7754-4FB7-87FF-2F0347EEEB01}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,9 +37,16 @@ Global
 		{0094B30E-E3E7-4119-8871-1F80A97E1F49}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0094B30E-E3E7-4119-8871-1F80A97E1F49}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0094B30E-E3E7-4119-8871-1F80A97E1F49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68CF77EB-BC78-4AE3-A901-BE4B9A5F52A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68CF77EB-BC78-4AE3-A901-BE4B9A5F52A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68CF77EB-BC78-4AE3-A901-BE4B9A5F52A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68CF77EB-BC78-4AE3-A901-BE4B9A5F52A3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{68CF77EB-BC78-4AE3-A901-BE4B9A5F52A3} = {52E052D0-7754-4FB7-87FF-2F0347EEEB01}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4ACF6D9A-8541-478B-A743-4A560C86C774}

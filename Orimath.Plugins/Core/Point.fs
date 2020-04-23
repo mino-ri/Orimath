@@ -5,6 +5,9 @@ open NearlyEquatable
 type Point = { X: float; Y: float } with
     member this.Norm = sqrt (this.X * this.X + this.Y * this.Y)
 
+    member this.GetDistance(other) =
+        sqrt ((this.X - other.X) * (this.X - other.X) + (this.Y - other.Y) * (this.Y - other.Y))
+
     member this.Deconstruct(x: outref<float>, y: outref<float>) =
         x <- this.X
         y <- this.Y
