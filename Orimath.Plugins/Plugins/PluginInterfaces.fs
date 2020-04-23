@@ -37,14 +37,14 @@ type IEffect =
     [<CLIEvent>]
     abstract member CanExecuteChanged : IEvent<EventHandler, EventArgs>
 
-type WorkspaceEventArgs<'TParent, 'TValue>(parent: 'TParent, value: 'TValue) =
+type WorkspaceEventArgs<'TValue>(layerIndex: int, value: 'TValue) =
     inherit EventArgs()
-    member __.Parent = parent
+    member __.LayerIndex = layerIndex
     member __.Value = value
 
-type WorkspaceEventHandler<'TParent, 'TValue> = delegate of obj * WorkspaceEventArgs<'TParent, 'TValue> -> unit
+type WorkspaceEventHandler<'TValue> = delegate of sender: obj * WorkspaceEventArgs<'TValue> -> unit
 
-type IWorkspaceEvent<'TParent, 'TValue> = IEvent<WorkspaceEventHandler<'TParent, 'TValue>, WorkspaceEventArgs<'TParent, 'TValue>>
+type IWorkspaceEvent<'TValue> = IEvent<WorkspaceEventHandler<'TValue>, WorkspaceEventArgs<'TValue>>
 
 type IWorkspace =
     abstract member Paper : Paper
@@ -54,6 +54,7 @@ type IWorkspace =
     abstract member CanRedo : bool
     abstract member Tools : IReadOnlyCollection<ITool>
     abstract member Effects : IReadOnlyCollection<IEffect>
+    abstract member CurrentTool : ITool with get, set
     abstract member SelectedLayers : Layer[] with get, set
     abstract member SelectedEdges : Edge[] with get, set
     abstract member SelectedPoints : Point[] with get, set
@@ -71,31 +72,36 @@ type IWorkspace =
     [<CLIEvent>]
     abstract member SelectedLinesChanged : IEvent<EventHandler, EventArgs>
     [<CLIEvent>]
-    abstract member PaperCleared : IEvent<EventHandler, EventArgs>
+    abstract member PaperCleared : IWorkspaceEvent<Paper>
     [<CLIEvent>]
-    abstract member LayerAdded : IWorkspaceEvent<Paper, IReadOnlyCollection<Layer>>
+    abstract member LayerAdded : IWorkspaceEvent<IReadOnlyCollection<Layer>>
     [<CLIEvent>]
-    abstract member LayerRemoved : IWorkspaceEvent<Paper, IReadOnlyCollection<Layer>>
+    abstract member LayerRemoved : IWorkspaceEvent<IReadOnlyCollection<Layer>>
     [<CLIEvent>]
-    abstract member LineAdded : IWorkspaceEvent<Layer, IReadOnlyCollection<LineSegment>>
+    abstract member LayerReplaced : IWorkspaceEvent<Layer>
     [<CLIEvent>]
-    abstract member LineRemoved : IWorkspaceEvent<Layer, IReadOnlyCollection<LineSegment>>
+    abstract member LineAdded : IWorkspaceEvent<IReadOnlyCollection<LineSegment>>
     [<CLIEvent>]
-    abstract member PointAdded : IWorkspaceEvent<Layer, IReadOnlyCollection<Point>>
+    abstract member LineRemoved : IWorkspaceEvent<IReadOnlyCollection<LineSegment>>
     [<CLIEvent>]
-    abstract member PointRemoved : IWorkspaceEvent<Layer, IReadOnlyCollection<Point>>
+    abstract member PointAdded : IWorkspaceEvent<IReadOnlyCollection<Point>>
+    [<CLIEvent>]
+    abstract member PointRemoved : IWorkspaceEvent<IReadOnlyCollection<Point>>
 
     abstract member Undo : unit -> unit
     abstract member Redo : unit -> unit
     abstract member BeginChange : unit -> IDisposable
     abstract member Clear : unit -> unit
     abstract member Clear : paper: Paper -> unit
-    abstract member AddLayers : layers: Layer -> unit
+    abstract member AddLayers : layers: seq<Layer> -> unit
+    abstract member RemoveLayers : count: int -> unit
+    abstract member ReplaceLayer : before: Layer * after: Layer -> unit
     abstract member AddLines : layer: Layer * lines: seq<Line> -> unit
     abstract member AddLines : layer: Layer * lines: seq<LineSegment> -> unit
-    abstract member AddPoints : layer: Layer * points: seq<Point> -> unit
-    abstract member RemoveLayers : count: int -> unit
+    abstract member AddLinesRaw : layer: Layer * lines: seq<Line> -> unit
+    abstract member AddLinesRaw : layer: Layer * lines: seq<LineSegment> -> unit
     abstract member RemoveLines : layer: Layer * count: int -> unit
+    abstract member AddPoints : layer: Layer * points: seq<Point> -> unit
     abstract member RemovePoints : layer: Layer * count: int -> unit
 
 type IToolProvidor =

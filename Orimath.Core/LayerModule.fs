@@ -14,26 +14,36 @@ let private appendCross (layer: Layer) (line: LineSegment) (points: Point list) 
     let mutable points = points
     for edge in layer.Edges do
         match edge.Line.GetCrossPoint(line) with
-        | Some(p) when not (points |> List.exists((=~) p)) && not (layer.HasPoint(p)) ->
+        | Some(p) when (points |> List.forall((<>~) p)) && not (layer.HasPoint(p)) ->
             points <- p :: points
         | _ -> ()
     points
 
-[<CompiledName("GetCrossesFSharpList"); Extension>]
-let cross (layer: Layer) (line: LineSegment) = appendCross layer line []
+[<CompiledName("GetCrossesFSharp"); Extension>]
+let cross (layer: Layer) (line: LineSegment) = appendCross layer line [line.Point1; line.Point2]
 
 [<CompiledName("GetCrosses"); Extension>]
-let crossArray layer line = cross layer line |> List.toArray
+let crossCSharp layer line = cross layer line |> List.toArray
 
-[<CompiledName("AddCore"); Extension>]
+[<CompiledName("GetCrossesFSharp"); Extension>]
+let crossAll (layer: Layer) (lines: seq<LineSegment>) =
+    let lines = asList lines
+    let mutable points = []
+    for line in lines do
+        if (points |> List.forall((<>~) line.Point1)) && not (layer.HasPoint(line.Point1)) then points <- line.Point1 :: points
+        if (points |> List.forall((<>~) line.Point2)) && not (layer.HasPoint(line.Point2)) then points <- line.Point2 :: points
+        points <- appendCross layer line points
+    points
+
+[<CompiledName("GetCrosses"); Extension>]
+let crossAllCSharp layer lines = crossAll layer lines |> List.toArray
+
+[<CompiledName("Add"); Extension>]
 let add (layer: Layer) (lines: seq<LineSegment>) (points: seq<Point>) =
     Layer.Create(layer.Edges, lines @@ layer.Lines, points @@ layer.Points)
 
 [<CompiledName("AddPoints"); Extension>]
 let addPoints layer points = add layer [] points
 
-[<CompiledName("AddLinesRaw"); Extension>]
-let addLinesRaw layer lines = add layer lines []
-
-[<CompiledName("AddLine"); Extension>]
-let addLine layer (line: LineSegment) = add layer [line] (cross layer line)
+[<CompiledName("AddLines"); Extension>]
+let addLines layer lines = add layer lines []

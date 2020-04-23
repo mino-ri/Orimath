@@ -10,8 +10,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Workspace.fs" />
+    <Compile Include="InternalModule.fs" />
+    <Compile Include="ReactiveProperty.fs" />
     <Compile Include="LayerModule.fs" />
+    <Compile Include="Workspace.fs" />
   </ItemGroup>
 
   <ItemGroup>
