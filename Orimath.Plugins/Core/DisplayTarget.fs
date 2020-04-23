@@ -1,4 +1,4 @@
-﻿namespace Orimath.Plugins
+﻿namespace Orimath.Core
 
 /// ドラッグおよびクリック操作の対象を表します。
 [<RequireQualifiedAccess>]

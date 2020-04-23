@@ -1,18 +1,15 @@
-﻿module Orimath.Plugins.Folding
-open Geometry
+﻿module Orimath.Core.Folding
 open NearlyEquatable
 
-[<CompiledName("FromAxiom1")>]
+[<CompiledName("FromAxiom1Option")>]
 let axiom1 p1 p2 =
     if p1 = p2 then None
     else Some(Line.Create(p1.Y - p2.Y, p2.X - p1.X, p1.X * p2.Y - p2.X * p1.Y))
 
-[<CompiledName("FromAxiom2")>]
-let axiom2 p1 p2 =
-    if p1 = p2 then None
-    else Some(Line.Create(p1.X - p2.X, p1.Y - p2.Y, (p2.X * p2.X + p2.Y * p2.Y - p1.X * p1.X - p1.Y * p1.Y) / 2.0))
+[<CompiledName("FromAxiom2Option")>]
+let axiom2 p1 p2 = Line.FromPoints(p1, p2)
 
-[<CompiledName("FromAxiom3")>]
+[<CompiledName("FromAxiom3FSharpList")>]
 let axiom3 (line1: Line) (line2: Line) =
     let isParallel = line1.Slope = line2.Slope
     if isParallel && line1.Intercept = line2.Intercept then []
@@ -29,9 +26,9 @@ let axiom3 (line1: Line) (line2: Line) =
 [<CompiledName("FromAxiom4")>]
 let axiom4 point line = Line.Create(-line.B, line.A, line.B * point.X - line.A * point.Y)
 
-[<CompiledName("FromAxiom5")>]
+[<CompiledName("FromAxiom5FSharpList")>]
 let axiom5 ontoLine passPoint ontoPoint =
-    if containsPoint ontoLine ontoPoint then []
+    if Line.contains ontoLine ontoPoint then []
     else
         let n = (ontoLine.A * passPoint.X + ontoLine.B * passPoint.Y + ontoLine.C)
         let dist = (passPoint.X - ontoPoint.X) * (passPoint.X - ontoPoint.X) + (passPoint.Y - ontoPoint.Y) * (passPoint.Y - ontoPoint.Y)
@@ -49,8 +46,7 @@ let axiom5 ontoLine passPoint ontoPoint =
             ]
             |> List.choose id
 
-
-[<CompiledName("FromAxiom6")>]
+[<CompiledName("FromAxiom6FSharpList")>]
 let axiom6 (line1: Line) (point1: Point) (line2: Line) (point2: Point) =
     let cbrt x = if x < 0.0 then -(-x ** (1.0 / 3.0)) else x ** (1.0 / 3.0)
     let hxrt x = if x < 0.0 then -(-x ** (1.0 / 6.0)) else x ** (1.0 / 6.0)
@@ -101,9 +97,7 @@ let axiom6 (line1: Line) (point1: Point) (line2: Line) (point2: Point) =
             let t2 = e + f * x + a * y
             let t3 = d + f * y + b * x
             let t4 = e + b * y
-            System.Diagnostics.Debug.Print(System.String.Format("{0:0.####} | {1:0.####} | {2:0.####} | {3:0.####}", t1, t2, t3, t4))
             let xfs = solveEquation t1 t2 t3 t4
-            System.Diagnostics.Debug.Print(System.String.Join(" ; ", xfs))
             let yf = 1.0
             xfs |> List.map(fun xf ->
                 let c = -(x1 * xf) - y1 + (n1 * (xf * xf + 1.0)) / (2.0 * (a1 * xf + b1))
@@ -111,10 +105,28 @@ let axiom6 (line1: Line) (point1: Point) (line2: Line) (point2: Point) =
     let result = getFactors line1.A line1.B line1.C point1.X point1.Y line2.A line2.B line2.C point2.X point2.Y false
     result
 
-[<CompiledName("FromAxiom7")>]
+[<CompiledName("FromAxiom7Option")>]
 let axiom7 passLine ontoLine ontoPoint =
-    if containsPoint ontoLine ontoPoint then None
+    if Line.contains ontoLine ontoPoint then None
     else
         let c = passLine.B * ontoPoint.X - passLine.A * ontoPoint.Y -
                 (ontoLine.A * ontoPoint.X + ontoLine.B * ontoPoint.Y + ontoLine.C) / (2.0 * (ontoLine.A * passLine.B - passLine.A * ontoLine.B))
         Some(Line.Create(-passLine.B, passLine.A, c))
+
+[<CompiledName("FromAxiom1")>]       
+let axiom1Nullable p1 p2 = axiom1 p1 p2 |> Option.toNullable
+
+[<CompiledName("FromAxiom2")>]       
+let axiom2Nullable p1 p2 = axiom2 p1 p2 |> Option.toNullable
+
+[<CompiledName("FromAxiom3")>]       
+let axiom3Array line1 line2 = axiom3 line1 line2 |> List.toArray
+
+[<CompiledName("FromAxiom5")>]       
+let axiom5Array ontoLine passPoint ontoPoint = axiom5 ontoLine passPoint ontoPoint |> List.toArray
+
+[<CompiledName("FromAxiom6")>]       
+let axiom6Array line1 point1 line2 point2 = axiom6 line1 point1 line2 point2 |> List.toArray
+
+[<CompiledName("FromAxiom7")>]
+let axiom7Nullable passLine ontoLine ontoPoint = axiom7 passLine ontoLine ontoPoint |> Option.toNullable

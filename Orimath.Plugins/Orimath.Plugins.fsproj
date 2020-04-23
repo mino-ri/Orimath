@@ -10,16 +10,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="NearlyEquatable.fs" />
-    <Compile Include="Point.fs" />
-    <Compile Include="Line.fs" />
-    <Compile Include="Geometry.fs" />
-    <Compile Include="Folding.fs" />
-    <Compile Include="LineSegment.fs" />
-    <Compile Include="Paper.fs" />
-    <Compile Include="DisplayTarget.fs" />
-    <Compile Include="PluginInterfaces.fs" />
-    <Compile Include="SelectorTool.fs" />
+    <Compile Include="Core\NearlyEquatable.fs" />
+    <Compile Include="Core\Point.fs" />
+    <Compile Include="Core\Line.fs" />
+    <Compile Include="Core\LineSegment.fs" />
+    <Compile Include="Core\LineModule.fs" />
+    <Compile Include="Core\LineSegmentModule.fs" />
+    <Compile Include="Core\PointModule.fs" />
+    <Compile Include="Core\Folding.fs" />
+    <Compile Include="Core\Paper.fs" />
+    <Compile Include="Core\LayerModule.fs" />
+    <Compile Include="Core\DisplayTarget.fs" />
+    <Compile Include="Plugins\PluginInterfaces.fs" />
+    <Compile Include="Plugins\WorkspaceModule.fs" />
+    <Compile Include="Plugins\SelectorTool.fs" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿namespace Orimath.Plugins
+﻿namespace Orimath.Core
 open System
 
 type INearlyEquatable<'T> =
@@ -9,12 +9,15 @@ module NearlyEquatable =
     let defaultMargin = 1.0 / 1024.0
 
     [<CompiledName("NearlyEquals")>]
-    let nearlyEquals margin (x: float) y =
+    let nearlyEqualsf margin (x: float) y =
         not (Double.IsFinite(x)) && not (Double.IsFinite(y)) ||
         x - margin <= y && y <= x + margin
 
     [<CompiledName("NearlyEquals")>]
-    let inline (=~~) x y = nearlyEquals defaultMargin x y
+    let nearlyEquals margin (x: 'T when 'T :> INearlyEquatable<'T>) y = x.NearlyEquals(y, margin)
+
+    [<CompiledName("NearlyEquals")>]
+    let inline (=~~) x y = nearlyEqualsf defaultMargin x y
 
     [<CompiledName("NearlyLessThan")>]
     let inline (<=~) x y = x - defaultMargin <= y

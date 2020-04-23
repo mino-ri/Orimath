@@ -1,7 +1,8 @@
 ﻿namespace Orimath.Plugins
+open Orimath.Core
 
 type SelectorTool(workspace: IWorkspace) =
-    abstract member UpdateSettings : unit -> unit
+    abstract member Name : string
     abstract member ShortcutKey : string
     abstract member OnClick : target: DisplayTarget * point: Point * modifier: OperationModifier -> unit
     abstract member BeginDrag : target: DisplayTarget * point: Point * modifier: OperationModifier -> bool
@@ -10,7 +11,7 @@ type SelectorTool(workspace: IWorkspace) =
     abstract member DragOver : target: DisplayTarget * point: Point * modifier: OperationModifier -> bool
     abstract member Drop : target: DisplayTarget * point: Point * modifier: OperationModifier -> unit
 
-    default __.UpdateSettings() = ()
+    default __.Name = "選択"
     default __.ShortcutKey = ""
     default __.BeginDrag(_, _, _) = false
     default __.DragEnter(_, _, _) = false
@@ -47,7 +48,7 @@ type SelectorTool(workspace: IWorkspace) =
                 workspace.SelectedPoints <- [| p |]
 
     interface ITool with
-        member this.UpdateSettings() = this.UpdateSettings()
+        member this.Name = this.Name
         member this.ShortcutKey = this.ShortcutKey
         member this.OnClick(target, point, modifier) = this.OnClick(target, point, modifier)
         member this.BeginDrag(target, point, modifier) = this.BeginDrag(target, point, modifier)
