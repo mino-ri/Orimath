@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Orimath.App
+namespace Orimath.ViewPlugins
 {
     public abstract class NotifyPropertyChanged : INotifyPropertyChanged
     {

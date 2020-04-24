@@ -9,11 +9,13 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Orimath.Plugins", "Orimath.
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Orimath.Core", "Orimath.Core\Orimath.Core.fsproj", "{979788AF-BC18-4C50-B2BD-6E9FE240800F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orimath.App", "Orimath.App\Orimath.App.csproj", "{0094B30E-E3E7-4119-8871-1F80A97E1F49}"
-EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Orimath.BasicTools", "Orimath.BasicTools\Orimath.BasicTools.fsproj", "{68CF77EB-BC78-4AE3-A901-BE4B9A5F52A3}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Orimath.BasicTools", "Orimath.BasicTools\Orimath.BasicTools.fsproj", "{68CF77EB-BC78-4AE3-A901-BE4B9A5F52A3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{52E052D0-7754-4FB7-87FF-2F0347EEEB01}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orimath.ViewPlugins", "Orimath.ViewPlugins\Orimath.ViewPlugins.csproj", "{E094762A-B4F0-4407-A8C7-FB2DFBD15F3D}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Orimath.App", "Orimath.App\Orimath.App.fsproj", "{5640D017-4388-41D2-B2D6-0A78EBEE9E0A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,14 +35,18 @@ Global
 		{979788AF-BC18-4C50-B2BD-6E9FE240800F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{979788AF-BC18-4C50-B2BD-6E9FE240800F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{979788AF-BC18-4C50-B2BD-6E9FE240800F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0094B30E-E3E7-4119-8871-1F80A97E1F49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0094B30E-E3E7-4119-8871-1F80A97E1F49}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0094B30E-E3E7-4119-8871-1F80A97E1F49}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0094B30E-E3E7-4119-8871-1F80A97E1F49}.Release|Any CPU.Build.0 = Release|Any CPU
 		{68CF77EB-BC78-4AE3-A901-BE4B9A5F52A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{68CF77EB-BC78-4AE3-A901-BE4B9A5F52A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68CF77EB-BC78-4AE3-A901-BE4B9A5F52A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{68CF77EB-BC78-4AE3-A901-BE4B9A5F52A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E094762A-B4F0-4407-A8C7-FB2DFBD15F3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E094762A-B4F0-4407-A8C7-FB2DFBD15F3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E094762A-B4F0-4407-A8C7-FB2DFBD15F3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E094762A-B4F0-4407-A8C7-FB2DFBD15F3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5640D017-4388-41D2-B2D6-0A78EBEE9E0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5640D017-4388-41D2-B2D6-0A78EBEE9E0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5640D017-4388-41D2-B2D6-0A78EBEE9E0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5640D017-4388-41D2-B2D6-0A78EBEE9E0A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -1,5 +1,4 @@
 ﻿namespace Orimath.Core
-open System
 open System.Collections.Generic
 open Orimath.Plugins
 
@@ -7,7 +6,7 @@ type Workspace() as this =
     let mutable tools = Array.empty<ITool>
     let mutable effects = Array.empty<IEffect>
     let paper = PaperModel()
-    let currentTool = ReactiveProperty.createEq this (Unchecked.defaultof<ITool>)
+    let currentTool = ReactiveProperty.createEq this (SelectorTool(this) :> ITool)
 
     member __.Paper = paper
     member __.Tools = tools :> IReadOnlyList<ITool>

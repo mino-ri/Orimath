@@ -1,10 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -13,8 +11,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Orimath.App\Orimath.App.fsproj" />
-    <ProjectReference Include="..\Orimath.Core\Orimath.Core.fsproj" />
+    <Compile Include="ViewModels\WorkspaceViewModel.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Orimath.Plugins\Orimath.Plugins.fsproj" />
     <ProjectReference Include="..\Orimath.ViewPlugins\Orimath.ViewPlugins.csproj" />
   </ItemGroup>

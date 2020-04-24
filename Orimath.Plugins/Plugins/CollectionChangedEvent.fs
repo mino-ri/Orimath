@@ -28,12 +28,19 @@ type CollectionChange<'Item> =
         | Replace(index, _, _) -> index
         | Reset(_) -> 0
 
-    member this.Items =
+    member this.OldItems =
+        match this with
+        | Reset(items, _) -> items
+        | Add(_, _) -> upcast []
+        | Remove(_, items) -> items
+        | Replace(_, oldItem, _) -> upcast [ oldItem ]
+
+    member this.NewItems =
         match this with
         | Reset(_, items) -> items
         | Add(_, items) -> items
-        | Remove(_, items) -> items
-        | Replace(_, oldItem, newItem) -> upcast [ oldItem; newItem ]
+        | Remove(_, _) -> upcast []
+        | Replace(_, _, item) -> upcast [ item ]
 
 type CollectionChangedEventHandler<'Item> = delegate of sender: obj * args: CollectionChange<'Item> -> unit
 

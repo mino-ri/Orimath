@@ -1,6 +1,6 @@
 ﻿[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 [<System.Runtime.CompilerServices.Extension>]
-module Orimath.Core.Layer
+module internal Orimath.Core.Layer
 open System.Runtime.CompilerServices
 open NearlyEquatable
 
