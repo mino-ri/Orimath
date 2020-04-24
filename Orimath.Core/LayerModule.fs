@@ -10,7 +10,7 @@ let private ( @@ ) (s : seq<'a>) (lst: 'a list) =
     r
 
 [<CompiledName("AppendCrosses")>]
-let private appendCross (layer: Layer) (line: LineSegment) (points: Point list) =
+let private appendCross (layer: ILayer) (line: LineSegment) (points: Point list) =
     let mutable points = points
     for edge in layer.Edges do
         match edge.Line.GetCrossPoint(line) with
@@ -20,13 +20,13 @@ let private appendCross (layer: Layer) (line: LineSegment) (points: Point list) 
     points
 
 [<CompiledName("GetCrossesFSharp"); Extension>]
-let cross (layer: Layer) (line: LineSegment) = appendCross layer line [line.Point1; line.Point2]
+let cross (layer: ILayer) (line: LineSegment) = appendCross layer line [line.Point1; line.Point2]
 
 [<CompiledName("GetCrosses"); Extension>]
 let crossCSharp layer line = cross layer line |> List.toArray
 
 [<CompiledName("GetCrossesFSharp"); Extension>]
-let crossAll (layer: Layer) (lines: seq<LineSegment>) =
+let crossAll (layer: ILayer) (lines: seq<LineSegment>) =
     let lines = asList lines
     let mutable points = []
     for line in lines do

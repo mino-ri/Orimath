@@ -7,7 +7,7 @@ type DisplayTarget =
     /// 選択対象なし
     | None
     /// レイヤー。
-    | Layer of Layer
+    | Layer of ILayerModel
     /// 紙の端や折りたたまれた紙の境界線。
     | Edge of Edge
     /// 折線。

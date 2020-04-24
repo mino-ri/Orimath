@@ -1,7 +1,7 @@
 ﻿namespace Orimath.Core
 open System
 
-type internal ReactiveProperty<'T> (init: 'T, eqComparer: 'T -> 'T -> bool) =
+type internal ReactiveProperty<'T> (sender: obj, init: 'T, eqComparer: 'T -> 'T -> bool) =
     let mutable value = init
     let valueChanged = Event<EventHandler, EventArgs>()
     
@@ -10,14 +10,14 @@ type internal ReactiveProperty<'T> (init: 'T, eqComparer: 'T -> 'T -> bool) =
         and set v =
             if not (eqComparer value v) then
                 value <- v
-                valueChanged.Trigger(this, EventArgs())
+                valueChanged.Trigger(sender, EventArgs())
 
     member __.ValueChanged = valueChanged.Publish
 
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module internal ReactiveProperty =
-    let createEq<'T when 'T : equality> init = ReactiveProperty<'T>(init, (=))
+    let createEq<'T when 'T : equality> sender init = ReactiveProperty<'T>(sender, init, (=))
 
-    let createArray<'T when 'T : equality> =
-        ReactiveProperty<'T[]>(Array.empty, fun a b ->
+    let createArray<'T when 'T : equality> sender =
+        ReactiveProperty<'T[]>(sender, Array.empty, fun a b ->
             a.Length = b.Length && Array.forall2 (=) a b)
