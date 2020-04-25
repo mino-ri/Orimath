@@ -3,10 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Orimath"
+        xmlns:vm="clr-namespace:Orimath.ViewModels;assembly=Orimath.App"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-
-    </Grid>
+        Title="MainWindow" Height="450" Width="800"
+        DataContext="{Binding Workspace, Source={StaticResource rootViewModel}, Mode=OneTime}"
+        ContentRendered="Window_ContentRendered">
+    <StackPanel Orientation="Vertical">
+        <Label Content="{Binding CurrentTool.Name}" />
+        <ListBox ItemsSource="{Binding Paper.Layers}" />
+    </StackPanel>
 </Window>

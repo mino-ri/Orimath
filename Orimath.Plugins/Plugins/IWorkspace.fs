@@ -9,6 +9,7 @@ type IWorkspace =
     abstract member Effects : IReadOnlyList<IEffect>
     abstract member CurrentTool : ITool with get, set
 
+    abstract member Initialize : unit -> unit
     abstract member CreatePaper : layers: seq<ILayer> -> IPaper
     abstract member CreateLayer : edges: seq<Edge> * lines: seq<LineSegment> * points: seq<Point> -> ILayer
     abstract member CreateLayerFromSize : width: float * height: float -> ILayer

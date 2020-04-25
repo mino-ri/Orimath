@@ -11,12 +11,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Converters\ScreenPointConverter.fs" />
+    <Compile Include="ViewModels\IViewThreadInvoker.fs" />
+    <Compile Include="ViewModels\NotifyPropertyChanged.fs" />
+    <Compile Include="ViewModels\ResettableObservableCollection.fs" />
+    <Compile Include="ViewModels\PointViewModel.fs" />
+    <Compile Include="ViewModels\LineViewModel.fs" />
+    <Compile Include="ViewModels\EdgeViewModel.fs" />
+    <Compile Include="ViewModels\LayerViewModel.fs" />
+    <Compile Include="ViewModels\PaperViewModel.fs" />
+    <Compile Include="ViewModels\EffectViewModel.fs" />
+    <Compile Include="ViewModels\ToolViewModel.fs" />
     <Compile Include="ViewModels\WorkspaceViewModel.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Orimath.Plugins\Orimath.Plugins.fsproj" />
-    <ProjectReference Include="..\Orimath.ViewPlugins\Orimath.ViewPlugins.csproj" />
   </ItemGroup>
 
 </Project>

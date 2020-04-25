@@ -69,8 +69,8 @@ and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Lay
             use __ = parent.TryBeginChange()
             layerPoints.Remove(count)
 
-    [<CLIEvent>] member __.LineChanged = layerLines.Changed
-    [<CLIEvent>] member __.PointChanged = layerPoints.Changed
+    member __.LineChanged = layerLines.Changed
+    member __.PointChanged = layerPoints.Changed
 
     interface ILayer with
         member this.Edges = upcast this.Edges

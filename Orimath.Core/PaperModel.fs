@@ -39,11 +39,11 @@ type PaperModel internal () as this =
     member __.SelectedLines with get() = selectedLines.Value and set v = selectedLines.Value <- v
     member __.ChangeBlockDeclared = changeBlockDeclared
 
-    [<CLIEvent>] member __.SelectedLayersChanged = selectedLayers.ValueChanged
-    [<CLIEvent>] member __.SelectedEdgesChanged = selectedEdges.ValueChanged
-    [<CLIEvent>] member __.SelectedPointsChanged = selectedPoints.ValueChanged
-    [<CLIEvent>] member __.SelectedLinesChanged = selectedLines.ValueChanged
-    [<CLIEvent>] member __.LayerChanged = layerChanged.Publish
+    member __.SelectedLayersChanged = selectedLayers.ValueChanged
+    member __.SelectedEdgesChanged = selectedEdges.ValueChanged
+    member __.SelectedPointsChanged = selectedPoints.ValueChanged
+    member __.SelectedLinesChanged = selectedLines.ValueChanged
+    member __.LayerChanged = layerChanged.Publish
 
     member internal __.PushUndoOpr(opr: PaperOpr) = if not changeBlockDisabled then undoOprStack.Push(opr)
 
