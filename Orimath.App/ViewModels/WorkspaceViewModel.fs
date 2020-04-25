@@ -18,7 +18,9 @@ type WorkspaceViewModel(workspace: IWorkspace, invoker: IUIThreadInvoker) as thi
     member __.Source = workspace
     member val Paper = new PaperViewModel(workspace.Paper, pointConverter, invoker)
     member __.PointConverter = pointConverter
-    member __.CurrentTool = currentTool
+    member __.CurrentTool 
+        with get() = currentTool
+        and set(v: ToolViewModel) = workspace.CurrentTool <- v.Source
     
     member private this.CurrentToolChanged(_: EventArgs) =
         onUI invoker <| fun () ->

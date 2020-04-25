@@ -13,6 +13,7 @@
     <Compile Include="InternalModule.fs" />
     <Compile Include="ReactiveProperty.fs" />
     <Compile Include="ReactiveCollection.fs" />
+    <Compile Include="PluginLoader.fs" />
     <Compile Include="Layer.fs" />
     <Compile Include="Paper.fs" />
     <Compile Include="LayerModule.fs" />

@@ -14,7 +14,7 @@ type Workspace() as this =
     member __.CurrentTool with get() = currentTool.Value and set v = currentTool.Value <- v
 
     member this.Initialize() =
-        tools <- [| SelectorTool(this) |]
+        tools <- PluginLoader.getPluginTools(this)
         paper.Clear()
     member __.CurrentToolChanged = currentTool.ValueChanged
 

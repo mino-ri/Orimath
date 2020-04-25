@@ -10,6 +10,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="DragFoldingTool.fs" />
+    <Compile Include="BasicToolsProvidor.fs" />
     <Compile Include="Folding.fs" />
   </ItemGroup>
 

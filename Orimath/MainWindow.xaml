@@ -177,37 +177,43 @@
                      Fill="{x:Static Brushes.Pink}" />
         </DataTemplate>
     </Window.Resources>
-    <ScrollViewer>
-        <Grid Background="{x:Static Brushes.Gainsboro}" ctrl:MouseHandler.RootMouseHandler="{StaticResource mouseHandler}">
-            <ItemsControl ItemsSource="{Binding Paper.Layers, Mode=OneTime}"
-                          ItemTemplate="{StaticResource LayerBackTemplate}"
-                          ItemsPanel="{StaticResource CanvasItemsPanel}" />
-            <ItemsControl ItemsSource="{Binding Paper.SelectedLayers, Mode=OneWay}"
-                          ItemTemplate="{StaticResource SelectedLayerTemplate}"
-                          ItemsPanel="{StaticResource CanvasItemsPanel}"
-                          IsHitTestVisible="False"/>
-            <ItemsControl ItemsSource="{Binding Paper.SelectedLines, Mode=OneWay}"
-                          ItemTemplate="{StaticResource SelectedLineTemplate}"
-                          ItemsPanel="{StaticResource CanvasItemsPanel}"
-                          IsHitTestVisible="False"/>
-            <ItemsControl ItemsSource="{Binding Paper.SelectedEdges, Mode=OneWay}"
-                          ItemTemplate="{StaticResource SelectedEdgeTemplate}"
-                          ItemsPanel="{StaticResource CanvasItemsPanel}"
-                          IsHitTestVisible="False"/>
-            <ItemsControl ItemsSource="{Binding Paper.SelectedPoints, Mode=OneWay}"
-                          ItemTemplate="{StaticResource SelectedPointTemplate}"
-                          ItemsPanel="{StaticResource CanvasItemsPanel}"
-                          IsHitTestVisible="False">
-                <ItemsControl.ItemContainerStyle>
-                    <Style TargetType="{x:Type ContentPresenter}">
-                        <Setter Property="Canvas.Left" Value="{Binding X, Mode=OneTime}" />
-                        <Setter Property="Canvas.Top" Value="{Binding Y, Mode=OneTime}" />
-                    </Style>
-                </ItemsControl.ItemContainerStyle>
-            </ItemsControl>
-            <ItemsControl ItemsSource="{Binding Paper.Layers, Mode=OneTime}"
-                          ItemTemplate="{StaticResource LayerTemplate}"
-                          ItemsPanel="{StaticResource CanvasItemsPanel}" />
-        </Grid>
-    </ScrollViewer>
+    <DockPanel>
+        <ListBox DockPanel.Dock="Left"
+                 ItemsSource="{Binding Tools, Mode=OneWay}"
+                 SelectedItem="{Binding CurrentTool, Mode=TwoWay}"
+                 DisplayMemberPath="Name" />
+        <ScrollViewer>
+            <Grid Background="{x:Static Brushes.Gainsboro}" ctrl:MouseHandler.RootMouseHandler="{StaticResource mouseHandler}">
+                <ItemsControl ItemsSource="{Binding Paper.Layers, Mode=OneTime}"
+                              ItemTemplate="{StaticResource LayerBackTemplate}"
+                              ItemsPanel="{StaticResource CanvasItemsPanel}" />
+                <ItemsControl ItemsSource="{Binding Paper.SelectedLayers, Mode=OneWay}"
+                              ItemTemplate="{StaticResource SelectedLayerTemplate}"
+                              ItemsPanel="{StaticResource CanvasItemsPanel}"
+                              IsHitTestVisible="False"/>
+                <ItemsControl ItemsSource="{Binding Paper.SelectedLines, Mode=OneWay}"
+                              ItemTemplate="{StaticResource SelectedLineTemplate}"
+                              ItemsPanel="{StaticResource CanvasItemsPanel}"
+                              IsHitTestVisible="False"/>
+                <ItemsControl ItemsSource="{Binding Paper.SelectedEdges, Mode=OneWay}"
+                              ItemTemplate="{StaticResource SelectedEdgeTemplate}"
+                              ItemsPanel="{StaticResource CanvasItemsPanel}"
+                              IsHitTestVisible="False"/>
+                <ItemsControl ItemsSource="{Binding Paper.SelectedPoints, Mode=OneWay}"
+                              ItemTemplate="{StaticResource SelectedPointTemplate}"
+                              ItemsPanel="{StaticResource CanvasItemsPanel}"
+                              IsHitTestVisible="False">
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="{x:Type ContentPresenter}">
+                            <Setter Property="Canvas.Left" Value="{Binding X, Mode=OneTime}" />
+                            <Setter Property="Canvas.Top" Value="{Binding Y, Mode=OneTime}" />
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                </ItemsControl>
+                <ItemsControl ItemsSource="{Binding Paper.Layers, Mode=OneTime}"
+                              ItemTemplate="{StaticResource LayerTemplate}"
+                              ItemsPanel="{StaticResource CanvasItemsPanel}" />
+            </Grid>
+        </ScrollViewer>
+    </DockPanel>
 </Window>
