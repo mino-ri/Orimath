@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{52E0
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Orimath.App", "Orimath.App\Orimath.App.fsproj", "{5640D017-4388-41D2-B2D6-0A78EBEE9E0A}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Orimath.ViewPlugins", "Orimath.ViewPlugins\Orimath.ViewPlugins.fsproj", "{99B9D74C-AA4D-4E5E-BE78-2A035F6DC8B2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,6 +43,10 @@ Global
 		{5640D017-4388-41D2-B2D6-0A78EBEE9E0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5640D017-4388-41D2-B2D6-0A78EBEE9E0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5640D017-4388-41D2-B2D6-0A78EBEE9E0A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99B9D74C-AA4D-4E5E-BE78-2A035F6DC8B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99B9D74C-AA4D-4E5E-BE78-2A035F6DC8B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99B9D74C-AA4D-4E5E-BE78-2A035F6DC8B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99B9D74C-AA4D-4E5E-BE78-2A035F6DC8B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

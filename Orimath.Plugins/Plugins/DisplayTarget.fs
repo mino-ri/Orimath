@@ -1,7 +1,7 @@
 ﻿namespace Orimath.Plugins
 open Orimath.Core
 
-/// ドラッグおよびクリック操作の対象を表します。
+/// ドラッグおよびクリック操作の対象オブジェクトを表します。
 [<RequireQualifiedAccess>]
 type DisplayTarget =
     /// 選択対象なし
@@ -14,3 +14,12 @@ type DisplayTarget =
     | Line of LineSegment
     /// 折線の交差などに現れる選択可能な点。
     | Point of Point
+
+/// ドラッグおよびクリック操作の対象と位置を表します。
+type OperationTarget =
+    {
+        /// 操作対象の位置。
+        Point: Point
+        /// 操作対象のオブジェクト。
+        Target: DisplayTarget
+    }

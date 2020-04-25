@@ -4,7 +4,7 @@ open System.Collections.ObjectModel
 open System.Windows.Media
 open Orimath.Plugins
 
-type LayerViewModel(layer: ILayerModel, pointConverter: PointConverter, invoker: IUIThreadInvoker) =
+type LayerViewModel(layer: ILayerModel, pointConverter: ScreenPointConverter, invoker: IUIThreadInvoker) =
     inherit NotifyPropertyChanged()
     let points = new AttachedObservableCollection<_, _>(invoker, layer.Points, layer.PointChanged, (fun p -> PointViewModel(p, pointConverter)), ignore)
     let lines = new AttachedObservableCollection<_, _>(invoker, layer.Lines, layer.LineChanged, (fun l -> LineViewModel(l, pointConverter)), ignore)
@@ -24,3 +24,6 @@ type LayerViewModel(layer: ILayerModel, pointConverter: PointConverter, invoker:
 
     interface IDisposable with
         member this.Dispose() = this.Dispose()
+
+    interface IDisplayTargetViewModel with
+        member __.GetTarget() = DisplayTarget.Layer(layer)

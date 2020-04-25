@@ -4,23 +4,23 @@ open Orimath.Core
 type SelectorTool(workspace: IWorkspace) =
     abstract member Name : string
     abstract member ShortcutKey : string
-    abstract member OnClick : target: DisplayTarget * point: Point * modifier: OperationModifier -> unit
-    abstract member BeginDrag : target: DisplayTarget * point: Point * modifier: OperationModifier -> bool
-    abstract member DragEnter : target: DisplayTarget * point: Point * modifier: OperationModifier -> bool
-    abstract member DragLeave : target: DisplayTarget * point: Point * modifier: OperationModifier -> bool
-    abstract member DragOver : target: DisplayTarget * point: Point * modifier: OperationModifier -> bool
-    abstract member Drop : target: DisplayTarget * point: Point * modifier: OperationModifier -> unit
+    abstract member OnClick : target: OperationTarget * modifier: OperationModifier -> unit
+    abstract member BeginDrag : source: OperationTarget * modifier: OperationModifier -> bool
+    abstract member DragEnter : source: OperationTarget * target: OperationTarget * modifier: OperationModifier -> bool
+    abstract member DragLeave : source: OperationTarget * target: OperationTarget * modifier: OperationModifier -> bool
+    abstract member DragOver : source: OperationTarget * target: OperationTarget * modifier: OperationModifier -> bool
+    abstract member Drop : source: OperationTarget * target: OperationTarget * modifier: OperationModifier -> unit
 
     default __.Name = "選択"
     default __.ShortcutKey = ""
-    default __.BeginDrag(_, _, _) = false
+    default __.BeginDrag(_, _) = false
     default __.DragEnter(_, _, _) = false
     default __.DragLeave(_, _, _) = false
     default __.DragOver(_, _, _) = false
     default __.Drop(_, _, _) = ()
-    default __.OnClick(target, _, modifier) =
+    default __.OnClick(target, modifier) =
         if modifier = OperationModifier.None then
-            match target with
+            match target.Target with
             |DisplayTarget.None ->
                 workspace.Paper.SelectedLayers <- Array.empty
                 workspace.Paper.SelectedEdges <- Array.empty
@@ -50,9 +50,9 @@ type SelectorTool(workspace: IWorkspace) =
     interface ITool with
         member this.Name = this.Name
         member this.ShortcutKey = this.ShortcutKey
-        member this.OnClick(target, point, modifier) = this.OnClick(target, point, modifier)
-        member this.BeginDrag(target, point, modifier) = this.BeginDrag(target, point, modifier)
-        member this.DragEnter(target, point, modifier) = this.DragEnter(target, point, modifier)
-        member this.DragLeave(target, point, modifier) = this.DragLeave(target, point, modifier)
-        member this.DragOver(target, point, modifier) = this.DragOver(target, point, modifier)
-        member this.Drop(target, point, modifier) = this.Drop(target, point, modifier)
+        member this.OnClick(target, modifier) = this.OnClick(target, modifier)
+        member this.BeginDrag(source, modifier) = this.BeginDrag(source, modifier)
+        member this.DragEnter(source, target, modifier) = this.DragEnter(source, target, modifier)
+        member this.DragLeave(source, target, modifier) = this.DragLeave(source, target, modifier)
+        member this.DragOver(source, target, modifier) = this.DragOver(source, target, modifier)
+        member this.Drop(source, target, modifier) = this.Drop(source, target, modifier)

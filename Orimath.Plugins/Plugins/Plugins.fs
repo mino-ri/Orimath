@@ -22,12 +22,12 @@ type IPlugin =
 
 type ITool =
     inherit IPlugin
-    abstract member OnClick : target: DisplayTarget * point: Point * modifier: OperationModifier -> unit
-    abstract member BeginDrag : target: DisplayTarget * point: Point * modifier: OperationModifier -> bool
-    abstract member DragEnter : target: DisplayTarget * point: Point * modifier: OperationModifier -> bool
-    abstract member DragLeave : target: DisplayTarget * point: Point * modifier: OperationModifier -> bool
-    abstract member DragOver : target: DisplayTarget * point: Point * modifier: OperationModifier -> bool
-    abstract member Drop : target: DisplayTarget * point: Point * modifier: OperationModifier -> unit
+    abstract member OnClick : target: OperationTarget * modifier: OperationModifier -> unit
+    abstract member BeginDrag : source: OperationTarget * modifier: OperationModifier -> bool
+    abstract member DragEnter : source: OperationTarget * target: OperationTarget * modifier: OperationModifier -> bool
+    abstract member DragLeave : source: OperationTarget * target: OperationTarget * modifier: OperationModifier -> bool
+    abstract member DragOver : source: OperationTarget * target: OperationTarget * modifier: OperationModifier -> bool
+    abstract member Drop : source: OperationTarget * target: OperationTarget * modifier: OperationModifier -> unit
 
 type IEffect =
     inherit IPlugin

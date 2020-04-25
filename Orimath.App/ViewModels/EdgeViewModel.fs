@@ -4,7 +4,7 @@ open Orimath.Core
 open Orimath.Core.NearlyEquatable
 open Orimath.Plugins
 
-type EdgeViewModel(edge: Edge, pointConverter: PointConverter) =
+type EdgeViewModel(edge: Edge, pointConverter: ScreenPointConverter) =
     inherit NotifyPropertyChanged()
     let screenPoint1 = pointConverter.ModelToScreen(edge.Line.Point1)
     let screenPoint2 = pointConverter.ModelToScreen(edge.Line.Point2)
@@ -20,3 +20,6 @@ type EdgeViewModel(edge: Edge, pointConverter: PointConverter) =
      override this.ToString() =
          edge.Line.Line.ToString() +
          String.Format("\r\n傾き:{0:0.#####} 角度:{1:0.#####}°", this.Slope, this.Angle)
+
+    interface IDisplayTargetViewModel with
+        member __.GetTarget() = DisplayTarget.Edge(edge)

@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="ViewModels\ISelectable.fs" />
     <Compile Include="ViewModels\NotifyPropertyChanged.fs" />
     <Compile Include="ViewModels\ResettableObservableCollection.fs" />
     <Compile Include="ViewModels\PointViewModel.fs" />
@@ -25,6 +26,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Orimath.Plugins\Orimath.Plugins.fsproj" />
+    <ProjectReference Include="..\Orimath.ViewPlugins\Orimath.ViewPlugins.fsproj" />
   </ItemGroup>
 
 </Project>
