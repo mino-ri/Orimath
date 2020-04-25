@@ -17,6 +17,8 @@
     <Compile Include="Core\LineSegment.fs" />
     <Compile Include="Core\Layer.fs" />
     <Compile Include="Core\Paper.fs" />
+    <Compile Include="Plugins\UIThreadInvoker.fs" />
+    <Compile Include="Plugins\PointConverter.fs" />
     <Compile Include="Plugins\CollectionChangedEvent.fs" />
     <Compile Include="Plugins\ILayerModel.fs" />
     <Compile Include="Plugins\IPaperModel.fs" />

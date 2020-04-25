@@ -5,6 +5,7 @@ open System.Collections.ObjectModel
 open System.Collections.Specialized
 open System.ComponentModel
 open Orimath.Plugins
+open Orimath.Plugins.ThreadController
 
 type internal ResettableObservableCollection<'T>(collection: seq<'T>) =
     inherit ObservableCollection<'T>(collection)

@@ -1,7 +1,8 @@
 ﻿namespace Orimath.ViewModels
 open System
-open Orimath.Plugins
 open System.Windows.Input
+open Orimath.Plugins
+open Orimath.Plugins.ThreadController
 
 type EffectCommand(effect: IEffect, invoker: IUIThreadInvoker) =
     let canExecuteChanged = Event<EventHandler, EventArgs>()

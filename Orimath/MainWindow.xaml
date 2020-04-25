@@ -4,12 +4,141 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:Orimath.ViewModels;assembly=Orimath.App"
+        xmlns:ctrl="clr-namespace:Orimath.Controls"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800"
+        Title="Orimath"
+        Width="800"
+        Height="600"
+        Icon="/icon_ho.ico"
         DataContext="{Binding Workspace, Source={StaticResource rootViewModel}, Mode=OneTime}"
+        SnapsToDevicePixels="True"
+        UseLayoutRounding="True"
         ContentRendered="Window_ContentRendered">
-    <StackPanel Orientation="Vertical">
-        <Label Content="{Binding CurrentTool.Name}" />
-        <ListBox ItemsSource="{Binding Paper.Layers}" />
-    </StackPanel>
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="VisibilityConverter" />
+        <ItemsPanelTemplate x:Key="CanvasItemsPanel">
+            <Canvas />
+        </ItemsPanelTemplate>
+        <ItemsPanelTemplate x:Key="GridItemsPanel">
+            <Grid />
+        </ItemsPanelTemplate>
+        <ControlTemplate TargetType="{x:Type Control}" x:Key="PointControlTemplate">
+            <Grid>
+                <Ellipse Width="4" Height="4" Margin="-2,-2,-2,-2"
+                         Fill="{x:Static Brushes.White}"
+                         Stroke="{x:Static Brushes.Black}"
+                         StrokeThickness="1" />
+                <Ellipse Width="12" Height="12" Margin="-6,-6,-6,-6" Fill="{TemplateBinding Foreground}" />
+            </Grid>
+        </ControlTemplate>
+        <Style TargetType="{x:Type Line}" x:Key="LineStyle">
+            <Setter Property="StrokeStartLineCap" Value="Round" />
+            <Setter Property="StrokeEndLineCap" Value="Round" />
+            <Setter Property="StrokeThickness" Value="2" />
+        </Style>
+        <Style TargetType="{x:Type ctrl:LineControl}">
+            <Setter Property="Foreground" Value="{x:Static Brushes.Black}" />
+            <Setter Property="StrokeThickness" Value="2" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ctrl:LineControl}">
+                        <Grid>
+                            <Line Stroke="{TemplateBinding Foreground}"
+                                  StrokeThickness="{TemplateBinding StrokeThickness}"
+                                  StrokeStartLineCap="Round"
+                                  StrokeEndLineCap="Round"
+                                  X1="{TemplateBinding X1}"
+                                  X2="{TemplateBinding X2}"
+                                  Y1="{TemplateBinding Y1}"
+                                  Y2="{TemplateBinding Y2}" />
+                            <Line Stroke="{x:Static Brushes.Transparent}"
+                                  StrokeThickness="12"
+                                  StrokeStartLineCap="Round"
+                                  StrokeEndLineCap="Round"
+                                  X1="{TemplateBinding X1}"
+                                  X2="{TemplateBinding X2}"
+                                  Y1="{TemplateBinding Y1}"
+                                  Y2="{TemplateBinding Y2}" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="{x:Static Brushes.Firebrick}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="{x:Type Control}" x:Key="StandardPointStyle">
+            <Setter Property="Foreground" Value="{x:Static Brushes.Transparent}" />
+            <Setter Property="Template" Value="{StaticResource PointControlTemplate}" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="{x:Static Brushes.Firebrick}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="{x:Type Polygon}" x:Key="LayerBackStyle">
+            <Setter Property="Fill" Value="{x:Static Brushes.White}" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Fill" Value="{x:Static Brushes.WhiteSmoke}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <DataTemplate DataType="{x:Type vm:LineViewModel}" x:Key="LineTemplate">
+            <ctrl:LineControl ToolTip="{Binding Mode=OneTime}"
+                              X1="{Binding X1, Mode=OneTime}"
+                              X2="{Binding X2, Mode=OneTime}"
+                              Y1="{Binding Y1, Mode=OneTime}"
+                              Y2="{Binding Y2, Mode=OneTime}"
+                              StrokeThickness="2" />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:EdgeViewModel}" x:Key="EdgeTemplate">
+            <ctrl:LineControl ToolTip="{Binding Mode=OneTime}"
+                              X1="{Binding X1, Mode=OneTime}"
+                              X2="{Binding X2, Mode=OneTime}"
+                              Y1="{Binding Y1, Mode=OneTime}"
+                              Y2="{Binding Y2, Mode=OneTime}"
+                              StrokeThickness="3" />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:PointViewModel}" x:Key="PointTemplate">
+            <Control Style="{StaticResource StandardPointStyle}"
+                     ToolTip="{Binding Mode=OneTime}" />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:LayerViewModel}" x:Key="LayerTemplate">
+            <Grid>
+                <ItemsControl ItemsSource="{Binding Edges, Mode=OneTime}"
+                              ItemTemplate="{StaticResource EdgeTemplate}"
+                              ItemsPanel="{StaticResource CanvasItemsPanel}" />
+                <ItemsControl ItemsSource="{Binding Lines, Mode=OneTime}"
+                              ItemTemplate="{StaticResource LineTemplate}"
+                              ItemsPanel="{StaticResource CanvasItemsPanel}" />
+                <ItemsControl ItemsSource="{Binding Points, Mode=OneTime}"
+                              ItemTemplate="{StaticResource PointTemplate}"
+                              ItemsPanel="{StaticResource CanvasItemsPanel}">
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="{x:Type ContentPresenter}">
+                            <Setter Property="Canvas.Left" Value="{Binding X, Mode=OneTime}" />
+                            <Setter Property="Canvas.Top" Value="{Binding Y, Mode=OneTime}" />
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                </ItemsControl>
+            </Grid>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:LayerViewModel}" x:Key="LayerBackTemplate">
+            <Polygon Points="{Binding Vertexes, Mode=OneTime}"
+                     Style="{StaticResource LayerBackStyle}" />
+        </DataTemplate>
+    </Window.Resources>
+    <ScrollViewer>
+        <Grid Background="Silver">
+            <ItemsControl ItemsSource="{Binding Paper.Layers, Mode=OneTime}"
+                          ItemTemplate="{StaticResource LayerBackTemplate}"
+                          ItemsPanel="{StaticResource GridItemsPanel}" />
+            <ItemsControl ItemsSource="{Binding Paper.Layers, Mode=OneTime}"
+                          ItemTemplate="{StaticResource LayerTemplate}"
+                          ItemsPanel="{StaticResource GridItemsPanel}" />
+        </Grid>
+    </ScrollViewer>
 </Window>

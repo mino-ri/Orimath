@@ -2,11 +2,11 @@
 open System
 open System.Collections.ObjectModel
 open Orimath.Plugins
-open Orimath.Converters
+open Orimath.Plugins.ThreadController
 
 type WorkspaceViewModel(workspace: IWorkspace, invoker: IUIThreadInvoker) as this =
     inherit NotifyPropertyChanged()
-    let pointConverter = ScreenPointConverter()
+    let pointConverter = PointConverter(512.0, 16.0, 16.0)
     let mutable currentTool = ToolViewModel(workspace.CurrentTool, pointConverter)
     let currentToolDscnt = workspace.CurrentToolChanged.Subscribe(this.CurrentToolChanged)
 

@@ -2,9 +2,9 @@
 open System
 open System.Collections.ObjectModel
 open Orimath.Plugins
-open Orimath.Converters
+open Orimath.Plugins.ThreadController
 
-type PaperViewModel(paper: IPaperModel, pointConverter: ScreenPointConverter, invoker: IUIThreadInvoker) as this =
+type PaperViewModel(paper: IPaperModel, pointConverter: PointConverter, invoker: IUIThreadInvoker) as this =
     inherit NotifyPropertyChanged()
     let disposables = ResizeArray<IDisposable>()
     let layers =

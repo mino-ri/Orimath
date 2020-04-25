@@ -1,7 +1,8 @@
-﻿using Orimath.Core;
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using Orimath.Core;
+using Orimath.Plugins;
 
 namespace Orimath.ViewModels
 {

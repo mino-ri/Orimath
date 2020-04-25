@@ -11,8 +11,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Converters\ScreenPointConverter.fs" />
-    <Compile Include="ViewModels\IViewThreadInvoker.fs" />
     <Compile Include="ViewModels\NotifyPropertyChanged.fs" />
     <Compile Include="ViewModels\ResettableObservableCollection.fs" />
     <Compile Include="ViewModels\PointViewModel.fs" />

@@ -3,9 +3,8 @@ open System
 open System.Collections.ObjectModel
 open System.Windows.Media
 open Orimath.Plugins
-open Orimath.Converters
 
-type LayerViewModel(layer: ILayerModel, pointConverter: ScreenPointConverter, invoker: IUIThreadInvoker) =
+type LayerViewModel(layer: ILayerModel, pointConverter: PointConverter, invoker: IUIThreadInvoker) =
     inherit NotifyPropertyChanged()
     let points = new AttachedObservableCollection<_, _>(invoker, layer.Points, layer.PointChanged, (fun p -> PointViewModel(p, pointConverter)), ignore)
     let lines = new AttachedObservableCollection<_, _>(invoker, layer.Lines, layer.LineChanged, (fun l -> LineViewModel(l, pointConverter)), ignore)
@@ -14,7 +13,9 @@ type LayerViewModel(layer: ILayerModel, pointConverter: ScreenPointConverter, in
     member val Edges = layer.Edges |> Seq.map(fun e -> EdgeViewModel(e, pointConverter))
     member val Vertexes =
         layer.Edges
-        |> Seq.map(fun e -> pointConverter.Convert(e.Line.Point1))
+        |> Seq.map(fun e -> 
+            let p = pointConverter.ModelToScreen(e.Line.Point1)
+            Windows.Point(p.X, p.Y))
         |> PointCollection
     member __.Points = points :> ObservableCollection<_>
     member __.Lines = lines :> ObservableCollection<_>
