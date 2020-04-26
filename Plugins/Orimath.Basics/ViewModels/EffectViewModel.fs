@@ -1,6 +1,7 @@
-﻿namespace Orimath.ViewModels
+﻿namespace Orimath.Basics.ViewModels
 open System
 open System.Windows.Input
+open Mvvm
 open Orimath.Plugins
 open Orimath.Plugins.ThreadController
 

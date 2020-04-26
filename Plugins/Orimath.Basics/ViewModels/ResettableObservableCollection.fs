@@ -1,22 +1,8 @@
-﻿namespace Orimath.ViewModels
+﻿namespace Orimath.Basics.ViewModels
 open System
-open System.Collections.Generic
-open System.Collections.ObjectModel
-open System.Collections.Specialized
-open System.ComponentModel
+open Mvvm
 open Orimath.Plugins
 open Orimath.Plugins.ThreadController
-
-type internal ResettableObservableCollection<'T>(collection: seq<'T>) =
-    inherit ObservableCollection<'T>(collection)
-
-    new() = ResettableObservableCollection(Array.empty)
-
-    member this.Reset(newItems: seq<'T>) =
-        this.Items.Clear()
-        (this.Items :?> List<'T>).AddRange(newItems)
-        this.OnCollectionChanged(NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset))
-        this.OnPropertyChanged(PropertyChangedEventArgs("Count"))
 
 type internal AttachedObservableCollection<'Model, 'ViewModel>
     (invoker: IUIThreadInvoker,

@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="ViewModels\IDisplayTargetViewModel.fs" />
+    <Compile Include="ViewModels\ResettableObservableCollection.fs" />
+    <Compile Include="ViewModels\PointViewModel.fs" />
+    <Compile Include="ViewModels\LineViewModel.fs" />
+    <Compile Include="ViewModels\EdgeViewModel.fs" />
+    <Compile Include="ViewModels\LayerViewModel.fs" />
+    <Compile Include="ViewModels\PaperViewModel.fs" />
+    <Compile Include="ViewModels\EffectViewModel.fs" />
+    <Compile Include="ViewModels\ToolViewModel.fs" />
+    <Compile Include="ViewModels\WorkspaceViewModel.fs" />
+    <Compile Include="BasicPlugin.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Mvvm\Mvvm.csproj" />
+    <ProjectReference Include="..\..\Orimath.Plugins\Orimath.Plugins.fsproj" />
+    <ProjectReference Include="..\..\Orimath.ViewPlugins\Orimath.ViewPlugins.fsproj" />
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy $(TargetDir)$(TargetName).* $(ProjectDir)..\..\Orimath\bin\$(ConfigurationName)\netcoreapp3.1\Plugins\" />
+  </Target>
+
+</Project>

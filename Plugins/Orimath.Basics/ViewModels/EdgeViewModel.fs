@@ -1,5 +1,6 @@
-﻿namespace Orimath.ViewModels
+﻿namespace Orimath.Basics.ViewModels
 open System
+open Mvvm
 open Orimath.Core
 open Orimath.Core.NearlyEquatable
 open Orimath.Plugins

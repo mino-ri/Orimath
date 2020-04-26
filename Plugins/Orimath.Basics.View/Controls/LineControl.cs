@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Shapes;
 
-namespace Orimath.Controls
+namespace Orimath.Basics.View.Controls
 {
     public class LineControl : Control
     {

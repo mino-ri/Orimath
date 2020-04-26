@@ -1,4 +1,5 @@
-﻿namespace Orimath.ViewModels
+﻿namespace Orimath.Basics.ViewModels
+open Mvvm
 open Orimath.Core
 open Orimath.Plugins
 

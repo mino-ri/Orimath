@@ -9,13 +9,19 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Orimath.Plugins", "Orimath.
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Orimath.Core", "Orimath.Core\Orimath.Core.fsproj", "{979788AF-BC18-4C50-B2BD-6E9FE240800F}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Orimath.BasicTools", "Orimath.BasicTools\Orimath.BasicTools.fsproj", "{68CF77EB-BC78-4AE3-A901-BE4B9A5F52A3}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Orimath.Folds", "Plugins\Orimath.Folds\Orimath.Folds.fsproj", "{68CF77EB-BC78-4AE3-A901-BE4B9A5F52A3}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{52E052D0-7754-4FB7-87FF-2F0347EEEB01}"
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Orimath.App", "Orimath.App\Orimath.App.fsproj", "{5640D017-4388-41D2-B2D6-0A78EBEE9E0A}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Orimath.ViewPlugins", "Orimath.ViewPlugins\Orimath.ViewPlugins.fsproj", "{99B9D74C-AA4D-4E5E-BE78-2A035F6DC8B2}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Orimath.ViewPlugins", "Orimath.ViewPlugins\Orimath.ViewPlugins.fsproj", "{99B9D74C-AA4D-4E5E-BE78-2A035F6DC8B2}"
+EndProject
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Orimath.Basics", "Plugins\Orimath.Basics\Orimath.Basics.fsproj", "{51CB0336-A340-4DDC-A70A-4B345EBD4AE0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mvvm", "Mvvm\Mvvm.csproj", "{3E853F21-B6B6-4393-A30B-C22D124CEEBB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orimath.Basics.View", "Plugins\Orimath.Basics.View\Orimath.Basics.View.csproj", "{54479B62-86E9-465C-8CBB-9A314AC22D69}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,12 +53,26 @@ Global
 		{99B9D74C-AA4D-4E5E-BE78-2A035F6DC8B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99B9D74C-AA4D-4E5E-BE78-2A035F6DC8B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{99B9D74C-AA4D-4E5E-BE78-2A035F6DC8B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51CB0336-A340-4DDC-A70A-4B345EBD4AE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51CB0336-A340-4DDC-A70A-4B345EBD4AE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51CB0336-A340-4DDC-A70A-4B345EBD4AE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51CB0336-A340-4DDC-A70A-4B345EBD4AE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E853F21-B6B6-4393-A30B-C22D124CEEBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E853F21-B6B6-4393-A30B-C22D124CEEBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E853F21-B6B6-4393-A30B-C22D124CEEBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E853F21-B6B6-4393-A30B-C22D124CEEBB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54479B62-86E9-465C-8CBB-9A314AC22D69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54479B62-86E9-465C-8CBB-9A314AC22D69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54479B62-86E9-465C-8CBB-9A314AC22D69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54479B62-86E9-465C-8CBB-9A314AC22D69}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{68CF77EB-BC78-4AE3-A901-BE4B9A5F52A3} = {52E052D0-7754-4FB7-87FF-2F0347EEEB01}
+		{51CB0336-A340-4DDC-A70A-4B345EBD4AE0} = {52E052D0-7754-4FB7-87FF-2F0347EEEB01}
+		{54479B62-86E9-465C-8CBB-9A314AC22D69} = {52E052D0-7754-4FB7-87FF-2F0347EEEB01}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4ACF6D9A-8541-478B-A743-4A560C86C774}

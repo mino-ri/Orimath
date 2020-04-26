@@ -1,7 +1,8 @@
-﻿namespace Orimath.ViewModels
+﻿namespace Orimath.Basics.ViewModels
 open System
 open System.Collections.ObjectModel
 open System.Windows.Media
+open Mvvm
 open Orimath.Plugins
 
 type LayerViewModel(layer: ILayerModel, pointConverter: ScreenPointConverter, invoker: IUIThreadInvoker) =

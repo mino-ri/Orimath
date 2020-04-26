@@ -1,9 +1,13 @@
-﻿using Orimath.Core;
+﻿using Mvvm;
+using Orimath.Core;
 using Orimath.Plugins;
 using Orimath.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -34,6 +38,24 @@ namespace Orimath
             await Dispatcher.Yield();
             var viewModel = (WorkspaceViewModel)DataContext;
             await Task.Run(viewModel.Initialize);
+
+            AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
+            {
+                Debug.Print("アセンブリ読み込み失敗: " + args.Name);
+                return null;
+            };
+
+            foreach (var (viewModelType, (_, uiType)) in viewModel.ViewDefinitions)
+            {
+                var template = new DataTemplate(viewModelType)
+                {
+                    VisualTree = new FrameworkElementFactory(uiType),
+                };
+                Resources.Add(template.DataTemplateKey, template);
+            }
+
+            await Dispatcher.Yield();
+            viewModel.LoadViewModels();
         }
     }
 }

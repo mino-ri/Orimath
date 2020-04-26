@@ -4,19 +4,17 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Orimath.Plugins;
-using Orimath.ViewModels;
+using Orimath.Basics.ViewModels;
 
-namespace Orimath.Controls
+namespace Orimath.Basics.View.Controls
 {
     public class MouseHandler : DependencyObject
     {
+        private WorkspaceViewModel? _workspaceViewModel;
+
         public IInputElement PositionRoot { get => (IInputElement)GetValue(PositionRootProperty); set => SetValue(PositionRootProperty, value); }
         public static readonly DependencyProperty PositionRootProperty =
             DependencyProperty.Register(nameof(PositionRoot), typeof(IInputElement), typeof(MouseHandler), new FrameworkPropertyMetadata(null));
-
-        public WorkspaceViewModel Workspace { get => (WorkspaceViewModel)GetValue(WorkspaceProperty); set => SetValue(WorkspaceProperty, value); }
-        public static readonly DependencyProperty WorkspaceProperty =
-            DependencyProperty.Register(nameof(Workspace), typeof(WorkspaceViewModel), typeof(MouseHandler), new FrameworkPropertyMetadata(null));
 
         public static MouseHandler GetAttachedMouseHandler(DependencyObject obj) => (MouseHandler)obj.GetValue(AttachedMouseHandlerProperty);
         public static void SetAttachedMouseHandler(DependencyObject obj, MouseHandler value) => obj.SetValue(AttachedMouseHandlerProperty, value);
@@ -27,6 +25,8 @@ namespace Orimath.Controls
         public static void SetRootMouseHandler(DependencyObject obj, MouseHandler value) => obj.SetValue(RootMouseHandlerProperty, value);
         public static readonly DependencyProperty RootMouseHandlerProperty =
             DependencyProperty.RegisterAttached("RootMouseHandler", typeof(MouseHandler), typeof(IInputElement), new PropertyMetadata(null, RootMouseHandlerChanged));
+
+        private WorkspaceViewModel Workspace => _workspaceViewModel ??= ((PositionRoot as FrameworkElement)?.DataContext as WorkspaceViewModel)!;
 
         private static void AttachedMouseHandlerChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
@@ -62,7 +62,10 @@ namespace Orimath.Controls
         private static void RootMouseHandlerChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             if (sender is IInputElement ctrl && e.NewValue is MouseHandler handler)
+            {
                 handler.PositionRoot = ctrl;
+                handler._workspaceViewModel = null;
+            }
         }
 
         private object? _clickControl;
@@ -114,7 +117,7 @@ namespace Orimath.Controls
 
             if (_clickControl == sender && _pressed == e.ChangedButton)
             {
-                Workspace.CurrentTool.OnClick(_draggingData, GetModifier(e.ChangedButton));
+                Workspace.OnClick(_draggingData, GetModifier(e.ChangedButton));
                 _clickControl = null;
                 _draggingData = null;
             }
@@ -124,7 +127,7 @@ namespace Orimath.Controls
 
         private void BeginDrag(Control ctrl)
         {
-            if (Workspace.CurrentTool.BeginDrag(_draggingData, GetModifier(_pressed)))
+            if (Workspace.BeginDrag(_draggingData, GetModifier(_pressed)))
             {
                 _draggingSource = ctrl;
                 _draggingGuid = Guid.NewGuid().ToString();
@@ -176,7 +179,7 @@ namespace Orimath.Controls
             if (!(sender is Control ctrl && ctrl.DataContext is IDisplayTargetViewModel dt)) return;
 
             if (IsValidDropSource(e.Data) && _draggingData is { } &&
-                Workspace.CurrentTool.DragEnter(_draggingData, GetOperationTarget(e, dt), GetModifier(_pressed)))
+                Workspace.DragEnter(_draggingData, GetOperationTarget(e, dt), GetModifier(_pressed)))
             {
                 e.Effects = DragDropEffects.Scroll;
                 ctrl.Foreground = (Brush)ctrl.Tag;
@@ -194,7 +197,7 @@ namespace Orimath.Controls
             if (!(sender is Control ctrl && ctrl.DataContext is IDisplayTargetViewModel dt)) return;
 
             if (IsValidDropSource(e.Data) && _draggingData is { })
-                Workspace.CurrentTool.DragOver(_draggingData, GetOperationTarget(e, dt), GetModifier(_pressed));
+                Workspace.DragOver(_draggingData, GetOperationTarget(e, dt), GetModifier(_pressed));
 
             e.Handled = true;
         }
@@ -204,7 +207,7 @@ namespace Orimath.Controls
             if (!(sender is Control ctrl && ctrl.DataContext is IDisplayTargetViewModel dt)) return;
 
             if (IsValidDropSource(e.Data) && _draggingData is { })
-                Workspace.CurrentTool.DragLeave(_draggingData, GetOperationTarget(e, dt), GetModifier(_pressed));
+                Workspace.DragLeave(_draggingData, GetOperationTarget(e, dt), GetModifier(_pressed));
 
             if (ctrl != _draggingSource)
                 ctrl.ClearValue(Control.ForegroundProperty);
@@ -218,7 +221,7 @@ namespace Orimath.Controls
 
             if (IsValidDropSource(e.Data) && _draggingData is { })
             {
-                Workspace.CurrentTool.Drop(_draggingData, GetOperationTarget(e, dt), GetModifier(_pressed));
+                Workspace.Drop(_draggingData, GetOperationTarget(e, dt), GetModifier(_pressed));
                 ctrl.ClearValue(Control.ForegroundProperty);
                 e.Handled = true;
             }

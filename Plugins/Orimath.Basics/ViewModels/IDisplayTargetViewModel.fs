@@ -1,4 +1,4 @@
-﻿namespace Orimath.ViewModels
+﻿namespace Orimath.Basics.ViewModels
 open Orimath.Plugins
 
 type IDisplayTargetViewModel =

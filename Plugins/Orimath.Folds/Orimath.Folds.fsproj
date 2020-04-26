@@ -11,20 +11,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="DragFoldingTool.fs" />
-    <Compile Include="BasicToolsPlugin.fs" />
-    <Compile Include="Folding.fs" />
+    <Compile Include="Core\Folding.fs" />
+    <Compile Include="Core\DragFoldTool.fs" />
+    <Compile Include="FoldsPlugin.fs" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Orimath.Plugins\Orimath.Plugins.fsproj" />
-    <ProjectReference Include="..\Orimath.ViewPlugins\Orimath.ViewPlugins.fsproj" />
+    <ProjectReference Include="..\..\Orimath.Plugins\Orimath.Plugins.fsproj" />
   </ItemGroup>
 
-  <ItemGroup />
-
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy $(TargetDir)$(TargetName).* $(ProjectDir)..\Orimath\bin\$(ConfigurationName)\netcoreapp3.1\Plugins\" />
+    <Exec Command="copy $(TargetDir)$(TargetName).* $(ProjectDir)..\..\Orimath\bin\$(ConfigurationName)\netcoreapp3.1\Plugins\" />
   </Target>
 
 </Project>

@@ -1,4 +1,4 @@
-﻿module Orimath.BasicTools.Folding
+﻿module Orimath.Folds.Core.Folding
 open Orimath.Core
 open NearlyEquatable
 

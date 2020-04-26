@@ -25,15 +25,9 @@ let executePlugins(viewArgs: ViewPluginArgs) =
     let args = { Workspace = viewArgs.Workspace }
     let types = loadPluginTypes()
     for plugin in getInstances<IPlugin> types do plugin.Execute(args)
-
-    for viewType, att in types
-                         |> Seq.filter(fun t -> not t.IsAbstract && typeof<FrameworkElement>.IsAssignableFrom(t))
-                         |> Seq.map(fun t -> t, t.GetCustomAttribute<ViewAttribute>())
-                         |> Seq.filter(fun (_, att) -> not (isNull (box att))) do
-        viewArgs.Messenger.RegisterView(att.ViewModelType, att.Pane,
-            fun vm ->
-                let ui = FastActivator.CreateInstance(viewType) :?> FrameworkElement
-                ui.DataContext <- vm
-                ui)
-
     for viewPlugin in getInstances<IViewPlugin> types do viewPlugin.Execute(viewArgs)
+
+    types
+    |> Seq.filter(fun t -> not t.IsAbstract && typeof<FrameworkElement>.IsAssignableFrom(t))
+    |> Seq.map(fun t -> t, t.GetCustomAttribute<ViewAttribute>())
+    |> Seq.filter(fun (_, att) -> not (isNull (box att)))
