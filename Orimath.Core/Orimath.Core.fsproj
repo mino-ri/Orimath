@@ -10,16 +10,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="InternalModule.fs" />
-    <Compile Include="ReactiveProperty.fs" />
-    <Compile Include="ReactiveCollection.fs" />
-    <Compile Include="PluginLoader.fs" />
-    <Compile Include="Layer.fs" />
-    <Compile Include="Paper.fs" />
-    <Compile Include="LayerModule.fs" />
-    <Compile Include="LayerModel.fs" />
-    <Compile Include="PaperModel.fs" />
-    <Compile Include="Workspace.fs" />
+    <Compile Include="Core\InternalModule.fs" />
+    <Compile Include="Core\ReactiveProperty.fs" />
+    <Compile Include="Core\ReactiveCollection.fs" />
+    <Compile Include="Core\Layer.fs" />
+    <Compile Include="Core\Paper.fs" />
+    <Compile Include="Core\LayerModule.fs" />
+    <Compile Include="Core\LayerModel.fs" />
+    <Compile Include="Core\PaperModel.fs" />
+    <Compile Include="Core\Workspace.fs" />
   </ItemGroup>
 
   <ItemGroup>

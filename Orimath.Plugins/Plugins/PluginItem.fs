@@ -1,6 +1,5 @@
 ﻿namespace Orimath.Plugins
 open System
-open Orimath.Core
 
 /// ドラッグ操作におけるキー修飾およびマウスボタンを表します。
 [<Flags>]
@@ -16,12 +15,13 @@ type OperationModifier =
     /// Ctrl キーが押されています。
     | Ctrl = 8
 
-type IPlugin =
+type IFunction =
     abstract member Name : string
     abstract member ShortcutKey : string
+    abstract member Icon : System.IO.Stream
 
 type ITool =
-    inherit IPlugin
+    inherit IFunction
     abstract member OnClick : target: OperationTarget * modifier: OperationModifier -> unit
     abstract member BeginDrag : source: OperationTarget * modifier: OperationModifier -> bool
     abstract member DragEnter : source: OperationTarget * target: OperationTarget * modifier: OperationModifier -> bool
@@ -30,17 +30,8 @@ type ITool =
     abstract member Drop : source: OperationTarget * target: OperationTarget * modifier: OperationModifier -> unit
 
 type IEffect =
-    inherit IPlugin
+    inherit IFunction
     abstract member Execute : unit -> unit
     abstract member CanExecute : unit -> bool
     [<CLIEvent>]
     abstract member CanExecuteChanged : IEvent<EventHandler, EventArgs>
-
-type WorkspaceEventArgs<'TValue>(layerIndex: int, value: 'TValue) =
-    inherit EventArgs()
-    member __.LayerIndex = layerIndex
-    member __.Value = value
-
-type WorkspaceEventHandler<'TValue> = delegate of sender: obj * WorkspaceEventArgs<'TValue> -> unit
-
-type IWorkspaceEvent<'TValue> = IEvent<WorkspaceEventHandler<'TValue>, WorkspaceEventArgs<'TValue>>

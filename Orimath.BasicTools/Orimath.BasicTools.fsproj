@@ -1,7 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -11,12 +12,19 @@
 
   <ItemGroup>
     <Compile Include="DragFoldingTool.fs" />
-    <Compile Include="BasicToolsProvidor.fs" />
+    <Compile Include="BasicToolsPlugin.fs" />
     <Compile Include="Folding.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Orimath.Plugins\Orimath.Plugins.fsproj" />
+    <ProjectReference Include="..\Orimath.ViewPlugins\Orimath.ViewPlugins.fsproj" />
   </ItemGroup>
+
+  <ItemGroup />
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy $(TargetDir)$(TargetName).* $(ProjectDir)..\Orimath\bin\$(ConfigurationName)\netcoreapp3.1\Plugins\" />
+  </Target>
 
 </Project>

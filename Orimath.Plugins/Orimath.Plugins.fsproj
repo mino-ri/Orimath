@@ -21,11 +21,11 @@
     <Compile Include="Plugins\ILayerModel.fs" />
     <Compile Include="Plugins\IPaperModel.fs" />
     <Compile Include="Plugins\DisplayTarget.fs" />
-    <Compile Include="Plugins\Plugins.fs" />
+    <Compile Include="Plugins\PluginItem.fs" />
     <Compile Include="Plugins\IWorkspace.fs" />
-    <Compile Include="Plugins\PluginProvidor.fs" />
     <Compile Include="Plugins\WorkspaceModule.fs" />
     <Compile Include="Plugins\SelectorTool.fs" />
+    <Compile Include="Plugins\IPlugin.fs" />
   </ItemGroup>
 
 </Project>

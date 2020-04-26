@@ -11,6 +11,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="Plugins\FastActivator.fs" />
+    <Compile Include="Plugins\PluginLoader.fs" />
     <Compile Include="ViewModels\ISelectable.fs" />
     <Compile Include="ViewModels\NotifyPropertyChanged.fs" />
     <Compile Include="ViewModels\ResettableObservableCollection.fs" />

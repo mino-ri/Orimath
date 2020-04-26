@@ -4,10 +4,10 @@ open Orimath.Plugins
 
 type internal PaperOpr =
     | BeginChangeBlock
-    | Clear of before: LayerModel list * after: LayerModel list
-    | LayerAddition of index: int * layers: LayerModel list
-    | LayerRemoving of index: int * layers: LayerModel list
-    | LayerReplace of layerIndex: int * before: LayerModel * after: LayerModel
+    | Clear of before: ILayerModel list * after: ILayerModel list
+    | LayerAddition of index: int * layers: ILayerModel list
+    | LayerRemoving of index: int * layers: ILayerModel list
+    | LayerReplace of layerIndex: int * before: ILayerModel * after: ILayerModel
     | LineAddition of layerIndex: int * index: int * lines: LineSegment list
     | LineRemoving of layerIndex: int * index: int * lines: LineSegment list
     | PointAddition of layerIndex: int * index: int * points: Point list
@@ -33,7 +33,6 @@ and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Lay
     member __.Edges = init.Edges
     member __.Lines = layerLines :> IReadOnlyList<_>
     member __.Points = layerPoints :> IReadOnlyList<_>
-    member internal __.LayerIndex = layerIndex
 
     member __.GetSnapShot() = Layer.Create(init.Edges, layerLines, layerPoints)
 

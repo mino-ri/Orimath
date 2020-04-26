@@ -15,9 +15,7 @@ type WorkspaceViewModel(workspace: IWorkspace, invoker: IUIThreadInvoker) as thi
     member __.Tools = tools :> ObservableCollection<_>
     member __.Effects = effects :> ObservableCollection<_>
 
-    member __.Source = workspace
     member val Paper = new PaperViewModel(workspace.Paper, pointConverter, invoker)
-    member __.PointConverter = pointConverter
     member __.CurrentTool 
         with get() = currentTool
         and set(v: ToolViewModel) = workspace.CurrentTool <- v.Source
@@ -28,6 +26,12 @@ type WorkspaceViewModel(workspace: IWorkspace, invoker: IUIThreadInvoker) as thi
             this.OnPropertyChanged("CurrentTool")
 
     member __.Initialize() =
+        PluginLoader.executePlugins {
+                Workspace = workspace
+                Messenger = Unchecked.defaultof<_>
+                UIThreadInvoker = invoker
+                PointConverter = pointConverter
+            }
         workspace.Initialize()
         onUI invoker <| fun () ->
             tools.Reset(workspace.Tools |> Seq.map(fun t -> ToolViewModel(t, pointConverter)))

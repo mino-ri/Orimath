@@ -8,6 +8,8 @@ type IWorkspace =
     abstract member Tools : IReadOnlyList<ITool>
     abstract member Effects : IReadOnlyList<IEffect>
     abstract member CurrentTool : ITool with get, set
+    abstract member AddTool : tool: ITool -> unit
+    abstract member AddEffect : effect: IEffect -> unit
 
     abstract member Initialize : unit -> unit
     abstract member CreatePaper : layers: seq<ILayer> -> IPaper

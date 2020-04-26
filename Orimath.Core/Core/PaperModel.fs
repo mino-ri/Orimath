@@ -12,25 +12,25 @@ type PaperModel internal () as this =
     let selectedEdges = ReactiveProperty.createArray<Edge> this
     let selectedPoints = ReactiveProperty.createArray<Point> this
     let selectedLines = ReactiveProperty.createArray<LineSegment> this
-    let layerModels = ReactiveCollection<LayerModel>(this)
+    let layerModels = ReactiveCollection<ILayerModel>(this)
     let layerChanged = CollectionChangedEvent<ILayerModel>()
 
     do layerModels.Changed.Add(function
         | CollectionChange.Add(index, layers) ->
             this.PushUndoOpr(LayerAddition(index, asList layers))
-            layerChanged.Trigger(this, CollectionChange.Add(index, layers :?> IReadOnlyList<ILayerModel>))
+            layerChanged.Trigger(this, CollectionChange.Add(index, layers))
         | CollectionChange.Remove(index, layers) ->
             this.PushUndoOpr(LayerRemoving(index, asList layers))
-            layerChanged.Trigger(this, CollectionChange.Remove(index, layers :?> IReadOnlyList<ILayerModel>))
+            layerChanged.Trigger(this, CollectionChange.Remove(index, layers))
         | CollectionChange.Replace(index, oldLayer, newLayer) ->
             this.PushUndoOpr(LayerReplace(index, oldLayer, newLayer))
-            layerChanged.Trigger(this, CollectionChange.Replace(index, upcast oldLayer, upcast newLayer))
+            layerChanged.Trigger(this, CollectionChange.Replace(index, oldLayer, newLayer))
         | CollectionChange.Reset(odlLayers, newLayers) ->
             this.PushUndoOpr(Clear(asList odlLayers, asList newLayers))
-            layerChanged.Trigger(this, CollectionChange.Reset(odlLayers :?> IReadOnlyList<ILayerModel>, newLayers :?> IReadOnlyList<ILayerModel>))
+            layerChanged.Trigger(this, CollectionChange.Reset(odlLayers, newLayers))
         )
 
-    member __.Layers = layerModels :> IReadOnlyList<LayerModel> :?> IReadOnlyList<ILayerModel>
+    member __.Layers = layerModels :> IReadOnlyList<ILayerModel>
     member __.CanUndo = undoOprStack.Count > 0
     member __.CanRedo = redoOprStack.Count > 0
     member __.SelectedLayers with get() = selectedLayers.Value and set v = selectedLayers.Value <- v
@@ -109,7 +109,7 @@ type PaperModel internal () as this =
         changeBlockDisabled <- true
         { new IDisposable with member __.Dispose() = changeBlockDeclared <- false; changeBlockDisabled <- false }
 
-    member private this.ClearRaw(layers: LayerModel list) =
+    member private this.ClearRaw(layers: ILayerModel list) =
         use __ = this.TryBeginChange()
         layerModels.Reset(layers)
 
@@ -118,7 +118,7 @@ type PaperModel internal () as this =
         let layers =
             paper.Layers
             |> Seq.indexed
-            |> Seq.map(fun (index, ly) -> LayerModel(this, index, Layer.AsLayer(ly)))
+            |> Seq.map(fun (index, ly) -> LayerModel(this, index, Layer.AsLayer(ly)) :> ILayerModel)
             |> Seq.toList
         this.ClearRaw(layers)
 
@@ -133,7 +133,7 @@ type PaperModel internal () as this =
         let layers =
             layers
             |> Seq.indexed
-            |> Seq.map(fun (index, ly) -> LayerModel(this, layerModels.Count + index, Layer.AsLayer(ly)))
+            |> Seq.map(fun (index, ly) -> LayerModel(this, layerModels.Count + index, Layer.AsLayer(ly)) :> ILayerModel)
             |> Seq.toList
         this.AddLayersRaw(layers)
 
@@ -150,7 +150,7 @@ type PaperModel internal () as this =
         this.ReplaceLayerRaw(index, LayerModel(this, index, Layer.AsLayer(newLayer)))
 
     interface IPaper with
-        member this.Layers = this.Layers :?> IReadOnlyList<ILayer>
+        member this.Layers = this.Layers :> IReadOnlyCollection<ILayerModel> :?> IReadOnlyList<ILayer>
 
     interface IInternalPaperModel with
         member this.PushUndoOpr(opr) = this.PushUndoOpr(opr)
