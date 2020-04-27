@@ -6,9 +6,9 @@ open System.Windows.Input
 open Mvvm
 open Orimath.Plugins
 
-type WorkspaceViewModel(workspace: IWorkspace, invoker: IUIThreadInvoker) as this =
+type WorkspaceViewModel(workspace: IWorkspace, dispatcher: IDispatcher) as this =
     inherit NotifyPropertyChanged()
-    let pointConverter = ScreenPointConverter(512.0, 16.0, 16.0)
+    let pointConverter = ViewPointConverter(512.0, 16.0, 16.0)
     let mutable dialog = null
     let closeDialogCommand = ActionCommand((fun _ -> this.CloseDialog()), (fun _ -> isNull this.Dialog))
     let preViewModels = ObservableCollection<obj>()
@@ -74,7 +74,7 @@ type WorkspaceViewModel(workspace: IWorkspace, invoker: IUIThreadInvoker) as thi
             PluginLoader.executePlugins {
                     Workspace = workspace
                     Messenger = this
-                    UIThreadInvoker = invoker
+                    Dispatcher = dispatcher
                     PointConverter = pointConverter
                 }
         for viewType, att in viewDefs do

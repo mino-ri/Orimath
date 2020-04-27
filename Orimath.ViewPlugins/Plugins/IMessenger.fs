@@ -2,12 +2,6 @@
 open System
 open System.Windows.Input
 
-type ViewPane =
-    | Main = 0
-    | Top = 1
-    | Side = 2
-    | Dialog = 3
-
 type IMessenger =
     abstract member AddViewModel : viewModel: obj -> unit
     abstract member RemoveViewModel : viewModelType: Type -> unit

@@ -3,24 +3,23 @@ open System
 open System.Collections.ObjectModel
 open Mvvm
 open Orimath.Plugins
-open Orimath.Plugins.ThreadController
 
-type PaperViewModel(paper: IPaperModel, pointConverter: ScreenPointConverter, invoker: IUIThreadInvoker) as this =
+type PaperViewModel(paper: IPaperModel, pointConverter: IViewPointConverter, dispatcher: IDispatcher) as this =
     inherit NotifyPropertyChanged()
     let disposables = ResizeArray<IDisposable>()
     let layers =
-        new AttachedObservableCollection<_, _>(invoker, paper.Layers, paper.LayerChanged,
-            (fun l -> new LayerViewModel(l, pointConverter, invoker)), (fun l -> l.Dispose()))
+        new AttachedObservableCollection<_, _>(dispatcher, paper.Layers, paper.LayerChanged,
+            (fun l -> new LayerViewModel(l, pointConverter, dispatcher)), (fun l -> l.Dispose()))
     do disposables.Add(layers)
     let mutable selectedLayers = Array.empty
     let mutable selectedEdges = Array.empty
     let mutable selectedLines = Array.empty
     let mutable selectedPoints = Array.empty
 
-    do disposables.Add(paper.SelectedLayersChanged.Subscribe(fun _ -> onUI invoker this.SelectedLayersChanged))
-    do disposables.Add(paper.SelectedEdgesChanged.Subscribe(fun _ -> onUI invoker this.SelectedEdgesChanged))
-    do disposables.Add(paper.SelectedLinesChanged.Subscribe(fun _ -> onUI invoker this.SelectedLinesChanged))
-    do disposables.Add(paper.SelectedPointsChanged.Subscribe(fun _ -> onUI invoker this.SelectedPointsChanged))
+    do disposables.Add(paper.SelectedLayersChanged.Subscribe(fun _ -> ignore (dispatcher.OnUIAsync(Action(this.SelectedLayersChanged)))))
+    do disposables.Add(paper.SelectedEdgesChanged.Subscribe(fun _ -> ignore (dispatcher.OnUIAsync(Action(this.SelectedEdgesChanged)))))
+    do disposables.Add(paper.SelectedLinesChanged.Subscribe(fun _ -> ignore (dispatcher.OnUIAsync(Action(this.SelectedLinesChanged)))))
+    do disposables.Add(paper.SelectedPointsChanged.Subscribe(fun _ -> ignore (dispatcher.OnUIAsync(Action(this.SelectedPointsChanged)))))
 
     member __.Source = paper
     member __.Layers = layers :> ObservableCollection<_>

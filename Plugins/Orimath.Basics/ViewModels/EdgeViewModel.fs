@@ -5,10 +5,10 @@ open Orimath.Core
 open Orimath.Core.NearlyEquatable
 open Orimath.Plugins
 
-type EdgeViewModel(edge: Edge, pointConverter: ScreenPointConverter) =
+type EdgeViewModel(edge: Edge, pointConverter: IViewPointConverter) =
     inherit NotifyPropertyChanged()
-    let screenPoint1 = pointConverter.ModelToScreen(edge.Line.Point1)
-    let screenPoint2 = pointConverter.ModelToScreen(edge.Line.Point2)
+    let screenPoint1 = pointConverter.ModelToView(edge.Line.Point1)
+    let screenPoint2 = pointConverter.ModelToView(edge.Line.Point2)
     
     member __.Source = edge
     member __.X1 = screenPoint1.X

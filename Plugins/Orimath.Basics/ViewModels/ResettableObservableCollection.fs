@@ -2,10 +2,9 @@
 open System
 open Mvvm
 open Orimath.Plugins
-open Orimath.Plugins.ThreadController
 
 type internal AttachedObservableCollection<'Model, 'ViewModel>
-    (invoker: IUIThreadInvoker,
+    (dispatcher: IDispatcher,
      init: seq<'Model>,
      source: ICollectionChangedEvent<'Model>,
      mapper: 'Model -> 'ViewModel,
@@ -14,19 +13,19 @@ type internal AttachedObservableCollection<'Model, 'ViewModel>
 
     let disconnector = source.Subscribe(function
         | CollectionChange.Add(_, items) ->
-            onUI invoker <| fun () -> for item in items do this.Add(mapper item)
+            ignore (dispatcher.OnUIAsync(fun () -> for item in items do this.Add(mapper item)))
         | CollectionChange.Remove(_, items) ->
-            onUI invoker <| fun () ->
+            ignore (dispatcher.OnUIAsync(fun () ->
                 let length = this.Count
-                for index in (length - 1)..(-1)..(length - items.Count) do this.RemoveAt(index)
+                for index in (length - 1)..(-1)..(length - items.Count) do this.RemoveAt(index)))
         | CollectionChange.Replace(index, _, item) ->
-            onUI invoker <| fun () ->
+            ignore (dispatcher.OnUIAsync(fun () ->
                 onRemove this.[index]
-                this.[index] <- mapper item
+                this.[index] <- mapper item))
         | CollectionChange.Reset(_, items) ->
-            onUI invoker <| fun () ->
+            ignore (dispatcher.OnUIAsync(fun () ->
                 Seq.iter onRemove this
-                this.Reset(items |> Seq.map mapper))
+                this.Reset(items |> Seq.map mapper))))
 
     member __.Dispose() = disconnector.Dispose()
 

@@ -17,9 +17,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Orimath.App\Orimath.App.fsproj" />
+    <ProjectReference Include="..\Mvvm\Mvvm.csproj" />
     <ProjectReference Include="..\Orimath.Core\Orimath.Core.fsproj" />
     <ProjectReference Include="..\Orimath.Plugins\Orimath.Plugins.fsproj" />
+    <ProjectReference Include="..\Orimath.ViewPlugins\Orimath.ViewPlugins.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

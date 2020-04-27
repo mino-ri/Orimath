@@ -4,8 +4,8 @@ type ViewPluginArgs =
     {
         Workspace: IWorkspace
         Messenger: IMessenger
-        UIThreadInvoker: IUIThreadInvoker
-        PointConverter: ScreenPointConverter
+        Dispatcher: IDispatcher
+        PointConverter: IViewPointConverter
     }
 
 type IViewPlugin =

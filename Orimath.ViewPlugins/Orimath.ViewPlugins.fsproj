@@ -11,8 +11,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Plugins\UIThreadInvoker.fs" />
-    <Compile Include="Plugins\PointConverter.fs" />
+    <Compile Include="Plugins\IDispatcher.fs" />
+    <Compile Include="Plugins\ViewPointConverter.fs" />
     <Compile Include="Plugins\IMessenger.fs" />
     <Compile Include="Plugins\ViewAttribute.fs" />
     <Compile Include="Plugins\IViewPlugin.fs" />

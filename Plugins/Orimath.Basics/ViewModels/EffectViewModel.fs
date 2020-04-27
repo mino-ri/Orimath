@@ -3,23 +3,22 @@ open System
 open System.Windows.Input
 open Mvvm
 open Orimath.Plugins
-open Orimath.Plugins.ThreadController
 
-type EffectCommand(effect: IEffect, invoker: IUIThreadInvoker) =
+type EffectCommand(effect: IEffect, dispatcher: IDispatcher) =
     let canExecuteChanged = Event<EventHandler, EventArgs>()
     do effect.CanExecuteChanged.AddHandler(fun sender args ->
-        onUI invoker <| fun () -> canExecuteChanged.Trigger(sender, args))
+        ignore (dispatcher.OnUIAsync(fun () -> canExecuteChanged.Trigger(sender, args))))
 
     interface ICommand with
         member __.CanExecute(_) = effect.CanExecute()
-        member __.Execute(_) = runAsync effect.Execute
+        member __.Execute(_) = ignore (dispatcher.OnBackgroundAsync(effect.Execute))
         [<CLIEvent>]
         member __.CanExecuteChanged = canExecuteChanged.Publish
 
-type EffectViewModel(effect: IEffect, invoker: IUIThreadInvoker) =
+type EffectViewModel(effect: IEffect, dispatcher: IDispatcher) =
     inherit NotifyPropertyChanged()
-    member val Command = EffectCommand(effect, invoker)
+    member val Command = EffectCommand(effect, dispatcher)
     member __.Name = effect.Name
     member __.ShortcutKey = effect.ShortcutKey
     member __.CanExecute = effect.CanExecute()
-    member __.Execute() = runAsync effect.Execute
+    member __.Execute() = ignore (dispatcher.OnBackgroundAsync(effect.Execute))

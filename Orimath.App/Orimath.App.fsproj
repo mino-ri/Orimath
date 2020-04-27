@@ -13,6 +13,7 @@
   <ItemGroup>
     <Compile Include="Plugins\FastActivator.fs" />
     <Compile Include="Plugins\PluginLoader.fs" />
+    <Compile Include="ViewModels\ViewPointConverter.fs" />
     <Compile Include="ViewModels\WorkspaceViewModel.fs" />
   </ItemGroup>
 

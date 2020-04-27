@@ -39,12 +39,6 @@ namespace Orimath
             var viewModel = (WorkspaceViewModel)DataContext;
             await Task.Run(viewModel.Initialize);
 
-            AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
-            {
-                Debug.Print("アセンブリ読み込み失敗: " + args.Name);
-                return null;
-            };
-
             foreach (var (viewModelType, (_, uiType)) in viewModel.ViewDefinitions)
             {
                 var template = new DataTemplate(viewModelType)

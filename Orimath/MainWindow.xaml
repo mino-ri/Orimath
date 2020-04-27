@@ -21,6 +21,6 @@
         <ScrollViewer>
             <ItemsControl ItemsSource="{Binding MainViewModels, Mode=OneTime}"
                           ItemsPanel="{StaticResource CanvasItemsPanel}" />
-        </ScrollViewer> 
+        </ScrollViewer>
     </DockPanel>
 </Window>
