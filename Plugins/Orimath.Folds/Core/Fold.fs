@@ -1,12 +1,13 @@
-﻿module Orimath.Folds.Core.Folding
+﻿module Orimath.Folds.Core.Fold
 open Orimath.Core
 open NearlyEquatable
 
 let axiom1 p1 p2 =
-    if p1 = p2 then None
-    else Some(Line.Create(p1.Y - p2.Y, p2.X - p1.X, p1.X * p2.Y - p2.X * p1.Y))
+    Line.FromPoints(p1, p2)
 
-let axiom2 p1 p2 = Line.FromPoints(p1, p2)
+let axiom2 p1 p2 =
+    if p1 = p2 then None
+    else Some(Line.Create(p1.X - p2.X, p1.Y - p2.Y, (p2.X * p2.X + p2.Y * p2.Y - p1.X * p1.X - p1.Y * p1.Y) / 2.0))
 
 let axiom3 (line1: Line) (line2: Line) =
     let isParallel = line1.Slope = line2.Slope
@@ -21,24 +22,24 @@ let axiom3 (line1: Line) (line2: Line) =
                 Line.Create(line1.XFactor - line2.XFactor, line1.YFactor - line2.YFactor, line1.Intercept - line2.Intercept)
             ]
 
-let axiom4 point (line: Line) = Line.Create(-line.YFactor, line.XFactor, line.YFactor * point.X - line.XFactor * point.Y)
+let axiom4 (line: Line) point = Line.Create(-line.YFactor, line.XFactor, line.YFactor * point.X - line.XFactor * point.Y)
 
-let axiom5 (ontoLine: Line) passPoint ontoPoint =
+let axiom5 pass (ontoLine: Line) ontoPoint =
     if ontoLine.Contains(ontoPoint) then []
     else
-        let n = (ontoLine.XFactor * passPoint.X + ontoLine.YFactor * passPoint.Y + ontoLine.Intercept)
-        let dist = (passPoint.X - ontoPoint.X) * (passPoint.X - ontoPoint.X) + (passPoint.Y - ontoPoint.Y) * (passPoint.Y - ontoPoint.Y)
+        let n = (ontoLine.XFactor * pass.X + ontoLine.YFactor * pass.Y + ontoLine.Intercept)
+        let dist = (pass.X - ontoPoint.X) * (pass.X - ontoPoint.X) + (pass.Y - ontoPoint.Y) * (pass.Y - ontoPoint.Y)
         let delta = dist - n * n
         if delta < 0.0 then
             []
         elif delta = 0.0 then
-            [ axiom2 ontoPoint { X = passPoint.X - ontoLine.XFactor * n; Y = passPoint.Y - ontoLine.YFactor * n } ]
+            [ axiom2 ontoPoint { X = pass.X - ontoLine.XFactor * n; Y = pass.Y - ontoLine.YFactor * n } ]
             |> List.choose id
         else
             let s = (sqrt delta)
             [
-                axiom2 ontoPoint { X = passPoint.X - (ontoLine.XFactor * n + ontoLine.YFactor * s); Y = passPoint.Y - (ontoLine.YFactor * n - ontoLine.XFactor * s) }
-                axiom2 ontoPoint { X = passPoint.X - (ontoLine.XFactor * n - ontoLine.YFactor * s); Y = passPoint.Y - (ontoLine.YFactor * n + ontoLine.XFactor * s) }
+                axiom2 ontoPoint { X = pass.X - (ontoLine.XFactor * n + ontoLine.YFactor * s); Y = pass.Y - (ontoLine.YFactor * n - ontoLine.XFactor * s) }
+                axiom2 ontoPoint { X = pass.X - (ontoLine.XFactor * n - ontoLine.YFactor * s); Y = pass.Y - (ontoLine.YFactor * n + ontoLine.XFactor * s) }
             ]
             |> List.choose id
 

@@ -17,6 +17,11 @@ let private appendCross (layer: ILayer) (line: LineSegment) (points: Point list)
         | Some(p) when (points |> List.forall((<>~) p)) && not (layer.HasPoint(p)) ->
             points <- p :: points
         | _ -> ()
+    for layerLine in layer.Lines do
+        match layerLine.GetCrossPoint(line) with
+        | Some(p) when (points |> List.forall((<>~) p)) && not (layer.HasPoint(p)) ->
+            points <- p :: points
+        | _ -> ()
     points
 
 [<CompiledName("GetCrossesFSharp"); Extension>]

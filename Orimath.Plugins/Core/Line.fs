@@ -93,8 +93,7 @@ type Line = private { A: float; B: float; C: float } with
     [<CompiledName("FromPointsFSharp")>]
     static member FromPoints(p1, p2) =
         if p1 = p2 then None
-        else
-            Some(Line.Create(p1.X - p2.X, p1.Y - p2.Y, (p2.X * p2.X + p2.Y * p2.Y - p1.X * p1.X - p1.Y * p1.Y) / 2.0))
+        else Some(Line.Create(p1.Y - p2.Y, p2.X - p1.X, p1.X * p2.Y - p2.X * p1.Y))
 
     [<CompiledName("FromPoints")>]
     static member FromPointsCSharp(p1, p2) =

@@ -45,3 +45,19 @@ type PaperModelExtensions =
             { new IDisposable with member __.Dispose() = () }
         else
             paper.BeginChange()
+
+    [<Extension>]
+    static member IsSelected(paper: IPaperModel, point) =
+        Array.contains point paper.SelectedPoints
+
+    [<Extension>]
+    static member IsSelected(paper: IPaperModel, line) =
+        Array.contains line paper.SelectedLines
+
+    [<Extension>]
+    static member IsSelected(paper: IPaperModel, edge) =
+        Array.contains edge paper.SelectedEdges
+
+    [<Extension>]
+    static member IsSelected(paper: IPaperModel, layer) =
+        Array.contains layer paper.SelectedLayers

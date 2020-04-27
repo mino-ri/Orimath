@@ -36,7 +36,7 @@ type LayerExtensions =
                         recSelf (acm + 1) tail
                     else
                         recSelf acm tail
-            | [] -> acm % 2 = 0
+            | [] -> acm % 2 = 1
         recSelf 0 edges
 
     /// このレイヤーの領域に指定した点が含まれているか判断します。
@@ -77,8 +77,7 @@ type LayerExtensions =
         let points = ResizeArray()
         for edge in layer.Edges do
             match edge.Line.Line.GetCrossPoint(line) with
-            | Some(p) when edge.Line.Contains(p) &&
-                            not (points |> Seq.exists((=~) p))
+            | Some(p) when edge.Line.Contains(p) && not (points |> Seq.exists((=~) p))
                 -> points.Add(p)
             | _ -> ()
         points
