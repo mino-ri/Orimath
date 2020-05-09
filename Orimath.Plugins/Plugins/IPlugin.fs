@@ -1,5 +1,6 @@
 ﻿namespace Orimath.Plugins
 
+[<NoComparison; ReferenceEquality>]
 type PluginArgs =
     {
         Workspace: IWorkspace

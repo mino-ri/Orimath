@@ -1,0 +1,22 @@
+﻿<UserControl x:Class="Orimath.FoldingInstruction.View.FoldingInstructionControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Orimath.FoldingInstruction.View.Controls"
+             xmlns:vm="clr-namespace:Orimath.FoldingInstruction.View.ViewModels"
+             IsHitTestVisible="False"
+             mc:Ignorable="d" 
+             d:DesignHeight="544" d:DesignWidth="544"
+             d:DataContext="{d:DesignData Type={x:Type vm:FoldingInstructionViewModel}}">
+    <Canvas Background="White">
+        <local:Arrow X1="100" Y1="100" X2="100" Y2="10"
+                     Stroke="Black"
+                     Fill="Black"
+                     StrokeThickness="2"
+                     StrokeStartLineCap="Flat"
+                     StrokeEndLineCap="Flat"
+                     BeginType="None"
+                     EndType="ValleyFold"/>
+    </Canvas>
+</UserControl>
