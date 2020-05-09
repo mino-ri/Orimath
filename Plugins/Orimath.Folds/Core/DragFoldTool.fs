@@ -46,13 +46,13 @@ type DragFoldTool(workspace: IWorkspace) =
         else
             match source, target with
             | FreePoint free (point1), FreePoint free (point2) -> Axiom2(point1, point2)
-            | LineOrEdge(line1, point1), LineOrEdge(line2, point2) -> Axiom3((line1, point1), (line2, point2))
-            | FreePoint free (point), LineOrEdge(line, lPoint)
-            | LineOrEdge(line, lPoint), FreePoint free (point) ->
+            | LineOrEdge(line1), LineOrEdge(line2) -> Axiom3(line1, line2)
+            | FreePoint free (point), LineOrEdge(line)
+            | LineOrEdge(line), FreePoint free (point) ->
                 match this.GetPass() with
-                | Some(pass), None -> Axiom5(pass, (line, lPoint), point)
-                | None, Some(pass) -> Axiom7(pass.Line, line, point)
-                | Some(p), Some(l) -> Axiom6(l.Line, p, (line, lPoint), point)
+                | Some(pass), None -> Axiom5(pass, line, point)
+                | None, Some(pass) -> Axiom7(pass.Line, fst line, point)
+                | Some(p), Some(l) -> Axiom6(l.Line, p, line, point)
                 | _ -> NoOperation
             | _ -> NoOperation
         
