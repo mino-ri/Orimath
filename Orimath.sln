@@ -21,6 +21,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mvvm", "Mvvm\Mvvm.csproj", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orimath.Basics.View", "Plugins\Orimath.Basics.View\Orimath.Basics.View.csproj", "{54479B62-86E9-465C-8CBB-9A314AC22D69}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Orimath.FoldingInstruction", "Plugins\Orimath.FoldingInstruction\Orimath.FoldingInstruction.fsproj", "{40D1E5E6-7DF5-4DFE-A262-5251A3DF7651}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Orimath.FoldingInstruction.View", "Plugins\Orimath.FoldingInstruction.View\Orimath.FoldingInstruction.View.csproj", "{9962831D-17C4-452A-93C8-4F57E2224B02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +63,14 @@ Global
 		{54479B62-86E9-465C-8CBB-9A314AC22D69}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54479B62-86E9-465C-8CBB-9A314AC22D69}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{54479B62-86E9-465C-8CBB-9A314AC22D69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40D1E5E6-7DF5-4DFE-A262-5251A3DF7651}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40D1E5E6-7DF5-4DFE-A262-5251A3DF7651}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40D1E5E6-7DF5-4DFE-A262-5251A3DF7651}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40D1E5E6-7DF5-4DFE-A262-5251A3DF7651}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9962831D-17C4-452A-93C8-4F57E2224B02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9962831D-17C4-452A-93C8-4F57E2224B02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9962831D-17C4-452A-93C8-4F57E2224B02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9962831D-17C4-452A-93C8-4F57E2224B02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,6 +79,8 @@ Global
 		{68CF77EB-BC78-4AE3-A901-BE4B9A5F52A3} = {52E052D0-7754-4FB7-87FF-2F0347EEEB01}
 		{51CB0336-A340-4DDC-A70A-4B345EBD4AE0} = {52E052D0-7754-4FB7-87FF-2F0347EEEB01}
 		{54479B62-86E9-465C-8CBB-9A314AC22D69} = {52E052D0-7754-4FB7-87FF-2F0347EEEB01}
+		{40D1E5E6-7DF5-4DFE-A262-5251A3DF7651} = {52E052D0-7754-4FB7-87FF-2F0347EEEB01}
+		{9962831D-17C4-452A-93C8-4F57E2224B02} = {52E052D0-7754-4FB7-87FF-2F0347EEEB01}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4ACF6D9A-8541-478B-A743-4A560C86C774}

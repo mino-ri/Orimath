@@ -34,11 +34,22 @@ namespace Orimath.ViewModels
             private set
             {
                 if (SetValue(ref _dialog, value))
+                {
+                    OnPropertyChanged(nameof(HasDialog));
+                    OnPropertyChanged(nameof(HasNotDialog));
+                    OnPropertyChanged(nameof(RootEnable));
                     _closeDialogCommand.OnCanExecuteChanged();
+                }
             }
         }
 
         public bool HasDialog => _dialog is { };
+
+        public bool HasNotDialog => !HasDialog;
+
+        public bool IsExecuting => _dispatcher.IsExecuting;
+
+        public bool RootEnable => !HasDialog && !IsExecuting;
 
         public ICommand CloseDialogCommand => _closeDialogCommand;
 
@@ -46,6 +57,11 @@ namespace Orimath.ViewModels
         {
             _workspace = workspace;
             _closeDialogCommand = new ActionCommand(_ => CloseDialog(), _ => HasDialog);
+            _dispatcher.IsExecutingChanged += (_, __) =>
+            {
+                OnPropertyChanged(nameof(IsExecuting));
+                OnPropertyChanged(nameof(RootEnable));
+            };
         }
 
         private ObservableCollection<object>? GetViewModelCollection(Type viewModelType)
