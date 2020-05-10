@@ -107,3 +107,5 @@ let axiom7 (passLine: Line) (ontoLine: Line) ontoPoint =
         let c = passLine.YFactor * ontoPoint.X - passLine.XFactor * ontoPoint.Y -
                 (ontoLine.XFactor * ontoPoint.X + ontoLine.YFactor * ontoPoint.Y + ontoLine.Intercept) / (2.0 * (ontoLine.XFactor * passLine.YFactor - passLine.XFactor * ontoLine.YFactor))
         Some(Line.Create(-passLine.YFactor, passLine.XFactor, c))
+
+let axiomP (line: Line) point = axiom7 (Line.Create(line.YFactor, -line.XFactor, 0.0)) line point

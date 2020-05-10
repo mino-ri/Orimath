@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Orimath.Plugins\Orimath.Plugins.fsproj" />
+    <ProjectReference Include="..\Orimath.FoldingInstruction\Orimath.FoldingInstruction.fsproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

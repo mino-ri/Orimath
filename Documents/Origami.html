@@ -1,0 +1,693 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="Content-Type" content="text/html" />
+        <meta http-equiv="Content-Style-Type" content="text/css" />
+        <meta name="language" content="japanese" />
+        <meta name="author" content="豊穣折紙" />
+        <meta name="copyright" content="copyright(C) 2020 豊穣折紙 All rights reserved." />
+        <meta name="description" content="折紙公理" />
+        <title>折紙公理</title>
+        <style type="text/css">
+@font-face {
+    font-family: 'math-alph';
+    src: local('Georgia Italic');
+    unicode-range: U+2D, U+41-5A, U+61-7B, U+3AC-3CE;
+}
+
+@font-face {
+    font-family: 'math-alph-smart';
+    src: local('Noto Serif Italic');
+    unicode-range: U+2D, U+41-5A, U+61-7B, U+3AC-3CE;
+}
+
+/* 全体設定 */
+
+* {
+	line-height: 1.5em;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+}
+
+body {
+	font-family: Meiryo, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* セクション・ヘッダー */
+
+body > section {
+    padding-left: 3%;
+    padding-right: 3%;
+}
+
+            h2, h3, h4, h5, h6 {
+                margin: 1.2rem 0;
+                font-weight: bold;
+            }
+
+            h1 {
+                margin: 1.2rem -3%;
+                padding: 0 2em;
+                color: lemonchiffon;
+                background-color: black;
+                border-top: 6px solid khaki;
+                border-bottom: 6px solid khaki;
+                font-size: 2rem;
+            }
+
+h2 {
+    border-bottom: 1px solid goldenrod;
+    color: chocolate;
+    font-size: 1.5rem;
+    margin-left: -2%;
+}
+
+h3 {
+    color: saddlebrown;
+    font-size: 1.2rem;
+    margin-left: -1.5%;
+}
+
+h4 {
+    color: maroon;
+    font-size: 1rem;
+    margin-left: -1%;
+}
+
+/* ブロックレベルでの装飾 */
+
+p, ul, ol, dl {
+    margin: 1rem 0;
+}
+
+ul, ol, dl {
+    padding-left: 2rem;
+    border-left: 5px solid khaki;
+}
+
+ul > li {
+    list-style-type: disc;
+}
+
+dl > dt {
+    font-weight: bold;
+    border-bottom: 1px dashed goldenrod;
+    margin: 1rem 0 0.2em;
+    padding-left: 0.1rem;
+    margin-left: -1.5rem;
+}
+
+dl ul, dl ol {
+    padding-left: 0;
+    border-left: none;
+}
+
+dl dl {
+    margin-left: -1rem;
+}
+
+figure {
+    margin: 1rem 2rem;
+    background-color: ghostwhite;
+    border: 2px solid silver;
+}
+
+figcaption {
+    background-color: silver;
+    color: white;
+    font-size: small;
+}
+
+table {
+    margin: 1rem 0;
+    border: 2px solid silver;
+    border-collapse: collapse;
+}
+
+td, th {
+    border: 1px solid silver;
+    margin: 0;
+    padding: 2px 0.5rem;
+}
+
+th {
+    background-color: gainsboro;
+}
+
+td {
+    background-color: ghostwhite;
+}
+
+/* フレーズレベルでの装飾 */
+
+i {
+    font-family: 'math-alph', 'math-alph-smart', 'Cambria Math', serif;
+    font-style: normal;
+    font-size: large;
+    margin: 0 0.3em;
+    color: forestgreen;
+}
+
+var {
+	font-family: 'Embassy JS', cursive;
+    font-style: normal;
+    font-size: large;
+}
+
+sup var, sub var {
+    font-size: medium;
+}
+
+dfn {
+    font-style: normal;
+    font-weight: bold;
+}
+
+figure > pre, figure > code, figure > div, figure > p {
+    margin: 0.3em;
+}
+
+p code {
+    background-color: ghostwhite;
+}
+
+            code {
+                font-family: 'DejaVu Sans Mono', 'fira code', 'Consolas', monospace;
+            }
+
+code var {
+	font-family: inherit;
+    font-style: normal;
+}
+
+code dfn {
+    font-weight: normal;
+    color: red;
+}
+
+code span.keyword {
+    color: blue;
+}
+
+code span.comment {
+    color: forestgreen;
+	font-family: Meiryo, sans-serif;
+}
+
+i u {
+    display: inline-block;
+    text-decoration: none;
+    vertical-align:middle;
+}
+
+i u > span {
+    display: block;
+    text-align: center;
+}
+
+i u > span:first-child {
+    border-bottom: 1px solid forestgreen;
+}
+        </style>
+    </head>
+    <body>
+        <section>
+            <h1>折紙公理</h1>
+            <p>
+                折紙公理には次の7つが存在する。これらは、真の意味で公理ではない。
+            </p>
+            <ul>
+                <li><a href="#section0">序. 基本情報</a></li>
+                <li><a href="#section1">公理1.点Pと点Qを通るように折る</a></li>
+                <li><a href="#section2">公理2.点Pと点Qを重ねるように折る (垂直二等分線)</a></li>
+                <li><a href="#section3">公理3.直線aと直線bを重ねるように折る (角の二等分線、1～2通り)</a></li>
+                <li><a href="#section4">公理4.直線aに垂直で、点Pを通るように折る (垂線)</a></li>
+                <li><a href="#section5">公理5.点Pを通り、点Qを直線aに重ねるように折る (0～2通り、2次方程式に対応)</a></li>
+                <li><a href="#section6">公理6.点Aを直線aに重ね、点Bを直線bに重ねるように折る (1～3通り、3次方程式に対応)</a></li>
+                <li><a href="#section7">公理7.直線aに垂直で、点Pを直線bに重ねるように折る</a></li>
+            </ul>
+
+            <section>
+                <a id="section0"></a>
+                <h2>序. 基本情報</h2>
+                <section>
+                    <h3>各要素の表現について</h3>
+                    <p>折紙の数学は点と直線で構成される。</p>
+                    <dl>
+                        <dt>点</dt>
+                        <dd><i>(x, y)</i>で表される。2次元ユークリッド空間上の1点を表す。</dd>
+                        <dt>直線</dt>
+                        <dd>
+                            <p>
+                                一般式<i>ax + by + c = 0</i>(<i>a</i>,<i>b</i>,<i>c</i>は定数, <i>a > 0</i>または<i>b > 0</i>)で表される。
+                                折紙公理の入力として使用する直線については、<i>a² + b² = 1</i>を満たすものとする(本文中ではこれを「正規形」と呼んでいる。正規形以外を想定する場合は明記する)。
+                                これによって以下の性質が満たされる。
+                            </p>
+                            <ul>
+                                <li><i>a/b = -tanθ</i>(<i>θ</i>は直線とx軸のなす角度)</li>
+                                <li><i>a = sinθ, b = -cosθ</i>または<i>a = -sinθ, b = cosθ</i></li>
+                            </ul>
+                        </dd>
+                    </dl>
+                </section>
+                <section>
+                    <h3>基本的な演算</h3>
+                    <p>公理に含まれないが、折紙をシミュレートするにあたって必要となる基本的な演算を列挙する。</p>
+                    <dl>
+                        <dt>(1)直線<i>a₁x + b₁y + c₁ = 0</i>と直線<i>a₂x + b₂y + c₂ = 0</i>の交点</dt>
+                        <dd>
+                            <i>x = <u><span>b₁c₂ - b₂c₁</span><span>a₁b₂ - a₂b₁</span></u></i> ,
+                            <i>y = - <u><span>a₁c₂ - a₂c₁</span><span>a₁b₂ - a₂b₁</span></u></i>
+                        </dd>
+                        <dt>(2)点P<i>(x₁, y₁)</i>と点Q<i>(x₂, y₂)</i>の距離</dt>
+                        <dd><i>√((x₁ - x₂)² + (y₁ - y₂)²)</i></dd>
+                        <dt>(3)点P<i>(x₁, y₁)</i>から直線a<i>a₁x + b₁y + c₁ = 0</i>に引いた垂線の足</dt>
+                        <dd>
+                            <p>
+                                <i>x = x₁ - <u><span>a₁(a₁x₁ + b₁y₁ + c₁)</span><span>a₁² + b₁²</span></u></i> ,
+                                <i>y = y₁ - <u><span>b₁(a₁x₁ + b₁y₁ + c₁)</span><span>a₁² + b₁²</span></u></i>
+                            </p>
+                            <p>特に、直線aが正規形の場合は</p>
+                            <p>
+                                <i>x = x₁ - a₁(a₁x₁ + b₁y₁ + c₁)</i> ,
+                                <i>y = y₁ - b₁(a₁x₁ + b₁y₁ + c₁)</i>
+                            </p>
+                        </dd>
+                        <dt>(4)点P<i>(x₁, y₁)</i>と直線a<i>a₁x + b₁y + c₁ = 0</i>の距離</dt>
+                        <dd>
+                            <p><i><u><span>| a₁x₁ + b₁y₁ + c₁ |</span><span>√(a₁² + b₁²)</span></u></i></p>
+                            <p>特に、直線aが正規形の場合は</p>
+                            <p><i>| a₁x₁ + b₁y₁ + c₁ |</i></p>
+                        </dd>
+                        <dt>(5)点P<i>(x₁, y₁)</i>を直線a<i>a₁x + b₁y + c₁ = 0</i>で折り返した点</dt>
+                        <dd>
+                            <p>
+                                <i>x = x₁ - 2 <u><span>a₁(a₁x₁ + b₁y₁ + c₁)</span><span>a₁² + b₁²</span></u></i> ,
+                                <i>y = y₁ - 2 <u><span>b₁(a₁x₁ + b₁y₁ + c₁)</span><span>a₁² + b₁²</span></u></i>
+                            </p>
+                            <p>特に、直線aが正規形の場合は</p>
+                            <p>
+                                <i>x = x₁ - 2a₁(a₁x₁ + b₁y₁ + c₁)</i> ,
+                                <i>y = y₁ - 2b₁(a₁x₁ + b₁y₁ + c₁)</i>
+                            </p>
+                        </dd>
+                        <dt>(6)直線a<i>a₁x + b₁y + c₁ = 0</i>を直線R<i>a₂x + b₂y + c₂ = 0</i>で折り返した直線</dt>
+                        <dd>
+                            <p>解となる直線の任意の点<i>(x, y)</i>は、演算5に従って折り返すと直線aに含まれる。よって</p>
+                            <p>
+                                <i>
+                                    a₂(x - 2 <u><span>a₁(a₁x + b₁y + c₁)</span><span>a₁² + b₁²</span></u>) +
+                                    b₂(y - 2 <u><span>b₁(a₁x + b₁y + c₁)</span><span>a₁² + b₁²</span></u>) +
+                                    c₂ = 0
+                                </i>
+                            </p>
+                            <p>上記を整理すると、解の直線について次を得る。</p>
+                            <ul>
+                                <li><i>a = a₁D - 2a₂E</i></li>
+                                <li><i>b = b₁D - 2b₂E</i></li>
+                                <li><i>c = c₁D - 2c₂E</i></li>
+                            </ul>
+                            <p>ただし、<i>D = a₂² + b₂²</i>, <i>E = a₁a₂ + b₁b₂</i></p>
+                        </dd>
+                    </dl>
+                </section>
+            </section>
+            <section>
+                <a id="section1"></a>
+                <h2>1. 点Pと点Qを通るように折る</h2>
+                <p>点P<i>(x₁, y₁)</i>と点Q<i>(x₂, y₂)</i>を通る直線は、次の連立方程式を解けばよい。</p>
+                <ul>
+                    <li><i>ax₁ + by₁ + c = 0</i></li>
+                    <li><i>ax₂ + by₂ + c = 0</i></li>
+                </ul>
+                <p><i>a = 1</i>として解いた後、全体に<i>(y₁ - y₂)</i>をかけると以下を得る。</p>
+                <ul>
+                    <li><i>a = y₁ - y₂</i></li>
+                    <li><i>b = x₁ - x₂</i></li>
+                    <li><i>c = x₁y₂ - x₂y₁</i></li>
+                </ul>
+            </section>
+            <section>
+                <a id="section2"></a>
+                <h2>2. 点Pと点Qを重ねるように折る (垂直二等分線)</h2>
+                <p>点P<i>(x₁, y₁)</i>と点Q<i>(x₂, y₂)</i>を重ねるようにして折った折線は、2点への距離が等しい点の集合になるため、直線上の任意の点<i>(x, y)</i>は次の性質を満たす。</p>
+                <p><i>(x - x₁)² + (y - y₁)² = (x - x₂)² + (y - y₂)²</i></p>
+                <p>この式を整理すると、次を得る。</p>
+                <p><i>2(x₁ - x₂)x + 2(y₁ - y₂)y + x₂² + y₂² - x₁² - y₁² = 0</i></p>
+                <p>全体を2で割って、</p>
+                <ul>
+                    <li><i>a = x₁ - x₂</i></li>
+                    <li><i>b = y₁ - y₂</i></li>
+                    <li><i>c = <u><span>x₂² + y₂² - x₁² - y₁²</span><span>2</span></u></i></li>
+                </ul>
+            </section>
+            <section>
+                <a id="section3"></a>
+                <h2>3. 直線aと直線bを重ねるように折る (角の二等分線、1～2通り)</h2>
+                <p>2線<i>a₁x + b₁y + c₁ = 0</i>, <i>a₂x + b₂y + c₂ = 0</i>の交点は次のように表せる。</p>
+                <p>
+                    <i>x = <u><span>b₁c₂ - b₂c₁</span><span>a₁b₂ - a₂b₁</span></u></i><br />
+                    <i>y = <u><span>a₁c₂ - a₂c₁</span><span>a₂b₁ - a₁b₂</span></u></i>
+                </p>
+                <p>角の平均におけるタンジェントの公式</p>
+                <p><i>tan <u><span>α + β</span><span>2</span></u> = <u><span>sinα + sinβ</span><span>cosα + cosβ</span></u></i></p>
+                <p>より、解となる直線の傾き<i>tanθ</i>は次のように表せる。</p>
+                <p><i>- <u><span>a₁ + a₂</span><span>b₁ + b₂</span></u></i>または<i>- <u><span>a₁ - a₂</span><span>b₁ - b₂</span></u></i></p>
+                <p>また、<i>tanθ = <u><span>sinθ</span><span>cosθ</span></u> = - <u><span>a</span><span>b</span></u></i>より、</p>
+                <p>
+                    <i>a = a₁ ± a₂</i><br />
+                    <i>b = b₁ ± b₂</i>
+                </p>
+                <p>ただし、符号は同順。<br />これらと交点の位置を直線の一般式に代入すると以下を得る。</p>
+                <ul>
+                    <li><i>a = a₁ ± a₂</i></li>
+                    <li><i>b = b₁ ± b₂</i></li>
+                    <li><i>c = c₁ ± c₂</i></li>
+                </ul>
+                <p>2線が平行な場合、<i>a₁ - a₂ = b₁ - b₂ = 0</i>となるため、マイナスの符号を使った直線は存在しない。</p>
+                <section>
+                    <h3>補. 入力が正規形ではない場合</h3>
+                    <p>角の平均におけるタンジェントの公式より、解となる直線の傾き<i>tanθ</i>は次のように表せる。</p>
+                    <p><i>- <u><span>a₁d₂ ± a₂d₁</span><span>b₁d₂ ± b₂d₁</span></u></i></p>
+                    <p>ただし、符号は同順で<i>d₁ = √(a₁² + b₁²)</i>, <i>d₂ = √(a₂² + b₂²)</i><br />これらと交点の位置を直線の一般式に代入すると以下を得る。</p>
+                    <ul>
+                        <li><i>a = a₁d₂ ± a₂d₁</i></li>
+                        <li><i>b = b₁d₂ ± b₂d₁</i></li>
+                        <li><i>c = c₁d₂ ± c₂d₁</i></li>
+                    </ul>
+                </section>
+            </section>
+            <section>
+                <a id="section4"></a>
+                <h2>4. 直線aに垂直で、点Pを通るように折る (垂線)</h2>
+                <p>この計算は入力が正規形でなくても成り立つ。</p>
+                <p>直線a<i>a₁x + b₁y + c₁ = 0</i>に垂直で、点P<i>(x₂, y₂)</i>を通る直線は、直線aに垂直であることから<i>tan(<u><span>π</span><span>2</span></u> + θ) = - <u><span>1</span><span>tanθ</span></u></i>より次を得る。</p>
+                <p><i>a = -b₁</i><br /><i>b = a₁</i></p>
+                <p>直線の一般式に点Pを代入して解くと次を得る。</p>
+                <ul>
+                    <li><i>a = -b₁</i></li>
+                    <li><i>b = a₁</i></li>
+                    <li><i>c = b₁x₂ - a₁y₂</i></li>
+                </ul>
+                <section>
+                    <h3>補足: 直線aに平行で、点Pを通るように折る</h3>
+                    <p>この計算は入力が正規形でなくても成り立つ。</p>
+                    <p>直線a<i>a₁x + b₁y + c₁ = 0</i>に平行で、点P<i>(x₂, y₂)</i>を通る直線は、直線aと平行であることから<i>a</i>, <i>b</i>は直線aと同じ値をとる。</p>
+                    <p>直線の一般式に点Pを代入して解くと次を得る。</p>
+                    <ul>
+                        <li><i>a = a₁</i></li>
+                        <li><i>b = b₁</i></li>
+                        <li><i>c = -a₁x₂ - b₁y₂</i></li>
+                    </ul>
+                </section>
+            </section>
+            <section>
+                <a id="section5"></a>
+                <h2>5. 点Pを通り、点Qを直線aに重ねるように折る (0～2通り、2次方程式に対応)</h2>
+                <ul>
+                    <li>直線a: <i>a₁x + b₁y + c₁ = 0</i></li>
+                    <li>点P: <i>(x₂, y₂)</i></li>
+                    <li>点Q: <i>(x₃, y₃)</i></li>
+                </ul>
+
+                <p>点Qを重ねる直線a上の点を点R<i>(X, Y)</i>とする。公理2より、解の直線は次のように表せる。</p>
+                <p><i>(x₃ - X)x + (y₃ - Y)y + <u><span>X² + Y² - x₃² - y₃²</span><span>2</span></u> = 0</i></p>
+                <p>この直線は点Pを通るので、次の式が成り立つ。</p>
+                <p>
+                    <i>
+                        x₂(x₃ - X) + y₂(y₃ - Y) + <u><span>X² + Y² - x₃² - y₃²</span><span>2</span></u> = 0<br />
+                        2x₂x₃ - 2x₂X + 2y₂y₃ - 2x₂Y + X² + Y² - x₃² - y₃² = 0<br />
+                        -2x₂X - 2x₂Y + X² + Y² = -2x₂x₃ - 2y₂y₃ + x₃² + y₃²
+                    </i>
+                </p>
+                <p>両辺に<i>x₂² + y₂²</i>を足す。</p>
+                <p>
+                    <i>
+                        x₂² - 2x₂X + X² + y₂² - 2x₂Y + Y² = x₂² - 2x₂x₃ + x₃² + y₂² - 2y₂y₃ + y₃²<br />
+                        (X - x₂)² + (Y - y₂)² = (x₂ - x₃)² + (y₂ - y₃)²
+                    </i>
+                </p>
+                <p>
+                    <i>X</i>, <i>Y</i>を変数、他を定数と考えた場合、この式は円を表す。<br />
+                    ここで、<i>U = X - x₂</i>, <i>V = Y - y₂</i>, <i>W = (x₂ - x₃)² + (y₂ - y₃)²</i>と置く。
+                </p>
+                <p><i>U² + V² = W</i></p>
+                <p>点R<i>(X, Y)</i>は直線a上の点であるから、<i>a₁X + b₁Y + c₁ = 0</i>が成り立つ。よって、<i>V</i>を次のように表すことができる。</p>
+                <p>
+                    <i>
+                        a₁(U + x₂) + b₁(V + y₂) + c₁ = 0<br />
+                        b₁V = -a₁U - a₁x₂ - b₁y₂ - c₁<br />
+                    </i>
+                </p>
+                <p>ここで、<i>N = a₁x₂ + b₁y₂ + c₁</i>と置く。</p>
+                <p>
+                    <i>
+                        b₁V = -a₁U - N<br />
+                        V = - <u><span>a₁U + N</span><span>b₁</span></u>
+                    </i>
+                </p>
+                <p>これを元の式に代入する。</p>
+                <p>
+                    <i>
+                        U² + <u><span>(a₁U + N)²</span><span>b₁²</span></u> = W<br />
+                        b₁²U² + (a₁U + N)² = b₁²W<br />
+                        b₁²U² + a₁²U² + 2a₁NU + N² = b₁²W<br />
+                        (a₁² + b₁²)U² + 2a₁NU = b₁²W - N²
+                    </i>
+                </p>
+                <p>入力の直線は正規形であるから、<i>a₁² + b₁² = 1</i>が成り立つ。</p>
+                <p>
+                    <i>
+                        U² + 2a₁NU = b₁²W - N²<br />
+                        (U + a₁N)² = b₁²W - N² + a₁²N²<br />
+                        (U + a₁N)² = b₁²W - N²(1 - a₁²)<br />
+                        (U + a₁N)² = b₁²W - b₁²N²<br />
+                        U = -a₁N ± b₁√(W - N²)<br />
+                        X = x₂ - a₁N ± b₁√(W - N²)
+                    </i>
+                </p>
+                <p><i>Y</i>においては<i>a</i>と<i>b</i>, <i>x</i>と<i>y</i>を入れ替えれば成り立つため、</p>
+                <ul>
+                    <li><i>X = x₂ - a₁N ± b₁√(W - N²)</i></li>
+                    <li><i>Y = y₂ - b₁N ∓ a₁√(W - N²)</i></li>
+                </ul>
+                <p>公理2に従ってこの点R<i>(X, Y)</i>と点Q<i>(x₃, y₃)</i>を重ねるように折ることで解を得る。</p>
+                <ul>
+                    <li><i>a = x₃ - x₂ + a₁N ∓ b₁√(W - N²)</i></li>
+                    <li><i>b = y₃ - y₂ + b₁N ± a₁√(W - N²)</i></li>
+                    <li><i>c = x₂(x₂ - x₃) + y₂(y₂ - y₃) - (a₁x₂ + b₁y₂)N ± <u><span>(b₁x₂ - a₁y₂)√(W - N²)</span><span>2</span></u></i></li>
+                </ul>
+                <section>
+                    <h3>補. 入力が正規形ではない場合</h3>
+                    <p><i>(a₁² + b₁²)U² + 2a₁NU = b₁²W - N²</i>から、正規形による変換ができないため以下のように計算する。</p>
+                    <p>
+                        <i>
+                            (a₁² + b₁²)U² + 2a₁NU - b₁²W + N² = 0<br />
+                            U = <u><span>-a₁N ± √(a₁²N² - (a₁² + b₁²)(N² - b₁²W))</span><span>a₁² + b₁²</span></u><br />
+                            U = <u><span>-a₁N ± b₁√((a₁² + b₁²)W - N²)</span><span>a₁² + b₁²</span></u>
+                        </i>
+                    </p>
+                    <ul>
+                        <li><i>X = x₂ - <u><span>a₁N ± b₁√((a₁² + b₁²)W - N²)</span><span>a₁² + b₁²</span></u></i></li>
+                        <li><i>Y = y₂ - <u><span>b₁N ∓ a₁√((a₁² + b₁²)W - N²)</span><span>a₁² + b₁²</span></u></i></li>
+                    </ul>
+                </section>
+            </section>
+            <section>
+                <h2>5. 点Pを通り、点Qを直線aに重ねるように折る (別解)</h2>
+                <ul>
+                    <li>直線a: <i>a₁x + b₁y + c₁ = 0</i></li>
+                    <li>点P: <i>(x₂, y₂)</i></li>
+                    <li>点Q: <i>(x₃, y₃)</i></li>
+                </ul>
+                <p>解の直線を<i>Ax + By + C = 0</i>とする。解の直線によって点Qを折り返すと直線aに重なるため、次が成り立つ。</p>
+                <p><i>a₁(x₃ - 2A <u><span>Ax₃ + By₃ + C</span><span>A² + B²</span></u> ) + b₁(y₃ - 2B <u><span>Ax₃ + By₃ + C</span><span>A² + B²</span></u> ) + c₁ = 0</i> … (1)</p>
+                <p>また、点Pは解の直線を通るため、次が成り立つ。</p>
+                <p><i>Ax₂ + By₂ + C = 0</i> … (2)</p>
+                <p>以上2式を連立させて解くことで、解を得る。</p>
+                <p>(1)を展開し、整理する。ここで、<i>N = a₁x₃ + b₁y₃ + c₁</i></p>
+                <p>
+                    <i>
+                        a₁(x₃ - 2A <u><span>Ax₃ + By₃ + C</span><span>A² + B²</span></u> ) + b₁(y₃ - 2B <u><span>Ax₃ + By₃ + C</span><span>A² + B²</span></u> ) + c₁ = 0<br />
+                        -2a₁A(Ax₃ + By₃ + C) - 2b₁B(Ax₃ + By₃ + C) + N(A² + B²) = 0<br />
+                        2a₁x₃A² + 2b₁y₃B² + 2(a₁y₃ + b₁x₃)AB + 2a₁AC + 2b₁BC - N(A² + B²) = 0
+                    </i>
+                </p>
+                <p>上記に(2)を代入し、<i>C</i>を消去する。</p>
+                <p>
+                    <i>
+                        2a₁x₃A² + 2b₁y₃B² + 2(a₁y₃ + b₁x₃)AB - 2a₁A(Ax₂ + By₂) - 2b₁B(Ax₂ + By₂) - N(A² + B²) = 0<br />
+                        2a₁(x₃ - x₂)A² + 2b₁(y₃ - y₂)B² + 2(a₁(y₃ - y₂) + b₁(x₃ - x₂))AB - N(A² + B²) = 0<br />
+                    </i>
+                </p>
+                <p><i>X = x₃ - x₂</i>, <i>Y = y₃ - y₂</i>と置く。</p>
+                <p>
+                    <i>
+                        2a₁XA² + 2b₁YB² + 2(a₁Y + b₁X)AB - N(A² + B²) = 0<br />
+                        2(a₁A + b₁B)(XA + YB) - N(A² + B²) = 0
+                    </i>
+                </p>
+                <p><i>B = 1</i>として<i>A</i>を求める。この値は直線の傾きとなり、∞の場合はy軸に平行である。</p>
+                <p>
+                    <i>
+                        (2a₁X - N)A² + 2(a₁Y + b₁X)A + 2b₁Y - N = 0<br />
+                        A = <u><span>-(a₁Y + b₁X) ± √((a₁Y + b₁X)² - (2a₁X - N)(2b₁Y - N))</span><span>2a₁X - N</span></u><br />
+                        A = <u><span>-(a₁Y + b₁X) ± √((a₁Y + b₁X)² - N² + 2(a₁X + b₁Y)N - 4a₁b₁XY)</span><span>2a₁X - N</span></u><br />
+                        = <u><span>-(a₁Y + b₁X) ± √((a₁Y - b₁X)² + N(2(a₁X + b₁Y) - N))</span><span>2a₁X - N</span></u>
+                    </i>
+                </p>
+            </section>
+            <section>
+                <a id="section6"></a>
+                <h2>6. 点Aを直線aに重ね、点Bを直線bに重ねるように折る (1～3通り、3次方程式に対応)</h2>
+                <ul>
+                    <li>直線a: <i>a₁x + b₁y + c₁ = 0</i></li>
+                    <li>直線b: <i>a₂x + b₂y + c₂ = 0</i></li>
+                    <li>点A: <i>(x₁, y₁)</i></li>
+                    <li>点B: <i>(x₂, y₂)</i></li>
+                </ul>
+                <p>解の直線を<i>Ax + By + C = 0</i>とする。解の直線によって点Aを折り返すと直線aに重なるため、次が成り立つ(点B - 直線bも同様。必要になるまでB - b系は省略する)。</p>
+                <p><i>a₁(x₁ - 2A <u><span>Ax₁ + By₁ + C</span><span>A² + B²</span></u> ) + b₁(y₁ - 2B <u><span>Ax₁ + By₁ + C</span><span>A² + B²</span></u> ) + c₁ = 0</i> … (1)</p>
+                <p>公理5と同様にして(1)を展開し、整理する。ここで、<i>N₁ = a₁x₁ + b₁y₁ + c₁</i>, <i>N₂ = a₂x₂ + b₂y₂ + c₂</i></p>
+                <p><i>2(a₁A + b₁B)(x₁A + y₁B + C) - N(A² + B²) = 0</i> … (1)</p>
+                <p>(1)をCについて整理する。</p>
+                <p>
+                    <i>
+                        2(a₁A + b₁B)C + 2(a₁A + b₁B)(x₁A + y₁B) - N₁(A² + B²) = 0<br />
+                        C = - <u><span>2(a₁A + b₁B)(x₁A + y₁B) - N₁(A² + B²)</span><span>2(a₁A + b₁B)</span></u><br />
+                        C = -x₁A - y₁B + <u><span>N₁(A² + B²)</span><span>2(a₁A + b₁B)</span></u>
+                    </i> … (2)
+                </p>
+                <p>B - b系についても同様に整理し、代入によって<i>C</i>を消去する。</p>
+                <p>
+                    <i>
+                        x₁A + y₁B - <u><span>N₁(A² + B²)</span><span>2(a₁A + b₁B)</span></u> = x₂A + y₂B - <u><span>N₂(A² + B²)</span><span>2(a₂A + b₂B)</span></u><br />
+                        (a₂A + b₂B)(2(a₁A + b₁B)(x₁A + y₁B) - N₁A² - N₁B²) = (a₁A + b₁B)(2(a₂A + b₂B)(x₂A + y₂B) - N₂A² - N₂B²)<br />
+                        2(a₁A + b₁B)(a₂A + b₂B)(x₁A + y₁B - x₂A - y₂B)
+                        + (a₁A + b₁B)(N₂A² + N₂B²) - (a₂A + b₂B)(N₁A² + N₁B²) = 0
+                    </i>
+                </p>
+                <p><i>X = x₁ - x₂</i>, <i>Y = y₁ - y₂</i>と置く。</p>
+                <p>
+                    <i>
+                        2(a₁A + b₁B)(a₂A + b₂B)(XA + YB)
+                        + (a₁A + b₁B)(N₂A² + N₂B²) - (a₂A + b₂B)(N₁A² + N₁B²) = 0<br />
+                        2(a₁a₂A² + (a₁b₂ + a₂b₁)AB + b₁b₂B²)(XA + YB)
+                        + (a₁N₂A³ + a₁N₂AB² + b₁N₂A²B + b₁N₂B³)
+                        - (a₂N₁A³ + a₂N₁AB² + b₂N₁A²B + b₂N₁B³) = 0<br />
+                        (a₁N₂ - a₂N₁ + 2a₁a₂X)A³
+                        + (b₁N₂ - b₂N₁ + 2(a₁b₂ + a₂b₁)X + 2a₁a₂Y)A²B
+                        + (a₁N₂ - a₂N₁ + 2(a₁b₂ + a₂b₁)Y + 2b₁b₂X)AB²
+                        + (b₁N₂ - b₂N₁ + 2b₁b₂Y)B³
+                        = 0
+                    </i>
+                </p>
+                <p><i>D = a₁N₂ - a₂N₁</i>, <i>E = b₁N₂ - b₂N₁</i>, <i>F = a₁b₂ + a₂b₁</i>と置く。</p>
+                <p>
+                    <i>
+                        (D + 2a₁a₂X)A³
+                        + (E + 2FX + 2a₁a₂Y)A²B
+                        + (D + 2FY + 2b₁b₂X)AB²
+                        + (E + 2b₁b₂Y)B³
+                        = 0
+                    </i>
+                </p>
+                <p><i>B = 1</i>として整理する。</p>
+                <p>
+                    <i>
+                        (D + 2a₁a₂X)A³
+                        + (E + 2FX + 2a₁a₂Y)A²
+                        + (D + 2FY + 2b₁b₂X)A
+                        + E + 2b₁b₂Y
+                        = 0
+                    </i>
+                </p>
+                <p>この三次方程式を解くことで<i>A</i>を求めることができる。<i>D + 2a₁a₂X = 0</i>となる場合はx座標系とy座標系を入れ替えて解くことができる。</p>
+            </section>
+            <section>
+                <a id="section7"></a>
+                <h2>7. 直線aに垂直で、点Pを直線bに重ねるように折る</h2>
+                <ul>
+                    <li>直線a: <i>a₁x + b₁y + c₁ = 0</i></li>
+                    <li>直線b: <i>a₂x + b₂y + c₂ = 0</i></li>
+                    <li>点P: <i>(x₃, y₃)</i></li>
+                </ul>
+                <p>解の直線は直線aに垂直であることから、<i>tan(<u><span>π</span><span>2</span></u> + θ) = - <u><span>1</span><span>tanθ</span></u></i>より次を得る。</p>
+                <p><i>a = -b₁</i><br /><i>b = a₁</i></p>
+
+                <p>解の直線によって点Pを折り返した点は直線bに重なることから、解の直線を<i>-b₁x + a₁y + c = 0</i>とすると次が成り立つ。</p>
+                <p>
+                    <i>
+                        a₂(x₃ + 2b₁ <u><span>a₁y₃ - b₁x₃ + c</span><span>a₁² + b₁²</span></u>) +
+                        b₂(y₃ - 2a₁ <u><span>a₁y₃ - b₁x₃ + c</span><span>a₁² + b₁²</span></u>) +
+                        c₂ = 0
+                    </i>
+                </p>
+                <p>これをcについて解くと次を得る。</p>
+                <p>
+                    <i>
+                        2a₂b₁(a₁y₃ - b₁x₃ + c) - 2a₁b₂(a₁y₃ - b₁x₃ + c) + (a₂x₃ + b₂y₃ + c₂)(a₁² + b₁²) = 0<br />
+                        2(a₂b₁ - a₁b₂)c = -2(a₂b₁ - a₁b₂)(a₁y₃ - b₁x₃) - (a₂x₃ + b₂y₃ + c₂)(a₁² + b₁²)<br />
+                        c = b₁x₃ - a₁y₃ - <u><span>(a₂x₃ + b₂y₃ + c₂)(a₁² + b₁²)</span><span>2(a₂b₁ - a₁b₂)</span></u><br />
+                    </i>
+                </p>
+                <p><i>a₁² + b₁² = 1</i>なので(入力が正規形ではない場合、このステップを省略する)、</p>
+                <ul>
+                    <li><i>a = -b₁</i></li>
+                    <li><i>b = a₁</i></li>
+                    <li><i>c = b₁x₃ - a₁y₃ - <u><span>a₂x₃ + b₂y₃ + c₂</span><span>2(a₂b₁ - a₁b₂)</span></u></i></li>
+                </ul>
+            </section>
+            <section>
+                <h2>補. 三次方程式のiを使わない解の公式</h2>
+                <figure>
+                    <figcaption>カルダノの公式</figcaption>
+                    <p>
+                        <i>
+                            ax³ + bx² + cx + d = 0<br /><br />
+                            ① = -2b³ + 9abc - 27a²d<br />
+                            ② = ① + √③<br />
+                            ③ = ①² + 4④³<br />
+                            ④ = -b² + 3ac<br /><br />
+
+                            Δ = -4ac³ + b²c² - 4b³d + 18abcd - 27a²d²<br /><br />
+
+                            x₁ = - <u><span>∛2④</span><span>3∛②a</span></u> + <u><span>∛②</span><span>3∛2a</span></u> - <u><span>b</span><span>3a</span></u><br />
+                            = <br />
+                            x₂, x₃ = <u><span>(1 ± i√3)④</span><span>3∛2²∛②a</span></u> - <u><span>(1 ∓ i√3)∛②</span><span>6∛2a</span></u> - <u><span>b</span><span>3a</span></u><br />
+                        </i>
+                    </p>
+                </figure>
+                <p><i>p</i>が3次方程式<i>ax³ + bx² + cx + d = 0</i>の根である場合、<i>ap³ + bp² + cp + d = 0</i>が成り立つため、<i>(x - p)</i>は元の3次式を割り切る。</p>
+                <p><i>ax³ + bx² + cx + d = (x - p)(ax² + (pa + b)x + p²a + pb + c)</i></p>
+                <p><i>M = pa + b</i>, <i>N = p²a + pb + c</i>と置くと、<i>x - p ≠ 0</i>の時<i>ax² + Mx + N = 0</i>が成り立つ。3次方程式の残りの根は、</p>
+                <p>
+                    <i>
+                        x = <u><span>-M ± √(M² - 4aN)</span><span>2a</span></u>
+                        <!--
+                = <u><span>-(pa + b) ± √((pa + b)² - 4a(p²a + pb + c))</span><span>2a</span></u><br />
+                = <u><span>-pa - b ± √(p²a² + 2pab + b² - 4p²a² - 4pab - 4ac)</span><span>2a</span></u><br />
+                -->
+                        = <u><span>-pa - b ± √(b² - 3p²a² - 2pab - 4ac)</span><span>2a</span></u>
+                    </i>
+                </p>
+                <!--
+            <p>この式に、3次方程式の解の公式<i>x₁ = - <u><span>∛2④</span><span>3∛②a</span></u> + <u><span>∛②</span><span>3∛2a</span></u> - <u><span>b</span><span>3a</span></u></i>を代入すると、</p>
+            <p>
+                <i>
+                    x₁ = - <u><span>∛2④</span><span>3a∛②</span></u> + <u><span>∛②</span><span>3a∛2</span></u> - <u><span>b</span><span>3a</span></u><br />
+                    = <u><span>-∛(2/②)④ + ∛(②/2) - b</span><span>3a</span></u>
+                </i>
+            </p>
+        -->
+            </section>
+        </section>
+    </body>
+</html>

@@ -1,7 +1,9 @@
 ﻿namespace Orimath.Folds.Core
+open System
 open Orimath.Core
-open Orimath.Plugins
 open Orimath.Core.NearlyEquatable
+open Orimath.FoldingInstruction
+open Orimath.Plugins
 
 type FoldOperation =
     | NoOperation
@@ -12,9 +14,11 @@ type FoldOperation =
     | Axiom5 of pass: Point * (Line * Point) * Point
     | Axiom6 of Line * Point * (Line * Point) * Point
     | Axiom7 of pass: Line * Line * Point
+    | AxiomP of Line * Point
 
 type DragFoldTool(workspace: IWorkspace) =
     let paper = workspace.Paper
+    let instruction = FoldingInstruction()
 
     let (|FreePoint|_|) (free: bool) (dt: OperationTarget) =
         match dt.Target with
@@ -53,7 +57,7 @@ type DragFoldTool(workspace: IWorkspace) =
                 | Some(pass), None -> Axiom5(pass, line, point)
                 | None, Some(pass) -> Axiom7(pass.Line, fst line, point)
                 | Some(p), Some(l) -> Axiom6(l.Line, p, line, point)
-                | _ -> NoOperation
+                | _ -> AxiomP(fst line, point)
             | _ -> NoOperation
         
     member private __.GetLines(opr) =
@@ -66,6 +70,7 @@ type DragFoldTool(workspace: IWorkspace) =
         | Axiom5(pass, (line, _), point) -> Fold.axiom5 pass line point
         | Axiom6(line1, point1, (line2, _), point2) -> Fold.axiom6 line1 point1 line2 point2
         | Axiom7(pass, line, point) -> Fold.axiom7 pass line point |> Option.toList
+        | AxiomP(line, point) -> Fold.axiomP line point |> Option.toList
 
     member private __.ChooseLine(lines: Line list, opr: FoldOperation) =
         match lines with
@@ -123,19 +128,46 @@ type DragFoldTool(workspace: IWorkspace) =
             | _ -> false
 
         member this.DragEnter(source, target, modifier) =
+            let opr = this.GetOperation(source, target, modifier)
+            let lines, chosen =
+                match opr with
+                | NoOperation ->
+                    let lines = this.GetLines(this.GetOperation(source, target, modifier ||| OperationModifier.Alt))
+                    lines, None
+                | _ ->
+                    let lines = this.GetLines(opr)
+                    lines, this.ChooseLine(lines, opr)
+            let mapping l = {
+                  Line = l
+                  Color =
+                    match chosen with
+                    | Some(c) when c =~ l.Line -> InstructionColor.Blue
+                    | _ -> InstructionColor.LightGray
+                }
+            instruction.Lines <- lines
+                |> Seq.collect(paper.Layers.[0].Clip)
+                |> Seq.map mapping
+                |> Seq.toArray
+
             match target with
             | FreePoint true _ | LineOrEdge _ -> true
             | _ -> false
-        member this.DragLeave(source, target, modifier) =
+
+        member __.DragLeave(source, target, modifier) =
+            instruction.Lines <- Array.Empty()
+            instruction.Arrows <- Array.Empty()
             match target with
-            | FreePoint (modifier.HasFlag(OperationModifier.Alt)) _ | LineOrEdge _ -> true
+            | FreePoint true _ | LineOrEdge _ -> true
             | _ -> false
-        member this.DragOver(source, target, modifier) =
-            match target with
-            | FreePoint (modifier.HasFlag(OperationModifier.Alt)) _ | LineOrEdge _ -> true
-            | _ -> false
+
+        member this.DragOver(source, target, modifier) = (this :> ITool).DragEnter(source, target, modifier)
 
         member this.Drop(source, target, modifier) =
             let opr = this.GetOperation(source, target, modifier)
             let lines = this.ChooseLine(this.GetLines(opr), opr) |> Option.toList
             for layer in paper.Layers do layer.AddLines(lines)
+            instruction.Lines <- Array.Empty()
+            instruction.Arrows <- Array.Empty()
+
+    interface IFoldingInstructionTool with
+        member __.FoldingInstruction = instruction
