@@ -1,4 +1,4 @@
-﻿using Orimath.Basics.ViewModels;
+﻿using Orimath.Basics.View.ViewModels;
 using Orimath.Plugins;
 using System.Windows.Controls;
 

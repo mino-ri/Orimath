@@ -4,7 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Orimath.Plugins;
-using Orimath.Basics.ViewModels;
+using Orimath.Basics.View.ViewModels;
 
 namespace Orimath.Basics.View.Controls
 {

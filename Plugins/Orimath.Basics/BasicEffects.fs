@@ -1,6 +1,5 @@
-﻿namespace Orimath.BasicEffects
+﻿namespace Orimath.Basics
 open System
-open Orimath.Core
 open Orimath.Plugins
 
 type UndoEffect(workspace: IWorkspace) =

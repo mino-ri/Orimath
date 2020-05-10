@@ -11,19 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="ViewModels\IDisplayTargetViewModel.fs" />
-    <Compile Include="ViewModels\ResettableObservableCollection.fs" />
-    <Compile Include="ViewModels\PointViewModel.fs" />
-    <Compile Include="ViewModels\LineViewModel.fs" />
-    <Compile Include="ViewModels\EdgeViewModel.fs" />
-    <Compile Include="ViewModels\LayerViewModel.fs" />
-    <Compile Include="ViewModels\PaperViewModel.fs" />
-    <Compile Include="ViewModels\EffectViewModel.fs" />
-    <Compile Include="ViewModels\ToolViewModel.fs" />
-    <Compile Include="ViewModels\EffectListViewModel.fs" />
-    <Compile Include="ViewModels\ToolListViewModel.fs" />
-    <Compile Include="ViewModels\WorkspaceViewModel.fs" />
-    <Compile Include="BasicPlugin.fs" />
+    <Compile Include="BasicEffects.fs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -40,8 +40,6 @@ namespace Orimath.ViewModels
             finally { EndBackground(); }
         }
 
-        public void OnUI(Action action) => _dispatcher.Invoke(action);
-
         public Task OnUIAsync(Action action) => _dispatcher.InvokeAsync(action).Task;
     }
 }
