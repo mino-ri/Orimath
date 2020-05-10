@@ -60,7 +60,7 @@ type ArrowType =
 type InstructionArrow =
     {
         Line: LineSegment
-        BeginType: ArrowType
+        StartType: ArrowType
         EndType: ArrowType
         Color: InstructionColor
     }

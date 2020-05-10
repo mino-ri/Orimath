@@ -9,14 +9,40 @@
              mc:Ignorable="d" 
              d:DesignHeight="544" d:DesignWidth="544"
              d:DataContext="{d:DesignData Type={x:Type vm:FoldingInstructionViewModel}}">
-    <Canvas Background="White">
-        <local:Arrow X1="100" Y1="100" X2="100" Y2="10"
-                     Stroke="Black"
-                     Fill="Black"
-                     StrokeThickness="2"
-                     StrokeStartLineCap="Flat"
-                     StrokeEndLineCap="Flat"
-                     BeginType="None"
-                     EndType="ValleyFold"/>
-    </Canvas>
+    <UserControl.Resources>
+        <ItemsPanelTemplate x:Key="CanvasItemsPanel">
+            <Canvas />
+        </ItemsPanelTemplate>
+        <local:UniversalColorConverter x:Key="CudConverter" />
+        <DataTemplate DataType="{x:Type vm:InstructionLineViewModel}" x:Key="LineTemplate">
+            <Line X1="{Binding X1, Mode=OneWay}"
+                  Y1="{Binding Y1, Mode=OneWay}"
+                  X2="{Binding X2, Mode=OneWay}"
+                  Y2="{Binding Y2, Mode=OneWay}"
+                  Stroke="{Binding Color, Mode=OneWay, Converter={StaticResource CudConverter}}"
+                  StrokeThickness="3"
+                  StrokeDashArray="4,2"
+                  StrokeStartLineCap="Round"
+                  StrokeEndLineCap="Round" />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:InstructionArrowViewModel}" x:Key="ArrowTemplate">
+            <local:Arrow X1="{Binding X1, Mode=OneWay}"
+                         Y1="{Binding Y1, Mode=OneWay}"
+                         X2="{Binding X2, Mode=OneWay}"
+                         Y2="{Binding Y2, Mode=OneWay}"
+                         Stroke="{Binding Color, Mode=OneWay, Converter={StaticResource CudConverter}}"
+                         Fill="{Binding Color, Mode=OneWay, Converter={StaticResource CudConverter}}"
+                         StartType="{Binding StartType, Mode=OneWay}"
+                         EndType="{Binding EndType, Mode=OneWay}"
+                         StrokeThickness="3" />
+        </DataTemplate>
+    </UserControl.Resources>
+    <Grid>
+        <ItemsControl ItemsSource="{Binding Arrows, Mode=OneTime}"
+                      ItemsPanel="{StaticResource CanvasItemsPanel}"
+                      ItemTemplate="{StaticResource ArrowTemplate}" />
+        <ItemsControl ItemsSource="{Binding Lines, Mode=OneTime}"
+                      ItemsPanel="{StaticResource CanvasItemsPanel}"
+                      ItemTemplate="{StaticResource LineTemplate}" />
+    </Grid>
 </UserControl>

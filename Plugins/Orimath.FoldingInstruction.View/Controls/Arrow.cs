@@ -47,9 +47,9 @@ namespace Orimath.FoldingInstruction.View.Controls
             DependencyProperty.Register(nameof(ArrowSize), typeof(double), typeof(Arrow),
                 new FrameworkPropertyMetadata(8d, FpmOptions.AffectsMeasure | FpmOptions.AffectsRender), IsDoubleFinite);
 
-        public ArrowType BeginType { get => (ArrowType)GetValue(BeginTypeProperty); set => SetValue(BeginTypeProperty, value); }
+        public ArrowType StartType { get => (ArrowType)GetValue(BeginTypeProperty); set => SetValue(BeginTypeProperty, value); }
         public static readonly DependencyProperty BeginTypeProperty =
-            DependencyProperty.Register(nameof(BeginType), typeof(ArrowType), typeof(Arrow),
+            DependencyProperty.Register(nameof(StartType), typeof(ArrowType), typeof(Arrow),
                 new FrameworkPropertyMetadata(ArrowType.None, FpmOptions.AffectsMeasure | FpmOptions.AffectsRender));
 
         public ArrowType EndType { get => (ArrowType)GetValue(EndTypeProperty); set => SetValue(EndTypeProperty, value); }
@@ -78,7 +78,7 @@ namespace Orimath.FoldingInstruction.View.Controls
                     var point2 = v2 - normal * (pointMargin * Sin60) + vertical * (pointMargin * Cos60);
                     var distance = (point2 - point1).Length;
 
-                    DrawArrow(true, BeginType, point1, normal, vertical);
+                    DrawArrow(true, StartType, point1, normal, vertical);
                     context.ArcTo((Point)point2, new Size(distance, distance), 0d, false, normal.X > 0d ? SweepDirection.Clockwise : SweepDirection.Counterclockwise, true, false);
                     DrawArrow(false, EndType, point2, -normal, vertical);
 
