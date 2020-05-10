@@ -13,6 +13,7 @@ namespace Orimath.ViewModels
         private readonly IWorkspace _workspace;
         private readonly IViewPointConverter _pointConverter = new ViewPointConverter(512.0, 16.0, 16.0);
         private readonly OrimathDispatcher _dispatcher = new OrimathDispatcher();
+        private readonly Dictionary<IEffect, EffectCommand> _effectCommands = new Dictionary<IEffect, EffectCommand>();
 
         private readonly ActionCommand _closeDialogCommand;
         private readonly ObservableCollection<object> _preViewModels = new ObservableCollection<object>();
@@ -89,6 +90,9 @@ namespace Orimath.ViewModels
             foreach (var (viewType, att) in viewArgs)
                 ViewDefinitions[att.ViewModelType] = (att.Pane, viewType);
 
+            foreach (var effect in _workspace.Effects)
+                _effectCommands[effect] = new EffectCommand(effect, _dispatcher);
+
             _workspace.Initialize();
             _initialized = true;
         }
@@ -129,5 +133,12 @@ namespace Orimath.ViewModels
         }
 
         public void CloseDialog() => Dialog = null;
+
+        public ICommand? GetEffectCommand(IEffect effect)
+        {
+            return _effectCommands.TryGetValue(effect, out var command)
+                ? command
+                : null;
+        }
     }
 }

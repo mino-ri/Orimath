@@ -9,3 +9,4 @@ type IMessenger =
     abstract member OpenDialog : viewModel: obj -> unit
     abstract member CloseDialog : unit -> unit
     abstract member CloseDialogCommand : ICommand
+    abstract member GetEffectCommand : effect: IEffect -> ICommand

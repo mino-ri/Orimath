@@ -20,6 +20,8 @@
     <Compile Include="ViewModels\PaperViewModel.fs" />
     <Compile Include="ViewModels\EffectViewModel.fs" />
     <Compile Include="ViewModels\ToolViewModel.fs" />
+    <Compile Include="ViewModels\EffectListViewModel.fs" />
+    <Compile Include="ViewModels\ToolListViewModel.fs" />
     <Compile Include="ViewModels\WorkspaceViewModel.fs" />
     <Compile Include="BasicPlugin.fs" />
   </ItemGroup>
