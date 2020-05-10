@@ -86,6 +86,15 @@ type LayerExtensions =
         |> Seq.filter(fun (p1, p2) -> layer.Contains((p1 + p2) / 2.0))
         |> Seq.choose(LineSegment.FromPoints)
         
+    /// このレイヤーの範囲内に収まるように指定された直線をカットし、その両端の位置を返します。
+    [<Extension>]
+    static member ClipBound(layer: ILayer, line: Line) =
+        let segments = layer.Clip(line) |> Seq.toArray
+        if segments.Length = 0 then
+            None
+        else
+            Some(segments.[0].Point1, segments.[segments.Length - 1].Point2)
+
     /// このレイヤーの範囲内に収まるように、指定された線分をカットします。
     [<Extension>]
     static member Clip(layer: ILayer, line: LineSegment) =
@@ -101,3 +110,12 @@ type LayerExtensions =
         |> Seq.pairwise
         |> Seq.filter(fun (p1, p2) -> layer.Contains((p1 + p2) / 2.0))
         |> Seq.choose(LineSegment.FromPoints)
+        
+    /// このレイヤーの範囲内に収まるように指定された線分をカットし、その両端の位置を返します。
+    [<Extension>]
+    static member ClipBound(layer: ILayer, line: LineSegment) =
+        let segments = layer.Clip(line) |> Seq.toArray
+        if segments.Length = 0 then
+            None
+        else
+            Some(segments.[0].Point1, segments.[segments.Length - 1].Point2)

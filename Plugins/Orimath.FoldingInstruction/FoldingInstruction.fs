@@ -64,6 +64,38 @@ type InstructionArrow =
         EndType: ArrowType
         Color: InstructionColor
     }
+    
+    static member Create(startPoint: Point, endPoint: Point, startType: ArrowType, endType: ArrowType, color: InstructionColor) =
+        {
+            Line = LineSegment.FromPoints(startPoint, endPoint).Value
+            StartType = startType
+            EndType = endType
+            Color = color
+        }
+
+    static member Create(startPoint: Point, endPoint: Point, endType: ArrowType, color: InstructionColor) =
+        InstructionArrow.Create(startPoint, endPoint, ArrowType.None, endType, color)
+
+    static member Create(startPoint: Point, endPoint: Point, endType: ArrowType) =
+        InstructionArrow.Create(startPoint, endPoint, ArrowType.None, endType, InstructionColor.Black)
+
+    static member Normal(startPoint, endPoint, color) =
+        InstructionArrow.Create(startPoint, endPoint, ArrowType.Normal, color)
+
+    static member Normal(startPoint, endPoint) =
+        InstructionArrow.Create(startPoint, endPoint, ArrowType.Normal)
+
+    static member MountainFold(startPoint, endPoint, color) =
+        InstructionArrow.Create(startPoint, endPoint, ArrowType.MountainFold, color)
+
+    static member MountainFold(startPoint, endPoint) =
+        InstructionArrow.Create(startPoint, endPoint, ArrowType.MountainFold)
+
+    static member ValleyFold(startPoint, endPoint, color) =
+        InstructionArrow.Create(startPoint, endPoint, ArrowType.ValleyFold, color)
+
+    static member ValleyFold(startPoint, endPoint) =
+        InstructionArrow.Create(startPoint, endPoint, ArrowType.ValleyFold)
 
 type FoldingInstruction() as this =    
     let mutable lines = ReactiveProperty.createArray<InstructionLine> this

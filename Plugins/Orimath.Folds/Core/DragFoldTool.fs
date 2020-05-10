@@ -95,6 +95,34 @@ type DragFoldTool(workspace: IWorkspace) =
                 Some(lines |> List.minBy(fun line -> point1.GetDistance(line.Reflect(point2))))
             | _ -> Some(lines.[0])
 
+    member private __.SetArrow(source: OperationTarget, target: OperationTarget, chosen: Line, opr: FoldOperation) =
+        instruction.Arrows <-
+            match opr with
+            | NoOperation -> Array.Empty()
+            | Axiom1(_, _)
+            | Axiom4(_, _) ->
+                match paper.Layers.[0].ClipBound(chosen) with
+                | None -> Array.Empty()
+                | Some(first, last) ->
+                    let middle = (first + last) / 2.0
+                    match paper.Layers.[0].ClipBound(Fold.axiom4 chosen middle) with
+                    | None -> Array.Empty()
+                    | Some(point1, point2) ->
+                        let point = if middle.GetDistance(point1) <= middle.GetDistance(point2) then point1 else point2
+                        if chosen.Contains(point)
+                        then Array.Empty()
+                        else [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Orange) |]
+            | Axiom2(point1, point2) -> [| InstructionArrow.ValleyFold(point1, point2, InstructionColor.Orange) |]
+            | Axiom3((_, point), _) -> [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Orange) |]
+            | Axiom5(_, _, point) -> [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Orange) |]
+            | Axiom6(_, point1, _, point2) -> [| InstructionArrow.ValleyFold(point1, chosen.Reflect(point1), InstructionColor.Orange)
+                                                 InstructionArrow.ValleyFold(point2, chosen.Reflect(point2), InstructionColor.Orange) |]
+            | Axiom7(_, _, point) -> [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Orange) |]
+            | AxiomP(_, point) ->
+                match source with
+                | LineOrEdge _ -> [| InstructionArrow.ValleyFold(chosen.Reflect(point), point, InstructionColor.Orange) |]
+                | _ -> [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Orange) |]
+
     interface ITool with
         member __.Name = "折り線"
         member __.ShortcutKey = ""
@@ -149,11 +177,15 @@ type DragFoldTool(workspace: IWorkspace) =
                 |> Seq.map mapping
                 |> Seq.toArray
 
+            match chosen with
+            | Some(c) -> this.SetArrow(source, target, c, opr)
+            | None -> instruction.Arrows <- Array.Empty()
+
             match target with
             | FreePoint true _ | LineOrEdge _ -> true
             | _ -> false
 
-        member __.DragLeave(source, target, modifier) =
+        member __.DragLeave(_, target, _) =
             instruction.Lines <- Array.Empty()
             instruction.Arrows <- Array.Empty()
             match target with
