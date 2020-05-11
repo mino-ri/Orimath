@@ -111,17 +111,17 @@ type DragFoldTool(workspace: IWorkspace) =
                         let point = if middle.GetDistance(point1) <= middle.GetDistance(point2) then point1 else point2
                         if chosen.Contains(point)
                         then Array.Empty()
-                        else [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Orange) |]
-            | Axiom2(point1, point2) -> [| InstructionArrow.ValleyFold(point1, point2, InstructionColor.Orange) |]
-            | Axiom3((_, point), _) -> [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Orange) |]
-            | Axiom5(_, _, point) -> [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Orange) |]
-            | Axiom6(_, point1, _, point2) -> [| InstructionArrow.ValleyFold(point1, chosen.Reflect(point1), InstructionColor.Orange)
-                                                 InstructionArrow.ValleyFold(point2, chosen.Reflect(point2), InstructionColor.Orange) |]
-            | Axiom7(_, _, point) -> [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Orange) |]
+                        else [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Blue) |]
+            | Axiom2(point1, point2) -> [| InstructionArrow.ValleyFold(point1, point2, InstructionColor.Blue) |]
+            | Axiom3((_, point), _) -> [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Blue) |]
+            | Axiom5(_, _, point) -> [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Blue) |]
+            | Axiom6(_, point1, _, point2) -> [| InstructionArrow.ValleyFold(point1, chosen.Reflect(point1), InstructionColor.Blue)
+                                                 InstructionArrow.ValleyFold(point2, chosen.Reflect(point2), InstructionColor.Blue) |]
+            | Axiom7(_, _, point) -> [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Blue) |]
             | AxiomP(_, point) ->
                 match source with
-                | LineOrEdge _ -> [| InstructionArrow.ValleyFold(chosen.Reflect(point), point, InstructionColor.Orange) |]
-                | _ -> [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Orange) |]
+                | LineOrEdge _ -> [| InstructionArrow.ValleyFold(chosen.Reflect(point), point, InstructionColor.Blue) |]
+                | _ -> [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Blue) |]
 
     interface ITool with
         member __.Name = "折り線"

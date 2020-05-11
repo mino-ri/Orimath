@@ -18,8 +18,12 @@
         </ItemsPanelTemplate>
     </Window.Resources>
     <DockPanel>
+        <ItemsControl DockPanel.Dock="Top"
+                      ItemsSource="{Binding TopViewModels, Mode=OneWay}" />
+        <ItemsControl DockPanel.Dock="Left"
+                      ItemsSource="{Binding SideViewModels, Mode=OneWay}" />
         <ScrollViewer>
-            <ItemsControl ItemsSource="{Binding MainViewModels, Mode=OneTime}"
+            <ItemsControl ItemsSource="{Binding MainViewModels, Mode=OneWay}"
                           ItemsPanel="{StaticResource CanvasItemsPanel}" />
         </ScrollViewer>
     </DockPanel>

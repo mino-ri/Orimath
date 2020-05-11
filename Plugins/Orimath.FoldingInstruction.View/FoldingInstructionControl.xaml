@@ -34,7 +34,7 @@
                          Fill="{Binding Color, Mode=OneWay, Converter={StaticResource CudConverter}}"
                          StartType="{Binding StartType, Mode=OneWay}"
                          EndType="{Binding EndType, Mode=OneWay}"
-                         StrokeThickness="3" />
+                         StrokeThickness="4" />
         </DataTemplate>
     </UserControl.Resources>
     <Grid>

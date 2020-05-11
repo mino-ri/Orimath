@@ -12,12 +12,12 @@
 
   <ItemGroup>
     <Compile Include="BasicEffects.fs" />
+    <Compile Include="PluginImplementations.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Mvvm\Mvvm.csproj" />
     <ProjectReference Include="..\..\Orimath.Plugins\Orimath.Plugins.fsproj" />
-    <ProjectReference Include="..\..\Orimath.ViewPlugins\Orimath.ViewPlugins.fsproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

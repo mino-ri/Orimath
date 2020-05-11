@@ -45,7 +45,7 @@ namespace Orimath.FoldingInstruction.View.Controls
         public double ArrowSize { get => (double)GetValue(ArrowSizeProperty); set => SetValue(ArrowSizeProperty, value); }
         public static readonly DependencyProperty ArrowSizeProperty =
             DependencyProperty.Register(nameof(ArrowSize), typeof(double), typeof(Arrow),
-                new FrameworkPropertyMetadata(8d, FpmOptions.AffectsMeasure | FpmOptions.AffectsRender), IsDoubleFinite);
+                new FrameworkPropertyMetadata(12d, FpmOptions.AffectsMeasure | FpmOptions.AffectsRender), IsDoubleFinite);
 
         public ArrowType StartType { get => (ArrowType)GetValue(BeginTypeProperty); set => SetValue(BeginTypeProperty, value); }
         public static readonly DependencyProperty BeginTypeProperty =
