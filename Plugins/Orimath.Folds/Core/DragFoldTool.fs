@@ -197,6 +197,7 @@ type DragFoldTool(workspace: IWorkspace) =
         member this.Drop(source, target, modifier) =
             let opr = this.GetOperation(source, target, modifier)
             let lines = this.ChooseLine(this.GetLines(opr), opr) |> Option.toList
+            use __ = paper.BeginChange()
             for layer in paper.Layers do layer.AddLines(lines)
             instruction.Lines <- Array.Empty()
             instruction.Arrows <- Array.Empty()

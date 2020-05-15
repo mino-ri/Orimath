@@ -23,6 +23,8 @@ type IPaperModel =
     abstract member SelectedPointsChanged : IEvent<EventHandler, EventArgs>
     [<CLIEvent>]
     abstract member SelectedLinesChanged : IEvent<EventHandler, EventArgs>
+    [<CLIEvent>]
+    abstract member CanUndoChanged : IEvent<EventHandler, EventArgs>
 
     [<CLIEvent>]
     abstract member LayerChanged : ICollectionChangedEvent<ILayerModel>
@@ -33,6 +35,7 @@ type IPaperModel =
     abstract member BeginChange : unit -> IDisposable
     abstract member Clear : unit -> unit
     abstract member Clear : paper: IPaper -> unit
+    abstract member ClearUndoStack : unit -> unit
     abstract member AddLayers : layers: seq<ILayer> -> unit
     abstract member RemoveLayers : count: int -> unit
     abstract member ReplaceLayer : index: int * newLayer: ILayer -> unit
