@@ -11,6 +11,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Icons\undo.png" />
+    <EmbeddedResource Include="Icons\redo.png" />
     <Compile Include="BasicEffects.fs" />
     <Compile Include="PluginImplementations.fs" />
   </ItemGroup>

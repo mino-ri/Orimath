@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ctrl="clr-namespace:Orimath.Controls"
         mc:Ignorable="d"
         Title="Orimath"
         Width="800"
@@ -16,12 +17,17 @@
         <ItemsPanelTemplate x:Key="CanvasItemsPanel">
             <Canvas />
         </ItemsPanelTemplate>
+        <ItemsPanelTemplate x:Key="GridItemsPanel">
+            <Grid />
+        </ItemsPanelTemplate>
+        <ctrl:IconImageConverter x:Key="IconImageConverter" />
     </Window.Resources>
     <DockPanel>
         <Menu DockPanel.Dock="Top" ItemsSource="{Binding MenuItems}">
             <Menu.ItemContainerStyle>
                 <Style TargetType="{x:Type MenuItem}">
                     <Setter Property="Header" Value="{Binding Name, Mode=OneTime}" />
+                    <Setter Property="Icon" Value="{Binding IconStream, Converter={StaticResource IconImageConverter}, Mode=OneTime}" />
                     <Setter Property="Command" Value="{Binding Command, Mode=OneTime}" />
                     <Setter Property="ItemsSource" Value="{Binding Children, Mode=OneTime}" />
                     <Setter Property="InputGestureText" Value="{Binding ShortcutKeyText, Mode=OneTime}" />
@@ -36,7 +42,7 @@
                       VerticalScrollBarVisibility="Auto"
                       x:Name="MainScrollViewer">
             <ItemsControl ItemsSource="{Binding MainViewModels, Mode=OneWay}"
-                          ItemsPanel="{StaticResource CanvasItemsPanel}"
+                          ItemsPanel="{StaticResource GridItemsPanel}"
                           Width="768"
                           Height="768"
                           VerticalAlignment="Top"

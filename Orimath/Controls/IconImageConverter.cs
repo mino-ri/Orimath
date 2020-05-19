@@ -6,25 +6,12 @@ using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace Orimath.Basics.View.Controls
+namespace Orimath.Controls
 {
     [ValueConversion(typeof(Stream), typeof(Image))]
     public class IconImageConverter : IValueConverter
     {
-        private readonly BitmapImage _source;
-
-        public IconImageConverter()
-        {
-            _source = new BitmapImage
-            {
-                CacheOption = BitmapCacheOption.OnLoad
-            };
-            _source.BeginInit();
-            _source.UriSource = new Uri("defaultIcon.png", UriKind.Relative);
-            _source.EndInit();
-        }
-
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is Stream stream)
             {
@@ -49,13 +36,7 @@ namespace Orimath.Basics.View.Controls
             }
             else
             {
-                return new Image
-                {
-                    Source = _source,
-                    Stretch = Stretch.Uniform,
-                    Width = 16.0,
-                    Height = 16.0,
-                };
+                return null;
             }
         }
 

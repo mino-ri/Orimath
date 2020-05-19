@@ -10,6 +10,10 @@
              d:DataContext="{d:DesignData Type={x:Type vm:EffectListViewModel}}">
     <UserControl.Resources>
         <ctrl:IconImageConverter x:Key="IconImageConverter" />
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="BorderBrush" Value="{x:Null}" />
+        </Style>
     </UserControl.Resources>
     <ToolBarTray IsLocked="True">
         <ToolBar ItemsSource="{Binding Effects, Mode=OneTime}">

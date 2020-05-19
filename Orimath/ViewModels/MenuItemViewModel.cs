@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows.Input;
 using Mvvm;
 using Orimath.Plugins;
@@ -17,6 +18,8 @@ namespace Orimath.ViewModels
 
         public ICommand? Command { get; }
 
+        public Stream? IconStream { get; }
+
         public ObservableCollection<MenuItemViewModel> Children { get; } = new ObservableCollection<MenuItemViewModel>();
 
         public MenuItemViewModel(string name)
@@ -29,6 +32,7 @@ namespace Orimath.ViewModels
         {
             Name = effect.Name;
             Command = messenger.GetEffectCommand(effect);
+            IconStream = effect.Icon;
             if (!string.IsNullOrEmpty(effect.ShortcutKey))
             {
                 ShortcutKeyText = effect.ShortcutKey;
