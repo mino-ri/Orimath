@@ -40,6 +40,10 @@ namespace Orimath.ViewModels
                 catch { }
 #pragma warning restore CA1031
             }
+            else
+            {
+                ShortcutKeyText = "";
+            }
         }
     }
 }
