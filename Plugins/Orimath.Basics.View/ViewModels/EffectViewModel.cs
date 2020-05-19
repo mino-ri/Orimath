@@ -1,4 +1,5 @@
-﻿using System.Windows.Input;
+﻿using System.IO;
+using System.Windows.Input;
 using Mvvm;
 using Orimath.Plugins;
 
@@ -15,6 +16,8 @@ namespace Orimath.Basics.View.ViewModels
         public string ShortcutKey => _effect.ShortcutKey;
 
         public string ToolTip => $"{Name} ({ShortcutKey})";
+
+        public Stream IconStream => _effect.Icon;
 
         public EffectViewModel(IEffect effect, IMessenger messenger)
         {

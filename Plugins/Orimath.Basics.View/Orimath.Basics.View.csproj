@@ -12,9 +12,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="defaultIcon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Mvvm\Mvvm.csproj" />
     <ProjectReference Include="..\..\Orimath.Plugins\Orimath.Plugins.fsproj" />
     <ProjectReference Include="..\..\Orimath.ViewPlugins\Orimath.ViewPlugins.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="defaultIcon.ico" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

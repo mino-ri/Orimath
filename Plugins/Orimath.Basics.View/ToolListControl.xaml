@@ -4,19 +4,19 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vm="clr-namespace:Orimath.Basics.View.ViewModels"
+             xmlns:ctrl="clr-namespace:Orimath.Basics.View.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="450"
              d:DataContext="{d:DesignData Type={x:Type vm:ToolListViewModel}}">
+    <UserControl.Resources>
+        <ctrl:IconImageConverter x:Key="IconImageConverter" />
+    </UserControl.Resources>
     <ListBox ItemsSource="{Binding Tools, Mode=OneTime}"
              SelectedItem="{Binding CurrentTool, Mode=TwoWay}">
-        <ListBox.ItemTemplate>
-            <DataTemplate DataType="{x:Type vm:ToolViewModel}">
-                <TextBlock Text="{Binding Name, Mode=OneTime}" />
-            </DataTemplate>
-        </ListBox.ItemTemplate>
         <ListBox.ItemContainerStyle>
             <Style TargetType="ListBoxItem">
                 <Setter Property="ToolTip" Value="{Binding ToolTip, Mode=OneTime}" />
+                <Setter Property="Content" Value="{Binding IconStream, Converter={StaticResource IconImageConverter}, Mode=OneTime}" />
             </Style>
         </ListBox.ItemContainerStyle>
     </ListBox>
