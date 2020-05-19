@@ -33,5 +33,6 @@ type IEffect =
     inherit IFunction
     abstract member Execute : unit -> unit
     abstract member CanExecute : unit -> bool
+    abstract member MenuHieralchy : string[]
     [<CLIEvent>]
     abstract member CanExecuteChanged : IEvent<EventHandler, EventArgs>

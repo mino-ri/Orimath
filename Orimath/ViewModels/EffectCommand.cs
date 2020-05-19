@@ -8,18 +8,22 @@ namespace Orimath.ViewModels
     {
         private readonly IEffect _effect;
         private readonly IDispatcher _dispatcher;
+        private readonly WorkspaceViewModel _parent;
 
-        public EffectCommand(IEffect effect, IDispatcher dispatcher)
+        public EffectCommand(IEffect effect, IDispatcher dispatcher, WorkspaceViewModel parent)
         {
             _effect = effect;
             _dispatcher = dispatcher;
+            _parent = parent;
             _effect.CanExecuteChanged += (sender, e) =>
                 _dispatcher.OnUIAsync(() => CanExecuteChanged?.Invoke(this, e));
+            _parent.PropertyChanged += (sender, e) =>
+                CanExecuteChanged?.Invoke(this, e);
         }
 
         public event EventHandler? CanExecuteChanged;
 
-        public bool CanExecute(object parameter) => _effect.CanExecute();
+        public bool CanExecute(object parameter) => _parent.RootEnable && _effect.CanExecute();
 
         public void Execute(object parameter) => _dispatcher.OnBackgroundAsync(_effect.Execute);
     }

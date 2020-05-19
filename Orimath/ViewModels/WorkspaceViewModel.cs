@@ -29,6 +29,8 @@ namespace Orimath.ViewModels
 
         public ObservableCollection<object> SideViewModels { get; } = new ObservableCollection<object>();
 
+        public ObservableCollection<MenuItemViewModel> MenuItems { get; } = new ObservableCollection<MenuItemViewModel>();
+
         public object? Dialog
         {
             get => _dialog;
@@ -91,14 +93,37 @@ namespace Orimath.ViewModels
                 ViewDefinitions[att.ViewModelType] = (att.Pane, viewType);
 
             foreach (var effect in _workspace.Effects)
-                _effectCommands[effect] = new EffectCommand(effect, _dispatcher);
+                _effectCommands[effect] = new EffectCommand(effect, _dispatcher, this);
 
             _workspace.Initialize();
             _initialized = true;
         }
 
+        private void CreateMenu()
+        {
+            foreach (var effect in _workspace.Effects)
+            {
+                var targetCollection = MenuItems;
+                foreach (var name in effect.MenuHieralchy)
+                {
+                    var parent = targetCollection.OfType<MenuItemViewModel>().FirstOrDefault(x => x.Name == name);
+                    if (parent is null)
+                    {
+                        parent = new MenuItemViewModel(name);
+                        targetCollection.Add(parent);
+                    }
+
+                    targetCollection = parent.Children;
+                }
+
+                targetCollection.Add(new MenuItemViewModel(effect, this));
+            }
+        }
+
         public void LoadViewModels()
         {
+            CreateMenu();
+
             foreach (var item in _preViewModels) AddViewModel(item);
             _preViewModels.Clear();
         }

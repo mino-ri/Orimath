@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:Orimath.ViewModels"
         mc:Ignorable="d"
         Title="Orimath"
         Width="800"
@@ -18,6 +19,15 @@
         </ItemsPanelTemplate>
     </Window.Resources>
     <DockPanel>
+        <Menu DockPanel.Dock="Top" ItemsSource="{Binding MenuItems}">
+            <Menu.ItemContainerStyle>
+                <Style TargetType="{x:Type MenuItem}">
+                    <Setter Property="Header" Value="{Binding Name, Mode=OneTime}" />
+                    <Setter Property="Command" Value="{Binding Command, Mode=OneTime}" />
+                    <Setter Property="ItemsSource" Value="{Binding Children, Mode=OneTime}" />
+                </Style>
+            </Menu.ItemContainerStyle>
+        </Menu>
         <ItemsControl DockPanel.Dock="Top"
                       ItemsSource="{Binding TopViewModels, Mode=OneWay}" />
         <ItemsControl DockPanel.Dock="Left"

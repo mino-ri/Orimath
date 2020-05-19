@@ -3,6 +3,7 @@ open Orimath.Plugins
 
 type UndoEffect(workspace: IWorkspace) =
     interface IEffect with
+        member val MenuHieralchy = [| "編集" |]
         member __.Name = "元に戻す"
         member __.ShortcutKey = "Ctrl+Z"
         member __.Icon = null
@@ -13,6 +14,7 @@ type UndoEffect(workspace: IWorkspace) =
 
 type RedoEffect(workspace: IWorkspace) =
     interface IEffect with
+        member val MenuHieralchy = [| "編集" |]
         member __.Name = "やり直し"
         member __.ShortcutKey = "Ctrl+Y"
         member __.Icon = null
