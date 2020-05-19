@@ -32,9 +32,15 @@
                       ItemsSource="{Binding TopViewModels, Mode=OneWay}" />
         <ItemsControl DockPanel.Dock="Left"
                       ItemsSource="{Binding SideViewModels, Mode=OneWay}" />
-        <ScrollViewer>
+        <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Auto"
+                      x:Name="MainScrollViewer">
             <ItemsControl ItemsSource="{Binding MainViewModels, Mode=OneWay}"
-                          ItemsPanel="{StaticResource CanvasItemsPanel}" />
+                          ItemsPanel="{StaticResource CanvasItemsPanel}"
+                          Width="768"
+                          Height="768"
+                          VerticalAlignment="Top"
+                          HorizontalAlignment="Left" />
         </ScrollViewer>
     </DockPanel>
 </Window>

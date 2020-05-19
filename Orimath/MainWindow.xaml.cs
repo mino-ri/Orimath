@@ -54,6 +54,9 @@ namespace Orimath
             foreach (var menuItem in viewModel.MenuItems)
                 SetShortcutKey(menuItem);
 
+            MainScrollViewer.ScrollToVerticalOffset((MainScrollViewer.ExtentHeight - MainScrollViewer.ActualHeight) / 2.0);
+            MainScrollViewer.ScrollToHorizontalOffset((MainScrollViewer.ExtentWidth - MainScrollViewer.ActualWidth) / 2.0);
+
             void SetShortcutKey(MenuItemViewModel menuItem)
             {
                 if (menuItem.ShortcutKey is { } gesture)
