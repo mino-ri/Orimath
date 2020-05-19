@@ -50,6 +50,18 @@ namespace Orimath
 
             await Dispatcher.Yield();
             viewModel.LoadViewModels();
+
+            foreach (var menuItem in viewModel.MenuItems)
+                SetShortcutKey(menuItem);
+
+            void SetShortcutKey(MenuItemViewModel menuItem)
+            {
+                if (menuItem.ShortcutKey is { } gesture)
+                    InputBindings.Add(new KeyBinding(menuItem.Command, gesture));
+
+                foreach (var child in menuItem.Children)
+                    SetShortcutKey(child);
+            }
         }
     }
 }
