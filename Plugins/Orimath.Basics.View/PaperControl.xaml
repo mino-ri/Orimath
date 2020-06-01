@@ -157,7 +157,7 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:LayerViewModel}" x:Key="LayerBackTemplate">
             <ctrl:PolygonControl Points="{Binding Vertexes, Mode=OneTime}"
-                                 Tag="{x:Static Brushes.Transparent}"
+                                 Tag="{x:Static Brushes.White}"
                                  AllowDrop="True"
                                  ctrl:MouseHandler.AttachedMouseHandler="{StaticResource mouseHandler}" />
         </DataTemplate>
