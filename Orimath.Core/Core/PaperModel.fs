@@ -54,8 +54,15 @@ type PaperModel internal () as this =
         |> Seq.map(fun lm -> lm.GetSnapShot())
         |> Paper.Create
 
+    member __.ResetSelection() =
+        selectedLayers.Value <- Array.Empty()
+        selectedEdges.Value <- Array.Empty()
+        selectedPoints.Value <- Array.Empty()
+        selectedLines.Value <- Array.Empty()
+
     member this.Undo() =
         if this.CanUndo && not this.ChangeBlockDeclared then
+            this.ResetSelection()
             use __ = this.BeginUndo()
             redoOprStack.Push(BeginChangeBlock)
             let rec recSelf() =
@@ -79,6 +86,7 @@ type PaperModel internal () as this =
 
     member this.Redo() =
         if this.CanRedo && not this.ChangeBlockDeclared then
+            this.ResetSelection()
             use __ = this.BeginUndo()
             undoOprStack.Push(BeginChangeBlock)
             let rec recSelf() =
@@ -129,6 +137,7 @@ type PaperModel internal () as this =
         layerModels.Reset(layers)
 
     member this.Clear(paper: IPaper) =
+        this.ResetSelection()
         use __ = this.TryBeginChange()
         let layers =
             paper.Layers
