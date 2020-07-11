@@ -25,6 +25,6 @@ namespace Orimath.Basics.View.ViewModels
         public double Angle => NearlyEquatable.UnaryPlus(Math.Atan2(XFactor, NearlyEquatable.Negate(YFactor)) / Math.PI * 180.0) % 180.0;
 
         public DisplayTarget GetTarget() => DisplayTarget.NewEdge(Source);
-        public override string ToString() => $"{Source.Line}\r\n傾き:{Slope:0.#####} 角度:{Angle:0.#####}°";
+        public override string ToString() => $"{Source.Line.Line}\r\n傾き:{Slope:0.#####} 角度:{Angle:0.#####}°";
     }
 }
