@@ -107,6 +107,8 @@ type PaperModel internal () as this =
         undoOprStack.Push(BeginChangeBlock)
         { new IDisposable with
             member __.Dispose() =
+                if undoOprStack.Peek() = BeginChangeBlock then
+                    ignore (undoOprStack.Pop())
                 changeBlockDeclared <- false
                 canUndoChanged.Trigger(this, EventArgs.Empty)
         }
