@@ -11,7 +11,7 @@ namespace Orimath.ViewModels
     public class WorkspaceViewModel : NotifyPropertyChanged, IMessenger
     {
         private readonly IWorkspace _workspace;
-        private readonly IViewPointConverter _pointConverter = new ViewPointConverter(512.0, 128.0, 128.0);
+        private readonly IViewPointConverter _pointConverter = new ViewPointConverter(512.0, -512.0, 128.0, 640.0);
         private readonly OrimathDispatcher _dispatcher = new OrimathDispatcher();
         private readonly Dictionary<IEffect, EffectCommand> _effectCommands = new Dictionary<IEffect, EffectCommand>();
 

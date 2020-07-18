@@ -1,0 +1,101 @@
+﻿<UserControl x:Class="Orimath.Basics.View.MeasureControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vm="clr-namespace:Orimath.Basics.View.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="220"
+             d:DataContext="{d:DesignData Type={x:Type vm:MeasureViewModel}}"
+             Width="220">
+    <StackPanel Background="{x:Static Brushes.AliceBlue}">
+        <StackPanel.Resources>
+            <Style TargetType="{x:Type TextBox}">
+                <Setter Property="IsReadOnly" Value="True" />
+                <Setter Property="FontFamily" Value="Cambria" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="BorderBrush" Value="{x:Null}" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Background" Value="{x:Static Brushes.Transparent}" />
+            </Style>
+        </StackPanel.Resources>
+        <ItemsControl ItemsSource="{Binding SelectedEdges, Mode=OneWay}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type vm:EdgeViewModel}">
+                    <Grid VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="4">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" FontFamily="Georgia" FontSize="16" HorizontalAlignment="Right"><Italic>θ</Italic> =</TextBlock>
+                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Angle, Mode=OneWay, StringFormat=0.################}" />
+                        <TextBlock Grid.Row="1" Grid.Column="0" FontFamily="Georgia" FontSize="16" HorizontalAlignment="Right">tan<Italic>θ</Italic> =</TextBlock>
+                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Slope, Mode=OneWay, StringFormat=0.################}" />
+                        <TextBlock Grid.Row="2" Grid.Column="0" FontFamily="Georgia" FontSize="16" HorizontalAlignment="Right">sin<Italic>θ</Italic> =</TextBlock>
+                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding XFactor, Mode=OneWay, StringFormat=0.################}" />
+                        <TextBlock Grid.Row="3" Grid.Column="0" FontFamily="Georgia" FontSize="16" HorizontalAlignment="Right">cos<Italic>θ</Italic> =</TextBlock>
+                        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding YFactor, Mode=OneWay, StringFormat=0.################}" />
+                        <TextBlock Grid.Row="4" Grid.Column="0" FontFamily="Georgia" FontSize="16" HorizontalAlignment="Right"><Italic>d</Italic> =</TextBlock>
+                        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Intercept, Mode=OneWay, StringFormat=0.################}" />
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <ItemsControl ItemsSource="{Binding SelectedLines, Mode=OneWay}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type vm:LineViewModel}">
+                    <Grid VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="4">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" FontFamily="Georgia" FontSize="16" HorizontalAlignment="Right"><Italic>θ</Italic> =</TextBlock>
+                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Angle, Mode=OneWay, StringFormat=0.################}" />
+                        <TextBlock Grid.Row="1" Grid.Column="0" FontFamily="Georgia" FontSize="16" HorizontalAlignment="Right">tan<Italic>θ</Italic> =</TextBlock>
+                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Slope, Mode=OneWay, StringFormat=0.################}" />
+                        <TextBlock Grid.Row="2" Grid.Column="0" FontFamily="Georgia" FontSize="16" HorizontalAlignment="Right">sin<Italic>θ</Italic> =</TextBlock>
+                        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding XFactor, Mode=OneWay, StringFormat=0.################}" />
+                        <TextBlock Grid.Row="3" Grid.Column="0" FontFamily="Georgia" FontSize="16" HorizontalAlignment="Right">cos<Italic>θ</Italic> =</TextBlock>
+                        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding YFactor, Mode=OneWay, StringFormat=0.################}" />
+                        <TextBlock Grid.Row="4" Grid.Column="0" FontFamily="Georgia" FontSize="16" HorizontalAlignment="Right"><Italic>d</Italic> =</TextBlock>
+                        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Intercept, Mode=OneWay, StringFormat=0.################}" />
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <ItemsControl ItemsSource="{Binding SelectedPoints, Mode=OneWay}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type vm:PointViewModel}">
+                    <Grid VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="4">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Row="0" Grid.Column="0" FontFamily="Georgia" FontSize="16" HorizontalAlignment="Right"><Italic>X</Italic> =</TextBlock>
+                        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Source.X, Mode=OneTime, StringFormat=0.################}" />
+                        <TextBlock Grid.Row="1" Grid.Column="0" FontFamily="Georgia" FontSize="16" HorizontalAlignment="Right"><Italic>Y</Italic> =</TextBlock>
+                        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Source.Y, Mode=OneTime, StringFormat=0.################}" />
+                    </Grid>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
+</UserControl>

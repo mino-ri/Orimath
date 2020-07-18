@@ -20,9 +20,10 @@ namespace Orimath.Basics.View.ViewModels
         public double X2 { get; }
         public double Y2 { get; }
         public double XFactor => Source.Line.XFactor;
-        public double YFactor => Source.Line.YFactor;
-        public double Slope => NearlyEquatable.UnaryPlus(XFactor / -YFactor);
-        public double Angle => NearlyEquatable.UnaryPlus(Math.Atan2(XFactor, NearlyEquatable.Negate(YFactor)) / Math.PI * 180.0) % 180.0;
+        public double YFactor => NearlyEquatable.Negate(Source.Line.YFactor);
+        public double Intercept => Source.Line.Intercept;
+        public double Slope => NearlyEquatable.UnaryPlus(XFactor / YFactor);
+        public double Angle => NearlyEquatable.UnaryPlus(Math.Atan2(XFactor, YFactor) / Math.PI * 180.0) % 180.0;
 
         public DisplayTarget GetTarget() => DisplayTarget.NewLine(Source);
         public override string ToString() => $"{Source.Line}\r\n傾き:{Slope:0.#####} 角度:{Angle:0.#####}°";

@@ -20,6 +20,9 @@
         <ItemsPanelTemplate x:Key="GridItemsPanel">
             <Grid />
         </ItemsPanelTemplate>
+        <ItemsPanelTemplate x:Key="HorizontalItemsPanel">
+            <StackPanel Orientation="Horizontal" />
+        </ItemsPanelTemplate>
         <ctrl:IconImageConverter x:Key="IconImageConverter" />
     </Window.Resources>
     <DockPanel>
@@ -37,7 +40,8 @@
         <ItemsControl DockPanel.Dock="Top"
                       ItemsSource="{Binding TopViewModels, Mode=OneWay}" />
         <ItemsControl DockPanel.Dock="Left"
-                      ItemsSource="{Binding SideViewModels, Mode=OneWay}" />
+                      ItemsSource="{Binding SideViewModels, Mode=OneWay}"
+                      ItemsPanel="{StaticResource HorizontalItemsPanel}" />
         <ScrollViewer HorizontalScrollBarVisibility="Auto"
                       VerticalScrollBarVisibility="Auto"
                       x:Name="MainScrollViewer">

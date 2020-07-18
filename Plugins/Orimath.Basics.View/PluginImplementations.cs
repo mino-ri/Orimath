@@ -26,4 +26,12 @@ namespace Orimath.Basics.View
             args.Messenger.AddViewModel(new ToolListViewModel(args.Workspace, args.Dispatcher));
         }
     }
+
+    public class MeasureViewPlugin : IViewPlugin
+    {
+        public void Execute(ViewPluginArgs args)
+        {
+            args.Messenger.AddViewModel(new MeasureViewModel(args.Workspace.Paper, args.PointConverter, args.Dispatcher));
+        }
+    }
 }
