@@ -24,6 +24,7 @@ namespace Orimath.Basics.View.ViewModels
         public double Intercept => Source.Line.Intercept;
         public double Slope => NearlyEquatable.UnaryPlus(XFactor / YFactor);
         public double Angle => NearlyEquatable.UnaryPlus(Math.Atan2(XFactor, YFactor) / Math.PI * 180.0) % 180.0;
+        public double Length => Source.Length;
 
         public DisplayTarget GetTarget() => DisplayTarget.NewLine(Source);
         public override string ToString() => $"{Source.Line}\r\n傾き:{Slope:0.#####} 角度:{Angle:0.#####}°";

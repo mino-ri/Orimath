@@ -29,6 +29,7 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -44,6 +45,8 @@
                         <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding YFactor, Mode=OneWay, StringFormat=0.################}" />
                         <TextBlock Grid.Row="4" Grid.Column="0" FontFamily="Georgia" FontSize="16" HorizontalAlignment="Right"><Italic>d</Italic> =</TextBlock>
                         <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Intercept, Mode=OneWay, StringFormat=0.################}" />
+                        <TextBlock Grid.Row="5" Grid.Column="0" FontFamily="Georgia" FontSize="16" HorizontalAlignment="Right"><Italic>l</Italic> =</TextBlock>
+                        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Length, Mode=OneWay, StringFormat=0.################}" />
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
@@ -58,6 +61,7 @@
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
@@ -73,6 +77,8 @@
                         <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding YFactor, Mode=OneWay, StringFormat=0.################}" />
                         <TextBlock Grid.Row="4" Grid.Column="0" FontFamily="Georgia" FontSize="16" HorizontalAlignment="Right"><Italic>d</Italic> =</TextBlock>
                         <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Intercept, Mode=OneWay, StringFormat=0.################}" />
+                        <TextBlock Grid.Row="5" Grid.Column="0" FontFamily="Georgia" FontSize="16" HorizontalAlignment="Right"><Italic>l</Italic> =</TextBlock>
+                        <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding Length, Mode=OneWay, StringFormat=0.################}" />
                     </Grid>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

@@ -7,6 +7,8 @@ type LineSegment internal (line: Line, p1: Point, p2: Point) =
     member __.Point1 = p1
     member __.Point2 = p2
     
+    member __.Length = (p1 - p2).Norm
+
     interface INearlyEquatable<LineSegment> with
         member this.NearlyEquals(other, margin) =
             nearlyEquals margin this.Line other.Line &&
