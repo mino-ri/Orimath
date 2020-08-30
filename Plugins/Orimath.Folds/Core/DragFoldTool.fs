@@ -129,22 +129,26 @@ type DragFoldTool(workspace: IWorkspace) =
         member __.Icon = null
         member __.OnClick(target, modifier) =
             if not (modifier.HasFlag(OperationModifier.RightButton)) then
+                let clearOther = not (modifier.HasFlag(OperationModifier.Shift))
                 match target.Target with
                 | DisplayTarget.Point(point) ->
                     paper.SelectedPoints <-
                         if paper.IsSelected(point) then array.Empty() else [| point |]
-                    paper.SelectedLines <- array.Empty()
-                    paper.SelectedEdges <- array.Empty()
+                    if clearOther then
+                        paper.SelectedLines <- array.Empty()
+                        paper.SelectedEdges <- array.Empty()
                 | DisplayTarget.Line(line) ->
-                    paper.SelectedPoints <- array.Empty()
                     paper.SelectedLines <-
                         if paper.IsSelected(line) then array.Empty() else [| line |]
                     paper.SelectedEdges <- array.Empty()
+                    if clearOther then
+                        paper.SelectedPoints <- array.Empty()
                 | DisplayTarget.Edge(edge) ->
-                    paper.SelectedPoints <- array.Empty()
                     paper.SelectedLines <- array.Empty()
                     paper.SelectedEdges <-
                         if paper.IsSelected(edge) then array.Empty() else [| edge |]
+                    if clearOther then
+                        paper.SelectedPoints <- array.Empty()
                 | _ ->
                     paper.SelectedPoints <- array.Empty()
                     paper.SelectedLines <- array.Empty()
