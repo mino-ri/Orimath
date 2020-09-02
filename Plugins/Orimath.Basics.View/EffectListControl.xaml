@@ -13,6 +13,11 @@
         <Style TargetType="{x:Type Button}">
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="BorderBrush" Value="{x:Null}" />
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="True">
+                    <Setter Property="Background" Value="{x:Static Brushes.Transparent}" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
     </UserControl.Resources>
     <ToolBarTray IsLocked="True">
