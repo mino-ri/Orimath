@@ -24,33 +24,42 @@
             <StackPanel Orientation="Horizontal" />
         </ItemsPanelTemplate>
         <ctrl:IconImageConverter x:Key="IconImageConverter" />
+        <BooleanToVisibilityConverter x:Key="BoolVisibleConverter" />
     </Window.Resources>
-    <DockPanel>
-        <Menu DockPanel.Dock="Top" ItemsSource="{Binding MenuItems}">
-            <Menu.ItemContainerStyle>
-                <Style TargetType="{x:Type MenuItem}">
-                    <Setter Property="Header" Value="{Binding Name, Mode=OneTime}" />
-                    <Setter Property="Icon" Value="{Binding IconStream, Converter={StaticResource IconImageConverter}, Mode=OneTime}" />
-                    <Setter Property="Command" Value="{Binding Command, Mode=OneTime}" />
-                    <Setter Property="ItemsSource" Value="{Binding Children, Mode=OneTime}" />
-                    <Setter Property="InputGestureText" Value="{Binding ShortcutKeyText, Mode=OneTime}" />
-                </Style>
-            </Menu.ItemContainerStyle>
-        </Menu>
-        <ItemsControl DockPanel.Dock="Top"
-                      ItemsSource="{Binding TopViewModels, Mode=OneWay}" />
-        <ItemsControl DockPanel.Dock="Left"
-                      ItemsSource="{Binding SideViewModels, Mode=OneWay}"
-                      ItemsPanel="{StaticResource HorizontalItemsPanel}" />
-        <ScrollViewer HorizontalScrollBarVisibility="Auto"
-                      VerticalScrollBarVisibility="Auto"
-                      x:Name="MainScrollViewer">
-            <ItemsControl ItemsSource="{Binding MainViewModels, Mode=OneWay}"
-                          ItemsPanel="{StaticResource GridItemsPanel}"
-                          Width="768"
-                          Height="768"
-                          VerticalAlignment="Top"
-                          HorizontalAlignment="Left" />
-        </ScrollViewer>
-    </DockPanel>
+    <Grid>
+        <DockPanel IsEnabled="{Binding HasNotDialog}">
+            <Menu DockPanel.Dock="Top" ItemsSource="{Binding MenuItems}">
+                <Menu.ItemContainerStyle>
+                    <Style TargetType="{x:Type MenuItem}">
+                        <Setter Property="Header" Value="{Binding Name, Mode=OneTime}" />
+                        <Setter Property="Icon" Value="{Binding IconStream, Converter={StaticResource IconImageConverter}, Mode=OneTime}" />
+                        <Setter Property="Command" Value="{Binding Command, Mode=OneTime}" />
+                        <Setter Property="ItemsSource" Value="{Binding Children, Mode=OneTime}" />
+                        <Setter Property="InputGestureText" Value="{Binding ShortcutKeyText, Mode=OneTime}" />
+                    </Style>
+                </Menu.ItemContainerStyle>
+            </Menu>
+            <ItemsControl DockPanel.Dock="Top"
+                          ItemsSource="{Binding TopViewModels, Mode=OneWay}" />
+            <ItemsControl DockPanel.Dock="Left"
+                          ItemsSource="{Binding SideViewModels, Mode=OneWay}"
+                          ItemsPanel="{StaticResource HorizontalItemsPanel}" />
+            <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                          VerticalScrollBarVisibility="Auto"
+                          x:Name="MainScrollViewer">
+                <ItemsControl ItemsSource="{Binding MainViewModels, Mode=OneWay}"
+                              ItemsPanel="{StaticResource GridItemsPanel}"
+                              Width="1024"
+                              Height="1024"
+                              VerticalAlignment="Top"
+                              HorizontalAlignment="Left" />
+            </ScrollViewer>
+        </DockPanel>
+        <Grid Visibility="{Binding HasDialog, Converter={StaticResource BoolVisibleConverter}}"
+              Background="#80000000">
+            <Label Content="{Binding Dialog, Mode=OneWay}"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center" />
+        </Grid>
+    </Grid>
 </Window>

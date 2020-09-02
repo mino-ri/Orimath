@@ -8,6 +8,13 @@ namespace Orimath.Basics.View
         public void Execute(ViewPluginArgs args)
         {
             args.Messenger.AddViewModel(new WorkspaceViewModel(args.Workspace, args.PointConverter, args.Dispatcher));
+            
+            if (args.Workspace.GetEffectOrDefault<NewPaperEffect>() is { } newPaper)
+            {
+                newPaper.OnExecute += (sender, e) =>
+                    args.Dispatcher.OnUIAsync(() =>
+                        args.Messenger.OpenDialog(new NewPaperDialogViewModel(args.Messenger, args.Dispatcher, newPaper.Executor)));
+            }
         }
     }
 
