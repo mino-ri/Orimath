@@ -95,9 +95,11 @@ let axiom6 (line1: Line) (point1: Point) (line2: Line) (point2: Point) =
             let t4 = e + b * y
             let xfs = solveEquation t1 t2 t3 t4
             let yf = 1.0
-            xfs |> List.map(fun xf ->
+            xfs |> List.choose(fun xf ->
                 let c = -(x1 * xf) - y1 + (n1 * (xf * xf + 1.0)) / (2.0 * (a1 * xf + b1))
-                if rev then Line.Create(yf, xf, c) else Line.Create(xf, yf, c))
+                if System.Double.IsFinite(c)
+                then Some(if rev then Line.Create(yf, xf, c) else Line.Create(xf, yf, c))
+                else None)
     let result = getFactors line1.XFactor line1.YFactor line1.Intercept point1.X point1.Y line2.XFactor line2.YFactor line2.Intercept point2.X point2.Y false
     result
 
