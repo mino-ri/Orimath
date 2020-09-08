@@ -25,6 +25,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="Sssl.CSharp">
+      <HintPath>..\Libraries\Sssl.CSharp.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="icon_ho.ico" />
   </ItemGroup>
 
