@@ -18,7 +18,10 @@ namespace Orimath.ViewModels
             _effect.CanExecuteChanged += (sender, e) =>
                 _dispatcher.OnUIAsync(() => CanExecuteChanged?.Invoke(this, e));
             _parent.PropertyChanged += (sender, e) =>
-                CanExecuteChanged?.Invoke(this, e);
+            {
+                if (e.PropertyName == nameof(WorkspaceViewModel.RootEnable))
+                    CanExecuteChanged?.Invoke(this, e);
+            };
         }
 
         public event EventHandler? CanExecuteChanged;

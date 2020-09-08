@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ctrl="clr-namespace:Orimath.Controls"
+        xmlns:vm="clr-namespace:Orimath.ViewModels"
         mc:Ignorable="d"
         Title="Orimath"
         Width="800"
@@ -25,7 +26,13 @@
         </ItemsPanelTemplate>
         <ctrl:IconImageConverter x:Key="IconImageConverter" />
         <BooleanToVisibilityConverter x:Key="BoolVisibleConverter" />
+        <DataTemplate DataType="{x:Type vm:PluginSettingViewModel}">
+            <ctrl:PluginSettingControl />
+        </DataTemplate>
     </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Gesture="Escape" Command="{Binding CloseDialogCommand, Mode=OneTime}" />
+    </Window.InputBindings>
     <Grid>
         <DockPanel IsEnabled="{Binding HasNotDialog}">
             <Menu DockPanel.Dock="Top" ItemsSource="{Binding MenuItems}">

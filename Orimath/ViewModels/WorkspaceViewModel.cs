@@ -17,6 +17,7 @@ namespace Orimath.ViewModels
         private readonly Dictionary<IEffect, EffectCommand> _effectCommands = new Dictionary<IEffect, EffectCommand>();
 
         private readonly ActionCommand _closeDialogCommand;
+        private readonly ActionCommand _pluginSettingCommand;
         private readonly ObservableCollection<object> _preViewModels = new ObservableCollection<object>();
 
         private bool _initialized;
@@ -43,6 +44,7 @@ namespace Orimath.ViewModels
                     OnPropertyChanged(nameof(HasNotDialog));
                     OnPropertyChanged(nameof(RootEnable));
                     _closeDialogCommand.OnCanExecuteChanged();
+                    _pluginSettingCommand.OnCanExecuteChanged();
                 }
             }
         }
@@ -61,10 +63,12 @@ namespace Orimath.ViewModels
         {
             _workspace = workspace;
             _closeDialogCommand = new ActionCommand(_ => CloseDialog(), _ => HasDialog);
+            _pluginSettingCommand = new ActionCommand(_ => OpenDialog(new PluginSettingViewModel(this)), _ => RootEnable);
             _dispatcher.IsExecutingChanged += (_, __) =>
             {
                 OnPropertyChanged(nameof(IsExecuting));
                 OnPropertyChanged(nameof(RootEnable));
+                _pluginSettingCommand.OnCanExecuteChanged();
             };
         }
 
@@ -107,7 +111,7 @@ namespace Orimath.ViewModels
                 var targetCollection = MenuItems;
                 foreach (var name in effect.MenuHieralchy)
                 {
-                    var parent = targetCollection.OfType<MenuItemViewModel>().FirstOrDefault(x => x.Name == name);
+                    var parent = targetCollection.FirstOrDefault(x => x.Name == name);
                     if (parent is null)
                     {
                         parent = new MenuItemViewModel(name);
@@ -119,6 +123,15 @@ namespace Orimath.ViewModels
 
                 targetCollection.Add(new MenuItemViewModel(effect, this));
             }
+
+            var settingMenu = MenuItems.FirstOrDefault(x => x.Name == "設定");
+            if (settingMenu is null)
+            {
+                settingMenu = new MenuItemViewModel("設定");
+                MenuItems.Add(settingMenu);
+            }
+
+            settingMenu.Children.Add(new MenuItemViewModel("プラグインの設定", _pluginSettingCommand));
         }
 
         public void LoadViewModels()

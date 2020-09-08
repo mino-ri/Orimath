@@ -28,6 +28,13 @@ namespace Orimath.ViewModels
             ShortcutKeyText = "";
         }
 
+        public MenuItemViewModel(string name, ICommand command)
+        {
+            Name = name;
+            ShortcutKeyText = "";
+            Command = command;
+        }
+
         public MenuItemViewModel(IEffect effect, IMessenger messenger)
         {
             Name = effect.Name;

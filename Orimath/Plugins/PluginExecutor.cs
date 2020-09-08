@@ -10,7 +10,9 @@ namespace Orimath.Plugins
 {
     internal static class PluginExecutor
     {
-        public static Type[] LoadedPlugins { get; private set; } = Type.EmptyTypes;
+        public static Type[] LoadedPluginTypes { get; private set; } = Type.EmptyTypes;
+
+        public static Type[] LoadedViewPluginTypes { get; private set; } = Type.EmptyTypes;
 
         public static PluginSetting Setting { get; private set; } = new PluginSetting();
 
@@ -20,8 +22,7 @@ namespace Orimath.Plugins
 
             if (Directory.Exists(pluginDirectory))
             {
-                return LoadedPlugins = 
-                    Directory.GetFiles(pluginDirectory, "*.dll", SearchOption.TopDirectoryOnly)
+                return Directory.GetFiles(pluginDirectory, "*.dll", SearchOption.TopDirectoryOnly)
                     .Select(Assembly.LoadFrom)
                     .SelectMany(asm => asm.GetExportedTypes())
                     .ToArray();
@@ -92,6 +93,8 @@ namespace Orimath.Plugins
             var args = new PluginArgs(viewArgs.Workspace);
             var types = LoadPluginTypes();
             var setting = LoadSetting(types);
+            LoadedPluginTypes = types.Where(t => t.IsClass && !t.IsAbstract && typeof(IPlugin).IsAssignableFrom(t)).ToArray();
+            LoadedViewPluginTypes = types.Where(t => t.IsClass && !t.IsAbstract && typeof(IViewPlugin).IsAssignableFrom(t)).ToArray();
 
             foreach (var plugin in GetInstances<IPlugin>(types, setting.PluginOrder)) plugin.Execute(args);
             foreach (var plugin in GetInstances<IViewPlugin>(types, setting.ViewPluginOrder)) plugin.Execute(viewArgs);
