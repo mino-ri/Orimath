@@ -22,6 +22,8 @@ type IFunction =
 
 type ITool =
     inherit IFunction
+    abstract member OnActivated : unit -> unit
+    abstract member OnDeactivated : unit -> unit
     abstract member OnClick : target: OperationTarget * modifier: OperationModifier -> unit
     abstract member BeginDrag : source: OperationTarget * modifier: OperationModifier -> bool
     abstract member DragEnter : source: OperationTarget * target: OperationTarget * modifier: OperationModifier -> bool

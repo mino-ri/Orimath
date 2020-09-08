@@ -10,7 +10,7 @@ namespace Orimath.ViewModels
 {
     public class WorkspaceViewModel : NotifyPropertyChanged, IMessenger
     {
-        private const double Scale = 512.0;
+        private const double Scale = 384.0;
         private readonly IWorkspace _workspace;
         private readonly IViewPointConverter _pointConverter = new ViewPointConverter(Scale, -Scale, Scale * 0.5, Scale * 1.5);
         private readonly OrimathDispatcher _dispatcher = new OrimathDispatcher();

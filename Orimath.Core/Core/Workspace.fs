@@ -12,7 +12,13 @@ type Workspace() as this =
     member __.Paper = paper
     member val Tools = tools.AsReadOnly() :> IReadOnlyList<_>
     member val Effects = effects.AsReadOnly() :> IReadOnlyList<_>
-    member __.CurrentTool with get() = currentTool.Value and set v = currentTool.Value <- v
+    member __.CurrentTool
+        with get() = currentTool.Value
+        and set v =
+            if currentTool.Value <> v then
+                currentTool.Value.OnDeactivated()
+                currentTool.Value <- v
+                currentTool.Value.OnActivated()
     member __.AddEffect(effect) =
         if initialized then invalidOp "初期化後にエフェクトを追加することはできません。"
         effects.Add(effect)
@@ -23,6 +29,7 @@ type Workspace() as this =
     member __.Initialize() =
         if initialized then invalidOp "初期化は既に完了しています。"
         currentTool.Value <- tools.[0]
+        currentTool.Value.OnActivated()
         paper.Clear()
         initialized <- true
     member __.CurrentToolChanged = currentTool.ValueChanged

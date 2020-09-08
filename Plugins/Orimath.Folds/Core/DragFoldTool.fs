@@ -127,6 +127,12 @@ type DragFoldTool(workspace: IWorkspace) =
         member __.Name = "折り線"
         member __.ShortcutKey = ""
         member __.Icon = null
+        member __.OnActivated() =
+            paper.SelectedLayers <- array.Empty()
+            paper.SelectedPoints <- array.Empty()
+            paper.SelectedLines <- array.Empty()
+            paper.SelectedEdges <- array.Empty()
+        member __.OnDeactivated() = ()
         member __.OnClick(target, modifier) =
             if not (modifier.HasFlag(OperationModifier.RightButton)) then
                 let clearOther = not (modifier.HasFlag(OperationModifier.Shift))
