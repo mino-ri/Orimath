@@ -26,7 +26,6 @@
     <Compile Include="Plugins\WorkspaceModule.fs" />
     <Compile Include="Plugins\SelectorTool.fs" />
     <Compile Include="Plugins\IPlugin.fs" />
-    <Compile Include="Plugins\OrimathPluginAttribute.fs" />
   </ItemGroup>
 
 </Project>

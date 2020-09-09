@@ -1,9 +1,10 @@
-﻿using Orimath.Plugins;
+﻿using System.ComponentModel;
+using Orimath.Plugins;
 using Orimath.Basics.View.ViewModels;
 
 namespace Orimath.Basics.View
 {
-    [OrimathPlugin("メインビュー", "メイン描画領域。このプラグインを削除すると、折り紙本体が表示されなくなります。")]
+    [DisplayName("メインビュー"), Description("メイン描画領域。このプラグインを削除すると、折り紙本体が表示されなくなります。")]
     public class BasicViewPlugin : IViewPlugin
     {
         public void Execute(ViewPluginArgs args)
@@ -19,7 +20,7 @@ namespace Orimath.Basics.View
         }
     }
 
-    [OrimathPlugin("ツールバー", "画面上部の各種機能が並んだツールバー。")]
+    [DisplayName("ツールバー"), Description("画面上部の各種機能が並んだツールバー。")]
     public class EffectViewPlugin : IViewPlugin
     {
         public void Execute(ViewPluginArgs args)
@@ -28,7 +29,7 @@ namespace Orimath.Basics.View
         }
     }
 
-    [OrimathPlugin("ツールボックス", "画面左のツール切り替えボックス。")]
+    [DisplayName("ツールボックス"), Description("画面左のツール切り替えボックス。")]
     public class ToolViewPlugin : IViewPlugin
     {
         public void Execute(ViewPluginArgs args)
@@ -37,7 +38,7 @@ namespace Orimath.Basics.View
         }
     }
 
-    [OrimathPlugin("計測ビュー", "選択中の点・線の情報を表示します。")]
+    [DisplayName("計測ビュー"), Description("選択中の点・線の情報を表示します。")]
     public class MeasureViewPlugin : IViewPlugin
     {
         public void Execute(ViewPluginArgs args)

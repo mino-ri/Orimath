@@ -1,14 +1,15 @@
 ﻿namespace Orimath.Basics
+open System.ComponentModel
 open Orimath.Plugins
 
-[<OrimathPlugin("基本機能", "アンドゥ・リドゥなど基本的な操作を含みます。")>]
+[<DisplayName("基本機能"); Description("アンドゥ・リドゥなど基本的な操作を含みます。")>]
 type BasicPlugin() =
     interface IPlugin with
         member __.Execute(args) =
             args.Workspace.AddEffect(UndoEffect(args.Workspace))
             args.Workspace.AddEffect(RedoEffect(args.Workspace))
 
-[<OrimathPlugin("紙の新規作成", "「新しい紙」「リセット」コマンドを含みます。")>]
+[<DisplayName("紙の新規作成");  Description("「新しい紙」「リセット」コマンドを含みます。")>]
 type NewPaperPlugin() =
     interface IPlugin with
         member __.Execute(args) =

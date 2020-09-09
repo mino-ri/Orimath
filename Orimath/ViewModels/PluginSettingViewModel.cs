@@ -2,6 +2,7 @@
 using Orimath.Plugins;
 using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Input;
@@ -127,16 +128,12 @@ namespace Orimath.ViewModels
 
         public PluginViewModel(Type pluginType, bool isEnabled)
         {
-            if (pluginType.GetCustomAttribute<OrimathPluginAttribute>() is { } attr)
-            {
-                Name = attr.Name;
-                Description = attr.Description;
-            }
-            else
-            {
-                Name = pluginType.Name;
-                Description = "(No description)";
-            }
+            Name = pluginType.GetCustomAttribute<DisplayNameAttribute>() is { } displayName
+                ? displayName.DisplayName
+                : pluginType.Name;
+            Description = pluginType.GetCustomAttribute<DescriptionAttribute>() is { } description
+                ? description.Description
+                : "(No description)";
 
             FullName = pluginType.FullName!;
             Type = pluginType;
