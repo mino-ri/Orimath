@@ -19,6 +19,8 @@ namespace Orimath.ViewModels
         private readonly ActionCommand _pluginSettingCommand;
         private readonly ObservableCollection<object> _preViewModels = new ObservableCollection<object>();
 
+        private GlobalSetting _setting = new GlobalSetting();
+
         private bool _initialized;
         private object? _dialog;
 
@@ -58,6 +60,14 @@ namespace Orimath.ViewModels
 
         public double ViewSize { get; set; }
 
+        public double Height { get => _setting.Height; set => _setting.Height = value; }
+
+        public double Width { get => _setting.Width; set => _setting.Width = value; }
+
+        public double Left { get => _setting.Left; set => _setting.Left = value; }
+
+        public double Top { get => _setting.Top; set => _setting.Top = value; }
+
         public ICommand CloseDialogCommand => _closeDialogCommand;
 
         public WorkspaceViewModel(IWorkspace workspace)
@@ -87,11 +97,20 @@ namespace Orimath.ViewModels
             };
         }
 
+        public void LoadSetting()
+        {
+            _setting = Settings.Load<GlobalSetting>(SettingName.Global)! ?? new GlobalSetting();
+            ViewSize = _setting.ViewSize * 2.0;
+        }
+
+        public void SaveSetting()
+        {
+            Settings.Save(SettingName.Global, _setting);
+        }
+
         public void Initialize()
         {
-            var setting = Settings.Load<GlobalSetting>(SettingName.Global)! ?? new GlobalSetting();
-            var pointConverter = new ViewPointConverter(setting.ViewSize, -setting.ViewSize, setting.ViewSize * 0.5, setting.ViewSize * 1.5);
-            ViewSize = setting.ViewSize * 2.0;
+            var pointConverter = new ViewPointConverter(_setting.ViewSize, -_setting.ViewSize, _setting.ViewSize * 0.5, _setting.ViewSize * 1.5);
 
             var viewArgs = PluginExecutor.ExecutePlugins(new ViewPluginArgs(
                 _workspace,
@@ -107,8 +126,6 @@ namespace Orimath.ViewModels
 
             _workspace.Initialize();
             _initialized = true;
-
-            _dispatcher.OnUIAsync(() => OnPropertyChanged(nameof(ViewSize)));
         }
 
         private void CreateMenu()

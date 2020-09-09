@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
@@ -16,7 +15,7 @@ namespace Orimath.IO
         public static string GetSettingPath(string fileName) =>
             Path.Combine(SettingDirectory, fileName + ".sssl");
 
-        public static void Save(string fileName, object obj)
+        public static void Save(string fileName, object? obj)
         {
             if (!Directory.Exists(SettingDirectory))
                 Directory.CreateDirectory(SettingDirectory);
