@@ -35,7 +35,7 @@ namespace Orimath.Plugins
 
         private static PluginSetting LoadSetting(Type[] types)
         {
-            Setting = Settings.Load<PluginSetting>("plugins")!;
+            Setting = Settings.Load<PluginSetting>(SettingName.Plugin)!;
             if (Setting is null)
             {
                 Setting = new PluginSetting
@@ -51,7 +51,7 @@ namespace Orimath.Plugins
 
         public static void SaveSetting()
         {
-            Settings.Save("plugins", Setting);
+            Settings.Save(SettingName.Plugin, Setting);
         }
 
         private static string[] GetFullNames<T>(Type[] types)

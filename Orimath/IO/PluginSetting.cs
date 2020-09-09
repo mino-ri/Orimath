@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Orimath.Plugins
+namespace Orimath.IO
 {
-    public class PluginSetting
+    public sealed class PluginSetting
     {
         public string[] PluginOrder { get; set; } = Array.Empty<string>();
 

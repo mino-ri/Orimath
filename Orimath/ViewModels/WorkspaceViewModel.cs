@@ -4,15 +4,14 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using Mvvm;
+using Orimath.IO;
 using Orimath.Plugins;
 
 namespace Orimath.ViewModels
 {
     public class WorkspaceViewModel : NotifyPropertyChanged, IMessenger
     {
-        private const double Scale = 384.0;
         private readonly IWorkspace _workspace;
-        private readonly IViewPointConverter _pointConverter = new ViewPointConverter(Scale, -Scale, Scale * 0.5, Scale * 1.5);
         private readonly OrimathDispatcher _dispatcher = new OrimathDispatcher();
         private readonly Dictionary<IEffect, EffectCommand> _effectCommands = new Dictionary<IEffect, EffectCommand>();
 
@@ -57,6 +56,8 @@ namespace Orimath.ViewModels
 
         public bool RootEnable => !HasDialog && !IsExecuting;
 
+        public double ViewSize { get; set; }
+
         public ICommand CloseDialogCommand => _closeDialogCommand;
 
         public WorkspaceViewModel(IWorkspace workspace)
@@ -88,11 +89,15 @@ namespace Orimath.ViewModels
 
         public void Initialize()
         {
+            var setting = Settings.Load<GlobalSetting>(SettingName.Global)! ?? new GlobalSetting();
+            var pointConverter = new ViewPointConverter(setting.ViewSize, -setting.ViewSize, setting.ViewSize * 0.5, setting.ViewSize * 1.5);
+            ViewSize = setting.ViewSize * 2.0;
+
             var viewArgs = PluginExecutor.ExecutePlugins(new ViewPluginArgs(
                 _workspace,
                 this,
                 _dispatcher,
-                _pointConverter));
+                pointConverter));
 
             foreach (var (viewType, att) in viewArgs)
                 ViewDefinitions[att.ViewModelType] = (att.Pane, viewType);
@@ -102,6 +107,8 @@ namespace Orimath.ViewModels
 
             _workspace.Initialize();
             _initialized = true;
+
+            _dispatcher.OnUIAsync(() => OnPropertyChanged(nameof(ViewSize)));
         }
 
         private void CreateMenu()

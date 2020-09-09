@@ -56,8 +56,8 @@
                           x:Name="MainScrollViewer">
                 <ItemsControl ItemsSource="{Binding MainViewModels, Mode=OneWay}"
                               ItemsPanel="{StaticResource GridItemsPanel}"
-                              Width="1024"
-                              Height="1024"
+                              Width="{Binding ViewSize, Mode=OneWay}"
+                              Height="{Binding ViewSize, Mode=OneWay}"
                               VerticalAlignment="Top"
                               HorizontalAlignment="Left" />
             </ScrollViewer>
