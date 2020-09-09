@@ -8,10 +8,6 @@
              d:DesignHeight="300" d:DesignWidth="400"
              d:DataContext="{d:DesignData Type={x:Type vm:NewPaperDialogViewModel}}">
     <Grid Background="{x:Static Brushes.White}" Margin="8">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*"/>
@@ -21,24 +17,30 @@
         </Grid.RowDefinitions>
         <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Content="紙の作成"
                Background="AliceBlue" />
-        <RadioButton Grid.Row="1" Grid.Column="0" Content="正方形" IsChecked="{Binding IsSquareSelected}" Margin="8" />
-        <RadioButton Grid.Row="2" Grid.Column="0" Content="長方形" IsChecked="{Binding IsRectangleSelected}" Margin="8" />
-        <StackPanel Orientation="Horizontal" Grid.Row="2" Grid.Column="1" Margin="8" IsEnabled="{Binding IsRectangleSelected}">
-            <TextBlock Text="幅: " />
-            <TextBox Width="80" Text="{Binding Width}" Margin="8,0" />
-            <TextBlock Text="× 高さ: " />
-            <TextBox Width="80" Text="{Binding Height}" Margin="8,0" />
-        </StackPanel>
-        <RadioButton Grid.Row="3" Grid.Column="0" Content="多角形" IsChecked="{Binding IsPolygonSelected}" Margin="8" />
-        <DockPanel Grid.Row="3" Grid.Column="1" Margin="8" IsEnabled="{Binding IsPolygonSelected}">
-            <TextBlock DockPanel.Dock="Left" Text="正" />
-            <TextBlock DockPanel.Dock="Left" Width="20" TextAlignment="Right" Text="{Binding NumberOfPolygon}" />
-            <TextBlock DockPanel.Dock="Left" Text="角形" />
-            <Slider Minimum="3" Maximum="12" SmallChange="1" LargeChange="1" Interval="1"
-                    Value="{Binding NumberOfPolygon}"
-                    Margin="8,0" />
-        </DockPanel>
-        <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+        <RadioButton Grid.Row="1" Content="正方形" IsChecked="{Binding IsSquareSelected}" Margin="8" />
+        <RadioButton Grid.Row="2" IsChecked="{Binding IsRectangleSelected}" Margin="8">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock DockPanel.Dock="Left" Text="長方形" Margin="0,0,8,0" />
+                <TextBlock Text="幅: " />
+                <TextBox Width="80" Text="{Binding Width}" Margin="8,0" IsEnabled="{Binding IsRectangleSelected}" />
+                <TextBlock Text="× 高さ: " />
+                <TextBox Width="80" Text="{Binding Height}" Margin="8,0" IsEnabled="{Binding IsRectangleSelected}" />
+            </StackPanel>
+        </RadioButton>
+        <RadioButton Grid.Row="3" IsChecked="{Binding IsPolygonSelected}" Margin="8"
+                     HorizontalContentAlignment="Stretch">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Left" Text="多角形" Margin="0,0,8,0" />
+                <TextBlock DockPanel.Dock="Left" Text="正" />
+                <TextBlock DockPanel.Dock="Left" Width="20" TextAlignment="Right" Text="{Binding NumberOfPolygon}" />
+                <TextBlock DockPanel.Dock="Left" Text="角形" />
+                <Slider IsEnabled="{Binding IsPolygonSelected}"
+                        Minimum="3" Maximum="12" SmallChange="1" LargeChange="1" Interval="1"
+                        Value="{Binding NumberOfPolygon}"
+                        Margin="8,0" />
+            </DockPanel>
+        </RadioButton>
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="紙の作成" Margin="2" IsDefault="True" Command="{Binding ExecuteCommand, Mode=OneTime}" />
             <Button Content="キャンセル" Margin="2" IsCancel="True" Command="{Binding CloseCommand, Mode=OneTime}" />
         </StackPanel>
