@@ -7,15 +7,15 @@
   "targets": {
     ".NETStandard,Version=v2.1": {},
     ".NETStandard,Version=v2.1/": {
-      "Sssl.CSharp/1.0.0": {
+      "Sssl/1.0.0": {
         "runtime": {
-          "Sssl.CSharp.dll": {}
+          "Sssl.dll": {}
         }
       }
     }
   },
   "libraries": {
-    "Sssl.CSharp/1.0.0": {
+    "Sssl/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""
