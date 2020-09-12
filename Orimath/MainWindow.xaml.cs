@@ -20,6 +20,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using ScreenPoint = System.Windows.Point;
 
 namespace Orimath
 {
@@ -31,6 +32,31 @@ namespace Orimath
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void Window_Close(object sender, ExecutedRoutedEventArgs e)
+        {
+            SystemCommands.CloseWindow(this);
+        }
+
+        private void Window_Minimize(object sender, ExecutedRoutedEventArgs e)
+        {
+            SystemCommands.MinimizeWindow(this);
+        }
+
+        private void Window_Maximize(object sender, ExecutedRoutedEventArgs e)
+        {
+            SystemCommands.MaximizeWindow(this);
+        }
+
+        private void Window_Restore(object sender, ExecutedRoutedEventArgs e)
+        {
+            SystemCommands.RestoreWindow(this);
+        }
+
+        private void Window_ShowSystemMenu(object sender, ExecutedRoutedEventArgs e)
+        {
+            SystemCommands.ShowSystemMenu(this, new ScreenPoint(0, 46));
         }
 
         private async void Window_ContentRendered(object sender, EventArgs e)
