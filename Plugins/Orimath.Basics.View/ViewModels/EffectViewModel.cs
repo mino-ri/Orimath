@@ -15,7 +15,9 @@ namespace Orimath.Basics.View.ViewModels
 
         public string ShortcutKey => _effect.ShortcutKey;
 
-        public string ToolTip => $"{Name} ({ShortcutKey})";
+        public string ToolTip => string.IsNullOrWhiteSpace(ShortcutKey)
+            ? Name
+            : $"{Name} ({ShortcutKey})";
 
         public Stream IconStream => _effect.Icon;
 

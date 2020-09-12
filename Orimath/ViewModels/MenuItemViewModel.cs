@@ -8,7 +8,6 @@ namespace Orimath.ViewModels
 {
     public class MenuItemViewModel : NotifyPropertyChanged
     {
-        private static readonly KeyGestureConverter _keyGestureConverter = new KeyGestureConverter();
 
         public string Name { get; }
 
@@ -40,21 +39,8 @@ namespace Orimath.ViewModels
             Name = effect.Name;
             Command = messenger.GetEffectCommand(effect);
             IconStream = effect.Icon;
-            if (!string.IsNullOrEmpty(effect.ShortcutKey))
-            {
-                ShortcutKeyText = effect.ShortcutKey;
-                try
-                {
-                    ShortcutKey = (KeyGesture)_keyGestureConverter.ConvertFromInvariantString(effect.ShortcutKey);
-                }
-#pragma warning disable CA1031
-                catch { }
-#pragma warning restore CA1031
-            }
-            else
-            {
-                ShortcutKeyText = "";
-            }
+            ShortcutKey = Internal.ConvertToKeyGesture(effect.ShortcutKey);
+            ShortcutKeyText = ShortcutKey is { } ? effect.ShortcutKey : "";
         }
     }
 }

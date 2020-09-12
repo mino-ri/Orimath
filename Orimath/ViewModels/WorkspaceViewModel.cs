@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
@@ -34,6 +35,8 @@ namespace Orimath.ViewModels
         public ObservableCollection<object> SideViewModels { get; } = new ObservableCollection<object>();
 
         public ObservableCollection<MenuItemViewModel> MenuItems { get; } = new ObservableCollection<MenuItemViewModel>();
+
+        public Dictionary<KeyGesture, ITool> ToolGestures { get; } = new Dictionary<KeyGesture, ITool>();
 
         public object? Dialog
         {
@@ -98,6 +101,8 @@ namespace Orimath.ViewModels
             };
         }
 
+        public void SelectTool(ITool tool) => _workspace.CurrentTool = tool;
+
         public void LoadSetting()
         {
             _setting = Settings.Load<GlobalSetting>(SettingName.Global)! ?? new GlobalSetting();
@@ -124,6 +129,12 @@ namespace Orimath.ViewModels
 
             foreach (var effect in _workspace.Effects)
                 _effectCommands[effect] = new EffectCommand(effect, _dispatcher, this);
+
+            foreach (var tool in _workspace.Tools)
+            {
+                if (Internal.ConvertToKeyGesture(tool.ShortcutKey) is { } gesture)
+                    ToolGestures[gesture] = tool;
+            }
 
             _workspace.Initialize();
             _initialized = true;

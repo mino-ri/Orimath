@@ -80,6 +80,10 @@ namespace Orimath
             foreach (var menuItem in viewModel.MenuItems)
                 SetShortcutKey(menuItem);
 
+            var selectToolCommand = new SelectToolCommand(viewModel);
+            foreach (var (gesture, tool) in viewModel.ToolGestures)
+                InputBindings.Add(new KeyBinding(selectToolCommand, gesture) { CommandParameter = tool });
+
             await Dispatcher.Yield();
 
             MainScrollViewer.ScrollToVerticalOffset((MainScrollViewer.ExtentHeight - MainScrollViewer.ActualHeight) / 2.0);
