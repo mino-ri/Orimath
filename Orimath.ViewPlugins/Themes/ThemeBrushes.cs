@@ -23,7 +23,7 @@ namespace Orimath.Themes
             var highlightBorder = Solid(168, 100, 0);
             var disabledBack = Solid(242, 242, 242);
             var disabledFore = Solid(166, 166, 166);
-            var hoverBack = Solid(210, 240, 225);
+            var back = Solid(240, 250, 245);
 
             Control = new ThemeBrush
             {
@@ -43,8 +43,8 @@ namespace Orimath.Themes
 
             Workspace = new ThemeBrush
             {
-                Normal = new BrushSet(Solid(240, 250, 245), Brushes.Black, normal),
-                Hovered = new BrushSet(hoverBack, Brushes.Black, hover),
+                Normal = new BrushSet(back, Brushes.Black, normal),
+                Hovered = new BrushSet(Solid(210, 240, 225), Brushes.Black, hover),
                 Highlight = new BrushSet(Solid(255, 215, 155), Brushes.Black, highlightBorder),
                 Disabled = new BrushSet(disabledBack, disabledFore, disabledFore),
             };
@@ -59,9 +59,9 @@ namespace Orimath.Themes
 
             ScrollBar = new ThemeBrush
             {
-                Normal = new BrushSet(hoverBack, normal, null),
-                Hovered = new BrushSet(hoverBack, hoverBack, null),
-                Highlight = new BrushSet(hoverBack, hoverBack, null),
+                Normal = new BrushSet(back, Solid(166, 226, 196), null),
+                Hovered = new BrushSet(back, hover, null),
+                Highlight = new BrushSet(back, normal, null),
                 Disabled = new BrushSet(disabledBack, disabledFore, null),
             };
         }

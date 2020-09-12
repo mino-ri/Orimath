@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ctrl="clr-namespace:Orimath.Controls"
         xmlns:vm="clr-namespace:Orimath.ViewModels"
+        xmlns:th="clr-namespace:Orimath.Themes;assembly=Orimath.ViewPlugins"
         mc:Ignorable="d"
         Title="Orimath"
         Icon="/icon_ho.ico"
@@ -14,6 +15,7 @@
         Left="{Binding Left, Mode=TwoWay}"
         Top="{Binding Top, Mode=TwoWay}"
         Style="{StaticResource MainWindowStyle}"
+        ResizeMode="CanResizeWithGrip"
         SnapsToDevicePixels="True"
         UseLayoutRounding="True"
         ContentRendered="Window_ContentRendered">
@@ -66,11 +68,12 @@
             <ItemsControl DockPanel.Dock="Left"
                           ItemsSource="{Binding SideViewModels, Mode=OneWay}"
                           ItemsPanel="{StaticResource HorizontalItemsPanel}" />
-            <ScrollViewer HorizontalScrollBarVisibility="Auto"
-                          VerticalScrollBarVisibility="Auto"
+            <ScrollViewer HorizontalScrollBarVisibility="Visible"
+                          VerticalScrollBarVisibility="Visible"
                           x:Name="MainScrollViewer">
                 <ItemsControl ItemsSource="{Binding MainViewModels, Mode=OneWay}"
                               ItemsPanel="{StaticResource GridItemsPanel}"
+                              Background="{Binding Path=Normal.Background, Source={x:Static th:ThemeBrushes.Workspace}, Mode=OneTime}"
                               Width="{Binding ViewSize, Mode=OneWay}"
                               Height="{Binding ViewSize, Mode=OneWay}"
                               VerticalAlignment="Top"
@@ -79,9 +82,9 @@
         </DockPanel>
         <Grid Grid.Row="1" Visibility="{Binding HasDialog, Converter={StaticResource BoolVisibleConverter}}"
               Background="#80000000">
-            <Label Content="{Binding Dialog, Mode=OneWay}"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center" />
+            <ContentControl Content="{Binding Dialog, Mode=OneWay}"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center" />
         </Grid>
     </Grid>
 </Window>
