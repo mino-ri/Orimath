@@ -46,7 +46,7 @@ type MeasureTool(workspace: IWorkspace) =
     interface ITool with
         member __.Name = "計測"
         member __.ShortcutKey = "M"
-        member __.Icon = Assembly.GetExecutingAssembly().GetManifestResourceStream("Orimath.Basics.Icon.png")
+        member __.Icon = Assembly.GetExecutingAssembly().GetManifestResourceStream("Orimath.Measure.Icon.png")
         member __.OnActivated() = ()
         member __.OnDeactivated() = ()
         member this.OnClick(_, _) = this.ClearSelection()

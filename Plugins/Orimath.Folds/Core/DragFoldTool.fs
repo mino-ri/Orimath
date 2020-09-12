@@ -127,7 +127,7 @@ type DragFoldTool(workspace: IWorkspace) =
     interface ITool with
         member __.Name = "折り線"
         member __.ShortcutKey = "F"
-        member __.Icon = Assembly.GetExecutingAssembly().GetManifestResourceStream("Orimath.Basics.Icon.png")
+        member __.Icon = Assembly.GetExecutingAssembly().GetManifestResourceStream("Orimath.Folds.Icon.png")
         member __.OnActivated() =
             paper.SelectedLayers <- array.Empty()
             paper.SelectedPoints <- array.Empty()
