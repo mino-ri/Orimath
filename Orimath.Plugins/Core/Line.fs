@@ -90,6 +90,9 @@ type Line = private { A: float; B: float; C: float } with
             then { A = !-a; B = !-b; C = !-c }
             else { A = !+a; B = !+b; C = !+c }
 
+    static member FromFactorsAndPoint(xFactor, yFactor, p) =
+        Line.Create(xFactor, yFactor, -p.X * xFactor - p.Y * yFactor)
+
     [<CompiledName("FromPointsFSharp")>]
     static member FromPoints(p1, p2) =
         if p1 = p2 then None

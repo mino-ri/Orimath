@@ -78,6 +78,9 @@ type LineSegment internal (line: Line, p1: Point, p2: Point) =
     [<CompiledName("YOf")>]
     member this.YOfCSharp(y) = this.YOf(y) |> Option.toNullable
 
+    static member FromFactorsAndPoint(xFactor, yFactor, p) =
+        LineSegment(Line.FromFactorsAndPoint(xFactor, yFactor, p), p, p)
+
     [<CompiledName("FromPointsFSharp")>]
     static member FromPoints(p1, p2) =
         Line.FromPoints(p1, p2)
