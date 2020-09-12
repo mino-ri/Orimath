@@ -13,8 +13,6 @@ Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Orimath.Folds", "Plugins\Or
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{52E052D0-7754-4FB7-87FF-2F0347EEEB01}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Orimath.ViewPlugins", "Orimath.ViewPlugins\Orimath.ViewPlugins.fsproj", "{99B9D74C-AA4D-4E5E-BE78-2A035F6DC8B2}"
-EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Orimath.Basics", "Plugins\Orimath.Basics\Orimath.Basics.fsproj", "{51CB0336-A340-4DDC-A70A-4B345EBD4AE0}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mvvm", "Mvvm\Mvvm.csproj", "{3E853F21-B6B6-4393-A30B-C22D124CEEBB}"
@@ -24,6 +22,8 @@ EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Orimath.FoldingInstruction", "Plugins\Orimath.FoldingInstruction\Orimath.FoldingInstruction.fsproj", "{40D1E5E6-7DF5-4DFE-A262-5251A3DF7651}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orimath.FoldingInstruction.View", "Plugins\Orimath.FoldingInstruction.View\Orimath.FoldingInstruction.View.csproj", "{9962831D-17C4-452A-93C8-4F57E2224B02}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orimath.ViewPlugins", "Orimath.ViewPlugins\Orimath.ViewPlugins.csproj", "{FEA70879-2998-4E8A-AC8F-4BCC1393BE99}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,10 +47,6 @@ Global
 		{68CF77EB-BC78-4AE3-A901-BE4B9A5F52A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{68CF77EB-BC78-4AE3-A901-BE4B9A5F52A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{68CF77EB-BC78-4AE3-A901-BE4B9A5F52A3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{99B9D74C-AA4D-4E5E-BE78-2A035F6DC8B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{99B9D74C-AA4D-4E5E-BE78-2A035F6DC8B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{99B9D74C-AA4D-4E5E-BE78-2A035F6DC8B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{99B9D74C-AA4D-4E5E-BE78-2A035F6DC8B2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{51CB0336-A340-4DDC-A70A-4B345EBD4AE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{51CB0336-A340-4DDC-A70A-4B345EBD4AE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51CB0336-A340-4DDC-A70A-4B345EBD4AE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -71,6 +67,10 @@ Global
 		{9962831D-17C4-452A-93C8-4F57E2224B02}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9962831D-17C4-452A-93C8-4F57E2224B02}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9962831D-17C4-452A-93C8-4F57E2224B02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEA70879-2998-4E8A-AC8F-4BCC1393BE99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEA70879-2998-4E8A-AC8F-4BCC1393BE99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEA70879-2998-4E8A-AC8F-4BCC1393BE99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEA70879-2998-4E8A-AC8F-4BCC1393BE99}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

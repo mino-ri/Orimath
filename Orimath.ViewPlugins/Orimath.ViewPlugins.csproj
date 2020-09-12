@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <RootNamespace>Orimath</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -11,15 +13,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Plugins\IDispatcher.fs" />
-    <Compile Include="Plugins\ViewPointConverter.fs" />
-    <Compile Include="Plugins\IMessenger.fs" />
-    <Compile Include="Plugins\ViewAttribute.fs" />
-    <Compile Include="Plugins\IViewPlugin.fs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Orimath.Plugins\Orimath.Plugins.fsproj" />
   </ItemGroup>
-
 </Project>

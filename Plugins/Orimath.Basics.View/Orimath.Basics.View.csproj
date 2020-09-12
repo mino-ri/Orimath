@@ -18,7 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Mvvm\Mvvm.csproj" />
     <ProjectReference Include="..\..\Orimath.Plugins\Orimath.Plugins.fsproj" />
-    <ProjectReference Include="..\..\Orimath.ViewPlugins\Orimath.ViewPlugins.fsproj" />
+    <ProjectReference Include="..\..\Orimath.ViewPlugins\Orimath.ViewPlugins.csproj" />
     <ProjectReference Include="..\Orimath.Basics\Orimath.Basics.fsproj" />
   </ItemGroup>
 
