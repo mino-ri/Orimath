@@ -29,15 +29,15 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Content="プラグインの設定" Background="AliceBlue" />
+        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Content="プラグインの設定" />
         <TextBlock Grid.Row="1" Grid.Column="0" Margin="8,0" Text="動作プラグイン" />
         <ListBox Grid.Row="2" Grid.Column="0" Margin="8,4,4,4"
                  ItemsSource="{Binding Plugins, Mode=OneTime}"
                  SelectedIndex="{Binding PluginIndex, Mode=TwoWay}"
                  ItemTemplate="{StaticResource PluginItemTemplate}" />
         <StackPanel Grid.Row="2" Grid.Column="1" Margin="0,4,8,4" Orientation="Vertical" VerticalAlignment="Center">
-            <Button Content="▲" Command="{Binding UpPluginCommand, Mode=OneTime}" Padding="4" />
-            <Button Content="▼" Command="{Binding DownPluginCommand, Mode=OneTime}" Padding="4" />
+            <Button Content="▲" Command="{Binding UpPluginCommand, Mode=OneTime}" MinWidth="0" Padding="6" Margin="1" />
+            <Button Content="▼" Command="{Binding DownPluginCommand, Mode=OneTime}" MinWidth="0" Padding="6" Margin="1" />
         </StackPanel>
         <TextBlock Grid.Row="3" Grid.Column="0" Margin="8,0" Text="表示プラグイン" />
         <ListBox Grid.Row="4" Grid.Column="0" Margin="8,4,4,4"
@@ -45,8 +45,8 @@
                  SelectedIndex="{Binding ViewPluginIndex, Mode=TwoWay}"
                  ItemTemplate="{StaticResource PluginItemTemplate}" />
         <StackPanel Grid.Row="4" Grid.Column="1" Margin="0,4,8,4" Orientation="Vertical" VerticalAlignment="Center">
-            <Button Content="▲" Command="{Binding UpViewPluginCommand, Mode=OneTime}" Padding="4" />
-            <Button Content="▼" Command="{Binding DownViewPluginCommand, Mode=OneTime}" Padding="4" />
+            <Button Content="▲" Command="{Binding UpViewPluginCommand, Mode=OneTime}" MinWidth="0" Padding="6" Margin="1" />
+            <Button Content="▼" Command="{Binding DownViewPluginCommand, Mode=OneTime}" MinWidth="0" Padding="6" Margin="1" />
         </StackPanel>
         <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="OK" Width="80" Margin="2" IsDefault="True" Command="{Binding SaveCommand, Mode=OneTime}" />

@@ -15,8 +15,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Content="紙の作成"
-               Background="AliceBlue" />
+        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Content="紙の作成" />
         <RadioButton Grid.Row="1" Content="正方形" IsChecked="{Binding IsSquareSelected}" Margin="8" />
         <RadioButton Grid.Row="2" IsChecked="{Binding IsRectangleSelected}" Margin="8">
             <StackPanel Orientation="Horizontal">

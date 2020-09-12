@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vm="clr-namespace:Orimath.Basics.View.ViewModels"
              xmlns:ctrl="clr-namespace:Orimath.Basics.View.Controls"
+             xmlns:th="clr-namespace:Orimath.Themes;assembly=Orimath.ViewPlugins"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="450"
              d:DataContext="{d:DesignData Type={x:Type vm:ToolListViewModel}}">
@@ -13,13 +14,15 @@
     </UserControl.Resources>
     <ListBox ItemsSource="{Binding Tools, Mode=OneTime}"
              SelectedItem="{Binding CurrentTool, Mode=TwoWay}"
-             Background="{x:Static Brushes.Transparent}"
+             th:ThemeBrush.Theme="{x:Static th:ThemeBrushes.Workspace}"
              BorderThickness="0"
              BorderBrush="{x:Null}">
         <ListBox.ItemContainerStyle>
-            <Style TargetType="ListBoxItem">
+            <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                <Setter Property="Padding" Value="4" />
                 <Setter Property="ToolTip" Value="{Binding ToolTip, Mode=OneTime}" />
                 <Setter Property="Content" Value="{Binding IconStream, Converter={StaticResource IconImageConverter}, Mode=OneTime}" />
+                <Setter Property="th:ThemeBrush.Theme" Value="{x:Static th:ThemeBrushes.Workspace}" />
             </Style>
         </ListBox.ItemContainerStyle>
     </ListBox>

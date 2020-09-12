@@ -26,37 +26,130 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <Border Name="Bd"
-                                CornerRadius="{TemplateBinding ActualHeight, Converter={StaticResource HalfCornerRadius}}"
+                        <Border CornerRadius="{TemplateBinding ActualHeight, Converter={StaticResource HalfCornerRadius}}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 Background="{TemplateBinding Background}"
                                 Padding="{TemplateBinding Padding}"
                                 SnapsToDevicePixels="True">
-                            <ContentPresenter Content="{TemplateBinding Content}" ContentTemplate="{TemplateBinding ContentTemplate}" ContentStringFormat="{TemplateBinding ContentStringFormat}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            <ContentPresenter Content="{TemplateBinding Content}"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                    <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                </Trigger>
+                <Trigger Property="IsKeyboardFocused" Value="True">
+                    <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                    <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Highlight.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                    <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Highlight.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Disabled.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                    <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Disabled.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="{x:Type Label}">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="th:ThemeBrush.Theme" Value="{x:Static th:ThemeBrushes.Control}" />
+            <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+            <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+            <Setter Property="Padding" Value="6,4" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="VerticalContentAlignment" Value="Top" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Label">
+                        <Border BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}"
+                                Padding="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="True">
+                            <ContentPresenter Content="{TemplateBinding Content}"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Disabled.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                    <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Disabled.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style  TargetType="{x:Type TextBox}">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="th:ThemeBrush.Theme" Value="{x:Static th:ThemeBrushes.Input}" />
+            <Setter Property="BorderBrush" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Border, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+            <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+            <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+            <Setter Property="Padding" Value="1" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst" />
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Border Name="Bd"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="2"
+                                Padding="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="True">
+                            <ScrollViewer Name="PART_ContentHost"
+                                          SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" />
                         </Border>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Background, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
-                                <Setter TargetName="Bd" Property="TextElement.Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Foreground, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
-                            </Trigger>
-                            <Trigger Property="IsKeyboardFocused" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Background, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
-                                <Setter TargetName="Bd" Property="TextElement.Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Foreground, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Highlight.Background, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
-                                <Setter TargetName="Bd" Property="TextElement.Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Highlight.Foreground, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="Bd" Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Disabled.Background, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
-                                <Setter TargetName="Bd" Property="TextElement.Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Disabled.Foreground, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
-                            </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Border, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                    <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                    <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                </Trigger>
+                <Trigger Property="IsKeyboardFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="{Binding Path=(th:ThemeBrush.Theme).Highlight.Border, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                    <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Highlight.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                    <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Highlight.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="BorderBrush" Value="{Binding Path=(th:ThemeBrush.Theme).Disabled.Border, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                    <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Disabled.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                    <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Disabled.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                </Trigger>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsInactiveSelectionHighlightEnabled" Value="True" />
+                        <Condition Property="IsSelectionActive" Value="False" />
+                    </MultiTrigger.Conditions>
+                    <Setter Property="SelectionBrush" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" />
+                </MultiTrigger>
+            </Style.Triggers>
         </Style>
+
+        <!-- ToolBar -->
         <Style TargetType="{x:Type ToolBarTray}">
             <Setter Property="Background" Value="{Binding Path=Normal.Background, Source={x:Static th:ThemeBrushes.Workspace}, Mode=OneTime}" />
         </Style>
@@ -213,6 +306,99 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+        </Style>
+
+        <!-- ListBox -->
+        <Style TargetType="{x:Type ListBoxItem}">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="Padding" Value="3,1" />
+            <Setter Property="Background" Value="{x:Static Brushes.Transparent}" />
+            <Setter Property="th:ThemeBrush.Theme" Value="{x:Static th:ThemeBrushes.Selector}" />
+            <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource FindAncestor, AncestorType=ItemsControl, AncestorLevel=1}}" />
+            <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource FindAncestor, AncestorType=ItemsControl, AncestorLevel=1}}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <Border Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True"
+                                Background="{TemplateBinding Background}">
+                            <ContentPresenter Content="{TemplateBinding Content}" 
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                    <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                </Trigger>
+                <Trigger Property="IsKeyboardFocused" Value="True">
+                    <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                    <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                </Trigger>
+                <Trigger Property="Selector.IsSelected" Value="True">
+                    <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Highlight.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                    <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Highlight.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Disabled.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                    <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Disabled.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="{x:Type ListBox}">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="th:ThemeBrush.Theme" Value="{x:Static th:ThemeBrushes.Selector}" />
+            <Setter Property="BorderBrush" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Border, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+            <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="ScrollViewer.PanningMode" Value="VerticalOnly" />
+            <Setter Property="VirtualizingPanel.IsVirtualizing" Value="True" />
+            <Setter Property="VirtualizingPanel.VirtualizationMode" Value="Recycling" />
+            <Setter Property="ItemContainerStyle" Value="{StaticResource {x:Type ListBoxItem}}" />
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <VirtualizingStackPanel Orientation="Vertical" CanVerticallyScroll="True" />
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBox">
+                        <Border BorderThickness="{TemplateBinding Border.BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                Background="{TemplateBinding Background}"
+                                Name="Bd"
+                                SnapsToDevicePixels="True">
+                            <ScrollViewer Padding="{TemplateBinding Control.Padding}">
+                                <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </ScrollViewer>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="BorderBrush" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Border, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                </Trigger>
+                <Trigger Property="IsKeyboardFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="{Binding Path=(th:ThemeBrush.Theme).Highlight.Border, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="BorderBrush" Value="{Binding Path=(th:ThemeBrush.Theme).Disabled.Border, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
         <!-- Menu -->
