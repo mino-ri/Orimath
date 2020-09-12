@@ -1,5 +1,6 @@
 ﻿namespace Orimath.Folds.Core
 open System
+open System.Reflection
 open Orimath.Core
 open Orimath.Core.NearlyEquatable
 open Orimath.FoldingInstruction
@@ -125,8 +126,8 @@ type DragFoldTool(workspace: IWorkspace) =
 
     interface ITool with
         member __.Name = "折り線"
-        member __.ShortcutKey = ""
-        member __.Icon = null
+        member __.ShortcutKey = "F"
+        member __.Icon = Assembly.GetExecutingAssembly().GetManifestResourceStream("Orimath.Basics.Icon.png")
         member __.OnActivated() =
             paper.SelectedLayers <- array.Empty()
             paper.SelectedPoints <- array.Empty()

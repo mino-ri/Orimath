@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Icon.png" />
     <Compile Include="Core\Fold.fs" />
     <Compile Include="Core\DragFoldTool.fs" />
     <Compile Include="FoldsPlugin.fs" />
