@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Input;
 using Mvvm;
@@ -197,11 +198,11 @@ namespace Orimath.ViewModels
 
         public void CloseDialog() => Dialog = null;
 
-        public ICommand? GetEffectCommand(IEffect effect)
+        public ICommand GetEffectCommand(IEffect effect)
         {
             return _effectCommands.TryGetValue(effect, out var command)
                 ? command
-                : null;
+                : null!;
         }
     }
 }

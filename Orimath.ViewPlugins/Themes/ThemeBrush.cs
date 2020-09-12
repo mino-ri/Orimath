@@ -60,13 +60,13 @@ namespace Orimath.Themes
             Foreground = foreground;
             Border = border;
 
-            if (Background.CanFreeze && !Background.IsFrozen)
+            if (Background is { } && Background.CanFreeze && !Background.IsFrozen)
                 Background.Freeze();
 
-            if (Foreground.CanFreeze && !Foreground.IsFrozen)
+            if (Foreground is { } && Foreground.CanFreeze && !Foreground.IsFrozen)
                 Foreground.Freeze();
 
-            if (Border.CanFreeze && !Border.IsFrozen)
+            if (Border is { } && Border.CanFreeze && !Border.IsFrozen)
                 Border.Freeze();
         }
 

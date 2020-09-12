@@ -21,8 +21,7 @@
         </Style>
     </UserControl.Resources>
     <ToolBarTray IsLocked="True">
-        <ToolBar ItemsSource="{Binding Effects, Mode=OneTime}"
-                 Background="{x:Static Brushes.AliceBlue}">
+        <ToolBar ItemsSource="{Binding Effects, Mode=OneTime}">
             <ToolBar.ItemTemplate>
                 <DataTemplate DataType="{x:Type vm:EffectViewModel}">
                     <Button Content="{Binding IconStream, Converter={StaticResource IconImageConverter}, Mode=OneTime}"

@@ -13,6 +13,7 @@
         Height="{Binding Height, Mode=TwoWay}"
         Left="{Binding Left, Mode=TwoWay}"
         Top="{Binding Top, Mode=TwoWay}"
+        Style="{StaticResource MainWindowStyle}"
         SnapsToDevicePixels="True"
         UseLayoutRounding="True"
         ContentRendered="Window_ContentRendered">
@@ -35,19 +36,31 @@
     <Window.InputBindings>
         <KeyBinding Gesture="Escape" Command="{Binding CloseDialogCommand, Mode=OneTime}" />
     </Window.InputBindings>
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static SystemCommands.CloseWindowCommand}" Executed="Window_Close" />
+        <CommandBinding Command="{x:Static SystemCommands.MaximizeWindowCommand}" Executed="Window_Maximize" />
+        <CommandBinding Command="{x:Static SystemCommands.MinimizeWindowCommand}" Executed="Window_Minimize" />
+        <CommandBinding Command="{x:Static SystemCommands.RestoreWindowCommand}" Executed="Window_Restore" />
+        <CommandBinding Command="{x:Static SystemCommands.ShowSystemMenuCommand}" Executed="Window_ShowSystemMenu" />
+    </Window.CommandBindings>
     <Grid>
-        <DockPanel IsEnabled="{Binding HasNotDialog}">
-            <Menu DockPanel.Dock="Top" ItemsSource="{Binding MenuItems}">
-                <Menu.ItemContainerStyle>
-                    <Style TargetType="{x:Type MenuItem}">
-                        <Setter Property="Header" Value="{Binding Name, Mode=OneTime}" />
-                        <Setter Property="Icon" Value="{Binding IconStream, Converter={StaticResource IconImageConverter}, Mode=OneTime}" />
-                        <Setter Property="Command" Value="{Binding Command, Mode=OneTime}" />
-                        <Setter Property="ItemsSource" Value="{Binding Children, Mode=OneTime}" />
-                        <Setter Property="InputGestureText" Value="{Binding ShortcutKeyText, Mode=OneTime}" />
-                    </Style>
-                </Menu.ItemContainerStyle>
-            </Menu>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0" ItemsSource="{Binding MenuItems}">
+            <Menu.ItemContainerStyle>
+                <Style TargetType="{x:Type MenuItem}">
+                    <Setter Property="Header" Value="{Binding Name, Mode=OneTime}" />
+                    <Setter Property="Icon" Value="{Binding IconStream, Converter={StaticResource IconImageConverter}, Mode=OneTime}" />
+                    <Setter Property="Command" Value="{Binding Command, Mode=OneTime}" />
+                    <Setter Property="ItemsSource" Value="{Binding Children, Mode=OneTime}" />
+                    <Setter Property="InputGestureText" Value="{Binding ShortcutKeyText, Mode=OneTime}" />
+                    <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
+                </Style>
+            </Menu.ItemContainerStyle>
+        </Menu>
+        <DockPanel Grid.Row="1" IsEnabled="{Binding HasNotDialog}">
             <ItemsControl DockPanel.Dock="Top"
                           ItemsSource="{Binding TopViewModels, Mode=OneWay}" />
             <ItemsControl DockPanel.Dock="Left"
@@ -64,7 +77,7 @@
                               HorizontalAlignment="Left" />
             </ScrollViewer>
         </DockPanel>
-        <Grid Visibility="{Binding HasDialog, Converter={StaticResource BoolVisibleConverter}}"
+        <Grid Grid.Row="1" Visibility="{Binding HasDialog, Converter={StaticResource BoolVisibleConverter}}"
               Background="#80000000">
             <Label Content="{Binding Dialog, Mode=OneWay}"
                    HorizontalAlignment="Center"

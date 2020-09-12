@@ -13,7 +13,7 @@
     </UserControl.Resources>
     <ListBox ItemsSource="{Binding Tools, Mode=OneTime}"
              SelectedItem="{Binding CurrentTool, Mode=TwoWay}"
-             Background="{x:Static Brushes.AliceBlue}"
+             Background="{x:Static Brushes.Transparent}"
              BorderThickness="0"
              BorderBrush="{x:Null}">
         <ListBox.ItemContainerStyle>

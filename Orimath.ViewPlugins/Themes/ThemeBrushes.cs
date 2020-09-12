@@ -9,6 +9,7 @@ namespace Orimath.Themes
     public static class ThemeBrushes
     {
         public static ThemeBrush Control { get; }
+        public static ThemeBrush CloseButton { get; }
         public static ThemeBrush Workspace { get; }
         public static ThemeBrush Input { get; }
         public static ThemeBrush ScrollBar { get; }
@@ -30,6 +31,14 @@ namespace Orimath.Themes
                 Hovered = new BrushSet(hover, Brushes.White, border),
                 Highlight = new BrushSet(highlight, Brushes.White, highlightBorder),
                 Disabled = new BrushSet(disabledFore, disabledBack, Solid(127, 127, 127)),
+            };
+
+            CloseButton = new ThemeBrush
+            {
+                Normal = Control.Normal,
+                Hovered = new BrushSet(Solid(232, 17, 35), Brushes.White, border),
+                Highlight = Control.Highlight,
+                Disabled = Control.Disabled,
             };
 
             Workspace = new ThemeBrush

@@ -8,7 +8,7 @@
              d:DesignHeight="450" d:DesignWidth="220"
              d:DataContext="{d:DesignData Type={x:Type vm:MeasureViewModel}}"
              Width="220">
-    <StackPanel Background="{x:Static Brushes.AliceBlue}">
+    <StackPanel>
         <StackPanel.Resources>
             <Style TargetType="{x:Type TextBox}">
                 <Setter Property="IsReadOnly" Value="True" />
