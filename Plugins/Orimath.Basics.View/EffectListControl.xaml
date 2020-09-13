@@ -10,25 +10,15 @@
              d:DataContext="{d:DesignData Type={x:Type vm:EffectListViewModel}}">
     <UserControl.Resources>
         <ctrl:IconImageConverter x:Key="IconImageConverter" />
-        <Style TargetType="{x:Type Button}">
-            <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="BorderBrush" Value="{x:Null}" />
-            <Style.Triggers>
-                <Trigger Property="IsEnabled" Value="True">
-                    <Setter Property="Background" Value="{x:Static Brushes.Transparent}" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
     </UserControl.Resources>
-    <ToolBarTray IsLocked="True">
-        <ToolBar ItemsSource="{Binding Effects, Mode=OneTime}">
-            <ToolBar.ItemTemplate>
-                <DataTemplate DataType="{x:Type vm:EffectViewModel}">
-                    <Button Content="{Binding IconStream, Converter={StaticResource IconImageConverter}, Mode=OneTime}"
-                            Command="{Binding EffectCommand, Mode=OneTime}"
-                            ToolTip="{Binding ToolTip, Mode=OneTime}"/>
-                </DataTemplate>
-            </ToolBar.ItemTemplate>
-        </ToolBar>
-    </ToolBarTray>
+    <ToolBar ItemsSource="{Binding Effects, Mode=OneTime}">
+        <ToolBar.ItemTemplate>
+            <DataTemplate DataType="{x:Type vm:EffectViewModel}">
+                <Button Content="{Binding IconStream, Converter={StaticResource IconImageConverter}, Mode=OneTime}"
+                        Command="{Binding EffectCommand, Mode=OneTime}"
+                        ToolTip="{Binding ToolTip, Mode=OneTime}"
+                        Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"/>
+            </DataTemplate>
+        </ToolBar.ItemTemplate>
+    </ToolBar>
 </UserControl>
