@@ -50,9 +50,10 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Menu Grid.Row="0" ItemsSource="{Binding MenuItems}">
+        <Menu Grid.Row="0" ItemsSource="{Binding MenuItems}"
+                           IsEnabled="{Binding HasNotDialog}">
             <Menu.ItemContainerStyle>
-                <Style TargetType="{x:Type MenuItem}">
+                <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource {x:Type MenuItem}}">
                     <Setter Property="Header" Value="{Binding Name, Mode=OneTime}" />
                     <Setter Property="Icon" Value="{Binding IconStream, Converter={StaticResource IconImageConverter}, Mode=OneTime}" />
                     <Setter Property="Command" Value="{Binding Command, Mode=OneTime}" />
@@ -83,6 +84,7 @@
         <Grid Grid.Row="1" Visibility="{Binding HasDialog, Converter={StaticResource BoolVisibleConverter}}"
               Background="#80000000">
             <ContentControl Content="{Binding Dialog, Mode=OneWay}"
+                            IsTabStop="False"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center" />
         </Grid>

@@ -32,7 +32,7 @@ namespace Orimath.Themes
                 Normal = new BrushSet(normal, Brushes.White, border),
                 Hovered = new BrushSet(hover, Brushes.White, border),
                 Highlight = new BrushSet(highlight, Brushes.White, highlightBorder),
-                Disabled = new BrushSet(disabledForeground, disabledBackground, Solid(127, 127, 127)),
+                Disabled = new BrushSet(disabledForeground, Solid(217, 217, 217), Solid(127, 127, 127)),
             };
 
             CloseButton = new ThemeBrush
@@ -69,7 +69,7 @@ namespace Orimath.Themes
 
             ScrollBar = new ThemeBrush
             {
-                Normal = new BrushSet(back, Solid(166, 226, 196), null),
+                Normal = new BrushSet(back, Solid(191, 219, 205), null),
                 Hovered = new BrushSet(back, hover, null),
                 Highlight = new BrushSet(back, normal, null),
                 Disabled = new BrushSet(disabledBackground, Solid(200, 200, 200), null),

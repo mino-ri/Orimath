@@ -56,7 +56,7 @@ namespace Orimath
 
         private void Window_ShowSystemMenu(object sender, ExecutedRoutedEventArgs e)
         {
-            SystemCommands.ShowSystemMenu(this, new ScreenPoint(0, 46));
+            SystemCommands.ShowSystemMenu(this, new ScreenPoint(Left + 2, Top + 28));
         }
 
         private async void Window_ContentRendered(object sender, EventArgs e)

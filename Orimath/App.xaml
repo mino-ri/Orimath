@@ -148,6 +148,139 @@
                 </MultiTrigger>
             </Style.Triggers>
         </Style>
+        <Style TargetType="{x:Type RadioButton}">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="th:ThemeBrush.Theme" Value="{x:Static th:ThemeBrushes.Input}" />
+            <Setter Property="Background" Value="{x:Static Brushes.Transparent}" />
+            <Setter Property="Padding" Value="4,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RadioButton}">
+                        <BulletDecorator Background="{TemplateBinding Background}"
+                                         SnapsToDevicePixels="True">
+                            <BulletDecorator.Bullet>
+                                <Grid Width="14" Height="14" SnapsToDevicePixels="True">
+                                    <Ellipse x:Name="BaseEllipse"
+                                             StrokeThickness="1"
+                                             SnapsToDevicePixels="True"
+                                             Stroke="{Binding Path=(th:ThemeBrush.Theme).Normal.Border, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}"
+                                             Fill="{Binding Path=(th:ThemeBrush.Theme).Normal.Background, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                                    <Ellipse x:Name="CheckMark"
+                                             Height="6"
+                                             Width="6"
+                                             HorizontalAlignment="Center"
+                                             VerticalAlignment="Center"
+                                             Visibility="Collapsed"
+                                             SnapsToDevicePixels="True"
+                                             Fill="{Binding Path=(th:ThemeBrush.Theme).Normal.Foreground, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                                </Grid>
+                            </BulletDecorator.Bullet>
+                            <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              Content="{TemplateBinding Content}" 
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                              RecognizesAccessKey="True" />
+                        </BulletDecorator>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="BaseEllipse" Property="Stroke" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Border, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                                <Setter TargetName="BaseEllipse" Property="Fill" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Background, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                                <Setter TargetName="CheckMark" Property="Fill" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Foreground, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="BaseEllipse" Property="Stroke" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Border, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                                <Setter TargetName="BaseEllipse" Property="Fill" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Background, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                                <Setter TargetName="CheckMark" Property="Fill" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Foreground, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="BaseEllipse" Property="Stroke" Value="{Binding Path=(th:ThemeBrush.Theme).Highlight.Border, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                                <Setter TargetName="BaseEllipse" Property="Fill" Value="{Binding Path=(th:ThemeBrush.Theme).Highlight.Background, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                                <Setter TargetName="CheckMark" Property="Fill" Value="{Binding Path=(th:ThemeBrush.Theme).Highlight.Foreground, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="BaseEllipse" Property="Stroke" Value="{Binding Path=(th:ThemeBrush.Theme).Disabled.Border, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                                <Setter TargetName="BaseEllipse" Property="Fill" Value="{Binding Path=(th:ThemeBrush.Theme).Disabled.Background, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                                <Setter TargetName="CheckMark" Property="Fill" Value="{Binding Path=(th:ThemeBrush.Theme).Disabled.Foreground, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="CheckMark" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="{x:Type CheckBox}">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="th:ThemeBrush.Theme" Value="{x:Static th:ThemeBrushes.Input}" />
+            <Setter Property="Background" Value="{x:Static Brushes.Transparent}" />
+            <Setter Property="Padding" Value="4,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type CheckBox}">
+                        <BulletDecorator Background="{TemplateBinding Background}"
+                                         SnapsToDevicePixels="True">
+                            <BulletDecorator.Bullet>
+                                <Border x:Name="Border"
+                                        Width="14" Height="14"
+                                        SnapsToDevicePixels="True"
+                                        BorderThickness="1"
+                                        BorderBrush="{Binding Path=(th:ThemeBrush.Theme).Normal.Border, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}"
+                                        Background="{Binding Path=(th:ThemeBrush.Theme).Normal.Background, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}">
+                                    <Path Visibility="Collapsed"
+                                          Width="10"
+                                          Height="10"
+                                          x:Name="CheckMark"
+                                          SnapsToDevicePixels="False"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          StrokeLineJoin="Miter"
+                                          Data="M 1,4 L 5,8 L 9,1"
+                                          StrokeThickness="2"
+                                          Stroke="{Binding Path=(th:ThemeBrush.Theme).Normal.Foreground, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                                </Border>
+                            </BulletDecorator.Bullet>
+                            <ContentPresenter Margin="{TemplateBinding Padding}"
+                                              Content="{TemplateBinding Content}" 
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                              RecognizesAccessKey="True" />
+                        </BulletDecorator>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Border, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                                <Setter TargetName="Border" Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Background, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                                <Setter TargetName="CheckMark" Property="Stroke" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Foreground, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Border, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                                <Setter TargetName="Border" Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Background, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                                <Setter TargetName="CheckMark" Property="Stroke" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Foreground, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{Binding Path=(th:ThemeBrush.Theme).Highlight.Border, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                                <Setter TargetName="Border" Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Highlight.Background, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                                <Setter TargetName="CheckMark" Property="Stroke" Value="{Binding Path=(th:ThemeBrush.Theme).Highlight.Foreground, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{Binding Path=(th:ThemeBrush.Theme).Disabled.Border, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                                <Setter TargetName="Border" Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Disabled.Background, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                                <Setter TargetName="CheckMark" Property="Stroke" Value="{Binding Path=(th:ThemeBrush.Theme).Disabled.Foreground, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="CheckMark" Property="Visibility" Value="Visible" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
         <!-- ToolBar -->
         <Style TargetType="{x:Type ToolBarTray}">
@@ -432,7 +565,6 @@
                     <Setter TargetName="Border" Property="TextElement.Foreground" Value="{Binding Path=Hovered.Foreground, Source={x:Static th:ThemeBrushes.Control}, Mode=OneTime}" />
                 </Trigger>
                 <Trigger Property="IsEnabled" Value="False">
-                    <Setter TargetName="Border" Property="Background" Value="{Binding Path=Disabled.Background, Source={x:Static th:ThemeBrushes.Control}, Mode=OneTime}" />
                     <Setter TargetName="Border" Property="TextElement.Foreground" Value="{Binding Path=Disabled.Foreground, Source={x:Static th:ThemeBrushes.Control}, Mode=OneTime}" />
                 </Trigger>
             </ControlTemplate.Triggers>
@@ -481,13 +613,13 @@
                     <Setter TargetName="Border" Property="TextElement.Foreground" Value="{Binding Path=Normal.Foreground, Source={x:Static th:ThemeBrushes.Workspace}, Mode=OneTime}" />
                 </Trigger>
                 <Trigger Property="IsEnabled" Value="False">
-                    <Setter TargetName="Border" Property="Background" Value="{Binding Path=Disabled.Background, Source={x:Static th:ThemeBrushes.Control}, Mode=OneTime}" />
                     <Setter TargetName="Border" Property="TextElement.Foreground" Value="{Binding Path=Disabled.Foreground, Source={x:Static th:ThemeBrushes.Control}, Mode=OneTime}" />
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
         <ControlTemplate TargetType="{x:Type MenuItem}" x:Key="{x:Static MenuItem.SubmenuItemTemplateKey}">
             <Border x:Name="Border"
+                    Padding="{TemplateBinding Padding}"
                     Background="{Binding Path=Normal.Background, Source={x:Static th:ThemeBrushes.Workspace}, Mode=OneTime}"
                     TextElement.Foreground="{Binding Path=Normal.Foreground, Source={x:Static th:ThemeBrushes.Workspace}, Mode=OneTime}">
                 <Grid>
@@ -497,15 +629,15 @@
                         <ColumnDefinition Width="Auto" SharedSizeGroup="Shortcut" />
                         <ColumnDefinition Width="13" />
                     </Grid.ColumnDefinitions>
-                    <ContentPresenter x:Name="Icon" Margin="6,0,6,0" VerticalAlignment="Center" ContentSource="Icon" />
-                    <Border x:Name="Check" Width="13" Height="13" Visibility="Collapsed" Margin="6,0,6,0"
+                    <ContentPresenter x:Name="Icon" Margin="6,0" VerticalAlignment="Center" ContentSource="Icon" />
+                    <Border x:Name="Check" Width="13" Height="13" Visibility="Collapsed" Margin="6,0"
                             Background="{Binding Path=Highlight.Background, Source={x:Static th:ThemeBrushes.Workspace}, Mode=OneTime}">
                         <Path x:Name="CheckMark" Width="7" Height="7" Visibility="Hidden"
                               SnapsToDevicePixels="False" StrokeThickness="2" Data="M 0 0 L 7 7 M 0 7 L 7 0"
                               Stroke="{TemplateBinding Foreground}" />
                     </Border>
                     <ContentPresenter x:Name="HeaderHost" Grid.Column="1" ContentSource="Header" RecognizesAccessKey="True" />
-                    <TextBlock x:Name="InputGestureText" Grid.Column="2" Text="{TemplateBinding InputGestureText}" Margin="5,2,0,2" DockPanel.Dock="Right" />
+                    <TextBlock x:Name="InputGestureText" Grid.Column="2" Text="{TemplateBinding InputGestureText}" Margin="5,0,0,0" DockPanel.Dock="Right" />
                 </Grid>
             </Border>
             <ControlTemplate.Triggers>
@@ -532,6 +664,7 @@
         </ControlTemplate>
         <ControlTemplate TargetType="{x:Type MenuItem}" x:Key="{x:Static MenuItem.SubmenuHeaderTemplateKey}">
             <Border x:Name="Border"
+                    Padding="{TemplateBinding Padding}"
                     Background="{Binding Path=(th:ThemeBrush.Theme).Normal.Background, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}"
                     TextElement.Foreground="{Binding Path=(th:ThemeBrush.Theme).Normal.Foreground, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}">
                 <Grid>
@@ -541,9 +674,9 @@
                         <ColumnDefinition Width="Auto" SharedSizeGroup="Shortcut" />
                         <ColumnDefinition Width="13" />
                     </Grid.ColumnDefinitions>
-                    <ContentPresenter x:Name="Icon" Margin="6,0,6,0" VerticalAlignment="Center" ContentSource="Icon" />
+                    <ContentPresenter x:Name="Icon" Margin="6,0" VerticalAlignment="Center" ContentSource="Icon" />
                     <ContentPresenter x:Name="HeaderHost" Grid.Column="1" ContentSource="Header" RecognizesAccessKey="True" />
-                    <TextBlock x:Name="InputGestureText" Grid.Column="2" Text="{TemplateBinding InputGestureText}" Margin="5,2,2,2" DockPanel.Dock="Right" />
+                    <TextBlock x:Name="InputGestureText" Grid.Column="2" Text="{TemplateBinding InputGestureText}" Margin="5,0,2,0" DockPanel.Dock="Right" />
                     <Path Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center" Data="M 0 0 L 0 7 L 4 3.5 Z"
                           Fill="{Binding Path=(th:ThemeBrush.Theme).Normal.Foreground, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
                     <Popup x:Name="Popup" Placement="Right" IsOpen="{TemplateBinding IsSubmenuOpen}" AllowsTransparency="True"
@@ -584,14 +717,17 @@
         <Style TargetType="{x:Type MenuItem}">
             <Setter Property="OverridesDefaultStyle" Value="True" />
             <Setter Property="Padding" Value="8,3" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
             <Style.Triggers>
                 <Trigger Property="Role" Value="TopLevelHeader">
                     <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.TopLevelHeaderTemplateKey}}" />
+                    <Setter Property="MinHeight" Value="26" />
+                    <Setter Property="VerticalContentAlignment" Value="Center" />
                 </Trigger>
                 <Trigger Property="Role" Value="TopLevelItem">
                     <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.TopLevelItemTemplateKey}}" />
+                    <Setter Property="MinHeight" Value="26" />
+                    <Setter Property="VerticalContentAlignment" Value="Center" />
                 </Trigger>
                 <Trigger Property="Role" Value="SubmenuHeader">
                     <Setter Property="Padding" Value="2,4" />
@@ -608,16 +744,16 @@
             <Setter Property="th:ThemeBrush.Theme" Value="{x:Static th:ThemeBrushes.Control}" />
             <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
             <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
-            <Setter Property="Height" Value="26" />
             <Setter Property="FontFamily" Value="{DynamicResource {x:Static SystemFonts.MenuFontFamilyKey}}" />
             <Setter Property="FontSize" Value="{DynamicResource {x:Static SystemFonts.MenuFontSizeKey}}" />
             <Setter Property="FontStyle" Value="{DynamicResource {x:Static SystemFonts.MenuFontStyleKey}}" />
             <Setter Property="FontWeight" Value="{DynamicResource {x:Static SystemFonts.MenuFontWeightKey}}" />
             <Setter Property="Padding" Value="30,0,138,0" />
+            <Setter Property="MinHeight" Value="26" />
             <Setter Property="ItemsPanel">
                 <Setter.Value>
                     <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal" />
+                        <WrapPanel Orientation="Horizontal" />
                     </ItemsPanelTemplate>
                 </Setter.Value>
             </Setter>

@@ -19,11 +19,11 @@
         <RadioButton Grid.Row="1" Content="正方形" IsChecked="{Binding IsSquareSelected}" Margin="8" />
         <RadioButton Grid.Row="2" IsChecked="{Binding IsRectangleSelected}" Margin="8">
             <StackPanel Orientation="Horizontal">
-                <TextBlock DockPanel.Dock="Left" Text="長方形" Margin="0,0,8,0" />
-                <TextBlock Text="幅: " />
-                <TextBox Width="80" Text="{Binding Width}" Margin="8,0" IsEnabled="{Binding IsRectangleSelected}" />
-                <TextBlock Text="× 高さ: " />
-                <TextBox Width="80" Text="{Binding Height}" Margin="8,0" IsEnabled="{Binding IsRectangleSelected}" />
+                <TextBlock VerticalAlignment="Center" Text="長方形" Margin="0,0,8,0" />
+                <TextBlock VerticalAlignment="Center" Text="幅: " />
+                <TextBox VerticalAlignment="Center" Width="80" Text="{Binding Width}" Margin="8,0" IsEnabled="{Binding IsRectangleSelected}" />
+                <TextBlock VerticalAlignment="Center" Text="× 高さ: " />
+                <TextBox VerticalAlignment="Center" Width="80" Text="{Binding Height}" Margin="8,0" IsEnabled="{Binding IsRectangleSelected}" />
             </StackPanel>
         </RadioButton>
         <RadioButton Grid.Row="3" IsChecked="{Binding IsPolygonSelected}" Margin="8"

@@ -10,8 +10,8 @@
     <UserControl.Resources>
         <DataTemplate DataType="{x:Type vm:PluginViewModel}" x:Key="PluginItemTemplate">
             <DockPanel>
-                <CheckBox DockPanel.Dock="Left" IsChecked="{Binding IsEnabled, Mode=TwoWay}" />
-                <TextBlock Text="{Binding Name, Mode=OneTime}" ToolTip="{Binding Description}" />
+                <CheckBox DockPanel.Dock="Left" VerticalAlignment="Center" IsChecked="{Binding IsEnabled, Mode=TwoWay}" />
+                <TextBlock VerticalAlignment="Center" Text="{Binding Name, Mode=OneTime}" ToolTip="{Binding Description}" />
             </DockPanel>
         </DataTemplate>
     </UserControl.Resources>
