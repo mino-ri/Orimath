@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy $(TargetDir)$(TargetName).* $(ProjectDir)..\..\Orimath\bin\$(ConfigurationName)\netcoreapp3.1\Plugins\" />
+  </Target>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Orimath.Plugins\Orimath.Plugins.fsproj" />
+    <ProjectReference Include="..\..\Orimath.ViewPlugins\Orimath.ViewPlugins.csproj" />
+  </ItemGroup>
+
+</Project>

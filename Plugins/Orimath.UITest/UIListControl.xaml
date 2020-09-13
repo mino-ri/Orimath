@@ -1,0 +1,42 @@
+﻿<UserControl x:Class="Orimath.UITest.UIListControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vm="clr-namespace:Orimath.UITest.ViewModels"
+             xmlns:th="clr-namespace:Orimath.Themes;assembly=Orimath.ViewPlugins"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignData Type={x:Type vm:ControlListViewModel}}">
+    <UserControl.Resources>
+        <vm:HorizontalAlignmentConverter x:Key="horizontalConverter" />
+        <vm:VerticalAlignmentConverter x:Key="verticalConverter" />
+    </UserControl.Resources>
+    <DockPanel Height="400" Width="650"
+               Background="{Binding Path=Normal.Background, Source={x:Static th:ThemeBrushes.Workspace}}">
+        <Label DockPanel.Dock="Top" Content="UIテスト" />
+        <ListBox DockPanel.Dock="Left" Width="250" ItemsSource="{Binding Path=ControlTypes, Mode=OneTime}"
+                 SelectionChanged="ListBox_SelectionChanged">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name, Mode=OneTime}"
+                               ToolTip="{Binding FullName, Mode=OneTime}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <CheckBox Name="Strech" DockPanel.Dock="Top" Content="Strech" Margin="4" />
+        <CheckBox Name="Enabled" DockPanel.Dock="Top" Content="Enabled" IsChecked="True" Margin="4" />
+        <Button Content="閉じる"
+                DockPanel.Dock="Bottom"
+                HorizontalAlignment="Right"
+                Margin="4"
+                Command="{Binding CloseCommand, Mode=OneTime}" />
+        <Border Name="previewHost"
+                BorderBrush="Gray"
+                BorderThickness="1"
+                Margin="4,0"
+                Padding="10"
+                IsEnabled="{Binding IsChecked, ElementName=Enabled, Mode=OneWay}"
+                VerticalAlignment="{Binding IsChecked, ElementName=Strech, Converter={StaticResource verticalConverter}, Mode=OneWay}"
+                HorizontalAlignment="{Binding IsChecked, ElementName=Strech, Converter={StaticResource horizontalConverter}, Mode=OneWay}"/>
+    </DockPanel>
+</UserControl>
