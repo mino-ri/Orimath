@@ -13,6 +13,9 @@
         <ctrl:Double Value="42" x:Key="{x:Static SystemParameters.VerticalScrollBarButtonHeightKey}" />
         <ctrl:Double Value="42" x:Key="{x:Static SystemParameters.HorizontalScrollBarButtonWidthKey}" />
         <ctrl:SubtractionValueConverter Amount="2" x:Key="Minus2Converter" />
+        <th:ThemeBrush x:Key="MenuItemThemeBrush"
+                       BasedOn="{x:Static th:ThemeBrushes.Control}"
+                       Highlight="Workspace.Normal" />
 
         <Style TargetType="{x:Type Button}">
             <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -912,11 +915,11 @@
             </Border>
             <ControlTemplate.Triggers>
                 <Trigger Property="IsHighlighted" Value="true">
-                    <Setter TargetName="Border" Property="Background" Value="{Binding Path=Hovered.Background, Source={x:Static th:ThemeBrushes.Control}, Mode=OneTime}" />
-                    <Setter TargetName="Border" Property="TextElement.Foreground" Value="{Binding Path=Hovered.Foreground, Source={x:Static th:ThemeBrushes.Control}, Mode=OneTime}" />
+                    <Setter TargetName="Border" Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Background, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                    <Setter TargetName="Border" Property="TextElement.Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Foreground, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
                 </Trigger>
                 <Trigger Property="IsEnabled" Value="False">
-                    <Setter TargetName="Border" Property="TextElement.Foreground" Value="{Binding Path=Disabled.Foreground, Source={x:Static th:ThemeBrushes.Control}, Mode=OneTime}" />
+                    <Setter TargetName="Border" Property="TextElement.Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Disabled.Foreground, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
@@ -941,8 +944,7 @@
                     </Border>
                 </Popup>
                 <Border x:Name="Border"
-                        Background="Transparent"
-                        TextElement.Foreground="{TemplateBinding Foreground}"
+                        Background="{TemplateBinding Background}"
                         Padding="{TemplateBinding Padding}"
                         BorderThickness="1,0" BorderBrush="{x:Null}">
                     <StackPanel Orientation="Horizontal">
@@ -955,24 +957,12 @@
                 <Trigger Property="IsSuspendingPopupAnimation" Value="true">
                     <Setter TargetName="Popup" Property="PopupAnimation" Value="None" />
                 </Trigger>
-                <Trigger Property="IsHighlighted" Value="true">
-                    <Setter TargetName="Border" Property="Background" Value="{Binding Path=Hovered.Background, Source={x:Static th:ThemeBrushes.Control}, Mode=OneTime}" />
-                    <Setter TargetName="Border" Property="TextElement.Foreground" Value="{Binding Path=Hovered.Foreground, Source={x:Static th:ThemeBrushes.Control}, Mode=OneTime}" />
-                </Trigger>
-                <Trigger Property="IsSubmenuOpen" Value="True">
-                    <Setter TargetName="Border" Property="Background" Value="{Binding Path=Normal.Background, Source={x:Static th:ThemeBrushes.Workspace}, Mode=OneTime}" />
-                    <Setter TargetName="Border" Property="TextElement.Foreground" Value="{Binding Path=Normal.Foreground, Source={x:Static th:ThemeBrushes.Workspace}, Mode=OneTime}" />
-                </Trigger>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter TargetName="Border" Property="TextElement.Foreground" Value="{Binding Path=Disabled.Foreground, Source={x:Static th:ThemeBrushes.Control}, Mode=OneTime}" />
-                </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
         <ControlTemplate TargetType="{x:Type MenuItem}" x:Key="{x:Static MenuItem.SubmenuItemTemplateKey}">
             <Border x:Name="Border"
                     Padding="{TemplateBinding Padding}"
-                    Background="{Binding Path=Normal.Background, Source={x:Static th:ThemeBrushes.Workspace}, Mode=OneTime}"
-                    TextElement.Foreground="{Binding Path=Normal.Foreground, Source={x:Static th:ThemeBrushes.Workspace}, Mode=OneTime}">
+                    Background="{TemplateBinding Background}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" SharedSizeGroup="Icon" />
@@ -1003,21 +993,12 @@
                     <Setter TargetName="Check" Property="Visibility" Value="Visible" />
                     <Setter TargetName="Icon" Property="Visibility" Value="Hidden" />
                 </Trigger>
-                <Trigger Property="IsHighlighted" Value="true">
-                    <Setter TargetName="Border" Property="Background" Value="{Binding Path=Hovered.Background, Source={x:Static th:ThemeBrushes.Workspace}, Mode=OneTime}" />
-                    <Setter TargetName="Border" Property="TextElement.Foreground" Value="{Binding Path=Hovered.Foreground, Source={x:Static th:ThemeBrushes.Workspace}, Mode=OneTime}" />
-                </Trigger>
-                <Trigger Property="IsEnabled" Value="false">
-                    <Setter TargetName="Border" Property="Background" Value="{Binding Path=Disabled.Background, Source={x:Static th:ThemeBrushes.Workspace}, Mode=OneTime}" />
-                    <Setter TargetName="Border" Property="TextElement.Foreground" Value="{Binding Path=Disabled.Foreground, Source={x:Static th:ThemeBrushes.Workspace}, Mode=OneTime}" />
-                </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
         <ControlTemplate TargetType="{x:Type MenuItem}" x:Key="{x:Static MenuItem.SubmenuHeaderTemplateKey}">
             <Border x:Name="Border"
                     Padding="{TemplateBinding Padding}"
-                    Background="{Binding Path=(th:ThemeBrush.Theme).Normal.Background, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}"
-                    TextElement.Foreground="{Binding Path=(th:ThemeBrush.Theme).Normal.Foreground, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}">
+                    Background="{TemplateBinding Background}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" SharedSizeGroup="Icon" />
@@ -1055,36 +1036,45 @@
                 <Trigger Property="Icon" Value="{x:Null}">
                     <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
                 </Trigger>
-                <Trigger Property="IsHighlighted" Value="true">
-                    <Setter TargetName="Border" Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Background, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
-                    <Setter TargetName="Border" Property="TextElement.Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Foreground, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
-                </Trigger>
-                <Trigger Property="IsEnabled" Value="false">
-                    <Setter TargetName="Border" Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Disabled.Background, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
-                    <Setter TargetName="Border" Property="TextElement.Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Disabled.Foreground, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
-                </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
         <Style TargetType="{x:Type MenuItem}">
             <Setter Property="OverridesDefaultStyle" Value="True" />
             <Setter Property="Padding" Value="8,3" />
             <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
+            <Setter Property="Background" Value="{x:Static Brushes.Transparent}" />
+            <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
             <Style.Triggers>
+                <Trigger Property="IsHighlighted" Value="true">
+                    <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                    <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                </Trigger>
+                <Trigger Property="IsSubmenuOpen" Value="True">
+                    <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Highlight.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                    <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Highlight.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Disabled.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                </Trigger>
                 <Trigger Property="Role" Value="TopLevelHeader">
-                    <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.TopLevelHeaderTemplateKey}}" />
+                    <Setter Property="th:ThemeBrush.Theme" Value="{StaticResource MenuItemThemeBrush}" />
                     <Setter Property="MinHeight" Value="26" />
                     <Setter Property="VerticalContentAlignment" Value="Center" />
+                    <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.TopLevelHeaderTemplateKey}}" />
                 </Trigger>
                 <Trigger Property="Role" Value="TopLevelItem">
-                    <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.TopLevelItemTemplateKey}}" />
+                    <Setter Property="th:ThemeBrush.Theme" Value="{x:Static th:ThemeBrushes.Control}" />
                     <Setter Property="MinHeight" Value="26" />
                     <Setter Property="VerticalContentAlignment" Value="Center" />
+                    <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.TopLevelItemTemplateKey}}" />
                 </Trigger>
                 <Trigger Property="Role" Value="SubmenuHeader">
+                    <Setter Property="th:ThemeBrush.Theme" Value="{x:Static th:ThemeBrushes.Workspace}" />
                     <Setter Property="Padding" Value="2,4" />
                     <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.SubmenuHeaderTemplateKey}}" />
                 </Trigger>
                 <Trigger Property="Role" Value="SubmenuItem">
+                    <Setter Property="th:ThemeBrush.Theme" Value="{x:Static th:ThemeBrushes.Workspace}" />
                     <Setter Property="Padding" Value="2,4" />
                     <Setter Property="Template" Value="{StaticResource {x:Static MenuItem.SubmenuItemTemplateKey}}" />
                 </Trigger>

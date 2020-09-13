@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.ComponentModel;
+using System.Windows;
 using System.Windows.Media;
 
 namespace Orimath.Themes
@@ -13,44 +14,46 @@ namespace Orimath.Themes
 
         public static ThemeBrush Default { get; } = new ThemeBrush();
 
-        private BrushSet _normal;
-        public BrushSet Normal { get => _normal; set => _normal = value ?? BrushSet.Default; }
+        public ThemeBrush? BasedOn { get; set; }
 
-        private BrushSet _hovered;
-        public BrushSet Hovered { get => _hovered; set => _hovered = value ?? BrushSet.Default; }
+        private BrushSet? _normal;
+        public BrushSet Normal { get => _normal ?? BasedOn?.Normal ?? BrushSet.Default; set => _normal = value; }
 
-        private BrushSet _highlight;
-        public BrushSet Highlight { get => _highlight; set => _highlight = value ?? BrushSet.Default; }
+        private BrushSet? _hovered;
+        public BrushSet Hovered { get => _hovered ?? BasedOn?.Hovered ?? BrushSet.Default; set => _hovered = value; }
 
-        private BrushSet _disabled;
-        public BrushSet Disabled { get => _disabled; set => _disabled = value ?? BrushSet.Default; }
+        private BrushSet? _highlight;
+        public BrushSet Highlight { get => _highlight ?? BasedOn?.Highlight ?? BrushSet.Default; set => _highlight = value; }
 
-        public ThemeBrush()
+        private BrushSet? _disabled;
+        public BrushSet Disabled { get => _disabled ?? BasedOn?.Disabled ?? BrushSet.Default; set => _disabled = value; }
+
+        public ThemeBrush() { }
+
+        public ThemeBrush(BrushSet? normal, BrushSet? hovered, BrushSet? highlight, BrushSet? disabled)
         {
-            _normal = BrushSet.Default;
-            _hovered = BrushSet.Default;
-            _highlight = BrushSet.Default;
-            _disabled = BrushSet.Default;
-        }
-
-        public ThemeBrush(BrushSet normal, BrushSet hovered, BrushSet highlight, BrushSet disabled)
-        {
-            _normal = normal ?? BrushSet.Default;
-            _hovered = hovered ?? BrushSet.Default;
-            _highlight = highlight ?? BrushSet.Default;
-            _disabled = disabled ?? BrushSet.Default;
+            _normal = normal;
+            _hovered = hovered;
+            _highlight = highlight;
+            _disabled = disabled;
         }
     }
 
+    [TypeConverter(typeof(BrushSetConverter))]
     public class BrushSet
     {
         public static BrushSet Default { get; } = new BrushSet();
 
-        public Brush? Background { get; set; }
+        public BrushSet? BasedOn { get; set; }
 
-        public Brush? Foreground { get; set; }
+        private Brush? _background;
+        public Brush? Background { get => _background ?? BasedOn?.Background; set => _background = value; }
 
-        public Brush? Border { get; set; }
+        private Brush? _foreGround;
+        public Brush? Foreground { get => _foreGround ?? BasedOn?.Foreground; set => _foreGround = value; }
+
+        private Brush? _border;
+        public Brush? Border { get => _border ?? BasedOn?.Border; set => _border = value; }
 
         public BrushSet() { }
 

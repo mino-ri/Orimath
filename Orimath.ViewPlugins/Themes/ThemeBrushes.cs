@@ -82,5 +82,42 @@ namespace Orimath.Themes
             brush.Freeze();
             return brush;
         }
+
+        internal static ThemeBrush? ResolveThemeBrushPath(string path)
+        {
+            return path switch
+            {
+                nameof(Control) => Control,
+                nameof(CloseButton) => CloseButton,
+                nameof(Workspace) => Workspace,
+                nameof(Input) => Input,
+                nameof(Selector) => Selector,
+                nameof(ScrollBar) => ScrollBar,
+                _ => null,
+            };
+        }
+
+        internal static BrushSet? ResolveBrushSetPath(this ThemeBrush themeBrush, string path)
+        {
+            return path switch
+            {
+                nameof(ThemeBrush.Normal) => themeBrush.Normal,
+                nameof(ThemeBrush.Hovered) => themeBrush.Hovered,
+                nameof(ThemeBrush.Highlight) => themeBrush.Highlight,
+                nameof(ThemeBrush.Disabled) => themeBrush.Disabled,
+                _ => null,
+            };
+        }
+
+        internal static Brush? ResolveBrushPath(this BrushSet brushSet, string path)
+        {
+            return path switch
+            {
+                nameof(BrushSet.Background) => brushSet.Background,
+                nameof(BrushSet.Foreground) => brushSet.Foreground,
+                nameof(BrushSet.Border) => brushSet.Border,
+                _ => null,
+            };
+        }
     }
 }
