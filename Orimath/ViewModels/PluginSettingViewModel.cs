@@ -15,19 +15,15 @@ namespace Orimath.ViewModels
 
         public ObservableCollection<PluginViewModel> Plugins { get; } = new ObservableCollection<PluginViewModel>();
 
-        public ObservableCollection<PluginViewModel> ViewPlugins { get; } = new ObservableCollection<PluginViewModel>();
-
         public PluginSettingViewModel(IMessenger messenger)
         {
             _messenger = messenger;
 
-            SetViewModels(PluginExecutor.LoadedPluginTypes, PluginExecutor.Setting.PluginOrder, Plugins);
-            SetViewModels(PluginExecutor.LoadedViewPluginTypes, PluginExecutor.Setting.ViewPluginOrder, ViewPlugins);
+            SetViewModels(PluginExecutor.LoadedPluginTypes.Concat(PluginExecutor.LoadedViewPluginTypes).ToArray(),
+                          PluginExecutor.Setting.PluginOrder, Plugins);
 
             _upPluginCommand = new ActionCommand(UpPlugin, _ => 1 <= PluginIndex && PluginIndex < Plugins.Count);
             _downPluginCommand = new ActionCommand(DownPlugin, _ => 0 <= PluginIndex && PluginIndex < Plugins.Count - 1);
-            _upViewPluginCommand = new ActionCommand(UpViewPlugin, _ => 1 <= ViewPluginIndex && ViewPluginIndex < ViewPlugins.Count);
-            _downViewPluginCommand = new ActionCommand(DownViewPlugin, _ => 0 <= ViewPluginIndex && ViewPluginIndex < ViewPlugins.Count - 1);
 
             SaveCommand = new ActionCommand(Save);
             CloseCommand = messenger.CloseDialogCommand;
@@ -69,24 +65,9 @@ namespace Orimath.ViewModels
             }
         }
 
-        private int _viewPluginIndex;
-        public int ViewPluginIndex
-        {
-            get => _viewPluginIndex;
-            set
-            {
-                if (SetValue(ref _viewPluginIndex, value))
-                {
-                    _upViewPluginCommand.OnCanExecuteChanged();
-                    _downViewPluginCommand.OnCanExecuteChanged();
-                }
-            }
-        }
-
         public void Save(object? dummy)
         {
             PluginExecutor.Setting.PluginOrder = Plugins.Where(x => x.IsEnabled).Select(x => x.FullName).ToArray();
-            PluginExecutor.Setting.ViewPluginOrder = ViewPlugins.Where(x => x.IsEnabled).Select(x => x.FullName).ToArray();
             PluginExecutor.SaveSetting();
             _messenger.CloseDialog();
         }
@@ -94,10 +75,6 @@ namespace Orimath.ViewModels
         public void UpPlugin(object? dummy) => Plugins.Move(PluginIndex, PluginIndex - 1);
 
         public void DownPlugin(object? dummy) => Plugins.Move(PluginIndex, PluginIndex + 1);
-
-        public void UpViewPlugin(object? dummy) => ViewPlugins.Move(ViewPluginIndex, ViewPluginIndex - 1);
-
-        public void DownViewPlugin(object? dummy) => ViewPlugins.Move(ViewPluginIndex, ViewPluginIndex + 1);
 
         public ICommand SaveCommand { get; }
 
@@ -108,12 +85,6 @@ namespace Orimath.ViewModels
 
         private readonly ActionCommand _downPluginCommand;
         public ICommand DownPluginCommand => _downPluginCommand;
-
-        private readonly ActionCommand _upViewPluginCommand;
-        public ICommand UpViewPluginCommand => _upViewPluginCommand;
-
-        private readonly ActionCommand _downViewPluginCommand;
-        public ICommand DownViewPluginCommand => _downViewPluginCommand;
     }
 
     public class PluginViewModel : NotifyPropertyChanged

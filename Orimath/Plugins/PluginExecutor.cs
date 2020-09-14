@@ -40,8 +40,9 @@ namespace Orimath.Plugins
             {
                 Setting = new PluginSetting
                 {
-                    PluginOrder = GetFullNames<IPlugin>(types),
-                    ViewPluginOrder = GetFullNames<IViewPlugin>(types)
+                    PluginOrder = GetFullNames<IPlugin>(types)
+                        .Concat(GetFullNames<IViewPlugin>(types))
+                        .ToArray(),
                 };
                 SaveSetting();
             }
@@ -63,20 +64,20 @@ namespace Orimath.Plugins
                     .ToArray();
         }
 
-        private static IEnumerable<T> GetInstances<T>(Type[] types, string[] order)
-            where T : class
+        private static void ExecuteCore(string[] order, PluginArgs args, ViewPluginArgs viewArgs)
         {
-            var targetTypes = types
-                .Where(t => t.IsClass && !t.IsAbstract && typeof(T).IsAssignableFrom(t))
-                .ToDictionary(t => t.FullName);
+            var pluginTypes = LoadedPluginTypes.ToDictionary(t => t.FullName);
+            var viewPluginTypes = LoadedViewPluginTypes.ToDictionary(t => t.FullName);
 
             foreach (var fullName in order)
             {
-                if (targetTypes.TryGetValue(fullName, out var type))
-                {
-                    var instance = (T?)Activator.CreateInstance(type);
-                    if (instance is { }) yield return instance;
-                }
+                if (pluginTypes.TryGetValue(fullName, out var type) &&
+                    Activator.CreateInstance(type) is IPlugin plugin)
+                    plugin.Execute(args);
+
+                if (viewPluginTypes.TryGetValue(fullName, out type) &&
+                    Activator.CreateInstance(type) is IViewPlugin viewPlugin)
+                    viewPlugin.Execute(viewArgs);
             }
         }
 
@@ -95,9 +96,7 @@ namespace Orimath.Plugins
             var setting = LoadSetting(types);
             LoadedPluginTypes = types.Where(t => t.IsClass && !t.IsAbstract && typeof(IPlugin).IsAssignableFrom(t)).ToArray();
             LoadedViewPluginTypes = types.Where(t => t.IsClass && !t.IsAbstract && typeof(IViewPlugin).IsAssignableFrom(t)).ToArray();
-
-            foreach (var plugin in GetInstances<IPlugin>(types, setting.PluginOrder)) plugin.Execute(args);
-            foreach (var plugin in GetInstances<IViewPlugin>(types, setting.ViewPluginOrder)) plugin.Execute(viewArgs);
+            ExecuteCore(setting.PluginOrder, args, viewArgs);
 
             return GetViewTypes(types);
         }

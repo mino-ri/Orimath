@@ -4,23 +4,31 @@ using Orimath.Basics.View.ViewModels;
 
 namespace Orimath.Basics.View
 {
-    [DisplayName("メインビュー"), Description("メイン描画領域。このプラグインを削除すると、折り紙本体が表示されなくなります。")]
+    [DisplayName("ビュー: 折り紙"), Description("メイン描画領域。このプラグインを削除すると、折り紙本体が表示されなくなります。")]
     public class BasicViewPlugin : IViewPlugin
     {
         public void Execute(ViewPluginArgs args)
         {
             args.Messenger.AddViewModel(new WorkspaceViewModel(args.Workspace, args.PointConverter, args.Dispatcher));
-            
-            if (args.Workspace.GetEffectOrDefault<NewPaperEffect>() is { } newPaper)
-            {
-                newPaper.OnExecute += (sender, e) =>
-                    args.Dispatcher.OnUIAsync(() =>
-                        args.Messenger.OpenDialog(new NewPaperDialogViewModel(args.Messenger, args.Dispatcher, newPaper.Executor)));
-            }
         }
     }
 
-    [DisplayName("ツールバー"), Description("画面上部の各種機能が並んだツールバー。")]
+    [DisplayName("コマンド: 紙の新規作成"), Description("「新しい紙」「リセット」コマンドを含みます。")]
+    public class NewPaperPlugin : IViewPlugin
+    {
+        public void Execute(ViewPluginArgs args)
+        {
+            var newPaperExecutor = new NewPaperExecutor(args.Workspace);
+            var effect = new NewPaperEffect(newPaperExecutor);
+            args.Workspace.AddEffect(newPaperExecutor.NewPaperEffect);
+            args.Workspace.AddEffect(effect);
+            effect.OnExecute += (sender, e) =>
+                args.Dispatcher.OnUIAsync(() =>
+                    args.Messenger.OpenDialog(new NewPaperDialogViewModel(args.Messenger, args.Dispatcher, effect.Executor)));
+        }
+    }
+
+    [DisplayName("ビュー: ツールバー"), Description("画面上部の各種機能が並んだツールバー。")]
     public class EffectViewPlugin : IViewPlugin
     {
         public void Execute(ViewPluginArgs args)
@@ -29,7 +37,7 @@ namespace Orimath.Basics.View
         }
     }
 
-    [DisplayName("ツールボックス"), Description("画面左のツール切り替えボックス。")]
+    [DisplayName("ビュー: ツールボックス"), Description("画面左のツール切り替えボックス。")]
     public class ToolViewPlugin : IViewPlugin
     {
         public void Execute(ViewPluginArgs args)
@@ -38,7 +46,7 @@ namespace Orimath.Basics.View
         }
     }
 
-    [DisplayName("計測ビュー"), Description("選択中の点・線の情報を表示します。")]
+    [DisplayName("ビュー: 計測"), Description("選択中の点・線の情報を表示します。")]
     public class MeasureViewPlugin : IViewPlugin
     {
         public void Execute(ViewPluginArgs args)

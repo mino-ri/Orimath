@@ -15,12 +15,14 @@
             </DockPanel>
         </DataTemplate>
     </UserControl.Resources>
+    <UserControl.InputBindings>
+        <KeyBinding Gesture="Alt+Up" Command="{Binding UpPluginCommand, Mode=OneTime}" />
+        <KeyBinding Gesture="Alt+Down" Command="{Binding DownPluginCommand, Mode=OneTime}" />
+    </UserControl.InputBindings>
     <Grid Background="{x:Static Brushes.White}" Margin="8"
           MinWidth="400">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
@@ -30,25 +32,16 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Content="プラグインの設定" />
-        <TextBlock Grid.Row="1" Grid.Column="0" Margin="8,0" Text="動作プラグイン" />
+        <TextBlock Grid.Row="1" Grid.Column="0" Margin="8,0" Text="ON/OFFと読み込み順" />
         <ListBox Grid.Row="2" Grid.Column="0" Margin="8,4,4,4"
                  ItemsSource="{Binding Plugins, Mode=OneTime}"
                  SelectedIndex="{Binding PluginIndex, Mode=TwoWay}"
                  ItemTemplate="{StaticResource PluginItemTemplate}" />
         <StackPanel Grid.Row="2" Grid.Column="1" Margin="0,4,8,4" Orientation="Vertical" VerticalAlignment="Center">
-            <Button Content="▲" Command="{Binding UpPluginCommand, Mode=OneTime}" MinWidth="0" Padding="6" Margin="1" />
-            <Button Content="▼" Command="{Binding DownPluginCommand, Mode=OneTime}" MinWidth="0" Padding="6" Margin="1" />
+            <Button Content="▲" Command="{Binding UpPluginCommand, Mode=OneTime}" MinWidth="0" Padding="6" Margin="1" ToolTip="上へ(Alt + ↑)" />
+            <Button Content="▼" Command="{Binding DownPluginCommand, Mode=OneTime}" MinWidth="0" Padding="6" Margin="1" ToolTip="下へ(Alt + ↓)" />
         </StackPanel>
-        <TextBlock Grid.Row="3" Grid.Column="0" Margin="8,0" Text="表示プラグイン" />
-        <ListBox Grid.Row="4" Grid.Column="0" Margin="8,4,4,4"
-                 ItemsSource="{Binding ViewPlugins, Mode=OneTime}"
-                 SelectedIndex="{Binding ViewPluginIndex, Mode=TwoWay}"
-                 ItemTemplate="{StaticResource PluginItemTemplate}" />
-        <StackPanel Grid.Row="4" Grid.Column="1" Margin="0,4,8,4" Orientation="Vertical" VerticalAlignment="Center">
-            <Button Content="▲" Command="{Binding UpViewPluginCommand, Mode=OneTime}" MinWidth="0" Padding="6" Margin="1" />
-            <Button Content="▼" Command="{Binding DownViewPluginCommand, Mode=OneTime}" MinWidth="0" Padding="6" Margin="1" />
-        </StackPanel>
-        <StackPanel Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+        <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="OK" Width="80" Margin="2" IsDefault="True" Command="{Binding SaveCommand, Mode=OneTime}" />
             <Button Content="キャンセル" Width="80" Margin="2" IsCancel="True" Command="{Binding CloseCommand, Mode=OneTime}" />
         </StackPanel>

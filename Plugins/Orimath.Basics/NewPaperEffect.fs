@@ -28,7 +28,7 @@ type NewPaperExecutor(workspace: IWorkspace) =
             workspace.Paper.Clear(workspace.CreatePaper([| workspace.CreateLayerFromPolygon(vertexes) |]))
         | _ -> ()
 
-    member internal this.NewPaperEffect =
+    member this.NewPaperEffect =
         { new IEffect with
             member __.MenuHieralchy = [| "編集" |]
             member __.Name = "すべて削除"
