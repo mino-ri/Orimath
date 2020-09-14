@@ -56,7 +56,10 @@ namespace Orimath
 
         private void Window_ShowSystemMenu(object sender, ExecutedRoutedEventArgs e)
         {
-            SystemCommands.ShowSystemMenu(this, new ScreenPoint(Left + 2, Top + 28));
+            if (!(e.OriginalSource is FrameworkElement source)) return;
+            var position = source.PointToScreen(new ScreenPoint(0d, source.ActualHeight));
+            var dpi = VisualTreeHelper.GetDpi(this);
+            SystemCommands.ShowSystemMenu(this, new ScreenPoint(position.X / dpi.DpiScaleX, position.Y / dpi.DpiScaleY));
         }
 
         private async void Window_ContentRendered(object sender, EventArgs e)
