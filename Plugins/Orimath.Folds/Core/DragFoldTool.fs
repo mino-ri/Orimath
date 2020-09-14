@@ -134,6 +134,8 @@ type DragFoldTool(workspace: IWorkspace) =
             paper.SelectedLines <- array.Empty()
             paper.SelectedEdges <- array.Empty()
         member __.OnDeactivated() = ()
+
+    interface IClickTool with
         member __.OnClick(target, modifier) =
             if not (modifier.HasFlag(OperationModifier.RightButton)) then
                 let clearOther = not (modifier.HasFlag(OperationModifier.Shift))
@@ -161,7 +163,8 @@ type DragFoldTool(workspace: IWorkspace) =
                     paper.SelectedLines <- array.Empty()
                     paper.SelectedEdges <- array.Empty()
 
-        member __.BeginDrag(source, modifier) =
+    interface IDragTool with
+        member __.BeginDrag(source, _) =
             match source with
             | FreePoint true _ | LineOrEdge _ -> true
             | _ -> false
@@ -203,7 +206,7 @@ type DragFoldTool(workspace: IWorkspace) =
             | FreePoint true _ | LineOrEdge _ -> true
             | _ -> false
 
-        member this.DragOver(source, target, modifier) = (this :> ITool).DragEnter(source, target, modifier)
+        member this.DragOver(source, target, modifier) = (this :> IDragTool).DragEnter(source, target, modifier)
 
         member this.Drop(source, target, modifier) =
             let opr = this.GetOperation(source, target, modifier)

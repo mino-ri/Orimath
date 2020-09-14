@@ -24,7 +24,13 @@ type ITool =
     inherit IFunction
     abstract member OnActivated : unit -> unit
     abstract member OnDeactivated : unit -> unit
+
+type IClickTool =
+    inherit ITool
     abstract member OnClick : target: OperationTarget * modifier: OperationModifier -> unit
+    
+type IDragTool =
+    inherit ITool
     abstract member BeginDrag : source: OperationTarget * modifier: OperationModifier -> bool
     abstract member DragEnter : source: OperationTarget * target: OperationTarget * modifier: OperationModifier -> bool
     abstract member DragLeave : source: OperationTarget * target: OperationTarget * modifier: OperationModifier -> bool

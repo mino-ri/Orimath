@@ -59,7 +59,11 @@ type SelectorTool(workspace: IWorkspace) =
         member this.Icon = this.Icon
         member this.OnActivated() = this.OnActivated()
         member this.OnDeactivated() = this.OnDeactivated()
+
+    interface IClickTool with
         member this.OnClick(target, modifier) = this.OnClick(target, modifier)
+
+    interface IDragTool with
         member this.BeginDrag(source, modifier) = this.BeginDrag(source, modifier)
         member this.DragEnter(source, target, modifier) = this.DragEnter(source, target, modifier)
         member this.DragLeave(source, target, modifier) = this.DragLeave(source, target, modifier)

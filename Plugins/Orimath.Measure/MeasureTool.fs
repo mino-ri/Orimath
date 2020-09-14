@@ -47,9 +47,13 @@ type MeasureTool(workspace: IWorkspace) =
         member __.Name = "計測"
         member __.ShortcutKey = "Ctrl+M"
         member __.Icon = Assembly.GetExecutingAssembly().GetManifestResourceStream("Orimath.Measure.Icon.png")
-        member __.OnActivated() = ()
+        member this.OnActivated() = this.ClearSelection()
         member __.OnDeactivated() = ()
+
+    interface IClickTool with
         member this.OnClick(_, _) = this.ClearSelection()
+
+    interface IDragTool with
         member __.BeginDrag(source, _) =
             match source with
             | FreePoint _ | LineOrEdge _ -> true

@@ -25,23 +25,29 @@ namespace Orimath.Basics.View.ViewModels
             return new OperationTarget(_pointConverter.ViewToModel(target.Point), target.Target);
         }
 
-        public void OnClick(ScreenOperationTarget target, OperationModifier modifier) =>
-            _dispatcher.OnBackgroundAsync(() => _workspace.CurrentTool.OnClick(ToModelTarget(target), modifier));
+        public void OnClick(ScreenOperationTarget target, OperationModifier modifier)
+        {
+            if (_workspace.CurrentTool is IClickTool tool)
+                _dispatcher.OnBackgroundAsync(() => tool.OnClick(ToModelTarget(target), modifier));
+        }
 
         public bool BeginDrag(ScreenOperationTarget source, OperationModifier modifier) =>
-            _workspace.CurrentTool.BeginDrag(ToModelTarget(source), modifier);
+             (_workspace.CurrentTool as IDragTool)?.BeginDrag(ToModelTarget(source), modifier) ?? false;
 
         public bool DragEnter(ScreenOperationTarget source, ScreenOperationTarget target, OperationModifier modifier) =>
-            _workspace.CurrentTool.DragEnter(ToModelTarget(source), ToModelTarget(target), modifier);
+            (_workspace.CurrentTool as IDragTool)?.DragEnter(ToModelTarget(source), ToModelTarget(target), modifier) ?? false;
 
         public void DragLeave(ScreenOperationTarget source, ScreenOperationTarget target, OperationModifier modifier) =>
-            _workspace.CurrentTool.DragLeave(ToModelTarget(source), ToModelTarget(target), modifier);
+            (_workspace.CurrentTool as IDragTool)?.DragLeave(ToModelTarget(source), ToModelTarget(target), modifier);
 
         public void DragOver(ScreenOperationTarget source, ScreenOperationTarget target, OperationModifier modifier) =>
-            _workspace.CurrentTool.DragOver(ToModelTarget(source), ToModelTarget(target), modifier);
+            (_workspace.CurrentTool as IDragTool)?.DragOver(ToModelTarget(source), ToModelTarget(target), modifier);
 
-        public void Drop(ScreenOperationTarget source, ScreenOperationTarget target, OperationModifier modifier) =>
-            _dispatcher.OnBackgroundAsync(() => _workspace.CurrentTool.Drop(ToModelTarget(source), ToModelTarget(target), modifier));
+        public void Drop(ScreenOperationTarget source, ScreenOperationTarget target, OperationModifier modifier)
+        {
+            if (_workspace.CurrentTool is IDragTool tool)
+                _dispatcher.OnBackgroundAsync(() => tool.Drop(ToModelTarget(source), ToModelTarget(target), modifier));
+        }
     }
 
     public class ScreenOperationTarget
