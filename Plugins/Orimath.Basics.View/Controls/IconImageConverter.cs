@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Mvvm;
 
 namespace Orimath.Basics.View.Controls
 {
@@ -38,7 +39,7 @@ namespace Orimath.Basics.View.Controls
                     source.StreamSource = stream;
                     source.EndInit();
 
-                    return new Image
+                    return new AutoDisableImage
                     {
                         Source = source,
                         Stretch = Stretch.Uniform,
@@ -49,7 +50,7 @@ namespace Orimath.Basics.View.Controls
             }
             else
             {
-                return new Image
+                return new AutoDisableImage
                 {
                     Source = _source,
                     Stretch = Stretch.Uniform,
