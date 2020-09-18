@@ -65,6 +65,10 @@ namespace Orimath
         private async void Window_ContentRendered(object sender, EventArgs e)
         {
             await Dispatcher.Yield();
+            SetIcon();
+
+            await Dispatcher.Yield();
+
             var viewModel = (WorkspaceViewModel)DataContext;
             await Task.Run(viewModel.Initialize);
 
@@ -99,6 +103,29 @@ namespace Orimath
 
                 foreach (var child in menuItem.Children)
                     SetShortcutKey(child);
+            }
+        }
+
+        private void SetIcon()
+        {
+            if (Template.FindName("IconImage", this) is Image image)
+            {
+                var decoder = BitmapDecoder.Create(
+                    new Uri("pack://application:,,,/Orimath;component/icon_ho.ico"),
+                    BitmapCreateOptions.None,
+                    BitmapCacheOption.OnLoad);
+                var dpi = VisualTreeHelper.GetDpi(this);
+                var screenWidth = (int)(16.0 * dpi.DpiScaleX);
+
+                var targetIcon = decoder.Frames
+                    .Where(x => x.PixelWidth >= screenWidth)
+                    .OrderBy(x => x.PixelWidth)
+                    .FirstOrDefault()
+                    ?? decoder.Frames
+                    .OrderByDescending(x => x.PixelWidth)
+                    .First();
+
+                image.Source = targetIcon;
             }
         }
     }

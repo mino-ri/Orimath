@@ -1195,8 +1195,7 @@
                                                 Command="{x:Static SystemCommands.ShowSystemMenuCommand}"
                                                 VerticalAlignment="Top"
                                                 HorizontalAlignment="Left">
-                                            <Image Source="{TemplateBinding Icon}"
-                                                   Width="16" Height="16" />
+                                            <Image x:Name="IconImage" Width="16" Height="16" />
                                         </Button>
                                         <StackPanel Orientation="Horizontal"
                                                     VerticalAlignment="Top"
