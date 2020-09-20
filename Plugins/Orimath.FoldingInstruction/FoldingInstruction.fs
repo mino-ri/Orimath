@@ -101,16 +101,16 @@ type FoldingInstruction() as this =
     let mutable lines = ReactiveProperty.createArray<InstructionLine> this
     let mutable arrows = ReactiveProperty.createArray<InstructionArrow> this
 
-    member __.Lines
+    member _.Lines
         with get() = lines.Value
         and set(v) = lines.Value <- v
 
-    member __.Arrows
+    member _.Arrows
         with get() = arrows.Value
         and set(v) = arrows.Value <- v
 
     [<CLIEvent>]
-    member __.LinesChanged = lines.ValueChanged
+    member _.LinesChanged = lines.ValueChanged
 
     [<CLIEvent>]
-    member __.ArrowsChanged = arrows.ValueChanged
+    member _.ArrowsChanged = arrows.ValueChanged

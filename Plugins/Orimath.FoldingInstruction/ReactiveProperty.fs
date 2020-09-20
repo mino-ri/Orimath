@@ -5,14 +5,14 @@ type internal ReactiveProperty<'T> (sender: obj, init: 'T, eqComparer: 'T -> 'T 
     let mutable value = init
     let valueChanged = Event<EventHandler, EventArgs>()
     
-    member __.Value
+    member _.Value
         with get() = value
         and set v =
             if not (eqComparer value v) then
                 value <- v
                 valueChanged.Trigger(sender, EventArgs())
 
-    member __.ValueChanged = valueChanged.Publish
+    member _.ValueChanged = valueChanged.Publish
 
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module internal ReactiveProperty =

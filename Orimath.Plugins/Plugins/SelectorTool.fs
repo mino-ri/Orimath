@@ -14,17 +14,17 @@ type SelectorTool(workspace: IWorkspace) =
     abstract member DragOver : source: OperationTarget * target: OperationTarget * modifier: OperationModifier -> bool
     abstract member Drop : source: OperationTarget * target: OperationTarget * modifier: OperationModifier -> unit
 
-    default __.Name = "選択"
-    default __.ShortcutKey = ""
-    default __.Icon = null
-    default __.OnActivated() = ()
-    default __.OnDeactivated() = ()
-    default __.BeginDrag(_, _) = false
-    default __.DragEnter(_, _, _) = false
-    default __.DragLeave(_, _, _) = false
-    default __.DragOver(_, _, _) = false
-    default __.Drop(_, _, _) = ()
-    default __.OnClick(target, modifier) =
+    default _.Name = "選択"
+    default _.ShortcutKey = ""
+    default _.Icon = null
+    default _.OnActivated() = ()
+    default _.OnDeactivated() = ()
+    default _.BeginDrag(_, _) = false
+    default _.DragEnter(_, _, _) = false
+    default _.DragLeave(_, _, _) = false
+    default _.DragOver(_, _, _) = false
+    default _.Drop(_, _, _) = ()
+    default _.OnClick(target, modifier) =
         if modifier = OperationModifier.None then
             match target.Target with
             |DisplayTarget.None ->

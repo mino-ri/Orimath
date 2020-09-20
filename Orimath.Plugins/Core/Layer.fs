@@ -9,8 +9,8 @@ type ILayer =
     abstract member Points : IReadOnlyList<Point>
 
 and Edge private (line: LineSegment, layer: ILayer option) =
-    member __.Line = line
-    member __.Layer = layer
+    member _.Line = line
+    member _.Layer = layer
 
     static member Create(line: LineSegment, layer: ILayer option) =
         match layer with

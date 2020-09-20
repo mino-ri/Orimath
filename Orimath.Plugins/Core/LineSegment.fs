@@ -3,11 +3,11 @@ open System.Diagnostics.CodeAnalysis
 open NearlyEquatable
 
 type LineSegment internal (line: Line, p1: Point, p2: Point) =
-    member __.Line = line
-    member __.Point1 = p1
-    member __.Point2 = p2
+    member _.Line = line
+    member _.Point1 = p1
+    member _.Point2 = p2
     
-    member __.Length = (p1 - p2).Norm
+    member _.Length = (p1 - p2).Norm
 
     interface INearlyEquatable<LineSegment> with
         member this.NearlyEquals(other, margin) =

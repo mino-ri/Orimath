@@ -2,10 +2,10 @@
 open System.Collections.Generic
 
 type Paper private (layers: Layer list) =
-    member __.Layers = layers
+    member _.Layers = layers
 
     interface IPaper with
-        member __.Layers = layers :> IReadOnlyList<Layer> :?> IReadOnlyList<ILayer>
+        member _.Layers = layers :> IReadOnlyList<Layer> :?> IReadOnlyList<ILayer>
 
     static member Create(layers: seq<ILayer>) =
         let layers = layers |> Seq.map Layer.AsLayer |> Seq.toList

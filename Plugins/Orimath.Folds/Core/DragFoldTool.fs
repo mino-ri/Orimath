@@ -32,7 +32,7 @@ type DragFoldTool(workspace: IWorkspace) =
         | DisplayTarget.Edge(edge) -> Some(edge.Line.Line, dt.Point)
         | _ -> None
 
-    member private __.GetPass() =
+    member private _.GetPass() =
         let passPoint = Array.tryItem 0 paper.SelectedPoints
         let passLine =
             if paper.SelectedEdges.Length > 0
@@ -61,7 +61,7 @@ type DragFoldTool(workspace: IWorkspace) =
                 | _ -> AxiomP(fst line, point)
             | _ -> NoOperation
         
-    member private __.GetLines(opr) =
+    member private _.GetLines(opr) =
         match opr with
         | NoOperation -> []
         | Axiom1(point1, point2) -> Fold.axiom1 point1 point2 |> Option.toList
@@ -73,7 +73,7 @@ type DragFoldTool(workspace: IWorkspace) =
         | Axiom7(pass, line, point) -> Fold.axiom7 pass line point |> Option.toList
         | AxiomP(line, point) -> Fold.axiomP line point |> Option.toList
 
-    member private __.ChooseLine(lines: Line list, opr: FoldOperation) =
+    member private _.ChooseLine(lines: Line list, opr: FoldOperation) =
         match lines with
         | [] -> None
         | [l] -> Some(l)
@@ -96,7 +96,7 @@ type DragFoldTool(workspace: IWorkspace) =
                 Some(lines |> List.minBy(fun line -> point1.GetDistance(line.Reflect(point2))))
             | _ -> Some(lines.[0])
 
-    member private __.SetArrow(source: OperationTarget, target: OperationTarget, chosen: Line, opr: FoldOperation) =
+    member private _.SetArrow(source: OperationTarget, target: OperationTarget, chosen: Line, opr: FoldOperation) =
         instruction.Arrows <-
             match opr with
             | NoOperation -> Array.Empty()
@@ -125,18 +125,18 @@ type DragFoldTool(workspace: IWorkspace) =
                 | _ -> [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Blue) |]
 
     interface ITool with
-        member __.Name = "折り線"
-        member __.ShortcutKey = "Ctrl+F"
-        member __.Icon = Assembly.GetExecutingAssembly().GetManifestResourceStream("Orimath.Folds.Icon.png")
-        member __.OnActivated() =
+        member _.Name = "折り線"
+        member _.ShortcutKey = "Ctrl+F"
+        member _.Icon = Assembly.GetExecutingAssembly().GetManifestResourceStream("Orimath.Folds.Icon.png")
+        member _.OnActivated() =
             paper.SelectedLayers <- array.Empty()
             paper.SelectedPoints <- array.Empty()
             paper.SelectedLines <- array.Empty()
             paper.SelectedEdges <- array.Empty()
-        member __.OnDeactivated() = ()
+        member _.OnDeactivated() = ()
 
     interface IClickTool with
-        member __.OnClick(target, modifier) =
+        member _.OnClick(target, modifier) =
             if not (modifier.HasFlag(OperationModifier.RightButton)) then
                 let clearOther = not (modifier.HasFlag(OperationModifier.Shift))
                 match target.Target with
@@ -164,7 +164,7 @@ type DragFoldTool(workspace: IWorkspace) =
                     paper.SelectedEdges <- array.Empty()
 
     interface IDragTool with
-        member __.BeginDrag(source, _) =
+        member _.BeginDrag(source, _) =
             match source with
             | FreePoint true _ | LineOrEdge _ -> true
             | _ -> false
@@ -199,7 +199,7 @@ type DragFoldTool(workspace: IWorkspace) =
             | FreePoint true _ | LineOrEdge _ -> true
             | _ -> false
 
-        member __.DragLeave(_, target, _) =
+        member _.DragLeave(_, target, _) =
             instruction.Lines <- Array.Empty()
             instruction.Arrows <- Array.Empty()
             match target with
@@ -217,4 +217,4 @@ type DragFoldTool(workspace: IWorkspace) =
             instruction.Arrows <- Array.Empty()
 
     interface IFoldingInstructionTool with
-        member __.FoldingInstruction = instruction
+        member _.FoldingInstruction = instruction

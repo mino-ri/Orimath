@@ -30,29 +30,29 @@ type NewPaperExecutor(workspace: IWorkspace) =
 
     member this.NewPaperEffect =
         { new IEffect with
-            member __.MenuHieralchy = [| "編集" |]
-            member __.Name = "すべて削除"
-            member __.ShortcutKey = "Ctrl+Delete"
-            member __.Icon = InternalModule.getIcon "delete"
-            member __.CanExecute() = true
-            member __.Execute() = this.NewPaper()
+            member _.MenuHieralchy = [| "編集" |]
+            member _.Name = "すべて削除"
+            member _.ShortcutKey = "Ctrl+Delete"
+            member _.Icon = InternalModule.getIcon "delete"
+            member _.CanExecute() = true
+            member _.Execute() = this.NewPaper()
             [<CLIEvent>]
-            member __.CanExecuteChanged = Event<_, _>().Publish
+            member _.CanExecuteChanged = Event<_, _>().Publish
         }
 
 type NewPaperEffect(executor: NewPaperExecutor) =
     let onExecute = Event<EventHandler, EventArgs>()
 
-    member __.Executor = executor
+    member _.Executor = executor
     [<CLIEvent>]
-    member __.OnExecute = onExecute.Publish
+    member _.OnExecute = onExecute.Publish
 
     interface IEffect with
         member val MenuHieralchy = [| "編集" |]
-        member __.Name = "新しい紙"
-        member __.ShortcutKey = "Ctrl+N"
-        member __.Icon = InternalModule.getIcon "new_paper"
-        member __.CanExecute() = true
+        member _.Name = "新しい紙"
+        member _.ShortcutKey = "Ctrl+N"
+        member _.Icon = InternalModule.getIcon "new_paper"
+        member _.CanExecute() = true
         member this.Execute() = onExecute.Trigger(this, EventArgs.Empty)
         [<CLIEvent>]
-        member __.CanExecuteChanged = Event<_, _>().Publish
+        member _.CanExecuteChanged = Event<_, _>().Publish

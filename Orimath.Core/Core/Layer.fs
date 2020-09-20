@@ -1,14 +1,14 @@
 ﻿namespace Orimath.Core
 
 type Layer private (edges: Edge list, lines: LineSegment list, points: Point list) =
-    member __.Edges = edges
-    member __.Lines = lines
-    member __.Points = points
+    member _.Edges = edges
+    member _.Lines = lines
+    member _.Points = points
 
     interface ILayer with
-        member __.Edges = upcast edges
-        member __.Lines = upcast lines
-        member __.Points = upcast points        
+        member _.Edges = upcast edges
+        member _.Lines = upcast lines
+        member _.Points = upcast points        
 
     /// 指定した要素をもつレイヤーを生成します。
     static member Create(edges: seq<Edge>, lines: seq<LineSegment>, points: seq<Point>) =

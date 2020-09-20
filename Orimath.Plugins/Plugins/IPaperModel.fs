@@ -1,8 +1,8 @@
 ﻿namespace Orimath.Plugins
 open System
 open System.Collections.Generic
-open Orimath.Core
 open System.Runtime.CompilerServices
+open Orimath.Core
 
 type IPaperModel =
     inherit IPaper
@@ -45,7 +45,7 @@ type PaperModelExtensions =
     [<Extension>]
     static member TryBeginChange(paper: IPaperModel) =
         if paper.ChangeBlockDeclared then
-            { new IDisposable with member __.Dispose() = () }
+            { new IDisposable with member _.Dispose() = () }
         else
             paper.BeginChange()
 

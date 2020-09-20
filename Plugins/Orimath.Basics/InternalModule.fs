@@ -1,5 +1,4 @@
 ﻿module internal Orimath.Basics.InternalModule
-
 open System.Reflection
 
 let getIcon iconName =

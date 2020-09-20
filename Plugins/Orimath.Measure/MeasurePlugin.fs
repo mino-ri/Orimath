@@ -5,4 +5,4 @@ open Orimath.Plugins
 [<DisplayName("ツール: 計測"); Description("ドラッグ操作で角度と距離を測るツール。")>]
 type MeasurePlugin() =
     interface IPlugin with
-        member __.Execute(args) = args.Workspace.AddTool(MeasureTool(args.Workspace))
+        member _.Execute(args) = args.Workspace.AddTool(MeasureTool(args.Workspace))

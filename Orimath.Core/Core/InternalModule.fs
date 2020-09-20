@@ -1,6 +1,5 @@
 ﻿[<AutoOpen>]
 module internal Orimath.Core.InternalModule
-open System.Collections.Generic
 open Orimath.Plugins
 
 type CollectionChangedEvent<'Item> = Event<CollectionChangedEventHandler<'Item>, CollectionChange<'Item>>

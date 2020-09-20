@@ -9,30 +9,30 @@ type Workspace() as this =
     let effects = ResizeArray<IEffect>()
     let mutable initialized = false
 
-    member __.Paper = paper
+    member _.Paper = paper
     member val Tools = tools.AsReadOnly() :> IReadOnlyList<_>
     member val Effects = effects.AsReadOnly() :> IReadOnlyList<_>
-    member __.CurrentTool
+    member _.CurrentTool
         with get() = currentTool.Value
         and set v =
             if currentTool.Value <> v then
                 currentTool.Value.OnDeactivated()
                 currentTool.Value <- v
                 currentTool.Value.OnActivated()
-    member __.AddEffect(effect) =
+    member _.AddEffect(effect) =
         if initialized then invalidOp "初期化後にエフェクトを追加することはできません。"
         effects.Add(effect)
-    member __.AddTool(tool) =
+    member _.AddTool(tool) =
         if initialized then invalidOp "初期化後にツールを追加することはできません。"
         tools.Add(tool)
 
-    member __.Initialize() =
+    member _.Initialize() =
         if initialized then invalidOp "初期化は既に完了しています。"
         currentTool.Value <- tools.[0]
         currentTool.Value.OnActivated()
         paper.Clear()
         initialized <- true
-    member __.CurrentToolChanged = currentTool.ValueChanged
+    member _.CurrentToolChanged = currentTool.ValueChanged
 
     interface IWorkspace with
         member this.AddEffect(effect) = this.AddEffect(effect)
@@ -44,7 +44,7 @@ type Workspace() as this =
         [<CLIEvent>] member this.CurrentToolChanged = this.CurrentToolChanged
 
         member this.Initialize() = this.Initialize()
-        member __.CreatePaper(layers) = upcast Paper.Create(layers)
-        member __.CreateLayer(edges, lines, points) = upcast Layer.Create(edges, lines, points)
-        member __.CreateLayerFromSize(width, height) = upcast Layer.FromSize(width, height)
-        member __.CreateLayerFromPolygon(vertexes) = upcast Layer.FromPolygon(vertexes)
+        member _.CreatePaper(layers) = upcast Paper.Create(layers)
+        member _.CreateLayer(edges, lines, points) = upcast Layer.Create(edges, lines, points)
+        member _.CreateLayerFromSize(width, height) = upcast Layer.FromSize(width, height)
+        member _.CreateLayerFromPolygon(vertexes) = upcast Layer.FromPolygon(vertexes)

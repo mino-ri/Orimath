@@ -20,7 +20,7 @@ type MeasureTool(workspace: IWorkspace) =
         | DisplayTarget.Edge(edge) -> Some(edge.Line.Line, dt.Point)
         | _ -> None
 
-    member __.GetDistanceLine(source: OperationTarget, target: OperationTarget) =
+    member _.GetDistanceLine(source: OperationTarget, target: OperationTarget) =
         match source, target with
         | FreePoint(p1), FreePoint(p2) -> LineSegment.FromPoints(p1, p2)
         | FreePoint(p1), LineOrEdge(l1, _) 
@@ -37,24 +37,24 @@ type MeasureTool(workspace: IWorkspace) =
                 | None -> None
         | _ -> None
     
-    member __.ClearSelection() =
+    member _.ClearSelection() =
         paper.SelectedLayers <- array.Empty()
         paper.SelectedPoints <- array.Empty()
         paper.SelectedLines <- array.Empty()
         paper.SelectedEdges <- array.Empty()
 
     interface ITool with
-        member __.Name = "計測"
-        member __.ShortcutKey = "Ctrl+M"
-        member __.Icon = Assembly.GetExecutingAssembly().GetManifestResourceStream("Orimath.Measure.Icon.png")
+        member _.Name = "計測"
+        member _.ShortcutKey = "Ctrl+M"
+        member _.Icon = Assembly.GetExecutingAssembly().GetManifestResourceStream("Orimath.Measure.Icon.png")
         member this.OnActivated() = this.ClearSelection()
-        member __.OnDeactivated() = ()
+        member _.OnDeactivated() = ()
 
     interface IClickTool with
         member this.OnClick(_, _) = this.ClearSelection()
 
     interface IDragTool with
-        member __.BeginDrag(source, _) =
+        member _.BeginDrag(source, _) =
             match source with
             | FreePoint _ | LineOrEdge _ -> true
             | _ -> false
@@ -77,7 +77,7 @@ type MeasureTool(workspace: IWorkspace) =
             | FreePoint _ | LineOrEdge _ -> true
             | _ -> false
 
-        member __.DragLeave(_, target, _) =
+        member _.DragLeave(_, target, _) =
             instruction.Lines <- Array.Empty()
             match target with
             | FreePoint _ | LineOrEdge _ -> true
@@ -91,4 +91,4 @@ type MeasureTool(workspace: IWorkspace) =
             instruction.Lines <- Array.Empty()
 
     interface IFoldingInstructionTool with
-        member __.FoldingInstruction = instruction
+        member _.FoldingInstruction = instruction

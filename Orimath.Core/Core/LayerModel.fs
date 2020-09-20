@@ -30,11 +30,11 @@ and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Lay
         | CollectionChange.Remove(index, points) -> parent.PushUndoOpr(PointRemoving(layerIndex, index, asList points))
         | _ -> ())
 
-    member __.Edges = init.Edges
-    member __.Lines = layerLines :> IReadOnlyList<_>
-    member __.Points = layerPoints :> IReadOnlyList<_>
+    member _.Edges = init.Edges
+    member _.Lines = layerLines :> IReadOnlyList<_>
+    member _.Points = layerPoints :> IReadOnlyList<_>
 
-    member __.GetSnapShot() = Layer.Create(init.Edges, layerLines, layerPoints)
+    member _.GetSnapShot() = Layer.Create(init.Edges, layerLines, layerPoints)
 
     member this.AddLineCore(lines: seq<LineSegment>, addCross: bool) =
         let lines = lines |> Seq.filter(this.HasLine >> not) |> Seq.toList
@@ -52,7 +52,7 @@ and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Lay
 
     member this.AddLines(lines: seq<LineSegment>) = this.AddLineCore(lines |> Seq.collect(this.Clip), true)
 
-    member this.RemoveLines(count: int) =
+    member _.RemoveLines(count: int) =
         if count > 0 then
             use __ = parent.TryBeginChange()
             layerLines.Remove(count)
@@ -63,13 +63,13 @@ and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Lay
             use __ = parent.TryBeginChange()
             layerPoints.Add(points)
 
-    member this.RemovePoints(count: int) =
+    member _.RemovePoints(count: int) =
         if count > 0 then
             use __ = parent.TryBeginChange()
             layerPoints.Remove(count)
 
-    member __.LineChanged = layerLines.Changed
-    member __.PointChanged = layerPoints.Changed
+    member _.LineChanged = layerLines.Changed
+    member _.PointChanged = layerPoints.Changed
 
     interface ILayer with
         member this.Edges = upcast this.Edges

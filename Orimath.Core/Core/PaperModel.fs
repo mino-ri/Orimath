@@ -31,30 +31,30 @@ type PaperModel internal () as this =
             layerChanged.Trigger(this, CollectionChange.Reset(odlLayers, newLayers))
         )
 
-    member __.Layers = layerModels :> IReadOnlyList<ILayerModel>
-    member __.CanUndo = undoOprStack.Count > 0
-    member __.CanRedo = redoOprStack.Count > 0
-    member __.SelectedLayers with get() = selectedLayers.Value and set v = selectedLayers.Value <- v
-    member __.SelectedEdges with get() = selectedEdges.Value and set v = selectedEdges.Value <- v
-    member __.SelectedPoints with get() = selectedPoints.Value and set v = selectedPoints.Value <- v
-    member __.SelectedLines with get() = selectedLines.Value and set v = selectedLines.Value <- v
-    member __.ChangeBlockDeclared = changeBlockDeclared
+    member _.Layers = layerModels :> IReadOnlyList<ILayerModel>
+    member _.CanUndo = undoOprStack.Count > 0
+    member _.CanRedo = redoOprStack.Count > 0
+    member _.SelectedLayers with get() = selectedLayers.Value and set v = selectedLayers.Value <- v
+    member _.SelectedEdges with get() = selectedEdges.Value and set v = selectedEdges.Value <- v
+    member _.SelectedPoints with get() = selectedPoints.Value and set v = selectedPoints.Value <- v
+    member _.SelectedLines with get() = selectedLines.Value and set v = selectedLines.Value <- v
+    member _.ChangeBlockDeclared = changeBlockDeclared
 
-    member __.SelectedLayersChanged = selectedLayers.ValueChanged
-    member __.SelectedEdgesChanged = selectedEdges.ValueChanged
-    member __.SelectedPointsChanged = selectedPoints.ValueChanged
-    member __.SelectedLinesChanged = selectedLines.ValueChanged
-    member __.LayerChanged = layerChanged.Publish
-    member __.CanUndoChanged = canUndoChanged.Publish
+    member _.SelectedLayersChanged = selectedLayers.ValueChanged
+    member _.SelectedEdgesChanged = selectedEdges.ValueChanged
+    member _.SelectedPointsChanged = selectedPoints.ValueChanged
+    member _.SelectedLinesChanged = selectedLines.ValueChanged
+    member _.LayerChanged = layerChanged.Publish
+    member _.CanUndoChanged = canUndoChanged.Publish
 
-    member internal __.PushUndoOpr(opr: PaperOpr) = if not changeBlockDisabled then undoOprStack.Push(opr)
+    member internal _.PushUndoOpr(opr: PaperOpr) = if not changeBlockDisabled then undoOprStack.Push(opr)
 
-    member __.GetSnapShot() =
+    member _.GetSnapShot() =
         layerModels
         |> Seq.map(fun lm -> lm.GetSnapShot())
         |> Paper.Create
 
-    member __.ResetSelection() =
+    member _.ResetSelection() =
         selectedLayers.Value <- Array.Empty()
         selectedEdges.Value <- Array.Empty()
         selectedPoints.Value <- Array.Empty()
@@ -114,19 +114,19 @@ type PaperModel internal () as this =
         changeBlockDeclared <- true
         undoOprStack.Push(BeginChangeBlock)
         { new IDisposable with
-            member __.Dispose() =
+            member _.Dispose() =
                 if undoOprStack.Peek() = BeginChangeBlock then
                     ignore (undoOprStack.Pop())
                 changeBlockDeclared <- false
                 canUndoChanged.Trigger(this, EventArgs.Empty)
         }
 
-    member private __.BeginUndo() =
+    member private _.BeginUndo() =
         if changeBlockDeclared then invalidOp "変更ブロックが定義されているため、Undoを開始できません。"
         changeBlockDeclared <- true
         changeBlockDisabled <- true
         { new IDisposable with
-            member __.Dispose() =
+            member _.Dispose() =
                 changeBlockDeclared <- false
                 changeBlockDisabled <- false
                 canUndoChanged.Trigger(this, EventArgs.Empty)
@@ -150,7 +150,7 @@ type PaperModel internal () as this =
         this.Clear(Paper.FromSize(1.0, 1.0))
         this.ClearUndoStack()
 
-    member __.ClearUndoStack() =
+    member _.ClearUndoStack() =
         undoOprStack.Clear()
         redoOprStack.Clear()
 
