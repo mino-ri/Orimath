@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using Orimath.IO;
+using Sssl;
 
 namespace Orimath.Plugins
 {
@@ -64,20 +65,53 @@ namespace Orimath.Plugins
                     .ToArray();
         }
 
-        private static void ExecuteCore(string[] order, PluginArgs args, ViewPluginArgs viewArgs)
+        private static void ExecuteCore(PluginSetting setting, PluginArgs args, ViewPluginArgs viewArgs)
         {
             var pluginTypes = LoadedPluginTypes.ToDictionary(t => t.FullName);
             var viewPluginTypes = LoadedViewPluginTypes.ToDictionary(t => t.FullName);
 
-            foreach (var fullName in order)
+            foreach (var fullName in setting.PluginOrder)
             {
                 if (pluginTypes.TryGetValue(fullName, out var type) &&
                     Activator.CreateInstance(type) is IPlugin plugin)
+                {
+                    SetSetting(plugin, fullName, setting);
                     plugin.Execute(args);
+                }
 
                 if (viewPluginTypes.TryGetValue(fullName, out type) &&
                     Activator.CreateInstance(type) is IViewPlugin viewPlugin)
+                {
+                    SetSetting(viewPlugin, fullName, setting);
                     viewPlugin.Execute(viewArgs);
+                }
+            }
+        }
+
+        private static void SetSetting(object plugin, string fullName, PluginSetting setting)
+        {
+            if (plugin is IConfigurablePlugin configurable)
+            {
+                object? targetSetting;
+                if (!setting.Settings.TryGetValue(fullName, out var sssl) ||
+                    !sssl!.TryConvertTo(configurable.SettingType, out targetSetting))
+                {
+                    try
+                    {
+                        targetSetting = FastActivator.CreateInstance(configurable.SettingType);
+                        setting.Settings[fullName] = SsslObject.ConvertFrom(targetSetting);
+                    }
+                    catch
+                    {
+                        targetSetting = null;
+                    }
+
+                }
+
+                if (targetSetting is { })
+                    configurable.Setting = targetSetting;
+                else if (configurable.Setting is { })
+                    setting.Settings[fullName] = SsslObject.ConvertFrom(configurable.Setting);
             }
         }
 
@@ -96,7 +130,7 @@ namespace Orimath.Plugins
             var setting = LoadSetting(types);
             LoadedPluginTypes = types.Where(t => t.IsClass && !t.IsAbstract && typeof(IPlugin).IsAssignableFrom(t)).ToArray();
             LoadedViewPluginTypes = types.Where(t => t.IsClass && !t.IsAbstract && typeof(IViewPlugin).IsAssignableFrom(t)).ToArray();
-            ExecuteCore(setting.PluginOrder, args, viewArgs);
+            ExecuteCore(setting, args, viewArgs);
 
             return GetViewTypes(types);
         }

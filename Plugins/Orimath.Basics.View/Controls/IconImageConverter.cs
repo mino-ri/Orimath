@@ -21,7 +21,7 @@ namespace Orimath.Basics.View.Controls
                 CacheOption = BitmapCacheOption.OnLoad
             };
             _source.BeginInit();
-            _source.UriSource = new Uri("defaultIcon.png", UriKind.Relative);
+            _source.UriSource = new Uri("pack://application:,,,/Orimath.Basics.View;component/defaultIcon.png");
             _source.EndInit();
         }
 

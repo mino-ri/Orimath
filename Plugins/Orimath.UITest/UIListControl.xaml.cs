@@ -52,7 +52,7 @@ namespace Orimath.UITest
                         ctrl.MinWidth = 120;
                         ctrl.MinHeight = 24;
 
-                        { if (ctrl is ContentControl c) c.Content = "Content"; }
+                        { if (ctrl is ContentControl c) c.Content = (DataContext as ControlListViewModel)?.ContentText ?? "Content"; }
                         { if (ctrl is HeaderedContentControl c) c.Header = "Header"; }
                         { if (ctrl is HeaderedItemsControl c) c.Header = "Header"; }
                         { if (ctrl is RangeBase c) c.Value = c.Maximum / 2.0; }

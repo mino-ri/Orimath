@@ -10,10 +10,14 @@ namespace Orimath.UITest.ViewModels
     {
         public Type[] ControlTypes { get; }
 
+        public string ContentText { get; }
+
         public ICommand CloseCommand { get; }
 
-        public ControlListViewModel(IMessenger messenger)
+        public ControlListViewModel(IMessenger messenger, UITestPluginSetting setting)
         {
+            ContentText = setting.ContentText;
+
             ControlTypes = typeof(Control).Assembly
                 .GetTypes()
                 .Where(x => typeof(Control).IsAssignableFrom(x) && !x.IsAbstract)
