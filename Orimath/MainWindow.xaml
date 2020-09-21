@@ -35,16 +35,24 @@
             <ctrl:PluginSettingControl />
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:DoubleSettingItemViewModel}">
-            <StackPanel Orientation="Vertical">
-                <TextBlock Text="{Binding Name, Mode=OneTime}" />
-                <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            </StackPanel>
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="{Binding Name, Mode=OneTime}" />
+                <TextBox DockPanel.Dock="Left" Width="50" Text="{Binding Value, Mode=TwoWay}" />
+                <Slider Value="{Binding Value, Mode=TwoWay}"
+                        Maximum="{Binding Maximum, Mode=OneTime}"
+                        Minimum="{Binding Minimum, Mode=OneTime}"
+                        Visibility="{Binding HasRange, Mode=OneTime, Converter={StaticResource BoolVisibleConverter}}" />
+            </DockPanel>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:Int32SettingItemViewModel}">
-            <StackPanel Orientation="Vertical">
-                <TextBlock Text="{Binding Name, Mode=OneTime}" />
-                <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            </StackPanel>
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="{Binding Name, Mode=OneTime}" />
+                <TextBox DockPanel.Dock="Left" Width="50" Text="{Binding Value, Mode=TwoWay}" />
+                <Slider Value="{Binding Value, Mode=TwoWay}"
+                        Maximum="{Binding Maximum, Mode=OneTime}"
+                        Minimum="{Binding Minimum, Mode=OneTime}"
+                        Visibility="{Binding HasRange, Mode=OneTime, Converter={StaticResource BoolVisibleConverter}}" />
+            </DockPanel>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:BooleanSettingItemViewModel}">
             <CheckBox Content="{Binding Name, Mode=OneTime}"
@@ -53,7 +61,8 @@
         <DataTemplate DataType="{x:Type vm:StringSettingItemViewModel}">
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="{Binding Name, Mode=OneTime}" />
-                <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                         MaxLength="{Binding MaxLength, Mode=OneTime}" />
             </StackPanel>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:EnumSettingItemViewModel}">

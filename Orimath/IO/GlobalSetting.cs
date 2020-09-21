@@ -6,8 +6,8 @@ namespace Orimath.IO
     public sealed class GlobalSetting
     {
         [Display(Name = "表示サイズ")]
-        [Range(1.0, 10000.0)]
-        public double ViewSize { get; set; } = 512.0;
+        [Range(1, 5000)]
+        public int ViewSize { get; set; } = 512;
 
         [Editable(false)]
         public double Height { get; set; } = 600.0;

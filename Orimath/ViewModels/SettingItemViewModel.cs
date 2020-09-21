@@ -36,7 +36,15 @@ namespace Orimath.ViewModels
 
     public abstract class RangeSettingItemViewModel<T> : SettingItemViewModel
     {
-        public T Value { get => GetValue<T>()!; set => SetValue(value); }
+        public T Value
+        {
+            get => GetValue<T>()!;
+            set
+            {
+                SetValue(value);
+                OnPropertyChanged();
+            }
+        }
 
         public bool HasRange { get; }
 
@@ -87,7 +95,15 @@ namespace Orimath.ViewModels
 
     public class BooleanSettingItemViewModel : SettingItemViewModel
     {
-        public bool Value { get => GetValue<bool>(); set => SetValue(value); }
+        public bool Value
+        {
+            get => GetValue<bool>();
+            set
+            {
+                SetValue(value);
+                OnPropertyChanged();
+            }
+        }
 
         public BooleanSettingItemViewModel(PropertyInfo property, object obj)
             : base(property, obj) { }
@@ -95,7 +111,15 @@ namespace Orimath.ViewModels
 
     public class StringSettingItemViewModel : SettingItemViewModel
     {
-        public string? Value { get => GetValue<string>(); set => SetValue(value); }
+        public string? Value
+        {
+            get => GetValue<string>();
+            set
+            {
+                SetValue(value);
+                OnPropertyChanged();
+            }
+        }
 
         public int MaxLength { get; }
 
@@ -120,7 +144,11 @@ namespace Orimath.ViewModels
                 var value = GetValue<Enum>();
                 return Choices.First(v => v.Value.Equals(value));
             }
-            set => SetValue(value.Value);
+            set
+            {
+                SetValue(value.Value);
+                OnPropertyChanged();
+            }
         }
 
         public EnumSettingItemViewModel(PropertyInfo property, object obj)
