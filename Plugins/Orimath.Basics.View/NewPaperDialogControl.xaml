@@ -7,7 +7,9 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="400"
              d:DataContext="{d:DesignData Type={x:Type vm:NewPaperDialogViewModel}}">
-    <Grid Background="{x:Static Brushes.White}" Margin="8">
+    <Grid Background="{x:Static Brushes.White}" Margin="8"
+          HorizontalAlignment="Center"
+          VerticalAlignment="Center">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*"/>

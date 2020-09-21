@@ -1,5 +1,6 @@
 ﻿using Mvvm;
 using Orimath.Plugins;
+using Sssl;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -97,6 +98,8 @@ namespace Orimath.ViewModels
         public void Save(object? dummy)
         {
             PluginExecutor.Setting.PluginOrder = Plugins.Where(x => x.IsEnabled).Select(x => x.FullName).ToArray();
+            foreach (var configurable in PluginExecutor.ConfigurablePlugins)
+                PluginExecutor.Setting.Settings[configurable.GetType().ToString()] = SsslObject.ConvertFrom(configurable.Setting);
             PluginExecutor.SaveSetting();
             _messenger.CloseDialog();
         }

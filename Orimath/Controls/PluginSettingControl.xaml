@@ -32,7 +32,7 @@
             </Grid>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:PluginItemSettingViewModel}">
-            <ContentControl IsTabStop="False" Content="{Binding Content, Mode=OneTime}" />
+            <ContentControl Margin="8,4" IsTabStop="False" Content="{Binding Content, Mode=OneTime}" />
         </DataTemplate>
     </UserControl.Resources>
     <UserControl.InputBindings>

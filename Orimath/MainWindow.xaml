@@ -117,8 +117,7 @@
               Background="#80000000">
             <ContentControl Content="{Binding Dialog, Mode=OneWay}"
                             IsTabStop="False"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center" />
+                            Margin="16" />
         </Grid>
     </Grid>
 </Window>
