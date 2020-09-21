@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Linq.Expressions;
 
-namespace Orimath.Plugins
+namespace Orimath.Reflection
 {
     internal static class FastActivator
     {

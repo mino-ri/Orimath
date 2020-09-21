@@ -34,6 +34,38 @@
         <DataTemplate DataType="{x:Type vm:PluginSettingViewModel}">
             <ctrl:PluginSettingControl />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:DoubleSettingItemViewModel}">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="{Binding Name, Mode=OneTime}" />
+                <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:Int32SettingItemViewModel}">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="{Binding Name, Mode=OneTime}" />
+                <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:BooleanSettingItemViewModel}">
+            <CheckBox Content="{Binding Name, Mode=OneTime}"
+                      IsChecked="{Binding Value, Mode=TwoWay}" />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:StringSettingItemViewModel}">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="{Binding Name, Mode=OneTime}" />
+                <TextBox Text="{Binding Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:EnumSettingItemViewModel}">
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="{Binding Name, Mode=OneTime}" />
+                <ComboBox ItemsSource="{Binding Choices, Mode=OneTime}"
+                          SelectedItem="{Binding Value, Mode=TwoWay}" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SettingViewModel}">
+            <ItemsControl ItemsSource="{Binding Items, Mode=OneTime}" />
+        </DataTemplate>
     </Window.Resources>
     <Window.InputBindings>
         <KeyBinding Gesture="Escape" Command="{Binding CloseDialogCommand, Mode=OneTime}" />

@@ -11,11 +11,43 @@ namespace Orimath.ViewModels
 {
     public class PluginSettingViewModel : NotifyPropertyChanged
     {
+        private PluginLoadSettingViewModel _loadSetting;
+
+        public PluginSettingPageViewModel[] Pages { get; }
+
+        public PluginSettingViewModel(IMessenger messenger)
+        {
+            _loadSetting = new PluginLoadSettingViewModel(messenger);
+
+            Pages =
+                Enumerable.Concat(
+                    new PluginSettingPageViewModel[] { _loadSetting },
+                    PluginExecutor.ConfigurablePlugins.Select(c => new PluginItemSettingViewModel(c)))
+                .ToArray();
+
+            SaveCommand = new ActionCommand(_loadSetting.Save);
+            CloseCommand = messenger.CloseDialogCommand;
+        }
+
+        public ICommand SaveCommand { get; }
+
+        public ICommand CloseCommand { get; }
+     }
+
+    public abstract class PluginSettingPageViewModel : NotifyPropertyChanged
+    {
+        public abstract string Header { get; }
+    }
+
+    public class PluginLoadSettingViewModel : PluginSettingPageViewModel
+    {
         private readonly IMessenger _messenger;
+
+        public override string Header => "ON/OFFと読み込み順";
 
         public ObservableCollection<PluginViewModel> Plugins { get; } = new ObservableCollection<PluginViewModel>();
 
-        public PluginSettingViewModel(IMessenger messenger)
+        public PluginLoadSettingViewModel(IMessenger messenger)
         {
             _messenger = messenger;
 
@@ -24,9 +56,6 @@ namespace Orimath.ViewModels
 
             _upPluginCommand = new ActionCommand(UpPlugin, _ => 1 <= PluginIndex && PluginIndex < Plugins.Count);
             _downPluginCommand = new ActionCommand(DownPlugin, _ => 0 <= PluginIndex && PluginIndex < Plugins.Count - 1);
-
-            SaveCommand = new ActionCommand(Save);
-            CloseCommand = messenger.CloseDialogCommand;
         }
 
         private static void SetViewModels(Type[] pluginTypes, string[] order, ObservableCollection<PluginViewModel> collection)
@@ -76,15 +105,28 @@ namespace Orimath.ViewModels
 
         public void DownPlugin(object? dummy) => Plugins.Move(PluginIndex, PluginIndex + 1);
 
-        public ICommand SaveCommand { get; }
-
-        public ICommand CloseCommand { get; }
-
         private readonly ActionCommand _upPluginCommand;
         public ICommand UpPluginCommand => _upPluginCommand;
 
         private readonly ActionCommand _downPluginCommand;
         public ICommand DownPluginCommand => _downPluginCommand;
+    }
+
+    public class PluginItemSettingViewModel : PluginSettingPageViewModel
+    {
+        public override string Header { get; }
+
+        public SettingViewModel Content { get; }
+
+        public PluginItemSettingViewModel(IConfigurablePlugin plugin)
+        {
+            var pluginType = plugin.GetType();
+            Header = pluginType.GetCustomAttribute<DisplayNameAttribute>() is { } displayName
+                ? displayName.DisplayName
+                : pluginType.Name;
+            
+            Content = new SettingViewModel(plugin.Setting);
+        }
     }
 
     public class PluginViewModel : NotifyPropertyChanged

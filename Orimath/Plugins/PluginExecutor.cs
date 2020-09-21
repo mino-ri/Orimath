@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows;
 using Orimath.IO;
+using Orimath.Reflection;
 using Sssl;
 
 namespace Orimath.Plugins
@@ -16,6 +17,8 @@ namespace Orimath.Plugins
         public static Type[] LoadedViewPluginTypes { get; private set; } = Type.EmptyTypes;
 
         public static PluginSetting Setting { get; private set; } = new PluginSetting();
+
+        public static List<IConfigurablePlugin> ConfigurablePlugins { get; private set; } = new List<IConfigurablePlugin>();
 
         private static Type[] LoadPluginTypes()
         {
@@ -92,6 +95,8 @@ namespace Orimath.Plugins
         {
             if (plugin is IConfigurablePlugin configurable)
             {
+                ConfigurablePlugins.Add(configurable);
+
                 object? targetSetting;
                 if (!setting.Settings.TryGetValue(fullName, out var sssl) ||
                     !sssl!.TryConvertTo(configurable.SettingType, out targetSetting))
