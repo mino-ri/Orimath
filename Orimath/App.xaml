@@ -798,6 +798,7 @@
             <Setter Property="OverridesDefaultStyle" Value="True" />
             <Setter Property="Padding" Value="3,1" />
             <Setter Property="Background" Value="{x:Static Brushes.Transparent}" />
+            <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
             <Setter Property="th:ThemeBrush.Theme" Value="{x:Static th:ThemeBrushes.Selector}" />
             <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource FindAncestor, AncestorType=ItemsControl, AncestorLevel=1}}" />
             <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource FindAncestor, AncestorType=ItemsControl, AncestorLevel=1}}" />
@@ -1020,6 +1021,83 @@
                                           VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                           SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                         </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- TabControl -->
+        <Style TargetType="{x:Type TabItem}">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="th:ThemeBrush.Theme" Value="{Binding Path=(th:ThemeBrush.Theme), RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TabControl}}}" />
+            <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+            <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+            <Setter Property="Padding" Value="6,1" />
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Stretch" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TabItem}">
+                        <Border BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                Padding="{TemplateBinding Padding}"
+                                Background="{TemplateBinding Background}">
+                            <ContentPresenter RecognizesAccessKey="True"
+                                              Content="{TemplateBinding Header}"
+                                              ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                              ContentStringFormat="{TemplateBinding HeaderStringFormat}"
+                                              ContentSource="Header"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                    <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                </Trigger>
+                <Trigger Property="IsKeyboardFocused" Value="True">
+                    <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                    <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                </Trigger>
+                <Trigger Property="Selector.IsSelected" Value="True">
+                    <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Highlight.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                    <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Highlight.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Disabled.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                    <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Disabled.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="{x:Type TabControl}">
+            <Setter Property="th:ThemeBrush.Theme" Value="{StaticResource MenuItemThemeBrush}" />
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TabControl}">
+                        <DockPanel ClipToBounds="True" SnapsToDevicePixels="True" KeyboardNavigation.TabNavigation="Local">
+                            <Border Background="{Binding Path=(th:ThemeBrush.Theme).Normal.Background, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}"
+                                    DockPanel.Dock="{TemplateBinding TabStripPlacement}">
+                                <TabPanel IsItemsHost="True"
+                                          SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </Border>
+                            <Border KeyboardNavigation.TabNavigation="Local"
+                                    KeyboardNavigation.DirectionalNavigation="Contained">
+                                <ContentPresenter Content="{TemplateBinding SelectedContent}"
+                                                  ContentTemplate="{TemplateBinding SelectedContentTemplate}"
+                                                  ContentStringFormat="{TemplateBinding SelectedContentStringFormat}"
+                                                  ContentSource="SelectedContent"
+                                                  Name="PART_SelectedContentHost"
+                                                  Margin="{TemplateBinding Padding}"
+                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </Border>
+                        </DockPanel>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
