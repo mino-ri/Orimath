@@ -44,3 +44,8 @@ type IEffect =
     abstract member MenuHieralchy : string[]
     [<CLIEvent>]
     abstract member CanExecuteChanged : IEvent<EventHandler, EventArgs>
+
+type IParametricEffect =
+    inherit IEffect
+    abstract member Parameter : obj
+    

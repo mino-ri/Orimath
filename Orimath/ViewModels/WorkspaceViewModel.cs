@@ -15,11 +15,11 @@ namespace Orimath.ViewModels
     {
         private readonly IWorkspace _workspace;
         private readonly OrimathDispatcher _dispatcher = new OrimathDispatcher();
-        private readonly Dictionary<IEffect, EffectCommand> _effectCommands = new Dictionary<IEffect, EffectCommand>();
+        private readonly Dictionary<IEffect, ICommand> _effectCommands = new Dictionary<IEffect, ICommand>();
 
         private readonly ActionCommand _closeDialogCommand;
-        private readonly ActionCommand _pluginSettingCommand;
         private readonly ObservableCollection<object> _preViewModels = new ObservableCollection<object>();
+        private IEffect[] _systemEffects;
 
         private GlobalSetting _setting = new GlobalSetting();
 
@@ -49,7 +49,6 @@ namespace Orimath.ViewModels
                     OnPropertyChanged(nameof(HasNotDialog));
                     OnPropertyChanged(nameof(RootEnable));
                     _closeDialogCommand.OnCanExecuteChanged();
-                    _pluginSettingCommand.OnCanExecuteChanged();
                 }
             }
         }
@@ -78,12 +77,12 @@ namespace Orimath.ViewModels
         {
             _workspace = workspace;
             _closeDialogCommand = new ActionCommand(_ => CloseDialog(), _ => HasDialog);
-            _pluginSettingCommand = new ActionCommand(_ => OpenDialog(new PluginSettingViewModel(this)), _ => RootEnable);
+            _systemEffects = Array.Empty<IEffect>();
+
             _dispatcher.IsExecutingChanged += (_, __) =>
             {
                 OnPropertyChanged(nameof(IsExecuting));
                 OnPropertyChanged(nameof(RootEnable));
-                _pluginSettingCommand.OnCanExecuteChanged();
             };
         }
 
@@ -107,6 +106,12 @@ namespace Orimath.ViewModels
         {
             _setting = Settings.Load<GlobalSetting>(SettingName.Global)! ?? new GlobalSetting();
             ViewSize = _setting.ViewSize * 2.0;
+
+            _systemEffects = new IEffect[]
+            {
+                new GlobalSettingEffect(_setting),
+                new PluginSettingEffect(this),
+            };
         }
 
         public void SaveSetting()
@@ -127,8 +132,10 @@ namespace Orimath.ViewModels
             foreach (var (viewType, att) in viewArgs)
                 ViewDefinitions[att.ViewModelType] = (att.Pane, viewType);
 
-            foreach (var effect in _workspace.Effects)
-                _effectCommands[effect] = new EffectCommand(effect, _dispatcher, this);
+            foreach (var effect in _workspace.Effects.Concat(_systemEffects))
+                _effectCommands[effect] = effect is IParametricEffect parametric
+                    ? (ICommand)new ParametricEffectCommand(parametric, _dispatcher, this)
+                    : new EffectCommand(effect, _dispatcher, this);
 
             foreach (var tool in _workspace.Tools)
             {
@@ -142,7 +149,7 @@ namespace Orimath.ViewModels
 
         private void CreateMenu()
         {
-            foreach (var effect in _workspace.Effects)
+            foreach (var effect in _workspace.Effects.Concat(_systemEffects))
             {
                 var targetCollection = MenuItems;
                 foreach (var name in effect.MenuHieralchy)
@@ -159,15 +166,6 @@ namespace Orimath.ViewModels
 
                 targetCollection.Add(new MenuItemViewModel(effect, this));
             }
-
-            var settingMenu = MenuItems.FirstOrDefault(x => x.Name == "設定");
-            if (settingMenu is null)
-            {
-                settingMenu = new MenuItemViewModel("設定");
-                MenuItems.Add(settingMenu);
-            }
-
-            settingMenu.Children.Add(new MenuItemViewModel("プラグインの設定", _pluginSettingCommand));
         }
 
         public void LoadViewModels()
