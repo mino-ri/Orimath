@@ -21,7 +21,7 @@ namespace Orimath.ViewModels
             _messenger = messenger;
 
             Header = effect.Name;
-            Parameter = new SettingViewModel(_effect.Parameter);
+            Parameter = new SettingViewModel(_effect.GetParameter());
             ExecuteCommand = new ActionCommand(Execute);
         }
 

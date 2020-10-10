@@ -9,7 +9,6 @@ namespace Orimath.ViewModels
         private readonly IParametricEffect _effect;
         private readonly IDispatcher _dispatcher;
         private readonly WorkspaceViewModel _parent;
-        private ParametricEffectDialogViewModel? _dialogViewModel;
 
         public ParametricEffectCommand(IParametricEffect effect, IDispatcher dispatcher, WorkspaceViewModel parent)
         {
@@ -23,6 +22,6 @@ namespace Orimath.ViewModels
         public bool CanExecute(object parameter) => _parent.RootEnable && _effect.CanExecute();
 
         public void Execute(object parameter) =>
-            _parent.OpenDialog(_dialogViewModel ??= new ParametricEffectDialogViewModel(_effect, _dispatcher, _parent));
+            _parent.OpenDialog(new ParametricEffectDialogViewModel(_effect, _dispatcher, _parent));
     }
 }

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Orimath.IO
 {
-    public sealed class GlobalSetting
+    public sealed class GlobalSetting : ICloneable
     {
         [Display(Name = "表示サイズ")]
         [Range(1, 5000)]
@@ -20,5 +20,7 @@ namespace Orimath.IO
 
         [Editable(false)]
         public double Top { get; set; } = double.NaN;
+
+        public object Clone() => MemberwiseClone();
     }
 }

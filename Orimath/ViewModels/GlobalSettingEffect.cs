@@ -7,7 +7,10 @@ namespace Orimath.ViewModels
 {
     public class GlobalSettingEffect : IParametricEffect
     {
-        public object Parameter { get; }
+        private GlobalSetting _rootSetting;
+        private GlobalSetting? _setting;
+
+        public object GetParameter() => _setting = (GlobalSetting)_rootSetting.Clone();
 
         public string[] MenuHieralchy => new[] { "設定" };
 
@@ -21,14 +24,17 @@ namespace Orimath.ViewModels
 
         public GlobalSettingEffect(GlobalSetting setting)
         {
-            Parameter = setting;
+            _rootSetting = setting;
         }
 
         public bool CanExecute() => true;
 
         public void Execute()
         {
-            Settings.Save(SettingName.Global, Parameter);
+            if (_setting is null) return;
+
+            _rootSetting.ViewSize = _setting.ViewSize;
+            Settings.Save(SettingName.Global, _rootSetting);
         }
     }
 }

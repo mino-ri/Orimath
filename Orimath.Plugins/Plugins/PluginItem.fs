@@ -47,5 +47,4 @@ type IEffect =
 
 type IParametricEffect =
     inherit IEffect
-    abstract member Parameter : obj
-    
+    abstract member GetParameter : unit -> obj
