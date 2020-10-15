@@ -665,28 +665,28 @@ i u > span:first-child {
                         </i>
                     </p>
                 </figure>
-                <p><i>p</i>が3次方程式<i>ax³ + bx² + cx + d = 0</i>の根である場合、<i>ap³ + bp² + cp + d = 0</i>が成り立つため、<i>(x - p)</i>は元の3次式を割り切る。</p>
-                <p><i>ax³ + bx² + cx + d = (x - p)(ax² + (pa + b)x + p²a + pb + c)</i></p>
-                <p><i>M = pa + b</i>, <i>N = p²a + pb + c</i>と置くと、<i>x - p ≠ 0</i>の時<i>ax² + Mx + N = 0</i>が成り立つ。3次方程式の残りの根は、</p>
-                <p>
-                    <i>
-                        x = <u><span>-M ± √(M² - 4aN)</span><span>2a</span></u>
-                        <!--
-                = <u><span>-(pa + b) ± √((pa + b)² - 4a(p²a + pb + c))</span><span>2a</span></u><br />
-                = <u><span>-pa - b ± √(p²a² + 2pab + b² - 4p²a² - 4pab - 4ac)</span><span>2a</span></u><br />
-                -->
-                        = <u><span>-pa - b ± √(b² - 3p²a² - 2pab - 4ac)</span><span>2a</span></u>
-                    </i>
-                </p>
-                <!--
-            <p>この式に、3次方程式の解の公式<i>x₁ = - <u><span>∛2④</span><span>3∛②a</span></u> + <u><span>∛②</span><span>3∛2a</span></u> - <u><span>b</span><span>3a</span></u></i>を代入すると、</p>
-            <p>
-                <i>
-                    x₁ = - <u><span>∛2④</span><span>3a∛②</span></u> + <u><span>∛②</span><span>3a∛2</span></u> - <u><span>b</span><span>3a</span></u><br />
-                    = <u><span>-∛(2/②)④ + ∛(②/2) - b</span><span>3a</span></u>
-                </i>
-            </p>
-        -->
+                <figure>
+                    <figcaption>カルダノの公式を変形したもの</figcaption>
+                    <p>
+                        <i>
+                            ax³ + bx² + cx + d = 0<br /><br />
+                            p = b² - 3ac<br />
+                            q = -2b³ + 9abc - 27a²d<br />
+                            Δ = q² - 4p³<br /><br />
+                            Δ = 0 のとき: (x₂ は重解)<br />
+                            x₁ = <u><span>1</span><span>3a</span></u>(-b + ∛(4q))<br />
+                            x₂ = <u><span>1</span><span>3a</span></u>(-b - ∛(q/2))<br /><br />
+
+                            Δ > 0 のとき: (x₂, x₃は複素数解)<br />
+                            x₁ = <u><span>1</span><span>3a</span></u>(-b + <u><span>1</span><span>∛2</span></u>(∛(q + √Δ) + ∛(q - √Δ)))<br />
+                            x₂, x₃ = <u><span>1</span><span>3a</span></u>(-b - <u><span>1</span><span>2∛2</span></u>(∛(q + √Δ) + ∛(q - √Δ) ± i√3(∛(q + √Δ) - ∛(q - √Δ))))<br /><br />
+
+                            Δ < 0 のとき:<br />
+                            x₁ = <u><span>1</span><span>3a</span></u>(-b + √p・cos( <u><span>1</span><span>3</span></u> arccos<u><span>q</span><span>2√p³</span></u>))<br />
+                            x₂, x₃ = <u><span>1</span><span>3a</span></u>(-b + √p・cos( <u><span>1</span><span>3</span></u> arccos<u><span>q</span><span>2√p³</span></u> ± <u><span>2π</span><span>3</span></u>))
+                        </i>
+                    </p>
+                </figure>
             </section>
         </section>
     </body>

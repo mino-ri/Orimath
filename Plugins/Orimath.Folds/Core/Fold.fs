@@ -45,63 +45,58 @@ let axiom5 pass (ontoLine: Line) ontoPoint =
 
 let axiom6 (line1: Line) (point1: Point) (line2: Line) (point2: Point) =
     let cbrt x = if x < 0.0 then -(-x ** (1.0 / 3.0)) else x ** (1.0 / 3.0)
-    let hxrt x = if x < 0.0 then -(-x ** (1.0 / 6.0)) else x ** (1.0 / 6.0)
     let solveEquation a b c d =
-        let p = (3.0 * a * c - b * b) / (3.0 * a * a)
-        let q = (2.0 * b * b * b - 9.0 * a * b * c + 27.0 * a * a * d) / (27.0 * a * a * a)
-        let ys =
-            if p = 0.0 && q = 0.0 then
-                [ 0.0 ]
+        if a = 0.0 then
+            let delta = c * c - 4.0 * b * d
+            if delta = 0.0 then
+                [ -c / (2.0 * b) ]
+            elif delta < 0.0 then
+                []
             else
-                let delta = (27.0 * q * q + 4.0 * p * p * p) / 108.0
-                if delta > 0.0 then
-                    let s = sqrt delta
-                    [ cbrt (-q / 2.0 + s) + cbrt (-q / 2.0 - s) ]
-                elif delta = 0.0 then
-                    let s = cbrt (q / 2.0)
-                    [ -2.0 * s; s ]
-                else
-                    let α = -q / 2.0
-                    let β = sqrt -delta
-                    let s = 2.0 * hxrt (α * α - delta)
-                    let t = atan2 β α / 3.0
-                    let u = System.Math.PI / 1.5
-                    [ s * cos t; s * cos (t + u); s * cos (t + u * 2.0) ]
-        ys |> List.map(fun y -> y - b / (3.0 * a))
-
-    let rec getFactors a1 b1 c1 x1 y1 a2 b2 c2 x2 y2 rev =
-        let n1 = a1 * x1 + b1 * y1 + c1
-        let n2 = a2 * x2 + b2 * y2 + c2
-        let x = x1 - x2
-        let y = y1 - y2
-        let d = a1 * n2 - a2 * n1
-        let e = b1 * n2 - b2 * n1
-        let f = 2.0 * (a1 * b2 + a2 * b1)
-        let a = 2.0 * a1 * a2
-        let b = 2.0 * b1 * b2
-        let t1 = d + a * x
-        if t1 =~~ 0.0 then
-            if not rev then
-                getFactors b1 a1 c1 y1 x1 b2 a2 c2 y2 x2 true
-            else
-                // 縦・横どちらにも傾き∞を含む場合、その2つのみが解となる
-                [
-                    Line.Create(1.0, 0.0, -x1 + n1 / (2.0 * a1))
-                    Line.Create(0.0, 1.0, -y1 + n1 / (2.0 * b1))
-                ]
+                let c2 = -c / (2.0 * b)
+                let s = sqrt delta / (2.0 * b)
+                [ c2 + s; c2 - s ]
         else
-            let t2 = e + f * x + a * y
-            let t3 = d + f * y + b * x
-            let t4 = e + b * y
-            let xfs = solveEquation t1 t2 t3 t4
-            let yf = 1.0
-            xfs |> List.choose(fun xf ->
-                let c = -(x1 * xf) - y1 + (n1 * (xf * xf + 1.0)) / (2.0 * (a1 * xf + b1))
-                if System.Double.IsFinite(c)
-                then Some(if rev then Line.Create(yf, xf, c) else Line.Create(xf, yf, c))
-                else None)
-    let result = getFactors line1.XFactor line1.YFactor line1.Intercept point1.X point1.Y line2.XFactor line2.YFactor line2.Intercept point2.X point2.Y false
-    result
+            let p = (3.0 * a * c - b * b) / (3.0 * a * a)
+            let q = (2.0 * b * b * b - 9.0 * a * b * c + 27.0 * a * a * d) / (27.0 * a * a * a)
+            let ys =
+                if p = 0.0 && q = 0.0 then
+                    [ 0.0 ]
+                else
+                    let delta = (27.0 * q * q + 4.0 * p * p * p) / 108.0
+                    if delta > 0.0 then
+                        let s = sqrt delta
+                        [ cbrt (-q / 2.0 + s) + cbrt (-q / 2.0 - s) ]
+                    elif delta = 0.0 then
+                        let s = cbrt (q / 2.0)
+                        [ -2.0 * s; s ]
+                    else
+                        let α = -q / 2.0
+                        let β = sqrt -delta
+                        let s = 2.0 * sqrt (-p / 3.0)
+                        let t = atan2 β α / 3.0
+                        let u = System.Math.PI / 1.5
+                        [ s * cos t; s * cos (t + u); s * cos (t - u) ]
+            ys |> List.map(fun y -> y - b / (3.0 * a))
+
+    let getFactors a1 b1 c1 x1 y1 a2 b2 c2 x2 y2 =
+        let d = -x2 * a1 - y2 * b1 - c1
+        let e = -x2 * a2 - y2 * b2 - c2
+        let a = a1 * a2 + b1 * b2
+        let b = b1 * a2 - a1 * b2
+        let x = (x1 - x2) * a2 + (y1 - y2) * b2
+        let y = -(x1 - x2) * b2 + (y1 - y2) * a2
+        let α = e * b
+        let β = x * b + y * a
+        let γ = e * a - d
+        let δ = x * a - y * b
+        solveEquation α (γ + δ) (α - 2.0 * β) (γ - δ)
+        |> List.map(fun t -> 
+            let a = a2 - t * b2
+            let b = b2 + t * a2
+            let c = t * (x2 * b2 - y2 * a2) + ((x2 * a2 + y2 * b2) * (t * t - 1.0) + c2 * (t * t + 1.0)) / 2.0
+            Line.Create(a, b, c))
+    getFactors line1.XFactor line1.YFactor line1.Intercept point1.X point1.Y line2.XFactor line2.YFactor line2.Intercept point2.X point2.Y
 
 let axiom7 (passLine: Line) (ontoLine: Line) ontoPoint =
     if ontoLine.Contains(ontoPoint) then None
