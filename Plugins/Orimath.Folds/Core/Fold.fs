@@ -78,7 +78,6 @@ let axiom6 (line1: Line) (point1: Point) (line2: Line) (point2: Point) =
                         let u = System.Math.PI / 1.5
                         [ s * cos t; s * cos (t + u); s * cos (t - u) ]
             ys |> List.map(fun y -> y - b / (3.0 * a))
-
     let getFactors a1 b1 c1 x1 y1 a2 b2 c2 x2 y2 =
         let d = -x2 * a1 - y2 * b1 - c1
         let e = -x2 * a2 - y2 * b2 - c2
@@ -96,7 +95,9 @@ let axiom6 (line1: Line) (point1: Point) (line2: Line) (point2: Point) =
             let b = b2 + t * a2
             let c = t * (x2 * b2 - y2 * a2) + ((x2 * a2 + y2 * b2) * (t * t - 1.0) + c2 * (t * t + 1.0)) / 2.0
             Line.Create(a, b, c))
-    getFactors line1.XFactor line1.YFactor line1.Intercept point1.X point1.Y line2.XFactor line2.YFactor line2.Intercept point2.X point2.Y
+    if line1.Contains(point1) || line2.Contains(point2) then []
+    else
+        getFactors line1.XFactor line1.YFactor line1.Intercept point1.X point1.Y line2.XFactor line2.YFactor line2.Intercept point2.X point2.Y
 
 let axiom7 (passLine: Line) (ontoLine: Line) ontoPoint =
     if ontoLine.Contains(ontoPoint) then None
