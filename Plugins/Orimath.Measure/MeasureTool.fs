@@ -83,11 +83,14 @@ type MeasureTool(workspace: IWorkspace) =
             | FreePoint _ | LineOrEdge _ -> true
             | _ -> false
 
-        member this.Drop(source, target, _) =
+        member this.Drop(source, target, modifier) =
             paper.SelectedLayers <- array.Empty()
             paper.SelectedPoints <- array.Empty()
             paper.SelectedEdges <- array.Empty()
-            paper.SelectedLines <- Option.toArray(this.GetDistanceLine(source, target))
+            paper.SelectedLines <- 
+                if modifier.HasFlag(OperationModifier.Shift)
+                then Array.append paper.SelectedLines (Option.toArray(this.GetDistanceLine(source, target)))
+                else Option.toArray(this.GetDistanceLine(source, target))
             instruction.Lines <- Array.Empty()
 
     interface IFoldingInstructionTool with
