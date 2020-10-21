@@ -45,7 +45,7 @@ let crossAllCSharp layer lines = crossAll layer lines |> List.toArray
 
 [<CompiledName("Add"); Extension>]
 let add (layer: Layer) (lines: seq<LineSegment>) (points: seq<Point>) =
-    Layer.Create(layer.Edges, lines @@ layer.Lines, points @@ layer.Points)
+    Layer.Create(layer.Edges, lines @@ layer.Lines, points @@ layer.Points, layer.LayerType)
 
 [<CompiledName("AddPoints"); Extension>]
 let addPoints layer points = add layer [] points

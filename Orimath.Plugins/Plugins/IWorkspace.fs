@@ -13,9 +13,9 @@ type IWorkspace =
 
     abstract member Initialize : unit -> unit
     abstract member CreatePaper : layers: seq<ILayer> -> IPaper
-    abstract member CreateLayer : edges: seq<Edge> * lines: seq<LineSegment> * points: seq<Point> -> ILayer
-    abstract member CreateLayerFromSize : width: float * height: float -> ILayer
-    abstract member CreateLayerFromPolygon : vertexes: seq<Point> -> ILayer
+    abstract member CreateLayer : edges: seq<Edge> * lines: seq<LineSegment> * points: seq<Point> * layerType: LayerType -> ILayer
+    abstract member CreateLayerFromSize : width: float * height: float * layerType: LayerType -> ILayer
+    abstract member CreateLayerFromPolygon : vertexes: seq<Point> * layerType: LayerType -> ILayer
 
     [<CLIEvent>]
     abstract member CurrentToolChanged : IEvent<EventHandler, EventArgs>

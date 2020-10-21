@@ -156,10 +156,15 @@
             </Grid>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:LayerViewModel}" x:Key="LayerBackTemplate">
-            <ctrl:PolygonControl Points="{Binding Vertexes, Mode=OneTime}"
-                                 Tag="{x:Static Brushes.White}"
+            <ctrl:PolygonControl x:Name="Polygon"
+                                 Points="{Binding Vertexes, Mode=OneTime}"
                                  AllowDrop="True"
                                  ctrl:MouseHandler.AttachedMouseHandler="{StaticResource mouseHandler}" />
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding LayerType}" Value="FrontSide">
+                    <Setter TargetName="Polygon" Property="Foreground" Value="{x:Static Brushes.WhiteSmoke}" />
+                </DataTrigger>
+            </DataTemplate.Triggers>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:LayerViewModel}" x:Key="SelectedLayerTemplate">
             <Polygon Points="{Binding Vertexes, Mode=OneTime}"

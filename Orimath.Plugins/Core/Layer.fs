@@ -3,10 +3,15 @@ open System.Collections.Generic
 open System.Runtime.CompilerServices
 open NearlyEquatable
 
+type LayerType =
+    | BackSide = 0
+    | FrontSide = 1
+
 type ILayer =
     abstract member Edges : IReadOnlyList<Edge>
     abstract member Lines : IReadOnlyList<LineSegment>
     abstract member Points : IReadOnlyList<Point>
+    abstract member LayerType : LayerType
 
 and Edge private (line: LineSegment, layer: ILayer option) =
     member _.Line = line

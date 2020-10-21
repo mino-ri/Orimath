@@ -131,7 +131,8 @@ namespace Orimath.Basics.View.Controls
             {
                 _draggingSource = ctrl;
                 _draggingGuid = Guid.NewGuid().ToString();
-                ctrl.Foreground = (Brush)ctrl.Tag;
+                if (ctrl.Tag is Brush brush)
+                    ctrl.Foreground = brush;
                 // この中でドロップまで待機する
                 DragDrop.DoDragDrop(ctrl, _draggingGuid, DragDropEffects.Scroll);
                 _draggingData = null;
@@ -182,7 +183,8 @@ namespace Orimath.Basics.View.Controls
                 Workspace.DragEnter(_draggingData, GetOperationTarget(e, dt), GetModifier(_pressed)))
             {
                 e.Effects = DragDropEffects.Scroll;
-                ctrl.Foreground = (Brush)ctrl.Tag;
+                if (ctrl.Tag is Brush brush)
+                    ctrl.Foreground = brush;
             }
             else
             {

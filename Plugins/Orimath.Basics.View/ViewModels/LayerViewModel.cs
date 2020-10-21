@@ -43,6 +43,7 @@ namespace Orimath.Basics.View.ViewModels
         public PointCollection Vertexes { get; }
         public ObservableCollection<PointViewModel> Points => _points;
         public ObservableCollection<LineViewModel> Lines => _lines;
+        public LayerType LayerType => Source.LayerType;
 
         public DisplayTarget GetTarget() => DisplayTarget.NewLayer(Source);
 
