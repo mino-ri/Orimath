@@ -36,13 +36,33 @@
                          EndType="{Binding EndType, Mode=OneWay}"
                          StrokeThickness="4" />
         </DataTemplate>
+        <ControlTemplate TargetType="{x:Type Control}" x:Key="PointControlTemplate">
+            <Ellipse Width="12" Height="12" Margin="-6,-6,-6,-6" Fill="{TemplateBinding Foreground}" />
+        </ControlTemplate>
+        <Style TargetType="{x:Type Control}" x:Key="PointStyle">
+            <Setter Property="Foreground" Value="{Binding Color, Mode=OneWay, Converter={StaticResource CudConverter}}" />
+            <Setter Property="Template" Value="{StaticResource PointControlTemplate}" />
+        </Style>
+        <DataTemplate DataType="{x:Type vm:InstructionPointViewModel}" x:Key="PointTemplate">
+            <Control Style="{StaticResource PointStyle}" />
+        </DataTemplate>
     </UserControl.Resources>
     <Grid>
-        <ItemsControl ItemsSource="{Binding Arrows, Mode=OneTime}"
-                      ItemsPanel="{StaticResource CanvasItemsPanel}"
-                      ItemTemplate="{StaticResource ArrowTemplate}" />
         <ItemsControl ItemsSource="{Binding Lines, Mode=OneTime}"
                       ItemsPanel="{StaticResource CanvasItemsPanel}"
                       ItemTemplate="{StaticResource LineTemplate}" />
+        <ItemsControl ItemsSource="{Binding Points, Mode=OneTime}"
+                      ItemsPanel="{StaticResource CanvasItemsPanel}"
+                      ItemTemplate="{StaticResource PointTemplate}">
+            <ItemsControl.ItemContainerStyle>
+                <Style TargetType="{x:Type ContentPresenter}">
+                    <Setter Property="Canvas.Left" Value="{Binding X, Mode=OneWay}" />
+                    <Setter Property="Canvas.Top" Value="{Binding Y, Mode=OneWay}" />
+                </Style>
+            </ItemsControl.ItemContainerStyle>
+        </ItemsControl>
+        <ItemsControl ItemsSource="{Binding Arrows, Mode=OneTime}"
+                      ItemsPanel="{StaticResource CanvasItemsPanel}"
+                      ItemTemplate="{StaticResource ArrowTemplate}" />
     </Grid>
 </UserControl>

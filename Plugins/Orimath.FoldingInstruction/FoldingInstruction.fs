@@ -97,9 +97,17 @@ type InstructionArrow =
     static member ValleyFold(startPoint, endPoint) =
         InstructionArrow.Create(startPoint, endPoint, ArrowType.ValleyFold)
 
+[<Struct; NoComparison>]
+type InstructionPoint =
+    {
+        Point: Point
+        Color: InstructionColor
+    }
+
 type FoldingInstruction() as this =    
-    let mutable lines = ReactiveProperty.createArray<InstructionLine> this
-    let mutable arrows = ReactiveProperty.createArray<InstructionArrow> this
+    let lines = ReactiveProperty.createArray<InstructionLine> this
+    let arrows = ReactiveProperty.createArray<InstructionArrow> this
+    let points = ReactiveProperty.createArray<InstructionPoint> this
 
     member _.Lines
         with get() = lines.Value
@@ -109,8 +117,15 @@ type FoldingInstruction() as this =
         with get() = arrows.Value
         and set(v) = arrows.Value <- v
 
+    member _.Points
+        with get() = points.Value
+        and set(v) = points.Value <- v
+
     [<CLIEvent>]
     member _.LinesChanged = lines.ValueChanged
 
     [<CLIEvent>]
     member _.ArrowsChanged = arrows.ValueChanged
+
+    [<CLIEvent>]
+    member _.PointsChanged = points.ValueChanged

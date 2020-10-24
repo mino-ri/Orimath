@@ -127,26 +127,39 @@ type DragFoldTool(workspace: IWorkspace) =
                     let reflected = chosen.Reflect(p)
                     if p =~ reflected then Array.Empty()
                     else [| InstructionArrow.ValleyFold(p, chosen.Reflect(p), InstructionColor.Blue) |]
-        instruction.Arrows <-
+        let arrows, points =
             match opr with
-            | NoOperation -> Array.Empty()
-            | Axiom1(_, _) -> getGeneralArrow()
-            | Axiom2(point1, point2) -> [| InstructionArrow.ValleyFold(point1, point2, InstructionColor.Blue) |]
-            | Axiom3((_, point), _) -> [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Blue) |]
+            | NoOperation -> Array.Empty(), Array.Empty()
+            | Axiom1(_, _) -> getGeneralArrow(), Array.Empty()
+            | Axiom2(point1, point2) -> [| InstructionArrow.ValleyFold(point1, point2, InstructionColor.Blue) |], Array.Empty()
+            | Axiom3((_, point), _) -> [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Blue) |], Array.Empty()
             | Axiom4(line, _, isEdge) ->
                 let perpendicular = getPerpendicularArrow line chosen isEdge
-                if Array.isEmpty perpendicular then getGeneralArrow() else perpendicular
-            | Axiom5(_, _, point) -> [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Blue) |]
-            | Axiom6(_, point1, _, point2) -> [| InstructionArrow.ValleyFold(point1, chosen.Reflect(point1), InstructionColor.Blue)
-                                                 InstructionArrow.ValleyFold(point2, chosen.Reflect(point2), InstructionColor.Blue) |]
+                (if Array.isEmpty perpendicular then getGeneralArrow() else perpendicular), Array.Empty()
+            | Axiom5(_, _, point) ->
+                let reflected = chosen.Reflect(point)
+                [| InstructionArrow.ValleyFold(point, reflected, InstructionColor.Blue) |],
+                [| { Point = reflected; Color = InstructionColor.Brown } |]
+            | Axiom6(_, point1, _, point2) ->
+                let reflected1 = chosen.Reflect(point1)
+                let reflected2 = chosen.Reflect(point2)
+                [| InstructionArrow.ValleyFold(point1, reflected1, InstructionColor.Blue)
+                   InstructionArrow.ValleyFold(point2, reflected2, InstructionColor.Blue) |],
+                [| { Point = reflected1; Color = InstructionColor.Brown }
+                   { Point = reflected2; Color = InstructionColor.Brown } |]
             | Axiom7(pass, _, point, isEdge) ->
-                Array.append
-                    (getPerpendicularArrow pass chosen isEdge)
-                    [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Blue) |]
+                let reflected = chosen.Reflect(point)
+                let arrows =
+                    Array.append
+                        (getPerpendicularArrow pass chosen isEdge)
+                        [| InstructionArrow.ValleyFold(point, reflected, InstructionColor.Blue) |]
+                arrows, [| { Point = reflected; Color = InstructionColor.Brown } |]
             | AxiomP(_, point) ->
                 match source with
-                | LineOrEdge _ -> [| InstructionArrow.ValleyFold(chosen.Reflect(point), point, InstructionColor.Blue) |]
-                | _ -> [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Blue) |]
+                | LineOrEdge _ -> [| InstructionArrow.ValleyFold(chosen.Reflect(point), point, InstructionColor.Blue) |], Array.Empty()
+                | _ -> [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Blue) |], Array.Empty()
+        instruction.Arrows <- arrows
+        instruction.Points <- points
 
     interface ITool with
         member _.Name = "折り線"
@@ -217,7 +230,9 @@ type DragFoldTool(workspace: IWorkspace) =
 
             match chosen with
             | Some(c) -> this.SetArrow(source, target, c, opr)
-            | None -> instruction.Arrows <- Array.Empty()
+            | None ->
+                instruction.Arrows <- Array.Empty()
+                instruction.Points <- Array.Empty()
 
             match target with
             | FreePoint true _ | LineOrEdge _ -> true
@@ -226,6 +241,7 @@ type DragFoldTool(workspace: IWorkspace) =
         member _.DragLeave(_, target, _) =
             instruction.Lines <- Array.Empty()
             instruction.Arrows <- Array.Empty()
+            instruction.Points <- Array.Empty()
             match target with
             | FreePoint true _ | LineOrEdge _ -> true
             | _ -> false
@@ -239,6 +255,7 @@ type DragFoldTool(workspace: IWorkspace) =
             for layer in paper.Layers do layer.AddLines(lines)
             instruction.Lines <- Array.Empty()
             instruction.Arrows <- Array.Empty()
+            instruction.Points <- Array.Empty()
 
     interface IFoldingInstructionTool with
         member _.FoldingInstruction = instruction

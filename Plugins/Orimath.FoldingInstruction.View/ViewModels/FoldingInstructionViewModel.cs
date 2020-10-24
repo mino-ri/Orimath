@@ -14,6 +14,7 @@ namespace Orimath.FoldingInstruction.View.ViewModels
 
         public ResettableObservableCollection<InstructionLineViewModel> Lines { get; } = new ResettableObservableCollection<InstructionLineViewModel>();
         public ResettableObservableCollection<InstructionArrowViewModel> Arrows { get; } = new ResettableObservableCollection<InstructionArrowViewModel>();
+        public ResettableObservableCollection<InstructionPointViewModel> Points { get; } = new ResettableObservableCollection<InstructionPointViewModel>();
 
         public FoldingInstructionViewModel(IWorkspace workspace, IDispatcher dispatcher, IViewPointConverter pointConverter)
         {
@@ -29,6 +30,7 @@ namespace Orimath.FoldingInstruction.View.ViewModels
             {
                 _foldingInstruction.LinesChanged -= Model_LinesChanged;
                 _foldingInstruction.ArrowsChanged -= Model_ArrowsChanged;
+                _foldingInstruction.PointsChanged -= Model_PointsChanged;
             }
 
             _foldingInstruction = (_workspace.CurrentTool as IFoldingInstructionTool)?.FoldingInstruction;
@@ -36,11 +38,13 @@ namespace Orimath.FoldingInstruction.View.ViewModels
             {
                 _foldingInstruction.LinesChanged += Model_LinesChanged;
                 _foldingInstruction.ArrowsChanged += Model_ArrowsChanged;
+                _foldingInstruction.PointsChanged += Model_PointsChanged;
 
                 _dispatcher.OnUIAsync(() =>
                 {
                     Lines.Reset(_foldingInstruction.Lines.Select(x => new InstructionLineViewModel(_pointConverter, x)));
                     Arrows.Reset(_foldingInstruction.Arrows.Select(x => new InstructionArrowViewModel(_pointConverter, x)));
+                    Points.Reset(_foldingInstruction.Points.Select(x => new InstructionPointViewModel(_pointConverter, x)));
                     Visible = true;
                 });
 
@@ -51,6 +55,7 @@ namespace Orimath.FoldingInstruction.View.ViewModels
                 {
                     Lines.Clear();
                     Arrows.Clear();
+                    Points.Clear();
                     Visible = false;
                 });
             }
@@ -90,6 +95,25 @@ namespace Orimath.FoldingInstruction.View.ViewModels
                 else
                 {
                     Lines.Reset(lines.Select(x => new InstructionLineViewModel(_pointConverter, x)));
+                }
+            });
+        }
+
+        private void Model_PointsChanged(object? sender, EventArgs e)
+        {
+            if (!(sender is FoldingInstruction foldingInstruction)) return;
+
+            var points = foldingInstruction.Points;
+            _dispatcher.OnUIAsync(() =>
+            {
+                if (points.Length == Points.Count)
+                {
+                    for (var i = 0; i < points.Length; i++)
+                        Points[i].SetModel(points[i]);
+                }
+                else
+                {
+                    Points.Reset(points.Select(x => new InstructionPointViewModel(_pointConverter, x)));
                 }
             });
         }
