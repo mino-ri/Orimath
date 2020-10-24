@@ -105,11 +105,11 @@ type DragFoldTool(workspace: IWorkspace) =
 
     member private _.SetArrow(source: OperationTarget, target: OperationTarget, chosen: Line, opr: FoldOperation) =
         let getGeneralArrow() =
-            match paper.Layers.[0].ClipBound(chosen) with
+            match paper.ClipBound(chosen) with
             | None -> Array.Empty()
             | Some(first, last) ->
                 let middle = (first + last) / 2.0
-                match paper.Layers.[0].ClipBound(Fold.axiom4 chosen middle) with
+                match paper.ClipBound(Fold.axiom4 chosen middle) with
                 | None -> Array.Empty()
                 | Some(point1, point2) ->
                     let point = if middle.GetDistance(point1) <= middle.GetDistance(point2) then point1 else point2
@@ -211,7 +211,7 @@ type DragFoldTool(workspace: IWorkspace) =
                     | _ -> InstructionColor.LightGray
                 }
             instruction.Lines <- lines
-                |> Seq.collect(paper.Layers.[0].Clip)
+                |> Seq.collect(paper.Clip)
                 |> Seq.map mapping
                 |> Seq.toArray
 
