@@ -14,6 +14,7 @@ namespace Orimath.ViewModels
         private readonly IWorkspace _workspace;
         private readonly OrimathDispatcher _dispatcher = new OrimathDispatcher();
         private readonly Dictionary<IEffect, ICommand> _effectCommands = new Dictionary<IEffect, ICommand>();
+        private readonly Dictionary<Type, Func<object, object>> _effectParameterCreator = new Dictionary<Type, Func<object, object>>();
 
         private readonly ActionCommand _closeDialogCommand;
         private readonly ObservableCollection<object> _preViewModels = new ObservableCollection<object>();
@@ -195,6 +196,23 @@ namespace Orimath.ViewModels
         {
             if (viewModel is null) throw new ArgumentNullException(nameof(viewModel));
             GetViewModelCollection(viewModel.GetType())?.Add(viewModel);
+        }
+
+        public void SetEffectParameterViewModel<T>(Func<T, object> mapping)
+        {
+            _effectParameterCreator[typeof(T)] = p => mapping((T)p);
+        }
+
+        public object GetEffectParameterViewModel(object parameter)
+        {
+            if (_effectParameterCreator.TryGetValue(parameter.GetType(), out var creator))
+            {
+                return creator(parameter);
+            }
+            else
+            {
+                return new SettingViewModel(parameter);
+            }
         }
 
         public void OpenDialog(object viewModel)

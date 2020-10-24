@@ -28,7 +28,7 @@ type NewPaperExecutor(workspace: IWorkspace) =
             workspace.Paper.Clear(workspace.CreatePaper([| workspace.CreateLayerFromPolygon(vertexes, LayerType.BackSide) |]))
         | _ -> ()
 
-    member this.NewPaperEffect =
+    member this.ResetEffect =
         { new IEffect with
             member _.MenuHieralchy = [| "編集" |]
             member _.Name = "すべて削除"
@@ -40,19 +40,15 @@ type NewPaperExecutor(workspace: IWorkspace) =
             member _.CanExecuteChanged = Event<_, _>().Publish
         }
 
-type NewPaperEffect(executor: NewPaperExecutor) =
-    let onExecute = Event<EventHandler, EventArgs>()
-
-    member _.Executor = executor
-    [<CLIEvent>]
-    member _.OnExecute = onExecute.Publish
-
-    interface IEffect with
-        member val MenuHieralchy = [| "編集" |]
-        member _.Name = "新しい紙"
-        member _.ShortcutKey = "Ctrl+N"
-        member _.Icon = InternalModule.getIcon "new_paper"
-        member _.CanExecute() = true
-        member this.Execute() = onExecute.Trigger(this, EventArgs.Empty)
-        [<CLIEvent>]
-        member _.CanExecuteChanged = Event<_, _>().Publish
+    member this.NewPaperEffect =
+        { new IParametricEffect with
+            member _.MenuHieralchy = [| "編集" |]
+            member _.Name = "新しい紙"
+            member _.ShortcutKey = "Ctrl+N"
+            member _.Icon = InternalModule.getIcon "new_paper"
+            member _.CanExecute() = true
+            member _.Execute() = this.NewPaper()
+            member _.GetParameter() = this :> obj
+            [<CLIEvent>]
+            member _.CanExecuteChanged = Event<_, _>().Publish
+        }

@@ -19,12 +19,9 @@ namespace Orimath.Basics.View
         public void Execute(ViewPluginArgs args)
         {
             var newPaperExecutor = new NewPaperExecutor(args.Workspace);
-            var effect = new NewPaperEffect(newPaperExecutor);
             args.Workspace.AddEffect(newPaperExecutor.NewPaperEffect);
-            args.Workspace.AddEffect(effect);
-            effect.OnExecute += (sender, e) =>
-                args.Dispatcher.OnUIAsync(() =>
-                    args.Messenger.OpenDialog(new NewPaperDialogViewModel(args.Messenger, args.Dispatcher, effect.Executor)));
+            args.Workspace.AddEffect(newPaperExecutor.ResetEffect);
+            args.Messenger.SetEffectParameterViewModel<NewPaperExecutor>(p => new NewPaperDialogViewModel(args.Messenger, args.Dispatcher, p));
         }
     }
 

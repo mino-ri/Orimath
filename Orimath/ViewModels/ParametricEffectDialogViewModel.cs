@@ -12,16 +12,16 @@ namespace Orimath.ViewModels
 
         public string Header { get; }
 
-        public SettingViewModel Parameter { get; }
+        public object Parameter { get; }
 
-        public ParametricEffectDialogViewModel(IParametricEffect effect, IDispatcher dispatcher, IMessenger messenger)
+        public ParametricEffectDialogViewModel(IParametricEffect effect, IDispatcher dispatcher, WorkspaceViewModel parent)
         {
             _effect = effect;
             _dispatcher = dispatcher;
-            _messenger = messenger;
+            _messenger = parent;
 
             Header = effect.Name;
-            Parameter = new SettingViewModel(_effect.GetParameter());
+            Parameter = parent.GetEffectParameterViewModel(_effect.GetParameter());
             ExecuteCommand = new ActionCommand(Execute);
         }
 
