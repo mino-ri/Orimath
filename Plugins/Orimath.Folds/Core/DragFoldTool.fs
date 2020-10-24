@@ -10,12 +10,12 @@ type FoldOperation =
     | NoOperation
     | Axiom1 of Point * Point
     | Axiom2 of Point * Point
-    | Axiom3 of (Line * Point) * (Line * Point)
-    | Axiom4 of Line * Point
-    | Axiom5 of pass: Point * (Line * Point) * Point
-    | Axiom6 of Line * Point * (Line * Point) * Point
-    | Axiom7 of pass: Line * Line * Point
-    | AxiomP of Line * Point
+    | Axiom3 of (LineSegment * Point) * (LineSegment * Point)
+    | Axiom4 of LineSegment * Point
+    | Axiom5 of pass: Point * (LineSegment * Point) * Point
+    | Axiom6 of LineSegment * Point * (LineSegment * Point) * Point
+    | Axiom7 of pass: LineSegment * LineSegment * Point
+    | AxiomP of LineSegment * Point
 
 type DragFoldTool(workspace: IWorkspace) =
     let paper = workspace.Paper
@@ -28,8 +28,8 @@ type DragFoldTool(workspace: IWorkspace) =
         | _ -> None
     let (|LineOrEdge|_|) (dt: OperationTarget) =
         match dt.Target with
-        | DisplayTarget.Line(line) -> Some(line.Line, dt.Point)
-        | DisplayTarget.Edge(edge) -> Some(edge.Line.Line, dt.Point)
+        | DisplayTarget.Line(line) -> Some(line, dt.Point)
+        | DisplayTarget.Edge(edge) -> Some(edge.Line, dt.Point)
         | _ -> None
 
     member private _.GetPass() =
@@ -56,8 +56,8 @@ type DragFoldTool(workspace: IWorkspace) =
             | LineOrEdge(line), FreePoint free (point) ->
                 match this.GetPass() with
                 | Some(pass), None -> Axiom5(pass, line, point)
-                | None, Some(pass) -> Axiom7(pass.Line, fst line, point)
-                | Some(p), Some(l) -> Axiom6(l.Line, p, line, point)
+                | None, Some(pass) -> Axiom7(pass, fst line, point)
+                | Some(p), Some(l) -> Axiom6(l, p, line, point)
                 | _ -> AxiomP(fst line, point)
             | _ -> NoOperation
         
@@ -66,12 +66,12 @@ type DragFoldTool(workspace: IWorkspace) =
         | NoOperation -> []
         | Axiom1(point1, point2) -> Fold.axiom1 point1 point2 |> Option.toList
         | Axiom2(point1, point2) -> Fold.axiom2 point1 point2 |> Option.toList
-        | Axiom3((line1, _), (line2, _)) -> Fold.axiom3 line1 line2
-        | Axiom4(line, point) -> [Fold.axiom4 line point]
-        | Axiom5(pass, (line, _), point) -> Fold.axiom5 pass line point
-        | Axiom6(line1, point1, (line2, _), point2) -> Fold.axiom6 line1 point1 line2 point2
-        | Axiom7(pass, line, point) -> Fold.axiom7 pass line point |> Option.toList
-        | AxiomP(line, point) -> Fold.axiomP line point |> Option.toList
+        | Axiom3((line1, _), (line2, _)) -> Fold.axiom3 line1.Line line2.Line
+        | Axiom4(line, point) -> [Fold.axiom4 line.Line point]
+        | Axiom5(pass, (line, _), point) -> Fold.axiom5 pass line.Line point
+        | Axiom6(line1, point1, (line2, _), point2) -> Fold.axiom6 line1.Line point1 line2.Line point2
+        | Axiom7(pass, line, point) -> Fold.axiom7 pass.Line line.Line point |> Option.toList
+        | AxiomP(line, point) -> Fold.axiomP line.Line point |> Option.toList
 
     member private _.ChooseLine(lines: Line list, opr: FoldOperation) =
         match lines with
