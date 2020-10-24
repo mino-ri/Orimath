@@ -11,10 +11,10 @@ type FoldOperation =
     | Axiom1 of Point * Point
     | Axiom2 of Point * Point
     | Axiom3 of (LineSegment * Point) * (LineSegment * Point)
-    | Axiom4 of LineSegment * Point
+    | Axiom4 of LineSegment * Point * isEdge: bool
     | Axiom5 of pass: Point * (LineSegment * Point) * Point
     | Axiom6 of LineSegment * Point * (LineSegment * Point) * Point
-    | Axiom7 of pass: LineSegment * LineSegment * Point
+    | Axiom7 of pass: LineSegment * LineSegment * Point * isPassEdge: bool
     | AxiomP of LineSegment * Point
 
 type DragFoldTool(workspace: IWorkspace) =
@@ -31,13 +31,20 @@ type DragFoldTool(workspace: IWorkspace) =
         | DisplayTarget.Line(line) -> Some(line, dt.Point)
         | DisplayTarget.Edge(edge) -> Some(edge.Line, dt.Point)
         | _ -> None
+    let (|LineOrEdge2|_|) (dt: OperationTarget) =
+        match dt.Target with
+        | DisplayTarget.Line(line) -> Some(line, false)
+        | DisplayTarget.Edge(edge) -> Some(edge.Line, true)
+        | _ -> None
 
     member private _.GetPass() =
         let passPoint = Array.tryItem 0 paper.SelectedPoints
         let passLine =
             if paper.SelectedEdges.Length > 0
-            then Some(paper.SelectedEdges.[0].Line)
-            else Array.tryItem 0 paper.SelectedLines
+            then Some(paper.SelectedEdges.[0].Line, true)
+            elif paper.SelectedLines.Length > 0
+            then Some(paper.SelectedLines.[0], false)
+            else None
         passPoint, passLine
 
     member private this.GetOperation(source: OperationTarget, target: OperationTarget, modifier: OperationModifier) =
@@ -45,8 +52,8 @@ type DragFoldTool(workspace: IWorkspace) =
         if modifier.HasFlag(OperationModifier.RightButton) then
             match source, target with
             | FreePoint free (point1), FreePoint free (point2) -> Axiom1(point1, point2)
-            | FreePoint free (point), LineOrEdge(line, _)
-            | LineOrEdge(line, _), FreePoint free (point) -> Axiom4(line, point)
+            | FreePoint free (point), LineOrEdge2(line, isEdge)
+            | LineOrEdge2(line, isEdge), FreePoint free (point) -> Axiom4(line, point, isEdge)
             | _ -> NoOperation
         else
             match source, target with
@@ -56,8 +63,8 @@ type DragFoldTool(workspace: IWorkspace) =
             | LineOrEdge(line), FreePoint free (point) ->
                 match this.GetPass() with
                 | Some(pass), None -> Axiom5(pass, line, point)
-                | None, Some(pass) -> Axiom7(pass, fst line, point)
-                | Some(p), Some(l) -> Axiom6(l, p, line, point)
+                | None, Some(pass, isEdge) -> Axiom7(pass, fst line, point, isEdge)
+                | Some(p), Some(l, _) -> Axiom6(l, p, line, point)
                 | _ -> AxiomP(fst line, point)
             | _ -> NoOperation
         
@@ -67,10 +74,10 @@ type DragFoldTool(workspace: IWorkspace) =
         | Axiom1(point1, point2) -> Fold.axiom1 point1 point2 |> Option.toList
         | Axiom2(point1, point2) -> Fold.axiom2 point1 point2 |> Option.toList
         | Axiom3((line1, _), (line2, _)) -> Fold.axiom3 line1.Line line2.Line
-        | Axiom4(line, point) -> [Fold.axiom4 line.Line point]
+        | Axiom4(line, point, _) -> [Fold.axiom4 line.Line point]
         | Axiom5(pass, (line, _), point) -> Fold.axiom5 pass line.Line point
         | Axiom6(line1, point1, (line2, _), point2) -> Fold.axiom6 line1.Line point1 line2.Line point2
-        | Axiom7(pass, line, point) -> Fold.axiom7 pass.Line line.Line point |> Option.toList
+        | Axiom7(pass, line, point, _) -> Fold.axiom7 pass.Line line.Line point |> Option.toList
         | AxiomP(line, point) -> Fold.axiomP line.Line point |> Option.toList
 
     member private _.ChooseLine(lines: Line list, opr: FoldOperation) =
@@ -97,28 +104,45 @@ type DragFoldTool(workspace: IWorkspace) =
             | _ -> Some(lines.[0])
 
     member private _.SetArrow(source: OperationTarget, target: OperationTarget, chosen: Line, opr: FoldOperation) =
+        let getGeneralArrow() =
+            match paper.Layers.[0].ClipBound(chosen) with
+            | None -> Array.Empty()
+            | Some(first, last) ->
+                let middle = (first + last) / 2.0
+                match paper.Layers.[0].ClipBound(Fold.axiom4 chosen middle) with
+                | None -> Array.Empty()
+                | Some(point1, point2) ->
+                    let point = if middle.GetDistance(point1) <= middle.GetDistance(point2) then point1 else point2
+                    if chosen.Contains(point)
+                    then Array.Empty()
+                    else [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Blue) |]
+        let getPerpendicularArrow (line: LineSegment) (chosen: Line) (isEdge: bool) =
+            if isEdge then Array.Empty()
+            else
+                let p1 = chosen.GetSignedDistance(line.Point1)
+                let p2 = chosen.GetSignedDistance(line.Point2)
+                if sign p1 = sign p2 then Array.Empty()
+                else
+                    let p = if abs p1 < abs p2 then line.Point1 else line.Point2
+                    let reflected = chosen.Reflect(p)
+                    if p =~ reflected then Array.Empty()
+                    else [| InstructionArrow.ValleyFold(p, chosen.Reflect(p), InstructionColor.Blue) |]
         instruction.Arrows <-
             match opr with
             | NoOperation -> Array.Empty()
-            | Axiom1(_, _)
-            | Axiom4(_, _) ->
-                match paper.Layers.[0].ClipBound(chosen) with
-                | None -> Array.Empty()
-                | Some(first, last) ->
-                    let middle = (first + last) / 2.0
-                    match paper.Layers.[0].ClipBound(Fold.axiom4 chosen middle) with
-                    | None -> Array.Empty()
-                    | Some(point1, point2) ->
-                        let point = if middle.GetDistance(point1) <= middle.GetDistance(point2) then point1 else point2
-                        if chosen.Contains(point)
-                        then Array.Empty()
-                        else [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Blue) |]
+            | Axiom1(_, _) -> getGeneralArrow()
             | Axiom2(point1, point2) -> [| InstructionArrow.ValleyFold(point1, point2, InstructionColor.Blue) |]
             | Axiom3((_, point), _) -> [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Blue) |]
+            | Axiom4(line, _, isEdge) ->
+                let perpendicular = getPerpendicularArrow line chosen isEdge
+                if Array.isEmpty perpendicular then getGeneralArrow() else perpendicular
             | Axiom5(_, _, point) -> [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Blue) |]
             | Axiom6(_, point1, _, point2) -> [| InstructionArrow.ValleyFold(point1, chosen.Reflect(point1), InstructionColor.Blue)
                                                  InstructionArrow.ValleyFold(point2, chosen.Reflect(point2), InstructionColor.Blue) |]
-            | Axiom7(_, _, point) -> [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Blue) |]
+            | Axiom7(pass, _, point, isEdge) ->
+                Array.append
+                    (getPerpendicularArrow pass chosen isEdge)
+                    [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Blue) |]
             | AxiomP(_, point) ->
                 match source with
                 | LineOrEdge _ -> [| InstructionArrow.ValleyFold(chosen.Reflect(point), point, InstructionColor.Blue) |]
