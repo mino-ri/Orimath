@@ -299,8 +299,12 @@ type DragFoldTool(workspace: IWorkspace) =
         member _.OnDeactivated() = ()
 
     interface IClickTool with
-        member _.OnClick(target, modifier) =
-            if not (modifier.HasFlag(OperationModifier.RightButton)) then
+        member this.OnClick(target, modifier) =
+            if modifier.HasFlag(OperationModifier.RightButton) then
+                match target.Target with
+                | DisplayTarget.Line(line) -> this.FoldBack(line.Line)
+                | _ -> ()
+            else
                 let clearOther = not (modifier.HasFlag(OperationModifier.Shift))
                 match target.Target with
                 | DisplayTarget.Point(point) ->
