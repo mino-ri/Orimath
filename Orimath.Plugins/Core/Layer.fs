@@ -25,6 +25,8 @@ and Edge private (line: LineSegment, layer: ILayer option) =
         | None -> ()
         Edge(line, layer)
 
+    override _.ToString() = line.ToString()
+
 [<Extension>]
 type LayerExtensions =
     static member ContainsCore(edges, point: Point) =
@@ -124,3 +126,32 @@ type LayerExtensions =
             None
         else
             Some(segments.[0].Point1, segments.[segments.Length - 1].Point2)
+
+    static member private AppendCross(layer: ILayer, line: LineSegment, points: Point list) =
+        let mutable points = points
+        for edge in layer.Edges do
+            match edge.Line.GetCrossPoint(line) with
+            | Some(p) when (points |> List.forall((<>~) p)) && not (layer.HasPoint(p)) ->
+                points <- p :: points
+            | _ -> ()
+        for layerLine in layer.Lines do
+            match layerLine.GetCrossPoint(line) with
+            | Some(p) when (points |> List.forall((<>~) p)) && not (layer.HasPoint(p)) ->
+                points <- p :: points
+            | _ -> ()
+        points
+            
+    /// このレイヤー内の全ての折線と、指定した線分との交点を取得します。
+    [<Extension>]
+    static member GetCrosses(layer: ILayer, line: LineSegment) = LayerExtensions.AppendCross(layer, line, [line.Point1; line.Point2])
+            
+    /// このレイヤー内の全ての折線と、指定した全ての線分との交点を取得します。
+    [<Extension>]
+    static member GetCrosses(layer: ILayer, lines: seq<LineSegment>) =
+        let lines = asList lines
+        let mutable points = []
+        for line in lines do
+            if (points |> List.forall((<>~) line.Point1)) && not (layer.HasPoint(line.Point1)) then points <- line.Point1 :: points
+            if (points |> List.forall((<>~) line.Point2)) && not (layer.HasPoint(line.Point2)) then points <- line.Point2 :: points
+            points <- LayerExtensions.AppendCross(layer, line, points)
+        points

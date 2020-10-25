@@ -161,6 +161,132 @@ type DragFoldTool(workspace: IWorkspace) =
         instruction.Arrows <- arrows
         instruction.Points <- points
 
+    member _.MakeCrease(line: Line) =
+        for layer in paper.Layers do layer.AddLines([line])
+
+    member private _.Split(line: Line, target: LineSegment) =
+        match line.GetDistanceSign(target.Point1), line.GetDistanceSign(target.Point2) with
+        | 1, 1 | 1, 0 | 0, 1 -> Some(target), None
+        | -1, -1 | -1, 0 | 0, -1 -> None, Some(target)
+        | 1, -1 ->
+            let cross = line.GetCrossPoint(target.Line).Value
+            Some(LineSegment.FromPoints(target.Point1, cross).Value),
+            Some(LineSegment.FromPoints(cross, target.Point2).Value)
+        | -1, 1 ->
+            let cross = line.GetCrossPoint(target.Line).Value
+            Some(LineSegment.FromPoints(cross, target.Point2).Value),
+            Some(LineSegment.FromPoints(target.Point1, cross).Value)
+        | _ -> None, None
+
+    member private this.SplitEdges(foldLine: Line, layer: ILayer) =
+        let mutable crossed = false
+        let mutable isPositive = None
+        let positiveEdges = ResizeArray()
+        let negativeEdges = ResizeArray()
+        let cross (edge: Edge) positiveToNegative =
+            let positiveEdge, negativeEdge =
+                match layer.ClipBound(foldLine) with
+                | Some(a, b) ->
+                    if edge.Line.Contains(a) = positiveToNegative
+                    then LineSegment.FromPoints(a, b), LineSegment.FromPoints(b, a)
+                    else LineSegment.FromPoints(b, a), LineSegment.FromPoints(a, b)
+                | None -> None, None
+            positiveEdge |> Option.iter(fun e -> positiveEdges.Add(e, true))
+            negativeEdge |> Option.iter(fun e -> negativeEdges.Add(e, true))
+        for edge in layer.Edges do
+            match this.Split(foldLine, edge.Line) with
+            | Some(positive), None ->
+                if not crossed && isPositive = Some(false) then
+                    crossed <- true
+                    cross edge false
+                positiveEdges.Add(positive, false)
+                isPositive <- Some(true)
+            | None, Some(negative) ->
+                if not crossed && isPositive = Some(true) then
+                    crossed <- true
+                    cross edge true
+                negativeEdges.Add(negative, false)
+                isPositive <- Some(false)
+            | Some(positive), Some(negative) ->
+                if crossed then
+                    positiveEdges.Add(positive, false)
+                    negativeEdges.Add(negative, false)
+                else
+                    crossed <- true
+                    // 正 → 負に突入
+                    if positive.Point2 = negative.Point1 then
+                        positiveEdges.Add(positive, false)
+                        cross edge true
+                        negativeEdges.Add(negative, false)
+                        isPositive <- Some(false)
+                    // 負 → 正に突入
+                    else
+                        negativeEdges.Add(negative, false)
+                        cross edge false
+                        positiveEdges.Add(positive, false)
+                        isPositive <- Some(true)
+            | _ -> ()
+        positiveEdges, negativeEdges
+
+    member private this.SplitLayer(foldLine: Line, isPositiveStatic: bool, layer: ILayer) =
+        let turnLayerType isPositive =
+            if isPositive = isPositiveStatic then layer.LayerType
+            else
+                match layer.LayerType with
+                | LayerType.BackSide -> LayerType.FrontSide
+                | LayerType.FrontSide -> LayerType.BackSide
+                | _ -> layer.LayerType
+        let positiveEdges, negativeEdges = this.SplitEdges(foldLine, layer)
+        let positivePoints = ResizeArray()
+        let negativePoints = ResizeArray()
+        for point in Seq.append layer.Points (layer.GetCrosses(layer.Clip(foldLine))) do
+            match foldLine.GetDistanceSign(point) with
+            | 1 -> positivePoints.Add(point)
+            | -1 -> negativePoints.Add(point)
+            | _ ->
+                positivePoints.Add(point)
+                negativePoints.Add(point)
+        let positiveLines = ResizeArray()
+        let negativeLines = ResizeArray()
+        for line in layer.Lines do
+            let positiveLine, negativeLine = this.Split(foldLine, line)
+            positiveLine |> Option.iter positiveLines.Add
+            negativeLine |> Option.iter negativeLines.Add
+        let createLayer (edges: ResizeArray<LineSegment * bool>) lines points isPositive staticLayer =
+            if edges.Count < 3 then None
+            else
+                if isPositive = isPositiveStatic then
+                    workspace.CreateLayer(
+                        edges |> Seq.map(fun (e, _) -> Edge.Create(e, None)),
+                        lines,
+                        points,
+                        turnLayerType isPositive)
+                else
+                    workspace.CreateLayer(
+                        edges |> Seq.map(fun (e, _) -> Edge.Create(e.ReflectBy(foldLine), None)),
+                        lines |> Seq.map(fun ls -> ls.ReflectBy(foldLine)),
+                        points |> Seq.map foldLine.Reflect,
+                        turnLayerType isPositive)
+                |> Some
+        if isPositiveStatic then
+            let positiveLayer = createLayer positiveEdges positiveLines positivePoints true None
+            let negativeLayer = createLayer negativeEdges negativeLines negativePoints false positiveLayer
+            positiveLayer, negativeLayer
+        else
+            let negativeLayer = createLayer negativeEdges negativeLines negativePoints false None
+            let positiveLayer = createLayer positiveEdges positiveLines positivePoints true negativeLayer
+            negativeLayer, positiveLayer
+
+    member this.FoldBack(line: Line) =
+        let staticLayers = ResizeArray()
+        let dynamicLayers = ResizeArray()
+        let isPositiveStatic = line.IsPositiveSide({ X = 0.5; Y = 0.5 })
+        for layer in paper.Layers do
+            let staticLayer, dynamicLayer = this.SplitLayer(line, isPositiveStatic, layer)
+            staticLayer |> Option.iter staticLayers.Add
+            dynamicLayer |> Option.iter dynamicLayers.Add
+        paper.Clear(workspace.CreatePaper(Seq.append staticLayers (Seq.rev dynamicLayers)))
+
     interface ITool with
         member _.Name = "折り線"
         member _.ShortcutKey = "Ctrl+F"
@@ -250,9 +376,13 @@ type DragFoldTool(workspace: IWorkspace) =
 
         member this.Drop(source, target, modifier) =
             let opr = this.GetOperation(source, target, modifier)
-            let lines = this.ChooseLine(this.GetLines(opr), opr) |> Option.toList
-            use __ = paper.BeginChange()
-            for layer in paper.Layers do layer.AddLines(lines)
+            match this.ChooseLine(this.GetLines(opr), opr) with
+            | Some(line) ->
+                use __ = paper.BeginChange()
+                if modifier.HasFlag(OperationModifier.Shift)
+                then this.FoldBack(line)
+                else this.MakeCrease(line)
+            | None -> ()
             instruction.Lines <- Array.Empty()
             instruction.Arrows <- Array.Empty()
             instruction.Points <- Array.Empty()

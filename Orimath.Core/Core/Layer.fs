@@ -1,4 +1,5 @@
 ﻿namespace Orimath.Core
+open Orimath.Core.NearlyEquatable
 
 type Layer private (edges: Edge list, lines: LineSegment list, points: Point list, layerType: LayerType) =
     member _.Edges = edges
@@ -20,9 +21,9 @@ type Layer private (edges: Edge list, lines: LineSegment list, points: Point lis
         if edges.Length < 3 then invalidArg "edges" "多角形の辺は3以上でなければなりません。"
         let rec isValidEdge (head: Edge) (edges: Edge list) =
             match edges with
-            | [ e ] -> e.Line.Point2 = head.Line.Point1
+            | [ e ] -> e.Line.Point2 =~ head.Line.Point1
             // 末尾最適化用に一応 if で分岐
-            | e1 :: ((e2 :: _) as tail) -> if e1.Line.Point2 <> e2.Line.Point1 then false else isValidEdge head tail
+            | e1 :: ((e2 :: _) as tail) -> if e1.Line.Point2 <>~ e2.Line.Point1 then false else isValidEdge head tail
             | [] -> failwith "想定しない動作"
         if not (isValidEdge edges.Head edges) then invalidArg "edges" "多角形の辺は閉じている必要があります。"
         if not (lines |> List.forall(fun l -> LayerExtensions.ContainsCore(edges, l.Point1) && LayerExtensions.ContainsCore(edges, l.Point2)))

@@ -40,7 +40,7 @@ and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Lay
     member this.AddLineCore(lines: seq<LineSegment>, addCross: bool) =
         let lines = lines |> Seq.filter(this.HasLine >> not) |> Seq.toList
         if lines <> [] then
-            let points = if addCross then Layer.crossAll this lines else []
+            let points = if addCross then this.GetCrosses(lines) else []
             use __ = parent.TryBeginChange()
             layerLines.Add(lines)
             layerPoints.Add(points)

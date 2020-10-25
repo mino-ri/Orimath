@@ -6,8 +6,9 @@ type LineSegment internal (line: Line, p1: Point, p2: Point) =
     member _.Line = line
     member _.Point1 = p1
     member _.Point2 = p2
-    
     member _.Length = (p1 - p2).Norm
+
+    override _.ToString() = System.String.Format("{0}, {1}", p1, p2)
 
     interface INearlyEquatable<LineSegment> with
         member this.NearlyEquals(other, margin) =
@@ -77,6 +78,12 @@ type LineSegment internal (line: Line, p1: Point, p2: Point) =
     /// 直線上の指定したY値における点を取得します。
     [<CompiledName("YOf")>]
     member this.YOfCSharp(y) = this.YOf(y) |> Option.toNullable
+
+    /// 現在の線分を、指定した直線で反転させます。
+    member _.ReflectBy(line: Line) =
+        let p1 = line.Reflect(p1)
+        let p2 = line.Reflect(p2)
+        LineSegment(Line.FromPoints(p1, p2).Value, p1, p2)
 
     static member FromFactorsAndPoint(xFactor, yFactor, p) =
         LineSegment(Line.FromFactorsAndPoint(xFactor, yFactor, p), p, p)
