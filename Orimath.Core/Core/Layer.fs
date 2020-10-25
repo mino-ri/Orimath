@@ -26,10 +26,10 @@ type Layer private (edges: Edge list, lines: LineSegment list, points: Point lis
             | e1 :: ((e2 :: _) as tail) -> if e1.Line.Point2 <>~ e2.Line.Point1 then false else isValidEdge head tail
             | [] -> failwith "想定しない動作"
         if not (isValidEdge edges.Head edges) then invalidArg "edges" "多角形の辺は閉じている必要があります。"
-        if not (lines |> List.forall(fun l -> LayerExtensions.ContainsCore(edges, l.Point1) && LayerExtensions.ContainsCore(edges, l.Point2)))
-        then invalidArg "lines" "レイヤー内に含まれていない線分があります。"
-        if not (points |> List.forall(fun p -> LayerExtensions.ContainsCore(edges, p)))
-        then invalidArg "points" "レイヤー内に含まれていない点があります。"
+        // if not (lines |> List.forall(fun l -> LayerExtensions.ContainsCore(edges, l.Point1) && LayerExtensions.ContainsCore(edges, l.Point2)))
+        // then invalidArg "lines" "レイヤー内に含まれていない線分があります。"
+        // if not (points |> List.forall(fun p -> LayerExtensions.ContainsCore(edges, p)))
+        // then invalidArg "points" "レイヤー内に含まれていない点があります。"
         Layer(edges, lines, points, layerType)
 
     /// 指定した高さと幅を持つ長方形のレイヤーを生成します。
