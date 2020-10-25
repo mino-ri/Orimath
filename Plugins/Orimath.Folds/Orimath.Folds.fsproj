@@ -12,6 +12,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Icon.png" />
     <Compile Include="Core\Fold.fs" />
+    <Compile Include="Core\FoldOperation.fs" />
+    <Compile Include="Core\FoldBack.fs" />
+    <Compile Include="Core\InstructionWrapper.fs" />
     <Compile Include="Core\DragFoldTool.fs" />
     <Compile Include="FoldsPlugin.fs" />
   </ItemGroup>
