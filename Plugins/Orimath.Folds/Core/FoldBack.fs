@@ -2,6 +2,8 @@
 open Orimath.Core
 open Orimath.Plugins
 
+let private center = { X = 0.5; Y = 0.5 }
+
 let private splitLine (line: Line) (target: LineSegment) =
     match line.GetDistanceSign(target.Point1), line.GetDistanceSign(target.Point2) with
     | 1, 1 | 1, 0 | 0, 1 -> Some(target), None
@@ -80,6 +82,12 @@ let private splitLayer (workspace: IWorkspace) (foldLine: Line) (isPositiveStati
             | LayerType.FrontSide -> LayerType.BackSide
             | _ -> layer.LayerType
     let positiveEdges, negativeEdges = splitEdges foldLine layer
+    let originalPositiveEdges, originalNegativeEdges =
+        let foldLineInOrigin = layer.Matrix.MultiplyInv(foldLine)
+        let edges1, edges2 = splitEdges foldLineInOrigin (layer.GetOriginal())
+        if isPositiveStatic = foldLineInOrigin.IsPositiveSide(center * layer.Matrix.Invert())
+        then edges1, edges2
+        else edges2, edges1
     let positivePoints = ResizeArray()
     let negativePoints = ResizeArray()
     for point in Seq.append layer.Points (layer.GetCrosses(layer.Clip(foldLine))) do
@@ -95,7 +103,7 @@ let private splitLayer (workspace: IWorkspace) (foldLine: Line) (isPositiveStati
         let positiveLine, negativeLine = splitLine foldLine line
         positiveLine |> Option.iter positiveLines.Add
         negativeLine |> Option.iter negativeLines.Add
-    let createLayer (edges: ResizeArray<Edge>) lines points isPositive =
+    let createLayer (edges: ResizeArray<Edge>) original lines points isPositive =
         if edges.Count < 3 then None
         else
             if isPositive = isPositiveStatic then
@@ -103,27 +111,31 @@ let private splitLayer (workspace: IWorkspace) (foldLine: Line) (isPositiveStati
                     edges,
                     lines,
                     points,
-                    turnLayerType isPositive)
+                    turnLayerType isPositive,
+                    original,
+                    layer.Matrix)
             else
                 workspace.CreateLayer(
                     edges |> Seq.map(fun e -> Edge(e.Line.ReflectBy(foldLine), e.Inner)),
                     lines |> Seq.map(fun ls -> ls.ReflectBy(foldLine)),
                     points |> Seq.map foldLine.Reflect,
-                    turnLayerType isPositive)
+                    turnLayerType isPositive,
+                    original,
+                    layer.Matrix * Matrix.OfReflection(foldLine))
             |> Some
     if isPositiveStatic then
-        let positiveLayer = createLayer positiveEdges positiveLines positivePoints true
-        let negativeLayer = createLayer negativeEdges negativeLines negativePoints false
+        let positiveLayer = createLayer positiveEdges originalPositiveEdges positiveLines positivePoints true
+        let negativeLayer = createLayer negativeEdges originalNegativeEdges negativeLines negativePoints false
         positiveLayer, negativeLayer
     else
-        let negativeLayer = createLayer negativeEdges negativeLines negativePoints false
-        let positiveLayer = createLayer positiveEdges positiveLines positivePoints true
+        let negativeLayer = createLayer negativeEdges originalNegativeEdges negativeLines negativePoints false
+        let positiveLayer = createLayer positiveEdges originalPositiveEdges positiveLines positivePoints true
         negativeLayer, positiveLayer
 
 let foldBack (workspace: IWorkspace) (line: Line) =
     let staticLayers = ResizeArray()
     let dynamicLayers = ResizeArray()
-    let isPositiveStatic = line.IsPositiveSide({ X = 0.5; Y = 0.5 })
+    let isPositiveStatic = line.IsPositiveSide(center)
     for layer in workspace.Paper.Layers do
         let staticLayer, dynamicLayer = splitLayer workspace line isPositiveStatic layer
         staticLayer |> Option.iter staticLayers.Add

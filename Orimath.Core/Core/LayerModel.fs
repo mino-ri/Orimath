@@ -35,7 +35,7 @@ and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Lay
     member _.Points = layerPoints :> IReadOnlyList<_>
     member _.LayerType = init.LayerType
 
-    member _.GetSnapShot() = Layer.Create(init.Edges, layerLines, layerPoints, init.LayerType)
+    member _.GetSnapShot() = Layer.Create(init.Edges, layerLines, layerPoints, init.LayerType, init.OriginalEdges, init.Matrix)
 
     member this.AddLineCore(lines: seq<LineSegment>, addCross: bool) =
         let lines = lines |> Seq.filter(this.HasLine >> not) |> Seq.toList
@@ -77,6 +77,8 @@ and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Lay
         member this.Lines = this.Lines
         member this.Points = this.Points
         member _.LayerType = init.LayerType
+        member _.OriginalEdges = upcast init.OriginalEdges
+        member _.Matrix = init.Matrix
 
     interface ILayerModel with
         [<CLIEvent>] member this.LineChanged = this.LineChanged

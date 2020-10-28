@@ -14,12 +14,12 @@ type Edge (line: LineSegment, inner: bool) =
     override _.ToString() = line.ToString()
 
 type ILayer =
-    // abstract member OriginalEdges : IReadOnlyList<Edge>
-    // abstract member Matrix : Matrix
     abstract member Edges : IReadOnlyList<Edge>
     abstract member Lines : IReadOnlyList<LineSegment>
     abstract member Points : IReadOnlyList<Point>
     abstract member LayerType : LayerType
+    abstract member OriginalEdges : IReadOnlyList<Edge>
+    abstract member Matrix : Matrix
 
 [<Extension>]
 type LayerExtensions =
@@ -149,3 +149,15 @@ type LayerExtensions =
             if (points |> List.forall((<>~) line.Point2)) && not (layer.HasPoint(line.Point2)) then points <- line.Point2 :: points
             points <- LayerExtensions.AppendCross(layer, line, points)
         points
+
+    /// このレイヤーの OriginalEdges を辺として持ち、点・折線を持たないレイヤーを取得します。
+    [<Extension>]
+    static member GetOriginal(layer: ILayer) =
+        { new ILayer with
+            member _.Edges = layer.OriginalEdges
+            member _.Lines = upcast []
+            member _.Points = upcast []
+            member _.LayerType = layer.LayerType
+            member _.OriginalEdges = layer.OriginalEdges
+            member _.Matrix = Matrix.Identity
+        }

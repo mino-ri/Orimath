@@ -36,20 +36,22 @@ type Matrix with
             OffsetY = -2.0 * line.Intercept * line.YFactor
         }
 
-    static member Invert(matrix) =
-        let det = matrix.M11 * matrix.M22 - matrix.M21 * matrix.M12
-        if det = 0.0 then
-            None
-        else
-            let invDet = 1.0 / det
-            Some {
-                M11 = matrix.M22 * invDet
-                M12 = -matrix.M12 * invDet
-                M21 = -matrix.M21 * invDet
-                M22 = matrix.M11 * invDet
-                OffsetX = (matrix.M21 * matrix.OffsetY - matrix.M22 * matrix.OffsetX) * invDet
-                OffsetY = (matrix.M12 * matrix.OffsetX - matrix.M11 * matrix.OffsetY) * invDet
-            }
+    member matrix.Invert() =
+        let invDet = 1.0 / (matrix.M11 * matrix.M22 - matrix.M21 * matrix.M12)
+        {
+            M11 = matrix.M22 * invDet
+            M12 = -matrix.M12 * invDet
+            M21 = -matrix.M21 * invDet
+            M22 = matrix.M11 * invDet
+            OffsetX = (matrix.M21 * matrix.OffsetY - matrix.M22 * matrix.OffsetX) * invDet
+            OffsetY = (matrix.M12 * matrix.OffsetX - matrix.M11 * matrix.OffsetY) * invDet
+        }
+
+    member matrix.MultiplyInv(line: Line) =
+        Line.Create(
+            matrix.M11 * line.XFactor + matrix.M12 * line.YFactor,
+            matrix.M21 * line.XFactor + matrix.M22 * line.YFactor,
+            matrix.OffsetX * line.XFactor + matrix.OffsetY * line.YFactor + line.Intercept)
 
     static member ( * ) (point, matrix) =
         {

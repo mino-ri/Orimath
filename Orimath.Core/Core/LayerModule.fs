@@ -2,7 +2,6 @@
 [<System.Runtime.CompilerServices.Extension>]
 module internal Orimath.Core.Layer
 open System.Runtime.CompilerServices
-open NearlyEquatable
 
 let private ( @@ ) (s : seq<'a>) (lst: 'a list) =
     let mutable r = lst
@@ -11,7 +10,7 @@ let private ( @@ ) (s : seq<'a>) (lst: 'a list) =
 
 [<CompiledName("Add"); Extension>]
 let add (layer: Layer) (lines: seq<LineSegment>) (points: seq<Point>) =
-    Layer.Create(layer.Edges, lines @@ layer.Lines, points @@ layer.Points, layer.LayerType)
+    Layer.Create(layer.Edges, lines @@ layer.Lines, points @@ layer.Points, layer.LayerType, layer.OriginalEdges, layer.Matrix)
 
 [<CompiledName("AddPoints"); Extension>]
 let addPoints layer points = add layer [] points
