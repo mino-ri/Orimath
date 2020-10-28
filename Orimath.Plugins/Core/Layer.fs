@@ -7,25 +7,19 @@ type LayerType =
     | BackSide = 0
     | FrontSide = 1
 
+type Edge (line: LineSegment, inner: bool) =
+    member _.Line = line
+    member _.Inner = inner
+
+    override _.ToString() = line.ToString()
+
 type ILayer =
+    // abstract member OriginalEdges : IReadOnlyList<Edge>
+    // abstract member Matrix : Matrix
     abstract member Edges : IReadOnlyList<Edge>
     abstract member Lines : IReadOnlyList<LineSegment>
     abstract member Points : IReadOnlyList<Point>
     abstract member LayerType : LayerType
-
-and Edge private (line: LineSegment, layer: ILayer option) =
-    member _.Line = line
-    member _.Layer = layer
-
-    static member Create(line: LineSegment, layer: ILayer option) =
-        match layer with
-        | Some(ly) ->
-            if ly.Edges |> Seq.forall(fun (e: Edge) -> e.Line <>~ line) then
-                invalidArg "layer" "接続先のレイヤーに共有する辺がありません。"
-        | None -> ()
-        Edge(line, layer)
-
-    override _.ToString() = line.ToString()
 
 [<Extension>]
 type LayerExtensions =

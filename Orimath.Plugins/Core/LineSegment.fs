@@ -13,8 +13,8 @@ type LineSegment internal (line: Line, p1: Point, p2: Point) =
     interface INearlyEquatable<LineSegment> with
         member this.NearlyEquals(other, margin) =
             nearlyEquals margin this.Line other.Line &&
-            nearlyEquals margin this.Point1 other.Point1 &&
-            nearlyEquals margin this.Point2 other.Point2
+            (nearlyEquals margin this.Point1 other.Point1 && nearlyEquals margin this.Point2 other.Point2 ||
+             nearlyEquals margin this.Point1 other.Point2 && nearlyEquals margin this.Point2 other.Point1)
 
     member private this.ContainsX(x) =
         if this.Point1.X < this.Point2.X

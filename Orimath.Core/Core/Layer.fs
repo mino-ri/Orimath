@@ -48,8 +48,8 @@ type Layer private (edges: Edge list, lines: LineSegment list, points: Point lis
         if vertexes.Length < 3 then invalidArg "vertexes" "多角形の頂点は3以上でなければなりません。"
         let rec createEdges (head: Point) (points: Point list) (acm: Edge list) =
             match points with
-            | [ p ] -> Edge.Create(LineSegment.FromPoints(head, p).Value, None) :: acm
-            | p1 :: ((p2 :: _) as tail) -> createEdges head tail (Edge.Create(LineSegment.FromPoints(p2, p1).Value, None) :: acm)
+            | [ p ] -> Edge(LineSegment.FromPoints(head, p).Value, false) :: acm
+            | p1 :: ((p2 :: _) as tail) -> createEdges head tail (Edge(LineSegment.FromPoints(p2, p1).Value, false) :: acm)
             | [] -> acm
         Layer(createEdges vertexes.Head vertexes [], [], vertexes, layerType)
 

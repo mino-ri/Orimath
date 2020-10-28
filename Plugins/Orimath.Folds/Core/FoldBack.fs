@@ -16,6 +16,11 @@ let private splitLine (line: Line) (target: LineSegment) =
         Some(LineSegment.FromPoints(target.Point1, cross).Value)
     | _ -> None, None
 
+let private splitEdge (line: Line) (target: Edge) =
+    let positive, negative = splitLine line target.Line
+    positive |> Option.map (fun l -> Edge(l, target.Inner)),
+    negative |> Option.map (fun l -> Edge(l, target.Inner))
+
 let private splitEdges (foldLine: Line) (layer: ILayer) =
     let mutable crossed = false
     let mutable isPositive = None
@@ -29,39 +34,39 @@ let private splitEdges (foldLine: Line) (layer: ILayer) =
                 then LineSegment.FromPoints(a, b), LineSegment.FromPoints(b, a)
                 else LineSegment.FromPoints(b, a), LineSegment.FromPoints(a, b)
             | None -> None, None
-        positiveEdge |> Option.iter(fun e -> positiveEdges.Add(e, true))
-        negativeEdge |> Option.iter(fun e -> negativeEdges.Add(e, true))
+        positiveEdge |> Option.iter(fun e -> positiveEdges.Add(Edge(e, true)))
+        negativeEdge |> Option.iter(fun e -> negativeEdges.Add(Edge(e, true)))
     for edge in layer.Edges do
-        match splitLine foldLine edge.Line with
+        match splitEdge foldLine edge with
         | Some(positive), None ->
             if not crossed && isPositive = Some(false) then
                 crossed <- true
                 cross edge false
-            positiveEdges.Add(positive, false)
+            positiveEdges.Add(positive)
             isPositive <- Some(true)
         | None, Some(negative) ->
             if not crossed && isPositive = Some(true) then
                 crossed <- true
                 cross edge true
-            negativeEdges.Add(negative, false)
+            negativeEdges.Add(negative)
             isPositive <- Some(false)
         | Some(positive), Some(negative) ->
             if crossed then
-                positiveEdges.Add(positive, false)
-                negativeEdges.Add(negative, false)
+                positiveEdges.Add(positive)
+                negativeEdges.Add(negative)
             else
                 crossed <- true
                 // 正 → 負に突入
-                if positive.Point2 = negative.Point1 then
-                    positiveEdges.Add(positive, false)
+                if positive.Line.Point2 = negative.Line.Point1 then
+                    positiveEdges.Add(positive)
                     cross edge true
-                    negativeEdges.Add(negative, false)
+                    negativeEdges.Add(negative)
                     isPositive <- Some(false)
                 // 負 → 正に突入
                 else
-                    negativeEdges.Add(negative, false)
+                    negativeEdges.Add(negative)
                     cross edge false
-                    positiveEdges.Add(positive, false)
+                    positiveEdges.Add(positive)
                     isPositive <- Some(true)
         | _ -> ()
     positiveEdges, negativeEdges
@@ -90,29 +95,29 @@ let private splitLayer (workspace: IWorkspace) (foldLine: Line) (isPositiveStati
         let positiveLine, negativeLine = splitLine foldLine line
         positiveLine |> Option.iter positiveLines.Add
         negativeLine |> Option.iter negativeLines.Add
-    let createLayer (edges: ResizeArray<LineSegment * bool>) lines points isPositive staticLayer =
+    let createLayer (edges: ResizeArray<Edge>) lines points isPositive =
         if edges.Count < 3 then None
         else
             if isPositive = isPositiveStatic then
                 workspace.CreateLayer(
-                    edges |> Seq.map(fun (e, _) -> Edge.Create(e, None)),
+                    edges,
                     lines,
                     points,
                     turnLayerType isPositive)
             else
                 workspace.CreateLayer(
-                    edges |> Seq.map(fun (e, _) -> Edge.Create(e.ReflectBy(foldLine), None)),
+                    edges |> Seq.map(fun e -> Edge(e.Line.ReflectBy(foldLine), e.Inner)),
                     lines |> Seq.map(fun ls -> ls.ReflectBy(foldLine)),
                     points |> Seq.map foldLine.Reflect,
                     turnLayerType isPositive)
             |> Some
     if isPositiveStatic then
-        let positiveLayer = createLayer positiveEdges positiveLines positivePoints true None
-        let negativeLayer = createLayer negativeEdges negativeLines negativePoints false positiveLayer
+        let positiveLayer = createLayer positiveEdges positiveLines positivePoints true
+        let negativeLayer = createLayer negativeEdges negativeLines negativePoints false
         positiveLayer, negativeLayer
     else
-        let negativeLayer = createLayer negativeEdges negativeLines negativePoints false None
-        let positiveLayer = createLayer positiveEdges positiveLines positivePoints true negativeLayer
+        let negativeLayer = createLayer negativeEdges negativeLines negativePoints false
+        let positiveLayer = createLayer positiveEdges positiveLines positivePoints true
         negativeLayer, positiveLayer
 
 let foldBack (workspace: IWorkspace) (line: Line) =
