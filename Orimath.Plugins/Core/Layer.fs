@@ -121,18 +121,18 @@ type LayerExtensions =
         else
             Some(segments.[0].Point1, segments.[segments.Length - 1].Point2)
 
+    static member private TryAddPoint(layer: ILayer, points: Point list, addingPoint: Point option) =
+        match addingPoint with
+        | Some(p) when (points |> List.forall((<>~) p)) && not (layer.HasPoint(p)) ->
+            p :: points
+        | _ -> points
+
     static member private AppendCross(layer: ILayer, line: LineSegment, points: Point list) =
         let mutable points = points
         for edge in layer.Edges do
-            match edge.Line.GetCrossPoint(line) with
-            | Some(p) when (points |> List.forall((<>~) p)) && not (layer.HasPoint(p)) ->
-                points <- p :: points
-            | _ -> ()
+            points <- LayerExtensions.TryAddPoint(layer, points, edge.Line.GetCrossPoint(line))
         for layerLine in layer.Lines do
-            match layerLine.GetCrossPoint(line) with
-            | Some(p) when (points |> List.forall((<>~) p)) && not (layer.HasPoint(p)) ->
-                points <- p :: points
-            | _ -> ()
+            points <- LayerExtensions.TryAddPoint(layer, points, layerLine.GetCrossPoint(line))
         points
             
     /// このレイヤー内の全ての折線と、指定した線分との交点を取得します。
@@ -142,13 +142,17 @@ type LayerExtensions =
     /// このレイヤー内の全ての折線と、指定した全ての線分との交点を取得します。
     [<Extension>]
     static member GetCrosses(layer: ILayer, lines: seq<LineSegment>) =
-        let lines = asList lines
-        let mutable points = []
-        for line in lines do
-            if (points |> List.forall((<>~) line.Point1)) && not (layer.HasPoint(line.Point1)) then points <- line.Point1 :: points
-            if (points |> List.forall((<>~) line.Point2)) && not (layer.HasPoint(line.Point2)) then points <- line.Point2 :: points
-            points <- LayerExtensions.AppendCross(layer, line, points)
-        points
+        let rec recSelf (lines: LineSegment list) points =
+            let mutable points = points
+            match lines with
+            | line :: tail ->
+                if (points |> List.forall((<>~) line.Point1)) && not (layer.HasPoint(line.Point1)) then points <- line.Point1 :: points
+                if (points |> List.forall((<>~) line.Point2)) && not (layer.HasPoint(line.Point2)) then points <- line.Point2 :: points
+                points <- LayerExtensions.AppendCross(layer, line, points)
+                for tailLine in tail do points <- LayerExtensions.TryAddPoint(layer, points, tailLine.GetCrossPoint(line))
+                recSelf tail points
+            | _ -> points
+        recSelf (asList lines) []
 
     /// このレイヤーの OriginalEdges を辺として持ち、点・折線を持たないレイヤーを取得します。
     [<Extension>]

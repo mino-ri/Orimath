@@ -1,5 +1,6 @@
 ﻿namespace Orimath.Core
 open System.Diagnostics.CodeAnalysis
+open System.Runtime.CompilerServices
 open NearlyEquatable
 
 type LineSegment internal (line: Line, p1: Point, p2: Point) =
@@ -37,6 +38,12 @@ type LineSegment internal (line: Line, p1: Point, p2: Point) =
         this.ContainsCore(target.Point1) &&
         this.ContainsCore(target.Point2)
             
+    /// 線分が指定した線分と同じ向きで、かつ共有部分を持つか判定します。
+    member this.HasIntersection(target: LineSegment) =
+        this.Line =~ target.Line &&
+        (this.ContainsCore(target.Point1) || this.ContainsCore(target.Point2) ||
+         target.ContainsCore(this.Point1) || target.ContainsCore(this.Point2))
+
     /// 2つの線分が交差する点を求めます。
     [<CompiledName("GetCrossPointOption")>]
     member this.GetCrossPoint(other: LineSegment) =
@@ -98,3 +105,25 @@ type LineSegment internal (line: Line, p1: Point, p2: Point) =
         match LineSegment.FromPoints(p1, p2) with
         | Some(line) -> line
         | None -> Unchecked.defaultof<_>
+
+[<Extension>]
+type LineSegmentExtensions =
+    [<Extension>]
+    static member Merge(lineSegments: seq<LineSegment>) =
+        let grouped = lineSegments |> Seq.groupBy(fun s -> Nearly(s.Line))
+        let result = ResizeArray<LineSegment>()
+        for line, segs in grouped do
+            System.Diagnostics.Debug.Print("■" + line.ToString())
+            segs
+            |> Seq.map(fun s ->
+                if (if line.Value.YFactor = 0.0 then s.Point1.Y > s.Point2.Y else s.Point1.X > s.Point2.X)
+                then LineSegment(line.Value, s.Point2, s.Point1)
+                else s)
+            |> Seq.sortBy(fun s -> if line.Value.YFactor = 0.0 then s.Point1.Y else s.Point1.X)
+            |> Seq.iter(fun s ->
+                System.Diagnostics.Debug.Print(s.ToString())
+                if result.Count > 0 && result.[result.Count - 1].HasIntersection(s) then
+                    result.[result.Count - 1] <- LineSegment(line.Value, result.[result.Count - 1].Point1, s.Point2)
+                else
+                    result.Add(s))
+        result :> seq<_>

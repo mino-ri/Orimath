@@ -70,7 +70,10 @@ let private splitEdges (foldLine: Line) (layer: ILayer) =
                     cross edge false
                     positiveEdges.Add(positive)
                     isPositive <- Some(true)
-        | _ -> ()
+        | None, None ->
+            crossed <- true
+            positiveEdges.Add(edge)
+            negativeEdges.Add(edge)
     positiveEdges, negativeEdges
 
 let private splitLayer (workspace: IWorkspace) (foldLine: Line) (isPositiveStatic: bool) (layer: ILayer) =
@@ -85,9 +88,15 @@ let private splitLayer (workspace: IWorkspace) (foldLine: Line) (isPositiveStati
     let originalPositiveEdges, originalNegativeEdges =
         let foldLineInOrigin = layer.Matrix.MultiplyInv(foldLine)
         let edges1, edges2 = splitEdges foldLineInOrigin (layer.GetOriginal())
-        if isPositiveStatic = foldLineInOrigin.IsPositiveSide(center * layer.Matrix.Invert())
-        then edges1, edges2
-        else edges2, edges1
+        match positiveEdges.Count >= 3, edges1.Count >= 3 with
+        | false, false -> edges1, edges2
+        | true, false | false, true -> edges2, edges1
+        | true, true ->
+            let edgeSign =
+                edges1
+                |> Seq.map(fun e -> foldLine.GetDistanceSign(e.Line.Point1 * layer.Matrix))
+                |> Seq.find(fun d -> d <> 0)
+            if edgeSign > 0 then edges1, edges2 else edges2, edges1
     let positivePoints = ResizeArray()
     let negativePoints = ResizeArray()
     for point in Seq.append layer.Points (layer.GetCrosses(layer.Clip(foldLine))) do
