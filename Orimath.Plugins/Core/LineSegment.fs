@@ -1,19 +1,21 @@
 ﻿namespace Orimath.Core
 open System.Diagnostics.CodeAnalysis
+open System.Runtime.CompilerServices
 open NearlyEquatable
 
 type LineSegment internal (line: Line, p1: Point, p2: Point) =
     member _.Line = line
     member _.Point1 = p1
     member _.Point2 = p2
-    
     member _.Length = (p1 - p2).Norm
+
+    override _.ToString() = System.String.Format("{0}, {1}", p1, p2)
 
     interface INearlyEquatable<LineSegment> with
         member this.NearlyEquals(other, margin) =
             nearlyEquals margin this.Line other.Line &&
-            nearlyEquals margin this.Point1 other.Point1 &&
-            nearlyEquals margin this.Point2 other.Point2
+            (nearlyEquals margin this.Point1 other.Point1 && nearlyEquals margin this.Point2 other.Point2 ||
+             nearlyEquals margin this.Point1 other.Point2 && nearlyEquals margin this.Point2 other.Point1)
 
     member private this.ContainsX(x) =
         if this.Point1.X < this.Point2.X
@@ -36,6 +38,12 @@ type LineSegment internal (line: Line, p1: Point, p2: Point) =
         this.ContainsCore(target.Point1) &&
         this.ContainsCore(target.Point2)
             
+    /// 線分が指定した線分と同じ向きで、かつ共有部分を持つか判定します。
+    member this.HasIntersection(target: LineSegment) =
+        this.Line =~ target.Line &&
+        (this.ContainsCore(target.Point1) || this.ContainsCore(target.Point2) ||
+         target.ContainsCore(this.Point1) || target.ContainsCore(this.Point2))
+
     /// 2つの線分が交差する点を求めます。
     [<CompiledName("GetCrossPointOption")>]
     member this.GetCrossPoint(other: LineSegment) =
@@ -78,6 +86,12 @@ type LineSegment internal (line: Line, p1: Point, p2: Point) =
     [<CompiledName("YOf")>]
     member this.YOfCSharp(y) = this.YOf(y) |> Option.toNullable
 
+    /// 現在の線分を、指定した直線で反転させます。
+    member _.ReflectBy(line: Line) =
+        let p1 = line.Reflect(p1)
+        let p2 = line.Reflect(p2)
+        LineSegment(Line.FromPoints(p1, p2).Value, p1, p2)
+
     static member FromFactorsAndPoint(xFactor, yFactor, p) =
         LineSegment(Line.FromFactorsAndPoint(xFactor, yFactor, p), p, p)
 
@@ -91,3 +105,25 @@ type LineSegment internal (line: Line, p1: Point, p2: Point) =
         match LineSegment.FromPoints(p1, p2) with
         | Some(line) -> line
         | None -> Unchecked.defaultof<_>
+
+[<Extension>]
+type LineSegmentExtensions =
+    [<Extension>]
+    static member Merge(lineSegments: seq<LineSegment>) =
+        let grouped = lineSegments |> Seq.groupBy(fun s -> Nearly(s.Line))
+        let result = ResizeArray<LineSegment>()
+        for line, segs in grouped do
+            System.Diagnostics.Debug.Print("■" + line.ToString())
+            segs
+            |> Seq.map(fun s ->
+                if (if line.Value.YFactor = 0.0 then s.Point1.Y > s.Point2.Y else s.Point1.X > s.Point2.X)
+                then LineSegment(line.Value, s.Point2, s.Point1)
+                else s)
+            |> Seq.sortBy(fun s -> if line.Value.YFactor = 0.0 then s.Point1.Y else s.Point1.X)
+            |> Seq.iter(fun s ->
+                System.Diagnostics.Debug.Print(s.ToString())
+                if result.Count > 0 && result.[result.Count - 1].HasIntersection(s) then
+                    result.[result.Count - 1] <- LineSegment(line.Value, result.[result.Count - 1].Point1, s.Point2)
+                else
+                    result.Add(s))
+        result :> seq<_>

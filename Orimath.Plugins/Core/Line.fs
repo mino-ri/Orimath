@@ -19,6 +19,17 @@ type Line = private { A: float; B: float; C: float } with
     /// 直線と点の距離を取得します。
     member this.GetDistance(point: Point) = abs (this.GetSignedDistance(point))
 
+    /// 直線から点への符号付き距離の符号を取得します。
+    member this.GetDistanceSign(point: Point) =
+        let s = this.GetSignedDistance(point)
+        if s =~~ 0.0 then 0 else sign s
+
+    /// 直線から点への符号付き距離の符号が正の範囲にあるか判断します。
+    member this.IsPositiveSide(point: Point) = 0 < this.GetDistanceSign(point)
+
+    /// 直線から点への符号付き距離の符号が負の範囲にあるか判断します。
+    member this.IsNegativeSide(point: Point) = this.GetDistanceSign(point) < 0
+
     /// 2つの直線が交差する点を求めます。
     member this.GetCrossPoint(other: Line) =
         let divider = this.A * other.B - other.A * this.B

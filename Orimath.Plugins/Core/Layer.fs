@@ -7,23 +7,19 @@ type LayerType =
     | BackSide = 0
     | FrontSide = 1
 
+type Edge (line: LineSegment, inner: bool) =
+    member _.Line = line
+    member _.Inner = inner
+
+    override _.ToString() = line.ToString()
+
 type ILayer =
     abstract member Edges : IReadOnlyList<Edge>
     abstract member Lines : IReadOnlyList<LineSegment>
     abstract member Points : IReadOnlyList<Point>
     abstract member LayerType : LayerType
-
-and Edge private (line: LineSegment, layer: ILayer option) =
-    member _.Line = line
-    member _.Layer = layer
-
-    static member Create(line: LineSegment, layer: ILayer option) =
-        match layer with
-        | Some(ly) ->
-            if ly.Edges |> Seq.forall(fun (e: Edge) -> e.Line <>~ line) then
-                invalidArg "layer" "接続先のレイヤーに共有する辺がありません。"
-        | None -> ()
-        Edge(line, layer)
+    abstract member OriginalEdges : IReadOnlyList<Edge>
+    abstract member Matrix : Matrix
 
 [<Extension>]
 type LayerExtensions =
@@ -124,3 +120,48 @@ type LayerExtensions =
             None
         else
             Some(segments.[0].Point1, segments.[segments.Length - 1].Point2)
+
+    static member private TryAddPoint(layer: ILayer, points: Point list, addingPoint: Point option) =
+        match addingPoint with
+        | Some(p) when (points |> List.forall((<>~) p)) && not (layer.HasPoint(p)) ->
+            p :: points
+        | _ -> points
+
+    static member private AppendCross(layer: ILayer, line: LineSegment, points: Point list) =
+        let mutable points = points
+        for edge in layer.Edges do
+            points <- LayerExtensions.TryAddPoint(layer, points, edge.Line.GetCrossPoint(line))
+        for layerLine in layer.Lines do
+            points <- LayerExtensions.TryAddPoint(layer, points, layerLine.GetCrossPoint(line))
+        points
+            
+    /// このレイヤー内の全ての折線と、指定した線分との交点を取得します。
+    [<Extension>]
+    static member GetCrosses(layer: ILayer, line: LineSegment) = LayerExtensions.AppendCross(layer, line, [line.Point1; line.Point2])
+            
+    /// このレイヤー内の全ての折線と、指定した全ての線分との交点を取得します。
+    [<Extension>]
+    static member GetCrosses(layer: ILayer, lines: seq<LineSegment>) =
+        let rec recSelf (lines: LineSegment list) points =
+            let mutable points = points
+            match lines with
+            | line :: tail ->
+                if (points |> List.forall((<>~) line.Point1)) && not (layer.HasPoint(line.Point1)) then points <- line.Point1 :: points
+                if (points |> List.forall((<>~) line.Point2)) && not (layer.HasPoint(line.Point2)) then points <- line.Point2 :: points
+                points <- LayerExtensions.AppendCross(layer, line, points)
+                for tailLine in tail do points <- LayerExtensions.TryAddPoint(layer, points, tailLine.GetCrossPoint(line))
+                recSelf tail points
+            | _ -> points
+        recSelf (asList lines) []
+
+    /// このレイヤーの OriginalEdges を辺として持ち、点・折線を持たないレイヤーを取得します。
+    [<Extension>]
+    static member GetOriginal(layer: ILayer) =
+        { new ILayer with
+            member _.Edges = layer.OriginalEdges
+            member _.Lines = upcast []
+            member _.Points = upcast []
+            member _.LayerType = layer.LayerType
+            member _.OriginalEdges = layer.OriginalEdges
+            member _.Matrix = Matrix.Identity
+        }

@@ -10,6 +10,7 @@
              d:DataContext="{d:DesignData Type={x:Type vm:WorkspaceViewModel}}">
     <UserControl.Resources>
         <ctrl:MouseHandler x:Key="mouseHandler" />
+        <SolidColorBrush x:Key="selectionColor" Color="#7FFF69B4" />
         <ItemsPanelTemplate x:Key="CanvasItemsPanel">
             <Canvas />
         </ItemsPanelTemplate>
@@ -40,7 +41,7 @@
                      ctrl:MouseHandler.AttachedMouseHandler="{StaticResource mouseHandler}" />
         </DataTemplate>
         <DataTemplate x:Key="SelectedPointTemplate">
-            <Ellipse Width="16" Height="16" Margin="-8" Fill="{x:Static Brushes.HotPink}" />
+            <Ellipse Width="16" Height="16" Margin="-8" Fill="{StaticResource selectionColor}" />
         </DataTemplate>
 
         <Style TargetType="{x:Type Line}" x:Key="LineStyle">
@@ -111,7 +112,7 @@
                   StrokeThickness="8"
                   StrokeStartLineCap="Round"
                   StrokeEndLineCap="Round"
-                  Stroke="{x:Static Brushes.HotPink}" />
+                  Stroke="{StaticResource selectionColor}" />
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:EdgeViewModel}" x:Key="SelectedEdgeTemplate">
             <Line X1="{Binding X1, Mode=OneTime}"
@@ -121,7 +122,7 @@
                   StrokeThickness="8"
                   StrokeStartLineCap="Round"
                   StrokeEndLineCap="Round"
-                  Stroke="{x:Static Brushes.HotPink}" />
+                  Stroke="{StaticResource selectionColor}" />
         </DataTemplate>
 
         <Style TargetType="{x:Type ctrl:PolygonControl}">
@@ -137,6 +138,10 @@
         </Style>
         <DataTemplate DataType="{x:Type vm:LayerViewModel}" x:Key="LayerTemplate">
             <Grid>
+                <ctrl:PolygonControl x:Name="Polygon"
+                                     Points="{Binding Vertexes, Mode=OneTime}"
+                                     AllowDrop="True"
+                                     ctrl:MouseHandler.AttachedMouseHandler="{StaticResource mouseHandler}" />
                 <ItemsControl ItemsSource="{Binding Edges, Mode=OneTime}"
                               ItemTemplate="{StaticResource EdgeTemplate}"
                               ItemsPanel="{StaticResource CanvasItemsPanel}" />
@@ -154,15 +159,9 @@
                     </ItemsControl.ItemContainerStyle>
                 </ItemsControl>
             </Grid>
-        </DataTemplate>
-        <DataTemplate DataType="{x:Type vm:LayerViewModel}" x:Key="LayerBackTemplate">
-            <ctrl:PolygonControl x:Name="Polygon"
-                                 Points="{Binding Vertexes, Mode=OneTime}"
-                                 AllowDrop="True"
-                                 ctrl:MouseHandler.AttachedMouseHandler="{StaticResource mouseHandler}" />
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding LayerType}" Value="FrontSide">
-                    <Setter TargetName="Polygon" Property="Foreground" Value="{x:Static Brushes.WhiteSmoke}" />
+                    <Setter TargetName="Polygon" Property="Foreground" Value="{x:Static Brushes.Bisque}" />
                 </DataTrigger>
             </DataTemplate.Triggers>
         </DataTemplate>
@@ -174,7 +173,7 @@
     <Grid Background="{x:Static Brushes.Gainsboro}"
           ctrl:MouseHandler.RootMouseHandler="{StaticResource mouseHandler}">
         <ItemsControl ItemsSource="{Binding Paper.Layers, Mode=OneTime}"
-                      ItemTemplate="{StaticResource LayerBackTemplate}"
+                      ItemTemplate="{StaticResource LayerTemplate}"
                       ItemsPanel="{StaticResource CanvasItemsPanel}" />
         <ItemsControl ItemsSource="{Binding Paper.SelectedLayers, Mode=OneWay}"
                       ItemTemplate="{StaticResource SelectedLayerTemplate}"
@@ -199,8 +198,5 @@
                 </Style>
             </ItemsControl.ItemContainerStyle>
         </ItemsControl>
-        <ItemsControl ItemsSource="{Binding Paper.Layers, Mode=OneTime}"
-                      ItemTemplate="{StaticResource LayerTemplate}"
-                      ItemsPanel="{StaticResource CanvasItemsPanel}" />
     </Grid>
 </UserControl>
