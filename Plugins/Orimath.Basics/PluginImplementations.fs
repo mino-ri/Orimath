@@ -8,4 +8,8 @@ type BasicPlugin() =
         member _.Execute(args) =
             args.Workspace.AddEffect(UndoEffect(args.Workspace))
             args.Workspace.AddEffect(RedoEffect(args.Workspace))
+            args.Workspace.AddEffect(RotateLeftEffect(args.Workspace))
+            args.Workspace.AddEffect(RotateRightEffect(args.Workspace))
+            args.Workspace.AddEffect(TurnVerticallyEffect(args.Workspace))
+            args.Workspace.AddEffect(TurnHorizontallyEffect(args.Workspace))
             args.Workspace.AddEffect(OpenAllEffect(args.Workspace))
