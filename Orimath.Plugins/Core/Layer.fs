@@ -165,3 +165,11 @@ type LayerExtensions =
             member _.OriginalEdges = layer.OriginalEdges
             member _.Matrix = Matrix.Identity
         }
+
+    /// LayerType を裏表逆転させます。
+    [<Extension>]
+    static member TurnOver(layerType: LayerType) =
+        match layerType with
+        | LayerType.FrontSide -> LayerType.BackSide
+        | LayerType.BackSide -> LayerType.FrontSide
+        | _ -> layerType

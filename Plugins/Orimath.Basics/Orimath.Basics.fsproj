@@ -11,10 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Icons\delete.png" />
-    <EmbeddedResource Include="Icons\new_paper.png" />
-    <EmbeddedResource Include="Icons\undo.png" />
-    <EmbeddedResource Include="Icons\redo.png" />
+    <EmbeddedResource Include="Icons\*.png" />
     <Compile Include="InternalModule.fs" />
     <Compile Include="BasicEffects.fs" />
     <Compile Include="NewPaperEffect.fs" />
