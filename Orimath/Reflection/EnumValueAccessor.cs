@@ -18,7 +18,7 @@ namespace Orimath.Reflection
                 t.GetFields(BindingFlags.Public | BindingFlags.Static)
                 .Select(field => new EnumValueViewModel(
                     (Enum)Enum.Parse(t, field.Name),
-                    field.GetCustomAttribute<DisplayAttribute>() is { } display ? display.Name : field.Name))
+                    field.GetCustomAttribute<DisplayAttribute>()?.Name ?? field.Name))
                 .ToArray());
         }
     }

@@ -28,9 +28,7 @@ namespace Orimath.ViewModels
             _accessor = PropertyAccessor.GetInstance(property);
             _obj = obj;
 
-            Name = property.GetCustomAttribute<DisplayAttribute>() is { } display
-                ? display.Name
-                : property.Name;
+            Name = property.GetCustomAttribute<DisplayAttribute>()?.Name ?? property.Name;
         }
     }
 

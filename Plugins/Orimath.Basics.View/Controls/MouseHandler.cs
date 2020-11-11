@@ -74,7 +74,7 @@ namespace Orimath.Basics.View.Controls
         private Control? _draggingSource;
         private ScreenOperationTarget? _draggingData;
 
-        private OperationModifier GetModifier(MouseButton mouseButton)
+        private static OperationModifier GetModifier(MouseButton mouseButton)
         {
             var result = mouseButton == MouseButton.Right
                     ? OperationModifier.RightButton
@@ -115,7 +115,7 @@ namespace Orimath.Basics.View.Controls
         {
             if (!(sender is Control ctrl && ctrl.DataContext is IDisplayTargetViewModel)) return;
 
-            if (_clickControl == sender && _pressed == e.ChangedButton)
+            if (_clickControl == sender && _pressed == e.ChangedButton && _draggingData is not null)
             {
                 Workspace.OnClick(_draggingData, GetModifier(e.ChangedButton));
                 _clickControl = null;
@@ -127,7 +127,7 @@ namespace Orimath.Basics.View.Controls
 
         private void BeginDrag(Control ctrl)
         {
-            if (Workspace.BeginDrag(_draggingData, GetModifier(_pressed)))
+            if (_draggingData is { } && Workspace.BeginDrag(_draggingData, GetModifier(_pressed)))
             {
                 _draggingSource = ctrl;
                 _draggingGuid = Guid.NewGuid().ToString();

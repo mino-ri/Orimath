@@ -40,7 +40,7 @@ namespace Orimath.UITest
         public string Name => "UIテストを開く";
         public string ShortcutKey => "";
         public Stream? Icon => null;
-        public event EventHandler? CanExecuteChanged;
+        public event EventHandler CanExecuteChanged { add { } remove { } }
         public bool CanExecute() => true;
 
         public void Execute()

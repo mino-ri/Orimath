@@ -26,8 +26,8 @@ namespace Orimath.ViewModels
 
         public event EventHandler? CanExecuteChanged;
 
-        public bool CanExecute(object parameter) => _parent.RootEnable && _effect.CanExecute();
+        public bool CanExecute(object? parameter) => _parent.RootEnable && _effect.CanExecute();
 
-        public void Execute(object parameter) => _dispatcher.OnBackgroundAsync(_effect.Execute);
+        public void Execute(object? parameter) => _dispatcher.OnBackgroundAsync(_effect.Execute);
     }
 }

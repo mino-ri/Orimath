@@ -70,8 +70,8 @@ namespace Orimath.Plugins
 
         private static void ExecuteCore(PluginSetting setting, PluginArgs args, ViewPluginArgs viewArgs)
         {
-            var pluginTypes = LoadedPluginTypes.ToDictionary(t => t.FullName);
-            var viewPluginTypes = LoadedViewPluginTypes.ToDictionary(t => t.FullName);
+            var pluginTypes = LoadedPluginTypes.ToDictionary(t => t.FullName!);
+            var viewPluginTypes = LoadedViewPluginTypes.ToDictionary(t => t.FullName!);
 
             foreach (var fullName in setting.PluginOrder)
             {
