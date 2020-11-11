@@ -52,7 +52,7 @@ namespace Orimath.ViewModels
             }
         }
 
-        public bool HasDialog => _dialog is { };
+        public bool HasDialog => _dialog is not null;
 
         public bool HasNotDialog => !HasDialog;
 
@@ -185,7 +185,7 @@ namespace Orimath.ViewModels
         {
             if (viewModelType is null) throw new ArgumentNullException(nameof(viewModelType));
             var collection = GetViewModelCollection(viewModelType);
-            if (collection is { })
+            if (collection is not null)
             {
                 foreach (var vm in collection.Where(viewModelType.IsInstanceOfType).ToArray())
                     collection.Remove(vm);

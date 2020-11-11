@@ -21,7 +21,7 @@ namespace Mvvm
 
         private static void OnSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (!(d is AutoDisableImage image && image.Source is BitmapSource imageSoure))
+            if (d is not AutoDisableImage image || image.Source is not BitmapSource imageSoure)
                 return;
 
             var bitmap = new FormatConvertedBitmap(imageSoure, PixelFormats.Bgra32, null, 0.0);
@@ -54,7 +54,7 @@ namespace Mvvm
             {
                 base.OnRender(dc);
             }
-            else if (_graySource is { })
+            else if (_graySource is not null)
             {
                 dc.DrawImage(_graySource, new Rect(new Point(), RenderSize));
             }

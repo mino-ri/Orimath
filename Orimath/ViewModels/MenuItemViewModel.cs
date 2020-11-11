@@ -40,7 +40,7 @@ namespace Orimath.ViewModels
             Command = messenger.GetEffectCommand(effect);
             IconStream = effect.Icon;
             ShortcutKey = Internal.ConvertToKeyGesture(effect.ShortcutKey);
-            ShortcutKeyText = ShortcutKey is { } ? effect.ShortcutKey : "";
+            ShortcutKeyText = ShortcutKey is not null ? effect.ShortcutKey : "";
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Orimath.FoldingInstruction.View.ViewModels
 
         private void Workspace_CurrentToolChanged(object? sender, EventArgs e)
         {
-            if (_foldingInstruction is { })
+            if (_foldingInstruction is not null)
             {
                 _foldingInstruction.LinesChanged -= Model_LinesChanged;
                 _foldingInstruction.ArrowsChanged -= Model_ArrowsChanged;
@@ -34,7 +34,7 @@ namespace Orimath.FoldingInstruction.View.ViewModels
             }
 
             _foldingInstruction = (_workspace.CurrentTool as IFoldingInstructionTool)?.FoldingInstruction;
-            if (_foldingInstruction is { })
+            if (_foldingInstruction is not null)
             {
                 _foldingInstruction.LinesChanged += Model_LinesChanged;
                 _foldingInstruction.ArrowsChanged += Model_ArrowsChanged;
@@ -63,7 +63,7 @@ namespace Orimath.FoldingInstruction.View.ViewModels
 
         private void Model_ArrowsChanged(object? sender, EventArgs e)
         {
-            if (!(sender is FoldingInstruction foldingInstruction)) return;
+            if (sender is not FoldingInstruction foldingInstruction) return;
             
             var arrows = foldingInstruction.Arrows;
             _dispatcher.OnUIAsync(() =>
@@ -82,7 +82,7 @@ namespace Orimath.FoldingInstruction.View.ViewModels
 
         private void Model_LinesChanged(object? sender, EventArgs e)
         {
-            if (!(sender is FoldingInstruction foldingInstruction)) return;
+            if (sender is not FoldingInstruction foldingInstruction) return;
 
             var lines = foldingInstruction.Lines;
             _dispatcher.OnUIAsync(() =>
@@ -101,7 +101,7 @@ namespace Orimath.FoldingInstruction.View.ViewModels
 
         private void Model_PointsChanged(object? sender, EventArgs e)
         {
-            if (!(sender is FoldingInstruction foldingInstruction)) return;
+            if (sender is not FoldingInstruction foldingInstruction) return;
 
             var points = foldingInstruction.Points;
             _dispatcher.OnUIAsync(() =>

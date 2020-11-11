@@ -124,9 +124,7 @@ namespace Orimath.ViewModels
         public PluginItemSettingViewModel(IConfigurablePlugin plugin)
         {
             var pluginType = plugin.GetType();
-            Header = pluginType.GetCustomAttribute<DisplayNameAttribute>() is { } displayName
-                ? displayName.DisplayName
-                : pluginType.Name;
+            Header = pluginType.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName ?? pluginType.Name;
             
             Content = new SettingViewModel(plugin.Setting);
         }
@@ -144,12 +142,8 @@ namespace Orimath.ViewModels
 
         public PluginViewModel(Type pluginType, bool isEnabled)
         {
-            Name = pluginType.GetCustomAttribute<DisplayNameAttribute>() is { } displayName
-                ? displayName.DisplayName
-                : pluginType.Name;
-            Description = pluginType.GetCustomAttribute<DescriptionAttribute>() is { } description
-                ? description.Description
-                : "(No description)";
+            Name = pluginType.GetCustomAttribute<DisplayNameAttribute>()?.DisplayName ?? pluginType.Name;
+            Description = pluginType.GetCustomAttribute<DescriptionAttribute>()?.Description ?? "(No description)";
 
             FullName = pluginType.FullName!;
             Type = pluginType;

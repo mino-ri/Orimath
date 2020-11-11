@@ -97,9 +97,8 @@ namespace Orimath.Plugins
             {
                 ConfigurablePlugins.Add(configurable);
 
-                object? targetSetting;
                 if (!setting.Settings.TryGetValue(fullName, out var sssl) ||
-                    !sssl!.TryConvertTo(configurable.SettingType, out targetSetting))
+                    !sssl!.TryConvertTo(configurable.SettingType, out var targetSetting))
                 {
                     try
                     {
@@ -113,9 +112,9 @@ namespace Orimath.Plugins
 
                 }
 
-                if (targetSetting is { })
+                if (targetSetting is not null)
                     configurable.Setting = targetSetting;
-                else if (configurable.Setting is { })
+                else if (configurable.Setting is not null)
                     setting.Settings[fullName] = SsslObject.ConvertFrom(configurable.Setting);
             }
         }
@@ -125,7 +124,7 @@ namespace Orimath.Plugins
             return types
                 .Where(t => t.IsClass && !t.IsAbstract && typeof(FrameworkElement).IsAssignableFrom(t))
                 .Select(t => (t, t.GetCustomAttribute<ViewAttribute>()!))
-                .Where(tuple => tuple.Item2 is { });
+                .Where(tuple => tuple.Item2 is not null);
         }
 
         public static IEnumerable<(Type, ViewAttribute)> ExecutePlugins(ViewPluginArgs viewArgs)

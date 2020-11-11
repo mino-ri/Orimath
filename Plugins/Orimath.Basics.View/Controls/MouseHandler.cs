@@ -30,7 +30,7 @@ namespace Orimath.Basics.View.Controls
 
         private static void AttachedMouseHandlerChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            if (!(sender is Control ctrl)) return;
+            if (sender is not Control ctrl) return;
 
             if (e.OldValue is MouseHandler old)
             {
@@ -99,7 +99,7 @@ namespace Orimath.Basics.View.Controls
 
         private void Selector_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (!(sender is Control ctrl && ctrl.DataContext is IDisplayTargetViewModel dt)) return;
+            if (sender is not Control ctrl || ctrl.DataContext is not IDisplayTargetViewModel dt) return;
 
             if (e.ChangedButton == MouseButton.Left || e.ChangedButton == MouseButton.Right)
             {
@@ -113,7 +113,7 @@ namespace Orimath.Basics.View.Controls
 
         private void Selector_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            if (!(sender is Control ctrl && ctrl.DataContext is IDisplayTargetViewModel)) return;
+            if (sender is not Control ctrl || ctrl.DataContext is not IDisplayTargetViewModel) return;
 
             if (_clickControl == sender && _pressed == e.ChangedButton && _draggingData is not null)
             {
@@ -127,7 +127,7 @@ namespace Orimath.Basics.View.Controls
 
         private void BeginDrag(Control ctrl)
         {
-            if (_draggingData is { } && Workspace.BeginDrag(_draggingData, GetModifier(_pressed)))
+            if (_draggingData is not null && Workspace.BeginDrag(_draggingData, GetModifier(_pressed)))
             {
                 _draggingSource = ctrl;
                 _draggingGuid = Guid.NewGuid().ToString();
@@ -144,9 +144,9 @@ namespace Orimath.Basics.View.Controls
 
         private void Selector_MouseMove(object sender, MouseEventArgs e)
         {
-            if (!(sender is Control ctrl && ctrl.DataContext is IDisplayTargetViewModel)) return;
+            if (sender is not Control ctrl || ctrl.DataContext is not IDisplayTargetViewModel) return;
 
-            if (_clickControl == sender && _draggingData is { })
+            if (_clickControl == sender && _draggingData is not null)
             {
                 var point = e.GetPosition(PositionRoot);
                 if (Math.Abs(point.X - _draggingData.Point.X) >= 5.0 ||
@@ -163,7 +163,7 @@ namespace Orimath.Basics.View.Controls
 
         private void Selector_MouseLeave(object sender, MouseEventArgs e)
         {
-            if (!(sender is Control ctrl && ctrl.DataContext is IDisplayTargetViewModel)) return;
+            if (sender is not Control ctrl || ctrl.DataContext is not IDisplayTargetViewModel) return;
 
             if (_clickControl == sender)
             {
@@ -177,9 +177,9 @@ namespace Orimath.Basics.View.Controls
 
         private void Selector_DragEnter(object sender, DragEventArgs e)
         {
-            if (!(sender is Control ctrl && ctrl.DataContext is IDisplayTargetViewModel dt)) return;
+            if (sender is not Control ctrl || ctrl.DataContext is not IDisplayTargetViewModel dt) return;
 
-            if (IsValidDropSource(e.Data) && _draggingData is { } &&
+            if (IsValidDropSource(e.Data) && _draggingData is not null &&
                 Workspace.DragEnter(_draggingData, GetOperationTarget(e, dt), GetModifier(_pressed)))
             {
                 e.Effects = DragDropEffects.Scroll;
@@ -196,9 +196,9 @@ namespace Orimath.Basics.View.Controls
 
         private void Selector_DragOver(object sender, DragEventArgs e)
         {
-            if (!(sender is Control ctrl && ctrl.DataContext is IDisplayTargetViewModel dt)) return;
+            if (sender is not Control ctrl || ctrl.DataContext is not IDisplayTargetViewModel dt) return;
 
-            if (IsValidDropSource(e.Data) && _draggingData is { })
+            if (IsValidDropSource(e.Data) && _draggingData is not null)
                 Workspace.DragOver(_draggingData, GetOperationTarget(e, dt), GetModifier(_pressed));
 
             e.Handled = true;
@@ -206,9 +206,9 @@ namespace Orimath.Basics.View.Controls
 
         private void Selector_DragLeave(object sender, DragEventArgs e)
         {
-            if (!(sender is Control ctrl && ctrl.DataContext is IDisplayTargetViewModel dt)) return;
+            if (sender is not Control ctrl || ctrl.DataContext is not IDisplayTargetViewModel dt) return;
 
-            if (IsValidDropSource(e.Data) && _draggingData is { })
+            if (IsValidDropSource(e.Data) && _draggingData is not null)
                 Workspace.DragLeave(_draggingData, GetOperationTarget(e, dt), GetModifier(_pressed));
 
             if (ctrl != _draggingSource)
@@ -219,9 +219,9 @@ namespace Orimath.Basics.View.Controls
 
         private void Selector_Drop(object sender, DragEventArgs e)
         {
-            if (!(sender is Control ctrl && ctrl.DataContext is IDisplayTargetViewModel dt)) return;
+            if (sender is not Control ctrl || ctrl.DataContext is not IDisplayTargetViewModel dt) return;
 
-            if (IsValidDropSource(e.Data) && _draggingData is { })
+            if (IsValidDropSource(e.Data) && _draggingData is not null)
             {
                 Workspace.Drop(_draggingData, GetOperationTarget(e, dt), GetModifier(_pressed));
                 ctrl.ClearValue(Control.ForegroundProperty);
