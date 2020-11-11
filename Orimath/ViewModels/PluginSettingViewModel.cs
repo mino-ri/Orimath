@@ -12,7 +12,7 @@ namespace Orimath.ViewModels
 {
     public class PluginSettingViewModel : NotifyPropertyChanged
     {
-        private PluginLoadSettingViewModel _loadSetting;
+        private readonly PluginLoadSettingViewModel _loadSetting;
 
         public PluginSettingPageViewModel[] Pages { get; }
 
@@ -46,7 +46,7 @@ namespace Orimath.ViewModels
 
         public override string Header => "ON/OFFと読み込み順";
 
-        public ObservableCollection<PluginViewModel> Plugins { get; } = new ObservableCollection<PluginViewModel>();
+        public ObservableCollection<PluginViewModel> Plugins { get; } = new();
 
         public PluginLoadSettingViewModel(IMessenger messenger)
         {

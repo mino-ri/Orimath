@@ -5,8 +5,8 @@ namespace Orimath.Basics.View.ViewModels
 {
     public class WorkspaceViewModel : NotifyPropertyChanged
     {
-        private IWorkspace _workspace;
-        private IViewPointConverter _pointConverter;
+        private readonly IWorkspace _workspace;
+        private readonly IViewPointConverter _pointConverter;
         private readonly IDispatcher _dispatcher;
 
         public PaperViewModel Paper { get; }

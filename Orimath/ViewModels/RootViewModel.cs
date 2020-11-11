@@ -4,6 +4,6 @@ namespace Orimath.ViewModels
 {
     public class RootViewModel
     {
-        public WorkspaceViewModel Workspace { get; } = new WorkspaceViewModel(new Workspace());
+        public WorkspaceViewModel Workspace { get; } = new(new Workspace());
     }
 }

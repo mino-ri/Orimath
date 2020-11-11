@@ -12,7 +12,7 @@ namespace Orimath.Themes
             DependencyProperty.RegisterAttached("Theme", typeof(ThemeBrush), typeof(ThemeBrush),
                 new FrameworkPropertyMetadata(new ThemeBrush(), FrameworkPropertyMetadataOptions.AffectsRender));
 
-        public static ThemeBrush Default { get; } = new ThemeBrush();
+        public static ThemeBrush Default { get; } = new();
 
         public ThemeBrush? BasedOn { get; set; }
 
@@ -42,7 +42,7 @@ namespace Orimath.Themes
     [TypeConverter(typeof(BrushSetConverter))]
     public class BrushSet
     {
-        public static BrushSet Default { get; } = new BrushSet();
+        public static BrushSet Default { get; } = new();
 
         public BrushSet? BasedOn { get; set; }
 

@@ -19,7 +19,7 @@ namespace Orimath.ViewModels
 
         public Stream? IconStream { get; }
 
-        public ObservableCollection<MenuItemViewModel> Children { get; } = new ObservableCollection<MenuItemViewModel>();
+        public ObservableCollection<MenuItemViewModel> Children { get; } = new();
 
         public MenuItemViewModel(string name)
         {

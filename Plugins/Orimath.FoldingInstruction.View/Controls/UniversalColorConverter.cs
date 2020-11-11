@@ -8,7 +8,7 @@ namespace Orimath.FoldingInstruction.View.Controls
     [ValueConversion(typeof(InstructionColor), typeof(Brush))]
     public class UniversalColorConverter : IValueConverter
     {
-        private Brush[] _brushes;
+        private readonly Brush[] _brushes;
 
         public UniversalColorConverter()
         {
@@ -35,7 +35,7 @@ namespace Orimath.FoldingInstruction.View.Controls
             _brushes[(int)InstructionColor.LightPurple] = CreateBrush(0xC7B2DE);
         }
 
-        private Brush CreateBrush(uint value)
+        private static Brush CreateBrush(uint value)
         {
             var brush = new SolidColorBrush(Color.FromRgb((byte)(value >> 16), (byte)(value >> 8), (byte)value));
             brush.Freeze();

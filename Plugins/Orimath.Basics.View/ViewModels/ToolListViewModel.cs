@@ -24,7 +24,7 @@ namespace Orimath.Basics.View.ViewModels
         {
             _workspace = workspace;
             _dispatcher = dispatcher;
-            _workspace.CurrentToolChanged += (_, __) => _dispatcher.OnUIAsync(() =>
+            _workspace.CurrentToolChanged += (_, _) => _dispatcher.OnUIAsync(() =>
             {
                 _currentTool = null;
                 OnPropertyChanged(nameof(CurrentTool));

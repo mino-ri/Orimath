@@ -16,17 +16,17 @@ namespace Orimath.Basics.View.ViewModels
             _pointConverter = pointConverter;
             _dispatcher = dispatcher;
 
-            _paper.SelectedEdgesChanged += (_, __) => _dispatcher.OnUIAsync(() =>
+            _paper.SelectedEdgesChanged += (_, _) => _dispatcher.OnUIAsync(() =>
             {
                 SelectedEdges = Array.ConvertAll(_paper.SelectedEdges, e => new EdgeViewModel(e, _pointConverter));
                 OnPropertyChanged(nameof(SelectedEdges));
             });
-            _paper.SelectedLinesChanged += (_, __) => _dispatcher.OnUIAsync(() =>
+            _paper.SelectedLinesChanged += (_, _) => _dispatcher.OnUIAsync(() =>
             {
                 SelectedLines = Array.ConvertAll(_paper.SelectedLines, l => new LineViewModel(l, _pointConverter));
                 OnPropertyChanged(nameof(SelectedLines));
             });
-            _paper.SelectedPointsChanged += (_, __) => _dispatcher.OnUIAsync(() =>
+            _paper.SelectedPointsChanged += (_, _) => _dispatcher.OnUIAsync(() =>
             {
                 SelectedPoints = Array.ConvertAll(_paper.SelectedPoints, p => new PointViewModel(p, _pointConverter));
                 OnPropertyChanged(nameof(SelectedPoints));

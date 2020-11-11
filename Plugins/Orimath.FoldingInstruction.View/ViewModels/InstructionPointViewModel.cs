@@ -5,7 +5,7 @@ namespace Orimath.FoldingInstruction.View.ViewModels
 {
     public class InstructionPointViewModel : NotifyPropertyChanged
     {
-        private IViewPointConverter _pointConverter;
+        private readonly IViewPointConverter _pointConverter;
 
         private double _x;
         public double X { get => _x; set => SetValue(ref _x, value); }

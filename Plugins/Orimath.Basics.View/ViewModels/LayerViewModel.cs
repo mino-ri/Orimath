@@ -13,7 +13,7 @@ namespace Orimath.Basics.View.ViewModels
     {
         private readonly AttachedObservableCollection<Point, PointViewModel> _points;
         private readonly AttachedObservableCollection<LineSegment, LineViewModel> _lines;
-        private IViewPointConverter _pointConverter;
+        private readonly IViewPointConverter _pointConverter;
 
         public LayerViewModel(ILayerModel layer, IViewPointConverter pointConverter, IDispatcher dispatcher)
         {
@@ -47,9 +47,7 @@ namespace Orimath.Basics.View.ViewModels
 
         public DisplayTarget GetTarget() => DisplayTarget.NewLayer(Source);
 
-#pragma warning disable CA1063 // Implement IDisposable Correctly
         public void Dispose()
-#pragma warning restore CA1063 // Implement IDisposable Correctly
         {
             _points.Dispose();
             _lines.Dispose();

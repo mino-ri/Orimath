@@ -7,7 +7,7 @@ namespace Orimath
 {
     internal static class Internal
     {
-        private static readonly KeyGestureConverter _keyGestureConverter = new KeyGestureConverter();
+        private static readonly KeyGestureConverter _keyGestureConverter = new();
 
         public static KeyGesture? ConvertToKeyGesture(string source)
         {

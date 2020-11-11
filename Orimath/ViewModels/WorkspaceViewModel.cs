@@ -12,30 +12,30 @@ namespace Orimath.ViewModels
     public class WorkspaceViewModel : NotifyPropertyChanged, IMessenger
     {
         private readonly IWorkspace _workspace;
-        private readonly OrimathDispatcher _dispatcher = new OrimathDispatcher();
-        private readonly Dictionary<IEffect, ICommand> _effectCommands = new Dictionary<IEffect, ICommand>();
-        private readonly Dictionary<Type, Func<object, object>> _effectParameterCreator = new Dictionary<Type, Func<object, object>>();
+        private readonly OrimathDispatcher _dispatcher = new();
+        private readonly Dictionary<IEffect, ICommand> _effectCommands = new();
+        private readonly Dictionary<Type, Func<object, object>> _effectParameterCreator = new();
 
         private readonly ActionCommand _closeDialogCommand;
-        private readonly ObservableCollection<object> _preViewModels = new ObservableCollection<object>();
+        private readonly ObservableCollection<object> _preViewModels = new();
         private IEffect[] _systemEffects;
 
-        private GlobalSetting _setting = new GlobalSetting();
+        private GlobalSetting _setting = new();
 
         private bool _initialized;
         private object? _dialog;
 
-        public Dictionary<Type, (ViewPane pane, Type type)> ViewDefinitions { get; } = new Dictionary<Type, (ViewPane pane, Type type)>();
+        public Dictionary<Type, (ViewPane pane, Type type)> ViewDefinitions { get; } = new();
 
-        public ObservableCollection<object> MainViewModels { get; } = new ObservableCollection<object>();
+        public ObservableCollection<object> MainViewModels { get; } = new();
 
-        public ObservableCollection<object> TopViewModels { get; } = new ObservableCollection<object>();
+        public ObservableCollection<object> TopViewModels { get; } = new();
 
-        public ObservableCollection<object> SideViewModels { get; } = new ObservableCollection<object>();
+        public ObservableCollection<object> SideViewModels { get; } = new();
 
-        public ObservableCollection<MenuItemViewModel> MenuItems { get; } = new ObservableCollection<MenuItemViewModel>();
+        public ObservableCollection<MenuItemViewModel> MenuItems { get; } = new();
 
-        public Dictionary<KeyGesture, ITool> ToolGestures { get; } = new Dictionary<KeyGesture, ITool>();
+        public Dictionary<KeyGesture, ITool> ToolGestures { get; } = new();
 
         public object? Dialog
         {
@@ -103,7 +103,7 @@ namespace Orimath.ViewModels
 
         public void LoadSetting()
         {
-            _setting = Settings.Load<GlobalSetting>(SettingName.Global)! ?? new GlobalSetting();
+            _setting = Settings.Load<GlobalSetting>(SettingName.Global) ?? new GlobalSetting();
             ViewSize = _setting.ViewSize * 2.0;
 
             _systemEffects = new IEffect[]

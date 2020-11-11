@@ -27,7 +27,7 @@ namespace Orimath.UITest
         private readonly IMessenger _messenger;
         private readonly IDispatcher _dispatcher;
         private ControlListViewModel? _viewModel;
-        private UITestPluginSetting _setting;
+        private readonly UITestPluginSetting _setting;
 
         public UITestEffect(IMessenger messenger, IDispatcher dispatcher, UITestPluginSetting setting)
         {

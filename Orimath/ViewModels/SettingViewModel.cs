@@ -10,7 +10,7 @@ namespace Orimath.ViewModels
     {
         private readonly object _obj;
         private bool _loaded;
-        private readonly ResettableObservableCollection<SettingItemViewModel> _items = new ResettableObservableCollection<SettingItemViewModel>();
+        private readonly ResettableObservableCollection<SettingItemViewModel> _items = new();
 
         public ResettableObservableCollection<SettingItemViewModel> Items
         {

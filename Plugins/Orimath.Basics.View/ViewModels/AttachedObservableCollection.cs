@@ -59,9 +59,7 @@ namespace Orimath.Basics.View.ViewModels
             }
         }
 
-#pragma warning disable CA1063 // Implement IDisposable Correctly
         public void Dispose()
-#pragma warning restore CA1063 // Implement IDisposable Correctly
         {
             _removeHandler(Source_CollectionChanged);
         }

@@ -12,9 +12,9 @@ namespace Orimath.FoldingInstruction.View.ViewModels
         private readonly IViewPointConverter _pointConverter;
         private FoldingInstruction? _foldingInstruction;
 
-        public ResettableObservableCollection<InstructionLineViewModel> Lines { get; } = new ResettableObservableCollection<InstructionLineViewModel>();
-        public ResettableObservableCollection<InstructionArrowViewModel> Arrows { get; } = new ResettableObservableCollection<InstructionArrowViewModel>();
-        public ResettableObservableCollection<InstructionPointViewModel> Points { get; } = new ResettableObservableCollection<InstructionPointViewModel>();
+        public ResettableObservableCollection<InstructionLineViewModel> Lines { get; } = new();
+        public ResettableObservableCollection<InstructionArrowViewModel> Arrows { get; } = new();
+        public ResettableObservableCollection<InstructionPointViewModel> Points { get; } = new();
 
         public FoldingInstructionViewModel(IWorkspace workspace, IDispatcher dispatcher, IViewPointConverter pointConverter)
         {
