@@ -28,8 +28,9 @@ type Workspace() as this =
 
     member _.Initialize() =
         if initialized then invalidOp "初期化は既に完了しています。"
-        currentTool.Value <- tools.[0]
-        currentTool.Value.OnActivated()
+        if tools.Count > 0 then
+            currentTool.Value <- tools.[0]
+            currentTool.Value.OnActivated()
         paper.Clear()
         initialized <- true
     member _.CurrentToolChanged = currentTool.ValueChanged

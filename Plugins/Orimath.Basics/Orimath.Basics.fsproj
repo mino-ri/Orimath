@@ -1,8 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <UseWPF>true</UseWPF>
+    <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -19,12 +18,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Mvvm\Mvvm.csproj" />
     <ProjectReference Include="..\..\Orimath.Plugins\Orimath.Plugins.fsproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy $(TargetDir)$(TargetName).* $(ProjectDir)..\..\Orimath\bin\$(ConfigurationName)\netcoreapp3.1\Plugins\" />
+    <Exec Command="copy $(TargetDir)$(TargetName).* $(ProjectDir)..\..\Orimath\bin\$(ConfigurationName)\net5.0-windows\Plugins\" />
   </Target>
 
 </Project>

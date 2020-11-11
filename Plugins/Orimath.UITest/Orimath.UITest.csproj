@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy $(TargetDir)$(TargetName).* $(ProjectDir)..\..\Orimath\bin\$(ConfigurationName)\netcoreapp3.1\Plugins\" />
+    <Exec Command="copy $(TargetDir)$(TargetName).* $(ProjectDir)..\..\Orimath\bin\$(ConfigurationName)\net5.0-windows\Plugins\" />
   </Target>
 
   <ItemGroup>
