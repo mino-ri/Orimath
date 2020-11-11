@@ -29,20 +29,20 @@ type Layer private (edges: Edge list, lines: LineSegment list, points: Point lis
             // 末尾最適化用に一応 if で分岐
             | e1 :: ((e2 :: _) as tail) -> if e1.Line.Point2 <>~ e2.Line.Point1 then false else isValidEdge head tail
             | [] -> failwith "想定しない動作"
-        if edges.Length < 3 then invalidArg "edges" "多角形の辺は3以上でなければなりません。"
-        if not (isValidEdge edges.Head edges) then invalidArg "edges" "多角形の辺は閉じている必要があります。"
-        if originalEdges.Length < 3 then invalidArg "edges" "多角形の辺は3以上でなければなりません。"
-        if not (isValidEdge originalEdges.Head originalEdges) then invalidArg "edges" "多角形の辺は閉じている必要があります。"
+        if edges.Length < 3 then invalidArg (nameof(edges)) "多角形の辺は3以上でなければなりません。"
+        if not (isValidEdge edges.Head edges) then invalidArg (nameof(edges)) "多角形の辺は閉じている必要があります。"
+        if originalEdges.Length < 3 then invalidArg (nameof(originalEdges)) "多角形の辺は3以上でなければなりません。"
+        if not (isValidEdge originalEdges.Head originalEdges) then invalidArg (nameof(originalEdges)) "多角形の辺は閉じている必要があります。"
         // if not (lines |> List.forall(fun l -> LayerExtensions.ContainsCore(edges, l.Point1) && LayerExtensions.ContainsCore(edges, l.Point2)))
-        // then invalidArg "lines" "レイヤー内に含まれていない線分があります。"
+        // then invalidArg (nameof(lines)) "レイヤー内に含まれていない線分があります。"
         // if not (points |> List.forall(fun p -> LayerExtensions.ContainsCore(edges, p)))
-        // then invalidArg "points" "レイヤー内に含まれていない点があります。"
+        // then invalidArg (nameof(points)) "レイヤー内に含まれていない点があります。"
         Layer(edges, lines, points, layerType, originalEdges, matrix)
 
     /// 指定した高さと幅を持つ長方形のレイヤーを生成します。
     static member FromSize(width, height, layerType) =
-        if width <= 0.0 then invalidArg "width" "紙の幅または高さを0以下にすることはできません。"
-        if height <= 0.0 then invalidArg "height" "紙の幅または高さを0以下にすることはできません。"
+        if width <= 0.0 then invalidArg (nameof(width)) "紙の幅または高さを0以下にすることはできません。"
+        if height <= 0.0 then invalidArg (nameof(height)) "紙の幅または高さを0以下にすることはできません。"
         let p0 = { X = 0.0; Y = 0.0 }
         let p1 = { X = width; Y = 0.0 }
         let p2 = { X = width; Y = height }
@@ -52,7 +52,7 @@ type Layer private (edges: Edge list, lines: LineSegment list, points: Point lis
     /// 指定した頂点を持つ多角形のレイヤーを生成します。
     static member FromPolygon(vertexes: seq<Point>, layerType) =
         let vertexes = asList vertexes
-        if vertexes.Length < 3 then invalidArg "vertexes" "多角形の頂点は3以上でなければなりません。"
+        if vertexes.Length < 3 then invalidArg (nameof(vertexes)) "多角形の頂点は3以上でなければなりません。"
         let rec createEdges (head: Point) (points: Point list) (acm: Edge list) =
             match points with
             | [ p ] -> Edge(LineSegment.FromPoints(head, p).Value, false) :: acm

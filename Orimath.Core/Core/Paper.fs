@@ -10,7 +10,7 @@ type Paper private (layers: Layer list) =
     static member Create(layers: seq<ILayer>) =
         let layers = layers |> Seq.map Layer.AsLayer |> Seq.toList
         if layers.Length < 1
-        then invalidArg "layers" "少なくとも1つのレイヤーが必要です。"
+        then invalidArg (nameof(layers)) "少なくとも1つのレイヤーが必要です。"
         else Paper(layers)
 
     static member FromSize(width: float, height: float) = Paper([ Layer.FromSize(width, height, LayerType.BackSide) ])
