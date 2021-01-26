@@ -1494,7 +1494,43 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
+        <Style TargetType="{x:Type ContextMenu}">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="th:ThemeBrush.Theme" Value="{x:Static th:ThemeBrushes.Workspace}" />
+            <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+            <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+            <Setter Property="BorderBrush" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Border, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+            <Setter Property="FontFamily" Value="{DynamicResource {x:Static SystemFonts.MenuFontFamilyKey}}" />
+            <Setter Property="FontSize" Value="{DynamicResource {x:Static SystemFonts.MenuFontSizeKey}}" />
+            <Setter Property="FontStyle" Value="{DynamicResource {x:Static SystemFonts.MenuFontStyleKey}}" />
+            <Setter Property="FontWeight" Value="{DynamicResource {x:Static SystemFonts.MenuFontWeightKey}}" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="Padding" Value="2" />
+            <Setter Property="ScrollViewer.PanningMode" Value="{x:Static PanningMode.Both}" />
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ContextMenu}">
+                        <Border SnapsToDevicePixels="True"
+                                BorderThickness="1"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                Margin="0,0,8,8">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="4" ShadowDepth="4" Color="#808080" RenderingBias="Quality" Opacity="0.5" />
+                            </Border.Effect>
+                            <ScrollViewer CanContentScroll="True" VerticalScrollBarVisibility="Auto">
+                                <ItemsPresenter Margin="{TemplateBinding Padding}"
+                                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                KeyboardNavigation.DirectionalNavigation="Cycle"
+                                                Grid.IsSharedSizeScope="True" />
+                            </ScrollViewer>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
         <!-- Window -->
         <Style TargetType="{x:Type Button}" x:Key="CaptionButton">
             <Setter Property="OverridesDefaultStyle" Value="True" />
