@@ -1130,6 +1130,55 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style TargetType="{x:Type GroupBox}">
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="th:ThemeBrush.Theme" Value="{StaticResource MenuItemThemeBrush}" />
+            <Setter Property="BorderBrush" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+            <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Highlight.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+            <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Highlight.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type GroupBox}">
+                        <Grid SnapsToDevicePixels="True">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="6" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="6" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="4" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="6" />
+                            </Grid.RowDefinitions>
+                            <Border BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="4"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    Grid.Row="0" Grid.Column="0" Grid.RowSpan="4" Grid.ColumnSpan="3" />
+                            <Border Padding="6,3" CornerRadius="4,4,0,0"
+                                    Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                                    TextElement.Foreground="{Binding Path=(th:ThemeBrush.Theme).Normal.Foreground, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}"
+                                    Background="{TemplateBinding BorderBrush}">
+                                <ContentPresenter RecognizesAccessKey="True"
+                                                  Content="{TemplateBinding Header}"
+                                                  ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                                  ContentStringFormat="{TemplateBinding HeaderStringFormat}"
+                                                  ContentSource="Header"
+                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </Border>
+                            <ContentPresenter Content="{TemplateBinding Content}"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                              Margin="{TemplateBinding Padding}"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                              Grid.Row="2" Grid.Column="1" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         
         <!-- Menu -->
         <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="{x:Type Separator}">
