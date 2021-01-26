@@ -16,6 +16,9 @@
         <th:ThemeBrush x:Key="MenuItemThemeBrush"
                        BasedOn="{x:Static th:ThemeBrushes.Control}"
                        Highlight="Workspace.Normal" />
+        <th:ThemeBrush x:Key="ProgressBarThemeBrush"
+                       BasedOn="{x:Static th:ThemeBrushes.Input}"
+                       Highlight="Control.Highlight" />
 
         <Style TargetType="{x:Type Button}">
             <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -1098,6 +1101,31 @@
                                                   SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                             </Border>
                         </DockPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="{x:Type ProgressBar}">
+            <Setter Property="th:ThemeBrush.Theme" Value="{StaticResource ProgressBarThemeBrush}" />
+            <Setter Property="BorderBrush" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Border, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+            <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+            <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Highlight.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ProgressBar}">
+                        <Grid SnapsToDevicePixels="True">
+                            <Border x:Name="PART_Track" 
+                                    CornerRadius="2"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}" />
+                            <Border x:Name="PART_Indicator"
+                                    HorizontalAlignment="Left"
+                                    Background="{TemplateBinding Foreground}"
+                                    Margin="2" />
+                        </Grid>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
