@@ -30,7 +30,6 @@
             <StackPanel Orientation="Horizontal" />
         </ItemsPanelTemplate>
         <ctrl:IconImageConverter x:Key="IconImageConverter" />
-        <BooleanToVisibilityConverter x:Key="BoolVisibleConverter" />
         <DataTemplate DataType="{x:Type vm:PluginSettingViewModel}">
             <ctrl:PluginSettingControl />
         </DataTemplate>
