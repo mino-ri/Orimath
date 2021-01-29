@@ -18,7 +18,6 @@
     <Compile Include="Core\Matrix.fs" />
     <Compile Include="Core\Layer.fs" />
     <Compile Include="Core\Paper.fs" />
-    <Compile Include="Plugins\CollectionChangedEvent.fs" />
     <Compile Include="Plugins\ILayerModel.fs" />
     <Compile Include="Plugins\IPaperModel.fs" />
     <Compile Include="Plugins\DisplayTarget.fs" />
@@ -27,6 +26,12 @@
     <Compile Include="Plugins\WorkspaceModule.fs" />
     <Compile Include="Plugins\SelectorTool.fs" />
     <Compile Include="Plugins\IPlugin.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="ApplicativeProperty">
+      <HintPath>..\Libraries\ApplicativeProperty.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

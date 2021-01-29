@@ -1,33 +1,19 @@
 ﻿namespace Orimath.Plugins
 open System
-open System.Collections.Generic
 open System.Runtime.CompilerServices
 open Orimath.Core
+open ApplicativeProperty
 
 type IPaperModel =
     inherit IPaper
-    abstract member Layers : IReadOnlyList<ILayerModel>
-    abstract member CanUndo : bool
-    abstract member CanRedo : bool
-    abstract member SelectedLayers : ILayerModel[] with get, set
-    abstract member SelectedEdges : Edge[] with get, set
-    abstract member SelectedPoints : Point[] with get, set
-    abstract member SelectedLines : LineSegment[] with get, set
+    abstract member Layers : IReactiveCollection<ILayerModel>
+    abstract member CanUndo : IGetProp<bool>
+    abstract member CanRedo : IGetProp<bool>
+    abstract member SelectedLayers : IProp<ILayerModel[]>
+    abstract member SelectedEdges : IProp<Edge[]>
+    abstract member SelectedPoints : IProp<Point[]>
+    abstract member SelectedLines : IProp<LineSegment[]>
     abstract member ChangeBlockDeclared : bool
-
-    [<CLIEvent>]
-    abstract member SelectedLayersChanged : IEvent<EventHandler, EventArgs>
-    [<CLIEvent>]
-    abstract member SelectedEdgesChanged : IEvent<EventHandler, EventArgs>
-    [<CLIEvent>]
-    abstract member SelectedPointsChanged : IEvent<EventHandler, EventArgs>
-    [<CLIEvent>]
-    abstract member SelectedLinesChanged : IEvent<EventHandler, EventArgs>
-    [<CLIEvent>]
-    abstract member CanUndoChanged : IEvent<EventHandler, EventArgs>
-
-    [<CLIEvent>]
-    abstract member LayerChanged : ICollectionChangedEvent<ILayerModel>
 
     abstract member GetSnapShot : unit -> IPaper
     abstract member Undo : unit -> unit
@@ -51,16 +37,16 @@ type PaperModelExtensions =
 
     [<Extension>]
     static member IsSelected(paper: IPaperModel, point) =
-        Array.contains point paper.SelectedPoints
+        Array.contains point paper.SelectedPoints.Value
 
     [<Extension>]
     static member IsSelected(paper: IPaperModel, line) =
-        Array.contains line paper.SelectedLines
+        Array.contains line paper.SelectedLines.Value
 
     [<Extension>]
     static member IsSelected(paper: IPaperModel, edge) =
-        Array.contains edge paper.SelectedEdges
+        Array.contains edge paper.SelectedEdges.Value
 
     [<Extension>]
     static member IsSelected(paper: IPaperModel, layer) =
-        Array.contains layer paper.SelectedLayers
+        Array.contains layer paper.SelectedLayers.Value

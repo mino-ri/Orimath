@@ -1,35 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Mvvm;
 using Orimath.Plugins;
+using ApplicativeProperty;
 
 namespace Orimath.Basics.View.ViewModels
 {
     public sealed class AttachedObservableCollection<TModel, TViewModel> : ResettableObservableCollection<TViewModel>, IDisposable
     {
+        private readonly IDisposable _disposer;
         private readonly IDispatcher _dispatcher;
-        private readonly Action<CollectionChangedEventHandler<TModel>> _removeHandler;
         private readonly Func<TModel, TViewModel> _mapper;
         private readonly Action<TViewModel> _onRemove;
 
         public AttachedObservableCollection(
             IDispatcher dispatcher,
-            IEnumerable<TModel> init,
-            Action<CollectionChangedEventHandler<TModel>> addHandler,
-            Action<CollectionChangedEventHandler<TModel>> removeHandler,
+            IReactiveCollection<TModel> source,
             Func<TModel, TViewModel> mapper,
             Action<TViewModel> onRemove)
-            : base(init.Select(mapper))
+            : base(source.Select(mapper))
         {
             _dispatcher = dispatcher;
-            _removeHandler = removeHandler;
             _mapper = mapper;
             _onRemove = onRemove;
-            addHandler(Source_CollectionChanged);
+            _disposer = source.Subscribe(Source_CollectionChanged);
         }
 
-        private async void Source_CollectionChanged(object sender, CollectionChange<TModel> e)
+        private async void Source_CollectionChanged(CollectionChange<TModel> e)
         {
             await _dispatcher.SwitchToUI();
             switch (e)
@@ -61,7 +58,7 @@ namespace Orimath.Basics.View.ViewModels
 
         public void Dispose()
         {
-            _removeHandler(Source_CollectionChanged);
+            _disposer.Dispose();
         }
     }
 }

@@ -4,6 +4,8 @@ open Orimath.Core
 open Orimath.FoldingInstruction
 open Orimath.Plugins
 open FoldOperation
+open ApplicativeProperty
+open ApplicativeProperty.PropOperators
 
 type DragFoldTool(workspace: IWorkspace) =
     let paper = workspace.Paper
@@ -17,10 +19,10 @@ type DragFoldTool(workspace: IWorkspace) =
         member _.ShortcutKey = "Ctrl+F"
         member _.Icon = Assembly.GetExecutingAssembly().GetManifestResourceStream("Orimath.Folds.Icon.png")
         member _.OnActivated() =
-            paper.SelectedLayers <- array.Empty()
-            paper.SelectedPoints <- array.Empty()
-            paper.SelectedLines <- array.Empty()
-            paper.SelectedEdges <- array.Empty()
+            paper.SelectedLayers .<- array.Empty()
+            paper.SelectedPoints .<- array.Empty()
+            paper.SelectedLines .<- array.Empty()
+            paper.SelectedEdges .<- array.Empty()
         member _.OnDeactivated() = ()
 
     interface IClickTool with
@@ -33,27 +35,27 @@ type DragFoldTool(workspace: IWorkspace) =
                 let clearOther = not (modifier.HasFlag(OperationModifier.Shift))
                 match target.Target with
                 | DisplayTarget.Point(point) ->
-                    paper.SelectedPoints <-
+                    paper.SelectedPoints .<-
                         if paper.IsSelected(point) then array.Empty() else [| point |]
                     if clearOther then
-                        paper.SelectedLines <- array.Empty()
-                        paper.SelectedEdges <- array.Empty()
+                        paper.SelectedLines .<- array.Empty()
+                        paper.SelectedEdges .<- array.Empty()
                 | DisplayTarget.Line(line) ->
-                    paper.SelectedLines <-
+                    paper.SelectedLines .<-
                         if paper.IsSelected(line) then array.Empty() else [| line |]
-                    paper.SelectedEdges <- array.Empty()
+                    paper.SelectedEdges .<- array.Empty()
                     if clearOther then
-                        paper.SelectedPoints <- array.Empty()
+                        paper.SelectedPoints .<- array.Empty()
                 | DisplayTarget.Edge(edge) ->
-                    paper.SelectedLines <- array.Empty()
-                    paper.SelectedEdges <-
+                    paper.SelectedLines .<- array.Empty()
+                    paper.SelectedEdges .<-
                         if paper.IsSelected(edge) then array.Empty() else [| edge |]
                     if clearOther then
-                        paper.SelectedPoints <- array.Empty()
+                        paper.SelectedPoints .<- array.Empty()
                 | _ ->
-                    paper.SelectedPoints <- array.Empty()
-                    paper.SelectedLines <- array.Empty()
-                    paper.SelectedEdges <- array.Empty()
+                    paper.SelectedPoints .<- array.Empty()
+                    paper.SelectedLines .<- array.Empty()
+                    paper.SelectedEdges .<- array.Empty()
 
     interface IDragTool with
         member _.BeginDrag(source, _) =

@@ -20,4 +20,10 @@
     <ProjectReference Include="..\..\Orimath.ViewPlugins\Orimath.ViewPlugins.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="ApplicativeProperty">
+      <HintPath>..\..\Libraries\ApplicativeProperty.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

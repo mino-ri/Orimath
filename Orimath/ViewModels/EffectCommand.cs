@@ -1,33 +1,26 @@
-﻿using Orimath.Plugins;
-using System;
-using System.Windows.Input;
+﻿using System.Windows.Input;
+using System.Windows.Threading;
+using Orimath.Plugins;
+using ApplicativeProperty;
 
 namespace Orimath.ViewModels
 {
-    public class EffectCommand : ICommand
+    public static class EffectCommand
     {
-        private readonly IEffect _effect;
-        private readonly IDispatcher _dispatcher;
-        private readonly WorkspaceViewModel _parent;
-
-        public EffectCommand(IEffect effect, IDispatcher dispatcher, WorkspaceViewModel parent)
+        public static ICommand Create(IEffect effect, OrimathDispatcher dispatcher, WorkspaceViewModel parent)
         {
-            _effect = effect;
-            _dispatcher = dispatcher;
-            _parent = parent;
-            _effect.CanExecuteChanged += (sender, e) =>
-                _dispatcher.OnUIAsync(() => CanExecuteChanged?.Invoke(this, e));
-            _parent.PropertyChanged += (sender, e) =>
+            if (effect is IParametricEffect parametric)
             {
-                if (e.PropertyName == nameof(WorkspaceViewModel.RootEnable))
-                    CanExecuteChanged?.Invoke(this, e);
-            };
+                return effect.CanExecute.Zip(parent.RootEnable, (a, b) => a && b)
+                    .ToCommand(_ => parent.OpenDialog(new ParametricEffectDialogViewModel(parametric, dispatcher, parent)),
+                               dispatcher.SynchronizationContext);
+            }
+            else
+            {
+                return parent.RootEnable.Zip(effect.CanExecute, (a, b) => a && b)
+                    .ToCommand(_ => dispatcher.OnBackgroundAsync(effect.Execute),
+                               dispatcher.SynchronizationContext);
+            }
         }
-
-        public event EventHandler? CanExecuteChanged;
-
-        public bool CanExecute(object? parameter) => _parent.RootEnable && _effect.CanExecute();
-
-        public void Execute(object? parameter) => _dispatcher.OnBackgroundAsync(_effect.Execute);
     }
 }

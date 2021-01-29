@@ -2,6 +2,8 @@
 open Orimath.Core
 open Orimath.Plugins
 open Orimath.Core.NearlyEquatable
+open ApplicativeProperty
+open ApplicativeProperty.PropOperators
 
 type UndoEffect(workspace: IWorkspace) =
     interface IEffect with
@@ -9,10 +11,8 @@ type UndoEffect(workspace: IWorkspace) =
         member _.Name = "元に戻す"
         member _.ShortcutKey = "Ctrl+Z"
         member _.Icon = InternalModule.getIcon "undo"
-        member _.CanExecute() = workspace.Paper.CanUndo
+        member _.CanExecute = workspace.Paper.CanUndo
         member _.Execute() = workspace.Paper.Undo()
-        [<CLIEvent>]
-        member _.CanExecuteChanged = workspace.Paper.CanUndoChanged
 
 type RedoEffect(workspace: IWorkspace) =
     interface IEffect with
@@ -20,10 +20,8 @@ type RedoEffect(workspace: IWorkspace) =
         member _.Name = "やり直し"
         member _.ShortcutKey = "Ctrl+Y"
         member _.Icon = InternalModule.getIcon "redo"
-        member _.CanExecute() = workspace.Paper.CanRedo
+        member _.CanExecute = workspace.Paper.CanRedo
         member _.Execute() = workspace.Paper.Redo()
-        [<CLIEvent>]
-        member _.CanExecuteChanged = workspace.Paper.CanUndoChanged
 
 type TurnVerticallyEffect(workspace: IWorkspace) =
     let matrix =
@@ -37,10 +35,8 @@ type TurnVerticallyEffect(workspace: IWorkspace) =
         member _.Name = "縦に裏返す"
         member _.ShortcutKey = "Ctrl+Up"
         member _.Icon = InternalModule.getIcon "turn_v"
-        member _.CanExecute() = true
+        member _.CanExecute = upcast Prop.ctrue
         member _.Execute() = InternalModule.transform workspace matrix true
-        [<CLIEvent>]
-        member _.CanExecuteChanged = workspace.Paper.CanUndoChanged
 
 type TurnHorizontallyEffect(workspace: IWorkspace) =
     let matrix =
@@ -54,10 +50,8 @@ type TurnHorizontallyEffect(workspace: IWorkspace) =
         member _.Name = "横に裏返す"
         member _.ShortcutKey = "Ctrl+Down"
         member _.Icon = InternalModule.getIcon "turn_h"
-        member _.CanExecute() = true
+        member _.CanExecute = upcast Prop.ctrue
         member _.Execute() = InternalModule.transform workspace matrix true
-        [<CLIEvent>]
-        member _.CanExecuteChanged = workspace.Paper.CanUndoChanged
 
 type RotateRightEffect(workspace: IWorkspace) =
     let matrix =
@@ -71,10 +65,8 @@ type RotateRightEffect(workspace: IWorkspace) =
         member _.Name = "右に90°回転"
         member _.ShortcutKey = "Ctrl+Right"
         member _.Icon = InternalModule.getIcon "rotate_r"
-        member _.CanExecute() = true
+        member _.CanExecute = upcast Prop.ctrue
         member _.Execute() = InternalModule.transform workspace matrix false
-        [<CLIEvent>]
-        member _.CanExecuteChanged = workspace.Paper.CanUndoChanged
 
 type RotateLeftEffect(workspace: IWorkspace) =
     let matrix =
@@ -88,19 +80,18 @@ type RotateLeftEffect(workspace: IWorkspace) =
         member _.Name = "左に90°回転"
         member _.ShortcutKey = "Ctrl+Left"
         member _.Icon = InternalModule.getIcon "rotate_l"
-        member _.CanExecute() = true
+        member _.CanExecute = upcast Prop.ctrue
         member _.Execute() = InternalModule.transform workspace matrix false
-        [<CLIEvent>]
-        member _.CanExecuteChanged = workspace.Paper.CanUndoChanged
 
 
 type OpenAllEffect(workspace: IWorkspace) =
+    let canExecute = workspace.Paper.Layers.CountProp .>= 2
     interface IEffect with
         member val MenuHieralchy = [| "編集" |]
         member _.Name = "すべて開く"
         member _.ShortcutKey = "Ctrl+E"
         member _.Icon = InternalModule.getIcon "open_all"
-        member _.CanExecute() = workspace.Paper.Layers.Count >= 2
+        member _.CanExecute = canExecute
         member _.Execute() =
             use __ = workspace.Paper.BeginChange()
             let layers = workspace.Paper.Layers |> Seq.toArray
@@ -133,5 +124,3 @@ type OpenAllEffect(workspace: IWorkspace) =
                         |> Seq.append (layer.Lines |> Seq.map invert))
                 |> LineSegmentExtensions.Merge
             workspace.Paper.Layers.[0].AddLines(lines)
-        [<CLIEvent>]
-        member _.CanExecuteChanged = workspace.Paper.CanUndoChanged

@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Mvvm;
 using Orimath.Plugins;
+using ApplicativeProperty;
 
 namespace Orimath.Basics.View.ViewModels
 {
@@ -16,19 +17,19 @@ namespace Orimath.Basics.View.ViewModels
         private ToolViewModel? _currentTool;
         public ToolViewModel? CurrentTool
         {
-            get => _currentTool ??= Tools.FirstOrDefault(t => t.Source == _workspace.CurrentTool);
-            set => _workspace.CurrentTool = value?.Source;
+            get => _currentTool ??= Tools.FirstOrDefault(t => t.Source == _workspace.CurrentTool.Value);
+            set => _workspace.CurrentTool.OnNext(value?.Source);
         }
 
         public ToolListViewModel(IWorkspace workspace, IDispatcher dispatcher)
         {
             _workspace = workspace;
             _dispatcher = dispatcher;
-            _workspace.CurrentToolChanged += (_, _) => _dispatcher.OnUIAsync(() =>
+            _workspace.CurrentTool.Subscribe(_ => _dispatcher.OnUIAsync(() =>
             {
                 _currentTool = null;
                 OnPropertyChanged(nameof(CurrentTool));
-            });
+            }));
         }
     }
 }

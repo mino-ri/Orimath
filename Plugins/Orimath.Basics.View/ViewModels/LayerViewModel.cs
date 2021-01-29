@@ -25,15 +25,11 @@ namespace Orimath.Basics.View.ViewModels
             _points = new AttachedObservableCollection<Point, PointViewModel>(
                 dispatcher,
                 layer.Points,
-                h => Source.PointChanged += h,
-                h => Source.PointChanged -= h,
                 p => new PointViewModel(p, _pointConverter),
                 _ => { });
             _lines = new AttachedObservableCollection<LineSegment, LineViewModel>(
                 dispatcher,
                 layer.Lines,
-                h => Source.LineChanged += h,
-                h => Source.LineChanged -= h,
                 l => new LineViewModel(l, _pointConverter),
                 _ => { });
         }

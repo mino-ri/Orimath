@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using System.Windows.Threading;
 using Mvvm;
 using Orimath.IO;
 using Orimath.Plugins;
+using ApplicativeProperty;
 
 namespace Orimath.ViewModels
 {
@@ -16,14 +18,12 @@ namespace Orimath.ViewModels
         private readonly Dictionary<IEffect, ICommand> _effectCommands = new();
         private readonly Dictionary<Type, Func<object, object>> _effectParameterCreator = new();
 
-        private readonly ActionCommand _closeDialogCommand;
         private readonly ObservableCollection<object> _preViewModels = new();
         private IEffect[] _systemEffects;
 
         private GlobalSetting _setting = new();
 
         private bool _initialized;
-        private object? _dialog;
 
         public Dictionary<Type, (ViewPane pane, Type type)> ViewDefinitions { get; } = new();
 
@@ -37,28 +37,15 @@ namespace Orimath.ViewModels
 
         public Dictionary<KeyGesture, ITool> ToolGestures { get; } = new();
 
-        public object? Dialog
-        {
-            get => _dialog; 
-            private set
-            {
-                if (SetValue(ref _dialog, value))
-                {
-                    OnPropertyChanged(nameof(HasDialog));
-                    OnPropertyChanged(nameof(HasNotDialog));
-                    OnPropertyChanged(nameof(RootEnable));
-                    _closeDialogCommand.OnCanExecuteChanged();
-                }
-            }
-        }
+        public IGetProp<object?> Dialog { get; }
 
-        public bool HasDialog => _dialog is not null;
+        public IGetProp<bool> HasDialog { get; }
 
-        public bool HasNotDialog => !HasDialog;
+        public IGetProp<bool> HasNotDialog { get; }
 
-        public bool IsExecuting => _dispatcher.IsExecuting;
+        public IGetProp<bool> IsExecuting => _dispatcher.IsExecuting;
 
-        public bool RootEnable => !HasDialog && !IsExecuting;
+        public IGetProp<bool> RootEnable { get; }
 
         public double ViewSize { get; set; }
 
@@ -70,19 +57,22 @@ namespace Orimath.ViewModels
 
         public double Top { get => _setting.Top; set => _setting.Top = value; }
 
-        public ICommand CloseDialogCommand => _closeDialogCommand;
+        public ICommand CloseDialogCommand { get; }
+
+        private readonly ValueProp<object?> _dialog;
 
         public WorkspaceViewModel(IWorkspace workspace)
         {
             _workspace = workspace;
-            _closeDialogCommand = new ActionCommand(_ => CloseDialog(), _ => HasDialog);
             _systemEffects = Array.Empty<IEffect>();
 
-            _dispatcher.IsExecutingChanged += (_, __) =>
-            {
-                OnPropertyChanged(nameof(IsExecuting));
-                OnPropertyChanged(nameof(RootEnable));
-            };
+            _dialog = new ValueProp<object?>(null);
+            Dialog = _dialog.AsGet();
+            HasDialog = _dialog.Select(d => d is not null);
+            HasNotDialog = HasDialog.Not();
+            RootEnable = HasDialog.Zip(IsExecuting, (a, b) => !a && !b);
+
+            CloseDialogCommand = HasDialog.ToCommand(_ => CloseDialog());
         }
 
         private ObservableCollection<object>? GetViewModelCollection(Type viewModelType)
@@ -99,7 +89,7 @@ namespace Orimath.ViewModels
             };
         }
 
-        public void SelectTool(ITool tool) => _workspace.CurrentTool = tool;
+        public void SelectTool(ITool tool) => _workspace.CurrentTool.OnNext(tool);
 
         public void LoadSetting()
         {
@@ -109,7 +99,7 @@ namespace Orimath.ViewModels
             _systemEffects = new IEffect[]
             {
                 new GlobalSettingEffect(_setting),
-                new PluginSettingEffect(this),
+                new PluginSettingEffect(this, _dispatcher),
             };
         }
 
@@ -132,9 +122,7 @@ namespace Orimath.ViewModels
                 ViewDefinitions[att.ViewModelType] = (att.Pane, viewType);
 
             foreach (var effect in _workspace.Effects.Concat(_systemEffects))
-                _effectCommands[effect] = effect is IParametricEffect parametric
-                    ? (ICommand)new ParametricEffectCommand(parametric, _dispatcher, this)
-                    : new EffectCommand(effect, _dispatcher, this);
+                _effectCommands[effect] = EffectCommand.Create(effect, _dispatcher, this);
 
             foreach (var tool in _workspace.Tools)
             {
@@ -218,10 +206,10 @@ namespace Orimath.ViewModels
         public void OpenDialog(object viewModel)
         {
             if (!_initialized) throw new InvalidOperationException("初期化完了前にダイアログを表示することはできません。");
-            Dialog = viewModel;
+            _dialog.Value = viewModel;
         }
 
-        public void CloseDialog() => Dialog = null;
+        public void CloseDialog() => _dialog.Value = null;
 
         public ICommand GetEffectCommand(IEffect effect)
         {

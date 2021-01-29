@@ -1,29 +1,35 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using Orimath.Plugins;
+using ApplicativeProperty;
 
 namespace Orimath.ViewModels
 {
     public class OrimathDispatcher : IDispatcher
     {
-        private int _processCount;
-        private readonly Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
+        private ValueProp<int> _processCount = new ValueProp<int>(0);
+        public Dispatcher UIDispatcher { get; } = Dispatcher.CurrentDispatcher;
+        public SynchronizationContext SynchronizationContext { get; }
 
-        public bool IsExecuting => _processCount > 0;
+        public IGetProp<bool> IsExecuting { get; }
 
-        public event EventHandler? IsExecutingChanged;
+        public OrimathDispatcher()
+        {
+            SynchronizationContext = new DispatcherSynchronizationContext(Dispatcher.CurrentDispatcher);
+            SynchronizationContext.SetSynchronizationContext(SynchronizationContext);
+            IsExecuting = _processCount.Select(p => p > 0).Cache();
+        }
 
         private void BeginBackground()
         {
-            _processCount++;
-            if (_processCount == 1) IsExecutingChanged?.Invoke(this, EventArgs.Empty);
+            _processCount.Increment();
         }
 
         private void EndBackground()
         {
-            _processCount--;
-            if (_processCount == 0) IsExecutingChanged?.Invoke(this, EventArgs.Empty);
+            _processCount.Decrement();
         }
 
         public async Task OnBackgroundAsync(Action action)
@@ -40,6 +46,6 @@ namespace Orimath.ViewModels
             finally { EndBackground(); }
         }
 
-        public Task OnUIAsync(Action action) => _dispatcher.InvokeAsync(action).Task;
+        public Task OnUIAsync(Action action) => UIDispatcher.InvokeAsync(action).Task;
     }
 }

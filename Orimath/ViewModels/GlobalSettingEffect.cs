@@ -2,6 +2,7 @@
 using System.IO;
 using Orimath.IO;
 using Orimath.Plugins;
+using ApplicativeProperty;
 
 namespace Orimath.ViewModels
 {
@@ -20,14 +21,12 @@ namespace Orimath.ViewModels
 
         public Stream? Icon => null;
 
-        public event EventHandler CanExecuteChanged { add { } remove { } }
-
         public GlobalSettingEffect(GlobalSetting setting)
         {
             _rootSetting = setting;
         }
 
-        public bool CanExecute() => true;
+        public IGetProp<bool> CanExecute => Prop.True;
 
         public void Execute()
         {

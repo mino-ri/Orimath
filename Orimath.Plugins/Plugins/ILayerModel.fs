@@ -1,10 +1,11 @@
 ﻿namespace Orimath.Plugins
 open Orimath.Core
+open ApplicativeProperty
 
 type ILayerModel =
     inherit ILayer
-    [<CLIEvent>] abstract member LineChanged : ICollectionChangedEvent<LineSegment>
-    [<CLIEvent>] abstract member PointChanged : ICollectionChangedEvent<Point>
+    abstract member Lines : IReactiveCollection<LineSegment>
+    abstract member Points : IReactiveCollection<Point>
 
     abstract member GetSnapShot : unit -> ILayer
     abstract member AddLines : lines: seq<Line> -> unit

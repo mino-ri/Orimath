@@ -1,5 +1,6 @@
 ﻿namespace Orimath.Plugins
 open System.IO
+open ApplicativeProperty.PropOperators
 
 type SelectorTool(workspace: IWorkspace) =
     abstract member Name : string
@@ -28,30 +29,30 @@ type SelectorTool(workspace: IWorkspace) =
         if modifier = OperationModifier.None then
             match target.Target with
             |DisplayTarget.None ->
-                workspace.Paper.SelectedLayers <- Array.empty
-                workspace.Paper.SelectedEdges <- Array.empty
-                workspace.Paper.SelectedLines <- Array.empty
-                workspace.Paper.SelectedPoints <- Array.empty
+                workspace.Paper.SelectedLayers .<- Array.empty
+                workspace.Paper.SelectedEdges .<- Array.empty
+                workspace.Paper.SelectedLines .<- Array.empty
+                workspace.Paper.SelectedPoints .<- Array.empty
             |DisplayTarget.Layer(l) ->
-                workspace.Paper.SelectedLayers <- [| l |]
-                workspace.Paper.SelectedEdges <- Array.empty
-                workspace.Paper.SelectedLines <- Array.empty
-                workspace.Paper.SelectedPoints <- Array.empty
+                workspace.Paper.SelectedLayers .<- [| l |]
+                workspace.Paper.SelectedEdges .<- Array.empty
+                workspace.Paper.SelectedLines .<- Array.empty
+                workspace.Paper.SelectedPoints .<- Array.empty
             |DisplayTarget.Edge(e) ->
-                workspace.Paper.SelectedLayers <- Array.empty
-                workspace.Paper.SelectedEdges <- [| e |]
-                workspace.Paper.SelectedLines <- Array.empty
-                workspace.Paper.SelectedPoints <- Array.empty
+                workspace.Paper.SelectedLayers .<- Array.empty
+                workspace.Paper.SelectedEdges .<- [| e |]
+                workspace.Paper.SelectedLines .<- Array.empty
+                workspace.Paper.SelectedPoints .<- Array.empty
             |DisplayTarget.Line(l) ->
-                workspace.Paper.SelectedLayers <- Array.empty
-                workspace.Paper.SelectedEdges <- Array.empty
-                workspace.Paper.SelectedLines <- [| l |]
-                workspace.Paper.SelectedPoints <- Array.empty
+                workspace.Paper.SelectedLayers .<- Array.empty
+                workspace.Paper.SelectedEdges .<- Array.empty
+                workspace.Paper.SelectedLines .<- [| l |]
+                workspace.Paper.SelectedPoints .<- Array.empty
             |DisplayTarget.Point(p) ->
-                workspace.Paper.SelectedLayers <- Array.empty
-                workspace.Paper.SelectedEdges <- Array.empty
-                workspace.Paper.SelectedLines <- Array.empty
-                workspace.Paper.SelectedPoints <- [| p |]
+                workspace.Paper.SelectedLayers .<- Array.empty
+                workspace.Paper.SelectedEdges .<- Array.empty
+                workspace.Paper.SelectedLines .<- Array.empty
+                workspace.Paper.SelectedPoints .<- [| p |]
 
     interface ITool with
         member this.Name = this.Name

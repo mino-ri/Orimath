@@ -5,15 +5,16 @@ open Orimath.Core.NearlyEquatable
 open Orimath.FoldingInstruction
 open Orimath.Plugins
 open FoldOperation
+open ApplicativeProperty.PropOperators
 
 type internal InstructionWrapper(paper: IPaper) =
     let instruction = FoldingInstruction()
     member _.Instruction = instruction
 
     member _.ResetAll() =
-        instruction.Lines <- Array.Empty()
-        instruction.Arrows <- Array.Empty()
-        instruction.Points <- Array.Empty()
+        instruction.Lines .<- Array.Empty()
+        instruction.Arrows .<- Array.Empty()
+        instruction.Points .<- Array.Empty()
 
     member _.SetLines(lines, chosen) =
         let mapping l = {
@@ -23,15 +24,14 @@ type internal InstructionWrapper(paper: IPaper) =
                 | Some(c) when c =~ l.Line -> InstructionColor.Blue
                 | _ -> InstructionColor.LightGray
             }
-        instruction.Lines <-
-            lines
+        instruction.Lines .<- (lines
             |> Seq.collect(paper.Clip)
             |> Seq.map mapping
-            |> Seq.toArray
+            |> Seq.toArray)
 
     member _.ResetArrows() =
-        instruction.Arrows <- Array.Empty()
-        instruction.Points <- Array.Empty()
+        instruction.Arrows .<- Array.Empty()
+        instruction.Points .<- Array.Empty()
 
     member _.SetArrow(source: OperationTarget, target: OperationTarget, chosen: Line, opr: FoldOperation) =
         let getGeneralArrow() =
@@ -88,5 +88,5 @@ type internal InstructionWrapper(paper: IPaper) =
                 match source with
                 | LineOrEdge _ -> [| InstructionArrow.ValleyFold(chosen.Reflect(point), point, InstructionColor.Blue) |], Array.Empty()
                 | _ -> [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Blue) |], Array.Empty()
-        instruction.Arrows <- arrows
-        instruction.Points <- points
+        instruction.Arrows .<- arrows
+        instruction.Points .<- points

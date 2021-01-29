@@ -94,7 +94,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Menu Grid.Row="0" ItemsSource="{Binding MenuItems}"
-                           IsEnabled="{Binding HasNotDialog}">
+                           IsEnabled="{Binding HasNotDialog.Value}">
             <Menu.ItemContainerStyle>
                 <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource {x:Type MenuItem}}">
                     <Setter Property="Header" Value="{Binding Name, Mode=OneTime}" />
@@ -106,7 +106,7 @@
                 </Style>
             </Menu.ItemContainerStyle>
         </Menu>
-        <DockPanel Grid.Row="1" IsEnabled="{Binding HasNotDialog}">
+        <DockPanel Grid.Row="1" IsEnabled="{Binding HasNotDialog.Value}">
             <ItemsControl DockPanel.Dock="Top"
                           ItemsSource="{Binding TopViewModels, Mode=OneWay}" />
             <ItemsControl DockPanel.Dock="Left"
@@ -124,9 +124,9 @@
                               HorizontalAlignment="Left" />
             </ScrollViewer>
         </DockPanel>
-        <Grid Grid.Row="1" Visibility="{Binding HasDialog, Converter={StaticResource BoolVisibleConverter}}"
+        <Grid Grid.Row="1" Visibility="{Binding HasDialog.Value, Converter={StaticResource BoolVisibleConverter}}"
               Background="#80000000">
-            <ContentControl Content="{Binding Dialog, Mode=OneWay}"
+            <ContentControl Content="{Binding Dialog.Value, Mode=OneWay}"
                             IsTabStop="False"
                             Margin="16" />
         </Grid>

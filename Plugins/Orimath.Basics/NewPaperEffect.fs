@@ -2,6 +2,7 @@
 open System
 open Orimath.Core
 open Orimath.Plugins
+open ApplicativeProperty
 
 type NewPaperType =
     | Square
@@ -34,10 +35,8 @@ type NewPaperExecutor(workspace: IWorkspace) =
             member _.Name = "すべて削除"
             member _.ShortcutKey = "Ctrl+Delete"
             member _.Icon = InternalModule.getIcon "delete"
-            member _.CanExecute() = true
+            member _.CanExecute = upcast Prop.ctrue
             member _.Execute() = this.NewPaper()
-            [<CLIEvent>]
-            member _.CanExecuteChanged = Event<_, _>().Publish
         }
 
     member this.NewPaperEffect =
@@ -46,9 +45,7 @@ type NewPaperExecutor(workspace: IWorkspace) =
             member _.Name = "新しい紙"
             member _.ShortcutKey = "Ctrl+N"
             member _.Icon = InternalModule.getIcon "new_paper"
-            member _.CanExecute() = true
+            member _.CanExecute = upcast Prop.ctrue
             member _.Execute() = this.NewPaper()
             member _.GetParameter() = this :> obj
-            [<CLIEvent>]
-            member _.CanExecuteChanged = Event<_, _>().Publish
         }

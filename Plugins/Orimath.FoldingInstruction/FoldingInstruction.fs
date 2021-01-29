@@ -1,5 +1,15 @@
 ﻿namespace Orimath.FoldingInstruction
+open System
+open System.Collections.Generic
 open Orimath.Core
+open ApplicativeProperty
+
+module internal Internal =
+    let createArrayProp<'T when 'T : equality>() =
+        ValueProp<'T[]>(Array.Empty(), { new IEqualityComparer<'T[]> with
+            member _.Equals(a, b) = a.Length = b.Length && Array.forall2 (=) a b
+            member _.GetHashCode(_) = 0 // not used
+        }, System.Threading.SynchronizationContext.Current)
 
 type InstructionColor =
     /// CUD黒 / #000000
@@ -104,28 +114,7 @@ type InstructionPoint =
         Color: InstructionColor
     }
 
-type FoldingInstruction() as this =    
-    let lines = ReactiveProperty.createArray<InstructionLine> this
-    let arrows = ReactiveProperty.createArray<InstructionArrow> this
-    let points = ReactiveProperty.createArray<InstructionPoint> this
-
-    member _.Lines
-        with get() = lines.Value
-        and set(v) = lines.Value <- v
-
-    member _.Arrows
-        with get() = arrows.Value
-        and set(v) = arrows.Value <- v
-
-    member _.Points
-        with get() = points.Value
-        and set(v) = points.Value <- v
-
-    [<CLIEvent>]
-    member _.LinesChanged = lines.ValueChanged
-
-    [<CLIEvent>]
-    member _.ArrowsChanged = arrows.ValueChanged
-
-    [<CLIEvent>]
-    member _.PointsChanged = points.ValueChanged
+type FoldingInstruction() =
+    member val Lines = Internal.createArrayProp<InstructionLine>()
+    member val Arrows = Internal.createArrayProp<InstructionArrow>()
+    member val Points = Internal.createArrayProp<InstructionPoint>()

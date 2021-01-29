@@ -25,6 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="ApplicativeProperty">
+      <HintPath>..\Libraries\ApplicativeProperty.dll</HintPath>
+    </Reference>
     <Reference Include="Sssl">
       <HintPath>..\Libraries\Sssl.dll</HintPath>
     </Reference>

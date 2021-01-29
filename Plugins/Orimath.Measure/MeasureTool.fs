@@ -4,6 +4,7 @@ open System.Reflection
 open Orimath.Core
 open Orimath.FoldingInstruction
 open Orimath.Plugins
+open ApplicativeProperty.PropOperators
 
 type MeasureTool(workspace: IWorkspace) =
     let paper = workspace.Paper
@@ -38,10 +39,10 @@ type MeasureTool(workspace: IWorkspace) =
         | _ -> None
     
     member _.ClearSelection() =
-        paper.SelectedLayers <- array.Empty()
-        paper.SelectedPoints <- array.Empty()
-        paper.SelectedLines <- array.Empty()
-        paper.SelectedEdges <- array.Empty()
+        paper.SelectedLayers .<- array.Empty()
+        paper.SelectedPoints .<- array.Empty()
+        paper.SelectedLines .<- array.Empty()
+        paper.SelectedEdges .<- array.Empty()
 
     interface ITool with
         member _.Name = "計測"
@@ -61,7 +62,7 @@ type MeasureTool(workspace: IWorkspace) =
 
         member this.DragEnter(source, target, _) =
             match this.GetDistanceLine(source, target) with
-            | Some(l) -> instruction.Lines <- [| { Line = l; Color = InstructionColor.Gray } |]
+            | Some(l) -> instruction.Lines .<- [| { Line = l; Color = InstructionColor.Gray } |]
             | None -> ()
             
             match target with
@@ -70,7 +71,7 @@ type MeasureTool(workspace: IWorkspace) =
 
         member this.DragOver(source, target, _) =
             match this.GetDistanceLine(source, target) with
-            | Some(l) -> instruction.Lines <- [| { Line = l; Color = InstructionColor.Gray } |]
+            | Some(l) -> instruction.Lines .<- [| { Line = l; Color = InstructionColor.Gray } |]
             | None -> ()
 
             match target with
@@ -78,20 +79,20 @@ type MeasureTool(workspace: IWorkspace) =
             | _ -> false
 
         member _.DragLeave(_, target, _) =
-            instruction.Lines <- Array.Empty()
+            instruction.Lines .<- Array.Empty()
             match target with
             | FreePoint _ | LineOrEdge _ -> true
             | _ -> false
 
         member this.Drop(source, target, modifier) =
-            paper.SelectedLayers <- array.Empty()
-            paper.SelectedPoints <- array.Empty()
-            paper.SelectedEdges <- array.Empty()
-            paper.SelectedLines <- 
+            paper.SelectedLayers .<- array.Empty()
+            paper.SelectedPoints .<- array.Empty()
+            paper.SelectedEdges .<- array.Empty()
+            paper.SelectedLines .<- 
                 if modifier.HasFlag(OperationModifier.Shift)
-                then Array.append paper.SelectedLines (Option.toArray(this.GetDistanceLine(source, target)))
+                then Array.append paper.SelectedLines.Value (Option.toArray(this.GetDistanceLine(source, target)))
                 else Option.toArray(this.GetDistanceLine(source, target))
-            instruction.Lines <- Array.Empty()
+            instruction.Lines .<- Array.Empty()
 
     interface IFoldingInstructionTool with
         member _.FoldingInstruction = instruction

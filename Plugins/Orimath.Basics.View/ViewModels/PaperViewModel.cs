@@ -1,7 +1,8 @@
-﻿using Mvvm;
-using Orimath.Plugins;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
+using Mvvm;
+using Orimath.Plugins;
+using ApplicativeProperty;
 
 namespace Orimath.Basics.View.ViewModels
 {
@@ -21,31 +22,29 @@ namespace Orimath.Basics.View.ViewModels
             _layers = new AttachedObservableCollection<ILayerModel, LayerViewModel>(
                 _dispatcher,
                 _paper.Layers,
-                h => _paper.LayerChanged += h,
-                h => _paper.LayerChanged -= h,
                 l => new LayerViewModel(l, _pointConverter, _dispatcher),
                 l => l.Dispose());
 
-            _paper.SelectedLayersChanged += (_, _) => _dispatcher.OnUIAsync(() =>
+            _paper.SelectedLayers.Subscribe(values => _dispatcher.OnUIAsync(() =>
             {
-                SelectedLayers = Array.ConvertAll(_paper.SelectedLayers, l => new LayerViewModel(l, _pointConverter, _dispatcher));
+                SelectedLayers = Array.ConvertAll(values, l => new LayerViewModel(l, _pointConverter, _dispatcher));
                 OnPropertyChanged(nameof(SelectedLayers));
-            });
-            _paper.SelectedEdgesChanged += (_, _) => _dispatcher.OnUIAsync(() =>
+            }));
+            _paper.SelectedEdges.Subscribe(values => _dispatcher.OnUIAsync(() =>
             {
-                SelectedEdges = Array.ConvertAll(_paper.SelectedEdges, e => new EdgeViewModel(e, _pointConverter));
+                SelectedEdges = Array.ConvertAll(values, e => new EdgeViewModel(e, _pointConverter));
                 OnPropertyChanged(nameof(SelectedEdges));
-            });
-            _paper.SelectedLinesChanged += (_, _) => _dispatcher.OnUIAsync(() =>
+            }));
+            _paper.SelectedLines.Subscribe(values => _dispatcher.OnUIAsync(() =>
             {
-                SelectedLines = Array.ConvertAll(_paper.SelectedLines, l => new LineViewModel(l, _pointConverter));
+                SelectedLines = Array.ConvertAll(values, l => new LineViewModel(l, _pointConverter));
                 OnPropertyChanged(nameof(SelectedLines));
-            });
-            _paper.SelectedPointsChanged += (_, _) => _dispatcher.OnUIAsync(() =>
+            }));
+            _paper.SelectedPoints.Subscribe(values => _dispatcher.OnUIAsync(() =>
             {
-                SelectedPoints = Array.ConvertAll(_paper.SelectedPoints, p => new PointViewModel(p, _pointConverter));
+                SelectedPoints = Array.ConvertAll(values, p => new PointViewModel(p, _pointConverter));
                 OnPropertyChanged(nameof(SelectedPoints));
-            });
+            }));
         }
 
         public ObservableCollection<LayerViewModel> Layers => _layers;

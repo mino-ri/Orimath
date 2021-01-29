@@ -11,8 +11,6 @@
 
   <ItemGroup>
     <Compile Include="Core\InternalModule.fs" />
-    <Compile Include="Core\ReactiveProperty.fs" />
-    <Compile Include="Core\ReactiveCollection.fs" />
     <Compile Include="Core\Layer.fs" />
     <Compile Include="Core\Paper.fs" />
     <Compile Include="Core\LayerModule.fs" />
@@ -23,6 +21,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Orimath.Plugins\Orimath.Plugins.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="ApplicativeProperty">
+      <HintPath>..\Libraries\ApplicativeProperty.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

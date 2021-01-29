@@ -10,13 +10,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="ReactiveProperty.fs" />
     <Compile Include="FoldingInstruction.fs" />
     <Compile Include="IFoldingInstructionTool.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Orimath.Plugins\Orimath.Plugins.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="ApplicativeProperty">
+      <HintPath>..\..\Libraries\ApplicativeProperty.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

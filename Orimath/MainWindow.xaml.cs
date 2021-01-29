@@ -21,6 +21,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using ScreenPoint = System.Windows.Point;
+using ApplicativeProperty;
 
 namespace Orimath
 {
@@ -87,7 +88,11 @@ namespace Orimath
             foreach (var menuItem in viewModel.MenuItems)
                 SetShortcutKey(menuItem);
 
-            var selectToolCommand = new SelectToolCommand(viewModel);
+            var selectToolCommand = viewModel.RootEnable.ToCommand(parameter =>
+            {
+                if (parameter is ITool tool)
+                    viewModel.SelectTool(tool);
+            });
             foreach (var (gesture, tool) in viewModel.ToolGestures)
                 InputBindings.Add(new KeyBinding(selectToolCommand, gesture) { CommandParameter = tool });
 

@@ -1,6 +1,7 @@
 ﻿namespace Orimath.Core
 open System.Collections.Generic
 open Orimath.Plugins
+open ApplicativeProperty
 
 type internal PaperOpr =
     | BeginChangeBlock
@@ -18,21 +19,21 @@ and internal IInternalPaperModel =
     abstract member PushUndoOpr : opr: PaperOpr -> unit
 
 and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Layer) as this =
-    let layerLines = ReactiveCollection<LineSegment>(this, init.Lines)
-    let layerPoints = ReactiveCollection<Point>(this, init.Points)
+    let layerLines = ReactiveCollection<LineSegment>(init.Lines)
+    let layerPoints = ReactiveCollection<Point>(init.Points)
     
-    do layerLines.Changed.Add(function
+    do layerLines.Add(function
         | CollectionChange.Add(index, lines) -> parent.PushUndoOpr(LineAddition(layerIndex, index, asList lines))
         | CollectionChange.Remove(index, lines) -> parent.PushUndoOpr(LineRemoving(layerIndex, index, asList lines))
         | _ -> ())
-    do layerPoints.Changed.Add(function
+    do layerPoints.Add(function
         | CollectionChange.Add(index, points) -> parent.PushUndoOpr(PointAddition(layerIndex, index, asList points))
         | CollectionChange.Remove(index, points) -> parent.PushUndoOpr(PointRemoving(layerIndex, index, asList points))
         | _ -> ())
 
     member _.Edges = init.Edges
-    member _.Lines = layerLines :> IReadOnlyList<_>
-    member _.Points = layerPoints :> IReadOnlyList<_>
+    member _.Lines = layerLines :> IReactiveCollection<_>
+    member _.Points = layerPoints :> IReactiveCollection<_>
     member _.LayerType = init.LayerType
 
     member _.GetSnapShot() = Layer.Create(init.Edges, layerLines, layerPoints, init.LayerType, init.OriginalEdges, init.Matrix)
@@ -42,8 +43,8 @@ and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Lay
         if lines <> [] then
             let points = if addCross then this.GetCrosses(lines) else []
             use __ = parent.TryBeginChange()
-            layerLines.Add(lines)
-            layerPoints.Add(points)
+            layerLines.AddRange(lines)
+            layerPoints.AddRange(points)
 
     member this.AddLinesRaw(lines: seq<Line>) = this.AddLineCore(lines |> Seq.collect(this.Clip), false)
 
@@ -56,33 +57,30 @@ and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Lay
     member _.RemoveLines(count: int) =
         if count > 0 then
             use __ = parent.TryBeginChange()
-            layerLines.Remove(count)
+            layerLines.RemoveTail(count)
 
     member this.AddPoints(points: seq<Point>) =
         let points = points |> Seq.filter(fun p -> this.Contains(p) && not (this.HasPoint(p))) |> Seq.toList
         if points <> [] then
             use __ = parent.TryBeginChange()
-            layerPoints.Add(points)
+            layerPoints.AddRange(points)
 
     member _.RemovePoints(count: int) =
         if count > 0 then
             use __ = parent.TryBeginChange()
-            layerPoints.Remove(count)
-
-    member _.LineChanged = layerLines.Changed
-    member _.PointChanged = layerPoints.Changed
+            layerPoints.RemoveTail(count)
 
     interface ILayer with
         member this.Edges = upcast this.Edges
-        member this.Lines = this.Lines
-        member this.Points = this.Points
+        member this.Lines = upcast this.Lines
+        member this.Points = upcast this.Points
         member _.LayerType = init.LayerType
         member _.OriginalEdges = upcast init.OriginalEdges
         member _.Matrix = init.Matrix
 
     interface ILayerModel with
-        [<CLIEvent>] member this.LineChanged = this.LineChanged
-        [<CLIEvent>] member this.PointChanged = this.PointChanged
+        member this.Lines = this.Lines
+        member this.Points = this.Points
         member this.GetSnapShot() = upcast (this.GetSnapShot())
         member this.AddLines(lines: seq<Line>) = this.AddLines(lines)
         member this.AddLines(lines: seq<LineSegment>) = this.AddLines(lines)

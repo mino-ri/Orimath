@@ -23,6 +23,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="ApplicativeProperty">
+      <HintPath>..\..\Libraries\ApplicativeProperty.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="defaultIcon.png" />
   </ItemGroup>
 

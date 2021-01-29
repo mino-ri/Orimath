@@ -1,12 +1,13 @@
 ﻿using Orimath.Plugins;
-using System;
 using System.IO;
+using ApplicativeProperty;
 
 namespace Orimath.ViewModels
 {
     public class PluginSettingEffect : IEffect
     {
         private IMessenger _messenger;
+        private IDispatcher _dispatcher;
 
         public string[] MenuHieralchy => new[] { "設定" };
 
@@ -16,15 +17,17 @@ namespace Orimath.ViewModels
 
         public Stream? Icon => null;
 
-        public event EventHandler CanExecuteChanged { add { } remove { } }
+        public PluginSettingEffect(IMessenger messenger, IDispatcher dispatcher)
+        {
+            _messenger = messenger;
+            _dispatcher = dispatcher;
+        }
 
-        public PluginSettingEffect(IMessenger messenger) => _messenger = messenger;
-
-        public bool CanExecute() => true;
+        public IGetProp<bool> CanExecute => Prop.True;
 
         public void Execute()
         {
-            _messenger.OpenDialog(new PluginSettingViewModel(_messenger));
+            _dispatcher.OnUIAsync(() => _messenger.OpenDialog(new PluginSettingViewModel(_messenger)));
         }
     }
 }

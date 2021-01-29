@@ -2,6 +2,7 @@
 using System.Linq;
 using Mvvm;
 using Orimath.Plugins;
+using ApplicativeProperty;
 
 namespace Orimath.FoldingInstruction.View.ViewModels
 {
@@ -10,7 +11,7 @@ namespace Orimath.FoldingInstruction.View.ViewModels
         private readonly IWorkspace _workspace;
         private readonly IDispatcher _dispatcher;
         private readonly IViewPointConverter _pointConverter;
-        private FoldingInstruction? _foldingInstruction;
+        private CompositeDisposable? _disposables;
 
         public ResettableObservableCollection<InstructionLineViewModel> Lines { get; } = new();
         public ResettableObservableCollection<InstructionArrowViewModel> Arrows { get; } = new();
@@ -21,30 +22,25 @@ namespace Orimath.FoldingInstruction.View.ViewModels
             _workspace = workspace;
             _dispatcher = dispatcher;
             _pointConverter = pointConverter;
-            workspace.CurrentToolChanged += Workspace_CurrentToolChanged;
+            workspace.CurrentTool.Subscribe(Workspace_CurrentToolChanged);
         }
 
-        private void Workspace_CurrentToolChanged(object? sender, EventArgs e)
+        private void Workspace_CurrentToolChanged(ITool tool)
         {
-            if (_foldingInstruction is not null)
-            {
-                _foldingInstruction.LinesChanged -= Model_LinesChanged;
-                _foldingInstruction.ArrowsChanged -= Model_ArrowsChanged;
-                _foldingInstruction.PointsChanged -= Model_PointsChanged;
-            }
+            _disposables?.Dispose();
+            _disposables = null;
 
-            _foldingInstruction = (_workspace.CurrentTool as IFoldingInstructionTool)?.FoldingInstruction;
-            if (_foldingInstruction is not null)
+            if ((tool as IFoldingInstructionTool)?.FoldingInstruction is { } _foldingInstruction)
             {
-                _foldingInstruction.LinesChanged += Model_LinesChanged;
-                _foldingInstruction.ArrowsChanged += Model_ArrowsChanged;
-                _foldingInstruction.PointsChanged += Model_PointsChanged;
+                _foldingInstruction.Lines.Subscribe(Model_LinesChanged);
+                _foldingInstruction.Arrows.Subscribe(Model_ArrowsChanged);
+                _foldingInstruction.Points.Subscribe(Model_PointsChanged);
 
                 _dispatcher.OnUIAsync(() =>
                 {
-                    Lines.Reset(_foldingInstruction.Lines.Select(x => new InstructionLineViewModel(_pointConverter, x)));
-                    Arrows.Reset(_foldingInstruction.Arrows.Select(x => new InstructionArrowViewModel(_pointConverter, x)));
-                    Points.Reset(_foldingInstruction.Points.Select(x => new InstructionPointViewModel(_pointConverter, x)));
+                    Lines.Reset(_foldingInstruction.Lines.Value.Select(x => new InstructionLineViewModel(_pointConverter, x)));
+                    Arrows.Reset(_foldingInstruction.Arrows.Value.Select(x => new InstructionArrowViewModel(_pointConverter, x)));
+                    Points.Reset(_foldingInstruction.Points.Value.Select(x => new InstructionPointViewModel(_pointConverter, x)));
                     Visible = true;
                 });
 
@@ -61,11 +57,8 @@ namespace Orimath.FoldingInstruction.View.ViewModels
             }
         }
 
-        private void Model_ArrowsChanged(object? sender, EventArgs e)
+        private void Model_ArrowsChanged(InstructionArrow[] arrows)
         {
-            if (sender is not FoldingInstruction foldingInstruction) return;
-            
-            var arrows = foldingInstruction.Arrows;
             _dispatcher.OnUIAsync(() =>
             {
                 if (arrows.Length == Arrows.Count)
@@ -80,11 +73,8 @@ namespace Orimath.FoldingInstruction.View.ViewModels
             });
         }
 
-        private void Model_LinesChanged(object? sender, EventArgs e)
+        private void Model_LinesChanged(InstructionLine[] lines)
         {
-            if (sender is not FoldingInstruction foldingInstruction) return;
-
-            var lines = foldingInstruction.Lines;
             _dispatcher.OnUIAsync(() =>
             {
                 if (lines.Length == Lines.Count)
@@ -99,11 +89,8 @@ namespace Orimath.FoldingInstruction.View.ViewModels
             });
         }
 
-        private void Model_PointsChanged(object? sender, EventArgs e)
+        private void Model_PointsChanged(InstructionPoint[] points)
         {
-            if (sender is not FoldingInstruction foldingInstruction) return;
-
-            var points = foldingInstruction.Points;
             _dispatcher.OnUIAsync(() =>
             {
                 if (points.Length == Points.Count)

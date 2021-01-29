@@ -35,12 +35,12 @@ module internal FoldOperation =
         | _ -> None
 
     let getPass (paper: IPaperModel) =
-        let passPoint = Array.tryItem 0 paper.SelectedPoints
+        let passPoint = Array.tryItem 0 paper.SelectedPoints.Value
         let passLine =
-            if paper.SelectedEdges.Length > 0
-            then Some(paper.SelectedEdges.[0].Line, true)
-            elif paper.SelectedLines.Length > 0
-            then Some(paper.SelectedLines.[0], false)
+            if paper.SelectedEdges.Value.Length > 0
+            then Some(paper.SelectedEdges.Value.[0].Line, true)
+            elif paper.SelectedLines.Value.Length > 0
+            then Some(paper.SelectedLines.Value.[0], false)
             else None
         passPoint, passLine
 

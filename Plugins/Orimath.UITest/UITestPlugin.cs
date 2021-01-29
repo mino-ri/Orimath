@@ -1,7 +1,8 @@
-﻿using Orimath.Plugins;
-using Orimath.UITest.ViewModels;
-using System;
+﻿using System;
 using System.IO;
+using Orimath.Plugins;
+using Orimath.UITest.ViewModels;
+using ApplicativeProperty;
 
 namespace Orimath.UITest
 {
@@ -40,8 +41,7 @@ namespace Orimath.UITest
         public string Name => "UIテストを開く";
         public string ShortcutKey => "";
         public Stream? Icon => null;
-        public event EventHandler CanExecuteChanged { add { } remove { } }
-        public bool CanExecute() => true;
+        public IGetProp<bool> CanExecute => Prop.True;
 
         public void Execute()
         {

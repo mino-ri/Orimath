@@ -1,5 +1,6 @@
 ﻿namespace Orimath.Plugins
 open System
+open ApplicativeProperty
 
 /// ドラッグ操作におけるキー修飾およびマウスボタンを表します。
 [<Flags>]
@@ -40,10 +41,8 @@ type IDragTool =
 type IEffect =
     inherit IFunction
     abstract member Execute : unit -> unit
-    abstract member CanExecute : unit -> bool
+    abstract member CanExecute : IGetProp<bool>
     abstract member MenuHieralchy : string[]
-    [<CLIEvent>]
-    abstract member CanExecuteChanged : IEvent<EventHandler, EventArgs>
 
 type IParametricEffect =
     inherit IEffect

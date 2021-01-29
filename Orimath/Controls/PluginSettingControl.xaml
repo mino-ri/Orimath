@@ -36,8 +36,8 @@
         </DataTemplate>
     </UserControl.Resources>
     <UserControl.InputBindings>
-        <KeyBinding Gesture="Alt+Up" Command="{Binding UpPluginCommand, Mode=OneTime}" />
-        <KeyBinding Gesture="Alt+Down" Command="{Binding DownPluginCommand, Mode=OneTime}" />
+        <KeyBinding Gesture="Alt+Up" Command="{Binding Pages[0].UpPluginCommand, Mode=OneTime}" />
+        <KeyBinding Gesture="Alt+Down" Command="{Binding Pages[0].DownPluginCommand, Mode=OneTime}" />
     </UserControl.InputBindings>
     <Grid Margin="8" MinWidth="400" Background="{th:ThemeBrush Workspace.Normal.Background}">
         <Grid.RowDefinitions>

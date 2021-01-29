@@ -2,50 +2,41 @@
 open System
 open System.Collections.Generic
 open Orimath.Plugins
+open ApplicativeProperty
+open ApplicativeProperty.PropOperators
 
 type PaperModel internal () as this =
     let mutable changeBlockDeclared = false
     let mutable changeBlockDisabled = false
     let undoOprStack = Stack<PaperOpr>()
     let redoOprStack = Stack<PaperOpr>()
-    let selectedLayers = ReactiveProperty.createArray<ILayerModel> this
-    let selectedEdges = ReactiveProperty.createArray<Edge> this
-    let selectedPoints = ReactiveProperty.createArray<Point> this
-    let selectedLines = ReactiveProperty.createArray<LineSegment> this
-    let layerModels = ReactiveCollection<ILayerModel>(this)
-    let layerChanged = CollectionChangedEvent<ILayerModel>()
-    let canUndoChanged = Event<EventHandler, EventArgs>()
+    let selectedLayers = createArrayProp<ILayerModel>()
+    let selectedEdges = createArrayProp<Edge>()
+    let selectedPoints = createArrayProp<Point>()
+    let selectedLines = createArrayProp<LineSegment>()
+    let layerModels = ReactiveCollection<ILayerModel>()
+    let canUndo = ValueProp<bool>(false)
+    let canRedo = ValueProp<bool>(false)
 
-    do layerModels.Changed.Add(function
+    do layerModels.Add(function
         | CollectionChange.Add(index, layers) ->
             this.PushUndoOpr(LayerAddition(index, asList layers))
-            layerChanged.Trigger(this, CollectionChange.Add(index, layers))
         | CollectionChange.Remove(index, layers) ->
             this.PushUndoOpr(LayerRemoving(index, asList layers))
-            layerChanged.Trigger(this, CollectionChange.Remove(index, layers))
         | CollectionChange.Replace(index, oldLayer, newLayer) ->
             this.PushUndoOpr(LayerReplace(index, oldLayer, newLayer))
-            layerChanged.Trigger(this, CollectionChange.Replace(index, oldLayer, newLayer))
         | CollectionChange.Reset(odlLayers, newLayers) ->
             this.PushUndoOpr(Clear(asList odlLayers, asList newLayers))
-            layerChanged.Trigger(this, CollectionChange.Reset(odlLayers, newLayers))
         )
 
     member _.Layers = layerModels :> IReadOnlyList<ILayerModel>
-    member _.CanUndo = undoOprStack.Count > 0
-    member _.CanRedo = redoOprStack.Count > 0
-    member _.SelectedLayers with get() = selectedLayers.Value and set v = selectedLayers.Value <- v
-    member _.SelectedEdges with get() = selectedEdges.Value and set v = selectedEdges.Value <- v
-    member _.SelectedPoints with get() = selectedPoints.Value and set v = selectedPoints.Value <- v
-    member _.SelectedLines with get() = selectedLines.Value and set v = selectedLines.Value <- v
+    member val CanUndo = Prop.asGet canUndo
+    member val CanRedo = Prop.asGet canRedo
+    member _.SelectedLayers = selectedLayers
+    member _.SelectedEdges = selectedEdges
+    member _.SelectedPoints = selectedPoints
+    member _.SelectedLines = selectedLines
     member _.ChangeBlockDeclared = changeBlockDeclared
-
-    member _.SelectedLayersChanged = selectedLayers.ValueChanged
-    member _.SelectedEdgesChanged = selectedEdges.ValueChanged
-    member _.SelectedPointsChanged = selectedPoints.ValueChanged
-    member _.SelectedLinesChanged = selectedLines.ValueChanged
-    member _.LayerChanged = layerChanged.Publish
-    member _.CanUndoChanged = canUndoChanged.Publish
 
     member internal _.PushUndoOpr(opr: PaperOpr) = if not changeBlockDisabled then undoOprStack.Push(opr)
 
@@ -55,13 +46,17 @@ type PaperModel internal () as this =
         |> Paper.Create
 
     member _.ResetSelection() =
-        selectedLayers.Value <- Array.Empty()
-        selectedEdges.Value <- Array.Empty()
-        selectedPoints.Value <- Array.Empty()
-        selectedLines.Value <- Array.Empty()
+        selectedLayers .<- Array.Empty()
+        selectedEdges .<- Array.Empty()
+        selectedPoints .<- Array.Empty()
+        selectedLines .<- Array.Empty()
+
+    member private _.UpdateCanUndo() =
+        canUndo .<- (undoOprStack.Count > 0)
+        canRedo .<- (redoOprStack.Count > 0)
 
     member this.Undo() =
-        if this.CanUndo && not this.ChangeBlockDeclared then
+        if this.CanUndo.Value && not this.ChangeBlockDeclared then
             this.ResetSelection()
             use __ = this.BeginUndo()
             redoOprStack.Push(BeginChangeBlock)
@@ -85,7 +80,7 @@ type PaperModel internal () as this =
             recSelf()
 
     member this.Redo() =
-        if this.CanRedo && not this.ChangeBlockDeclared then
+        if this.CanRedo.Value && not this.ChangeBlockDeclared then
             this.ResetSelection()
             use __ = this.BeginUndo()
             undoOprStack.Push(BeginChangeBlock)
@@ -118,10 +113,10 @@ type PaperModel internal () as this =
                 if undoOprStack.Peek() = BeginChangeBlock then
                     ignore (undoOprStack.Pop())
                 changeBlockDeclared <- false
-                canUndoChanged.Trigger(this, EventArgs.Empty)
+                this.UpdateCanUndo()
         }
 
-    member private _.BeginUndo() =
+    member private this.BeginUndo() =
         if changeBlockDeclared then invalidOp "変更ブロックが定義されているため、Undoを開始できません。"
         changeBlockDeclared <- true
         changeBlockDisabled <- true
@@ -129,7 +124,7 @@ type PaperModel internal () as this =
             member _.Dispose() =
                 changeBlockDeclared <- false
                 changeBlockDisabled <- false
-                canUndoChanged.Trigger(this, EventArgs.Empty)
+                this.UpdateCanUndo()
         }
 
     member private this.ClearRaw(layers: ILayerModel list) =
@@ -157,7 +152,7 @@ type PaperModel internal () as this =
     member private this.AddLayersRaw(layers) =
         if layers <> [] then
             use __ = this.TryBeginChange()
-            layerModels.Add(layers)
+            layerModels.AddRange(layers)
 
     member this.AddLayers(layers: seq<ILayer>) =
         let layers =
@@ -170,7 +165,7 @@ type PaperModel internal () as this =
     member this.RemoveLayers(count: int) =
         if count > 0 then
             use __ = this.TryBeginChange()
-            layerModels.Remove(count)
+            layerModels.RemoveTail(count)
 
     member private this.ReplaceLayerRaw(index: int, newLayer) =
         use __ = this.TryBeginChange()
@@ -180,25 +175,18 @@ type PaperModel internal () as this =
         this.ReplaceLayerRaw(index, LayerModel(this, index, Layer.AsLayer(newLayer)))
 
     interface IPaper with
-        member this.Layers = this.Layers :> IReadOnlyCollection<ILayerModel> :?> IReadOnlyList<ILayer>
+        member _.Layers = layerModels :> IReadOnlyList<ILayerModel> :?> IReadOnlyList<ILayer>
 
     interface IInternalPaperModel with
         member this.PushUndoOpr(opr) = this.PushUndoOpr(opr)
-        member this.Layers = this.Layers
+        member _.Layers = upcast layerModels
         member this.CanUndo = this.CanUndo
         member this.CanRedo = this.CanRedo
         member this.ChangeBlockDeclared = this.ChangeBlockDeclared
-        member this.SelectedLayers with get() = this.SelectedLayers and set(v) = this.SelectedLayers <- v
-        member this.SelectedEdges with get() = this.SelectedEdges and set(v) = this.SelectedEdges <- v
-        member this.SelectedPoints with get() = this.SelectedPoints and set(v) = this.SelectedPoints <- v
-        member this.SelectedLines with get() = this.SelectedLines and set(v) = this.SelectedLines <- v
-
-        [<CLIEvent>] member this.SelectedLayersChanged = this.SelectedLayersChanged
-        [<CLIEvent>] member this.SelectedEdgesChanged = this.SelectedEdgesChanged 
-        [<CLIEvent>] member this.SelectedPointsChanged = this.SelectedPointsChanged
-        [<CLIEvent>] member this.SelectedLinesChanged = this.SelectedLinesChanged 
-        [<CLIEvent>] member this.LayerChanged = this.LayerChanged
-        [<CLIEvent>] member this.CanUndoChanged = this.CanUndoChanged
+        member this.SelectedLayers = upcast this.SelectedLayers
+        member this.SelectedEdges = upcast this.SelectedEdges
+        member this.SelectedPoints = upcast this.SelectedPoints
+        member this.SelectedLines = upcast this.SelectedLines
 
         member this.GetSnapShot() = upcast this.GetSnapShot()
         member this.Undo() = this.Undo()
