@@ -4,6 +4,24 @@ open Orimath.Plugins
 
 let private center = { X = 0.5; Y = 0.5 }
 
+type private LayerSource = {
+    Edges: ResizeArray<Edge>
+    OriginalEdges: ResizeArray<Edge>
+    Points: ResizeArray<Point>
+    Lines: ResizeArray<LineSegment> }
+
+let private splitPoints (foldLine: Line) (layer: ILayer) =
+    let positivePoints = ResizeArray()
+    let negativePoints = ResizeArray()
+    for point in Seq.append layer.Points (layer.GetCrosses(layer.Clip(foldLine))) do
+        match foldLine.GetDistanceSign(point) with
+        | 1 -> positivePoints.Add(point)
+        | -1 -> negativePoints.Add(point)
+        | _ ->
+            positivePoints.Add(point)
+            negativePoints.Add(point)
+    positivePoints, negativePoints
+
 let private splitLine (line: Line) (target: LineSegment) =
     match line.GetDistanceSign(target.Point1), line.GetDistanceSign(target.Point2) with
     | 1, 1 | 1, 0 | 0, 1 -> Some(target), None
@@ -17,6 +35,15 @@ let private splitLine (line: Line) (target: LineSegment) =
         Some(LineSegment.FromPoints(cross, target.Point2).Value),
         Some(LineSegment.FromPoints(target.Point1, cross).Value)
     | _ -> None, None
+
+let private splitLines (foldLine: Line) (layer: ILayer) =
+    let positiveLines = ResizeArray()
+    let negativeLines = ResizeArray()
+    for line in layer.Lines do
+        let positiveLine, negativeLine = splitLine foldLine line
+        positiveLine |> Option.iter positiveLines.Add
+        negativeLine |> Option.iter negativeLines.Add
+    positiveLines, negativeLines
 
 let private splitEdge (line: Line) (target: Edge) =
     let positive, negative = splitLine line target.Line
@@ -76,70 +103,63 @@ let private splitEdges (foldLine: Line) (layer: ILayer) =
             negativeEdges.Add(edge)
     positiveEdges, negativeEdges
 
-let private splitLayer (workspace: IWorkspace) (foldLine: Line) (isPositiveStatic: bool) (layer: ILayer) =
-    let turnLayerType isPositive =
-        if isPositive = isPositiveStatic then layer.LayerType
-        else
-            match layer.LayerType with
-            | LayerType.BackSide -> LayerType.FrontSide
-            | LayerType.FrontSide -> LayerType.BackSide
-            | _ -> layer.LayerType
+let private splitOriginalEdges (foldLine: Line) (positiveEdgesCount: int) (layer: ILayer) =
+    let foldLineInOrigin = layer.Matrix.MultiplyInv(foldLine)
+    let edges1, edges2 = splitEdges foldLineInOrigin (layer.GetOriginal())
+    match positiveEdgesCount >= 3, edges1.Count >= 3 with
+    | false, false -> edges1, edges2
+    | true, false | false, true -> edges2, edges1
+    | true, true ->
+        let edgeSign =
+            edges1
+            |> Seq.map(fun e -> foldLine.GetDistanceSign(e.Line.Point1 * layer.Matrix))
+            |> Seq.find(fun d -> d <> 0)
+        if edgeSign > 0 then edges1, edges2 else edges2, edges1
+
+// returns positive-side, negative-side
+let private splitLayerCore (foldLine: Line) (layer: ILayer) =
     let positiveEdges, negativeEdges = splitEdges foldLine layer
-    let originalPositiveEdges, originalNegativeEdges =
-        let foldLineInOrigin = layer.Matrix.MultiplyInv(foldLine)
-        let edges1, edges2 = splitEdges foldLineInOrigin (layer.GetOriginal())
-        match positiveEdges.Count >= 3, edges1.Count >= 3 with
-        | false, false -> edges1, edges2
-        | true, false | false, true -> edges2, edges1
-        | true, true ->
-            let edgeSign =
-                edges1
-                |> Seq.map(fun e -> foldLine.GetDistanceSign(e.Line.Point1 * layer.Matrix))
-                |> Seq.find(fun d -> d <> 0)
-            if edgeSign > 0 then edges1, edges2 else edges2, edges1
-    let positivePoints = ResizeArray()
-    let negativePoints = ResizeArray()
-    for point in Seq.append layer.Points (layer.GetCrosses(layer.Clip(foldLine))) do
-        match foldLine.GetDistanceSign(point) with
-        | 1 -> positivePoints.Add(point)
-        | -1 -> negativePoints.Add(point)
-        | _ ->
-            positivePoints.Add(point)
-            negativePoints.Add(point)
-    let positiveLines = ResizeArray()
-    let negativeLines = ResizeArray()
-    for line in layer.Lines do
-        let positiveLine, negativeLine = splitLine foldLine line
-        positiveLine |> Option.iter positiveLines.Add
-        negativeLine |> Option.iter negativeLines.Add
-    let createLayer (edges: ResizeArray<Edge>) original lines points isPositive =
-        if edges.Count < 3 then None
-        else
-            if isPositive = isPositiveStatic then
-                workspace.CreateLayer(
-                    edges,
-                    lines,
-                    points,
-                    turnLayerType isPositive,
-                    original,
-                    layer.Matrix)
-            else
-                workspace.CreateLayer(
-                    edges |> Seq.map(fun e -> Edge(e.Line.ReflectBy(foldLine), e.Inner)),
-                    lines |> Seq.map(fun ls -> ls.ReflectBy(foldLine)),
-                    points |> Seq.map foldLine.Reflect,
-                    turnLayerType isPositive,
-                    original,
-                    layer.Matrix * Matrix.OfReflection(foldLine))
-            |> Some
-    if isPositiveStatic then
-        let positiveLayer = createLayer positiveEdges originalPositiveEdges positiveLines positivePoints true
-        let negativeLayer = createLayer negativeEdges originalNegativeEdges negativeLines negativePoints false
-        positiveLayer, negativeLayer
+    let originalPositiveEdges, originalNegativeEdges = splitOriginalEdges foldLine positiveEdges.Count layer
+    let positivePoints, negativePoints = splitPoints foldLine layer
+    let positiveLines, negativeLines = splitLines foldLine layer
+    { Edges = positiveEdges
+      OriginalEdges = originalPositiveEdges
+      Points = positivePoints
+      Lines = positiveLines },
+    { Edges = negativeEdges
+      OriginalEdges = originalNegativeEdges
+      Points = negativePoints
+      Lines = negativeLines }
+
+let private createLayer (workspace: IWorkspace) (foldLine: Line) (layer: ILayer) turnOver source =
+    if source.Edges.Count < 3 then None
     else
-        let negativeLayer = createLayer negativeEdges originalNegativeEdges negativeLines negativePoints false
-        let positiveLayer = createLayer positiveEdges originalPositiveEdges positiveLines positivePoints true
-        negativeLayer, positiveLayer
+        if not turnOver then
+            workspace.CreateLayer(
+                source.Edges,
+                source.Lines,
+                source.Points,
+                layer.LayerType,
+                source.OriginalEdges,
+                layer.Matrix)
+        else
+            workspace.CreateLayer(
+                source.Edges |> Seq.map(fun e -> Edge(e.Line.ReflectBy(foldLine), e.Inner)),
+                source.Lines |> Seq.map(fun ls -> ls.ReflectBy(foldLine)),
+                source.Points |> Seq.map foldLine.Reflect,
+                layer.LayerType.TurnOver(),
+                source.OriginalEdges,
+                layer.Matrix * Matrix.OfReflection(foldLine))
+        |> Some
+
+// returns static-side, dynamic-side
+let private splitLayer (workspace: IWorkspace) (foldLine: Line) (isPositiveStatic: bool) (layer: ILayer) =
+    let positive, negative = splitLayerCore foldLine layer
+    if isPositiveStatic
+    then createLayer workspace foldLine layer false positive,
+         createLayer workspace foldLine layer true negative
+    else createLayer workspace foldLine layer false negative,
+         createLayer workspace foldLine layer true positive
 
 let foldBack (workspace: IWorkspace) (line: Line) =
     let staticLayers = ResizeArray()
