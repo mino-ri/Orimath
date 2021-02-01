@@ -23,7 +23,8 @@ type ILayer =
 
 [<Extension>]
 type LayerExtensions =
-    static member ContainsCore(edges, point: Point) =
+    [<Extension>]
+    static member Contains(edges, point: Point) =
         let rec recSelf acm (edges: Edge list) =
             match edges with
             | head :: tail ->
@@ -40,9 +41,13 @@ type LayerExtensions =
             | [] -> acm % 2 = 1
         recSelf 0 edges
 
+    /// このレイヤーの領域に指定した線分が完全に含まれているか判断します。
+    [<Extension>]
+    static member Contains(edges: Edge list, line: LineSegment) = edges.Contains(line.Point1) && edges.Contains(line.Point2)
+
     /// このレイヤーの領域に指定した点が含まれているか判断します。
     [<Extension>]
-    static member Contains(layer: ILayer, point) = LayerExtensions.ContainsCore(asList layer.Edges, point)
+    static member Contains(layer: ILayer, point: Point) = LayerExtensions.Contains(asList layer.Edges, point)
 
     /// このレイヤーの領域に指定した線分が完全に含まれているか判断します。
     [<Extension>]
@@ -74,9 +79,9 @@ type LayerExtensions =
 
     /// このレイヤーの範囲内に収まるように、指定された直線をカットします。
     [<Extension>]
-    static member Clip(layer: ILayer, line: Line) =
+    static member Clip(edges: Edge list, line: Line) =
         let points = ResizeArray()
-        for edge in layer.Edges do
+        for edge in edges do
             match edge.Line.Line.GetCrossPoint(line) with
             | Some(p) when edge.Line.Contains(p) && not (points |> Seq.exists((=~) p))
                 -> points.Add(p)
@@ -84,8 +89,12 @@ type LayerExtensions =
         points
         |> Seq.sortBy(fun p -> if line.YFactor = 0.0 then p.Y else p.X)
         |> Seq.pairwise
-        |> Seq.filter(fun (p1, p2) -> layer.Contains((p1 + p2) / 2.0))
+        |> Seq.filter(fun (p1, p2) -> edges.Contains((p1 + p2) / 2.0))
         |> Seq.choose(LineSegment.FromPoints)
+
+    /// このレイヤーの範囲内に収まるように、指定された直線をカットします。
+    [<Extension>]
+    static member Clip(layer: ILayer, line: Line) = (asList layer.Edges).Clip(line)
         
     /// このレイヤーの範囲内に収まるように指定された直線をカットし、その両端の位置を返します。
     [<Extension>]
@@ -98,19 +107,23 @@ type LayerExtensions =
 
     /// このレイヤーの範囲内に収まるように、指定された線分をカットします。
     [<Extension>]
-    static member Clip(layer: ILayer, line: LineSegment) =
+    static member Clip(edges: Edge list, line: LineSegment) =
         let points = ResizeArray()
         points.Add(line.Point1)
         points.Add(line.Point2)
-        for edge in layer.Edges do
+        for edge in edges do
             match edge.Line.GetCrossPoint(line) with
             | Some(p) when not (points |> Seq.exists((=~) p)) -> points.Add(p)
             | _ -> ()
         points
         |> Seq.sortBy(fun p -> if line.Line.YFactor = 0.0 then p.Y else p.X)
         |> Seq.pairwise
-        |> Seq.filter(fun (p1, p2) -> layer.Contains((p1 + p2) / 2.0))
+        |> Seq.filter(fun (p1, p2) -> edges.Contains((p1 + p2) / 2.0))
         |> Seq.choose(LineSegment.FromPoints)
+
+    /// このレイヤーの範囲内に収まるように、指定された線分をカットします。
+    [<Extension>]
+    static member Clip(layer: ILayer, line: LineSegment) = (asList layer.Edges).Clip(line)
         
     /// このレイヤーの範囲内に収まるように指定された線分をカットし、その両端の位置を返します。
     [<Extension>]

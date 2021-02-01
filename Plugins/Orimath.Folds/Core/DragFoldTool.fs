@@ -29,7 +29,10 @@ type DragFoldTool(workspace: IWorkspace) =
         member _.OnClick(target, modifier) =
             if modifier.HasFlag(OperationModifier.RightButton) then
                 match target.Target with
-                | DisplayTarget.Line(line) -> FoldBack.foldBack workspace line.Line
+                | DisplayTarget.Line(line) ->
+                    if modifier.HasFlag(OperationModifier.Ctrl)
+                    then FoldBack.foldBackFirst workspace line.Line
+                    else FoldBack.foldBack workspace line.Line
                 | _ -> ()
             else
                 let clearOther = not (modifier.HasFlag(OperationModifier.Shift))
@@ -94,9 +97,12 @@ type DragFoldTool(workspace: IWorkspace) =
             match chooseLine (getLines opr) opr with
             | Some(line) ->
                 use __ = paper.BeginChange()
-                if modifier.HasFlag(OperationModifier.Shift)
-                then FoldBack.foldBack workspace line
-                else this.MakeCrease(line)
+                if modifier.HasFlag(OperationModifier.Ctrl) then
+                    FoldBack.foldBackFirst workspace line
+                elif modifier.HasFlag(OperationModifier.Shift) then
+                    FoldBack.foldBack workspace line
+                else
+                    this.MakeCrease(line)
             | None -> ()
             instruction.ResetAll()
 

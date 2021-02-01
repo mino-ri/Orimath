@@ -1,14 +1,30 @@
 ﻿module internal Orimath.Folds.Core.FoldBack
 open Orimath.Core
 open Orimath.Plugins
+open Orimath.Core.NearlyEquatable
 
 let private center = { X = 0.5; Y = 0.5 }
 
-type private LayerSource = {
-    Edges: ResizeArray<Edge>
-    OriginalEdges: ResizeArray<Edge>
-    Points: ResizeArray<Point>
-    Lines: ResizeArray<LineSegment> }
+type private LayerSource =
+    { Edges: Edge list
+      OriginalEdges: Edge list
+      Points: Point list
+      Lines: LineSegment list }
+
+type private SplittedLayer =
+    { Original: ILayerModel
+      Static: LayerSource option
+      Dynamic: LayerSource option
+      mutable TurnOver: bool }
+
+let chooseUnzip (f: 'T -> 'U1 option * 'U2 option) (source: seq<'T>) =
+    let leftResult = ResizeArray()
+    let rightResult = ResizeArray()
+    for item in source do
+        let left, right = f item
+        Option.iter leftResult.Add left
+        Option.iter rightResult.Add right
+    leftResult, rightResult
 
 let private splitPoints (foldLine: Line) (layer: ILayer) =
     let positivePoints = ResizeArray()
@@ -37,13 +53,7 @@ let private splitLine (line: Line) (target: LineSegment) =
     | _ -> None, None
 
 let private splitLines (foldLine: Line) (layer: ILayer) =
-    let positiveLines = ResizeArray()
-    let negativeLines = ResizeArray()
-    for line in layer.Lines do
-        let positiveLine, negativeLine = splitLine foldLine line
-        positiveLine |> Option.iter positiveLines.Add
-        negativeLine |> Option.iter negativeLines.Add
-    positiveLines, negativeLines
+    layer.Lines |> chooseUnzip (splitLine foldLine)
 
 let private splitEdge (line: Line) (target: Edge) =
     let positive, negative = splitLine line target.Line
@@ -122,51 +132,113 @@ let private splitLayerCore (foldLine: Line) (layer: ILayer) =
     let originalPositiveEdges, originalNegativeEdges = splitOriginalEdges foldLine positiveEdges.Count layer
     let positivePoints, negativePoints = splitPoints foldLine layer
     let positiveLines, negativeLines = splitLines foldLine layer
-    { Edges = positiveEdges
-      OriginalEdges = originalPositiveEdges
-      Points = positivePoints
-      Lines = positiveLines },
-    { Edges = negativeEdges
-      OriginalEdges = originalNegativeEdges
-      Points = negativePoints
-      Lines = negativeLines }
+    let positive =
+        if positiveEdges.Count >= 3 then
+            Some { Edges = Seq.toList positiveEdges
+                   OriginalEdges = Seq.toList originalPositiveEdges
+                   Points = Seq.toList positivePoints
+                   Lines = Seq.toList positiveLines }
+        else
+            None
+    let negative =
+        if negativeEdges.Count >= 3 then
+            Some { Edges = Seq.toList negativeEdges
+                   OriginalEdges = Seq.toList originalNegativeEdges
+                   Points = Seq.toList negativePoints
+                   Lines = Seq.toList negativeLines }
+        else
+            None
+    positive, negative
 
 let private createLayer (workspace: IWorkspace) (foldLine: Line) (layer: ILayer) turnOver source =
-    if source.Edges.Count < 3 then None
+    if not turnOver then
+        workspace.CreateLayer(
+            source.Edges,
+            source.Lines,
+            source.Points,
+            layer.LayerType,
+            source.OriginalEdges,
+            layer.Matrix)
     else
-        if not turnOver then
-            workspace.CreateLayer(
-                source.Edges,
-                source.Lines,
-                source.Points,
-                layer.LayerType,
-                source.OriginalEdges,
-                layer.Matrix)
-        else
-            workspace.CreateLayer(
-                source.Edges |> Seq.map(fun e -> Edge(e.Line.ReflectBy(foldLine), e.Inner)),
-                source.Lines |> Seq.map(fun ls -> ls.ReflectBy(foldLine)),
-                source.Points |> Seq.map foldLine.Reflect,
-                layer.LayerType.TurnOver(),
-                source.OriginalEdges,
-                layer.Matrix * Matrix.OfReflection(foldLine))
-        |> Some
+        workspace.CreateLayer(
+            source.Edges |> Seq.map(fun e -> Edge(e.Line.ReflectBy(foldLine), e.Inner)),
+            source.Lines |> Seq.map(fun ls -> ls.ReflectBy(foldLine)),
+            source.Points |> Seq.map foldLine.Reflect,
+            layer.LayerType.TurnOver(),
+            source.OriginalEdges,
+            layer.Matrix * Matrix.OfReflection(foldLine))
 
 // returns static-side, dynamic-side
 let private splitLayer (workspace: IWorkspace) (foldLine: Line) (isPositiveStatic: bool) (layer: ILayer) =
     let positive, negative = splitLayerCore foldLine layer
     if isPositiveStatic
-    then createLayer workspace foldLine layer false positive,
-         createLayer workspace foldLine layer true negative
-    else createLayer workspace foldLine layer false negative,
-         createLayer workspace foldLine layer true positive
+    then Option.map (createLayer workspace foldLine layer false) positive,
+         Option.map (createLayer workspace foldLine layer true) negative
+    else Option.map (createLayer workspace foldLine layer false) negative,
+         Option.map (createLayer workspace foldLine layer true) positive
+
+let private isContacted (originalEdges1: seq<Edge>) (originalEdge2: seq<Edge>) =
+    let innerEdges (edges: seq<Edge>) = edges |> Seq.filter(fun e -> e.Inner)
+    Seq.allPairs (innerEdges originalEdges1) (innerEdges  originalEdge2)
+    |> Seq.exists(fun (e1, e2) -> e1.Line =~ e2.Line)
 
 let foldBack (workspace: IWorkspace) (line: Line) =
-    let staticLayers = ResizeArray()
-    let dynamicLayers = ResizeArray()
     let isPositiveStatic = line.IsPositiveSide(center)
-    for layer in workspace.Paper.Layers do
-        let staticLayer, dynamicLayer = splitLayer workspace line isPositiveStatic layer
-        staticLayer |> Option.iter staticLayers.Add
-        dynamicLayer |> Option.iter dynamicLayers.Add
+    let staticLayers, dynamicLayers =
+        workspace.Paper.Layers |> chooseUnzip (splitLayer workspace line isPositiveStatic)
     workspace.Paper.Clear(workspace.CreatePaper(Seq.append staticLayers (Seq.rev dynamicLayers)))
+
+let private setContactedLayers (layers: SplittedLayer[]) firstIndex =
+    layers.[firstIndex].TurnOver <- true
+    for srcIndex = 0 to layers.Length - 2 do
+        if layers.[srcIndex].TurnOver then
+            for dstIndex = 0 to layers.Length - 1 do
+                if srcIndex <> dstIndex && not layers.[dstIndex].TurnOver then
+                    match layers.[srcIndex].Dynamic, layers.[dstIndex].Dynamic with
+                    | Some(src), Some(dst) when isContacted src.Edges dst.Edges ->
+                        layers.[dstIndex].TurnOver <- true
+                    | _ -> ()
+
+let foldBackFirst (workspace: IWorkspace) (line: Line) =
+    let isPositiveStatic = line.IsPositiveSide(center)
+    let layers =
+        workspace.Paper.Layers
+        |> Seq.map(fun layer ->
+            let positive, negative = splitLayerCore line layer
+            if isPositiveStatic
+            then { Original = layer; Static = positive; Dynamic = negative; TurnOver = false }
+            else { Original = layer; Static = negative; Dynamic = positive; TurnOver = false })
+        |> Seq.toArray
+    System.Array.Reverse(layers)
+    match layers |> Array.tryFindIndex(fun item -> item.Static.IsSome && item.Dynamic.IsSome) with
+    | None -> ()
+    | Some(firstIndex) ->
+        let rec setDynamicLayers index =
+            setContactedLayers layers index
+            let lastIndex = Array.findIndexBack (fun l -> l.TurnOver) layers
+            let mergedLine =
+                layers
+                |> Seq.filter(fun l -> l.TurnOver)
+                |> Seq.choose(fun l -> l.Dynamic)
+                |> Seq.collect(fun dl -> dl.Edges.Clip(line))
+                |> LineSegmentExtensions.Merge
+                |> Seq.toList
+            seq { 0..lastIndex }
+            |> Seq.tryFind(fun i ->
+                not layers.[i].TurnOver &&
+                layers.[i].Dynamic |> Option.exists(fun dl ->
+                    mergedLine |> List.exists(fun l -> not (Seq.isEmpty (dl.Edges.Clip(l))))))
+            // 末尾最適化のため、Option.iter を使わない
+            |> function
+            | None -> ()
+            | Some(ix) -> setDynamicLayers ix
+        setDynamicLayers firstIndex
+        let staticLaters = layers |> Seq.choose(fun l ->
+            if l.TurnOver
+            then l.Static |> Option.map(createLayer workspace line l.Original false)
+            else Some(upcast l.Original))
+        let dynamicLayers = layers |> Seq.choose(fun l ->
+            if l.TurnOver
+            then l.Dynamic |> Option.map(createLayer workspace line l.Original true)
+            else None)
+        workspace.Paper.Clear(workspace.CreatePaper(Seq.append (Seq.rev staticLaters) dynamicLayers))
