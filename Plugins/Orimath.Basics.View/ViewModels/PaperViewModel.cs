@@ -32,17 +32,17 @@ namespace Orimath.Basics.View.ViewModels
             }));
             _paper.SelectedEdges.Subscribe(values => _dispatcher.OnUIAsync(() =>
             {
-                SelectedEdges = Array.ConvertAll(values, e => new EdgeViewModel(e, _pointConverter));
+                SelectedEdges = Array.ConvertAll(values, e => new EdgeViewModel(null, e, _pointConverter));
                 OnPropertyChanged(nameof(SelectedEdges));
             }));
             _paper.SelectedLines.Subscribe(values => _dispatcher.OnUIAsync(() =>
             {
-                SelectedLines = Array.ConvertAll(values, l => new LineViewModel(l, _pointConverter));
+                SelectedLines = Array.ConvertAll(values, l => new LineViewModel(null, l, _pointConverter));
                 OnPropertyChanged(nameof(SelectedLines));
             }));
             _paper.SelectedPoints.Subscribe(values => _dispatcher.OnUIAsync(() =>
             {
-                SelectedPoints = Array.ConvertAll(values, p => new PointViewModel(p, _pointConverter));
+                SelectedPoints = Array.ConvertAll(values, p => new PointViewModel(null, p, _pointConverter));
                 OnPropertyChanged(nameof(SelectedPoints));
             }));
         }

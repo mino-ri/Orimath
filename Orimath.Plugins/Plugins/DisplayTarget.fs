@@ -4,8 +4,6 @@ open Orimath.Core
 /// ドラッグおよびクリック操作の対象オブジェクトを表します。
 [<RequireQualifiedAccess>]
 type DisplayTarget =
-    /// 選択対象なし
-    | None
     /// レイヤー。
     | Layer of ILayerModel
     /// 紙の端や折りたたまれた紙の境界線。
@@ -20,6 +18,8 @@ type OperationTarget =
     {
         /// 操作対象の位置。
         Point: Point
+        /// 操作対称が存在するレイヤー。
+        Layer: ILayerModel
         /// 操作対象のオブジェクト。
         Target: DisplayTarget
     }

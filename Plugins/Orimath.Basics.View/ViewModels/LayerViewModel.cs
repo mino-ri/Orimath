@@ -19,18 +19,18 @@ namespace Orimath.Basics.View.ViewModels
         {
             _pointConverter = pointConverter;
             Source = layer;
-            Edges = layer.Edges.Select(e => new EdgeViewModel(e, _pointConverter)).ToArray();
+            Edges = layer.Edges.Select(e => new EdgeViewModel(layer, e, _pointConverter)).ToArray();
             Vertexes = new PointCollection(layer.Edges.Select(e => _pointConverter.ModelToView(e.Line.Point1)));
 
             _points = new AttachedObservableCollection<Point, PointViewModel>(
                 dispatcher,
                 layer.Points,
-                p => new PointViewModel(p, _pointConverter),
+                p => new PointViewModel(null, p, _pointConverter),
                 _ => { });
             _lines = new AttachedObservableCollection<LineSegment, LineViewModel>(
                 dispatcher,
                 layer.Lines,
-                l => new LineViewModel(l, _pointConverter),
+                l => new LineViewModel(null, l, _pointConverter),
                 _ => { });
         }
 
@@ -41,7 +41,7 @@ namespace Orimath.Basics.View.ViewModels
         public ObservableCollection<LineViewModel> Lines => _lines;
         public LayerType LayerType => Source.LayerType;
 
-        public DisplayTarget GetTarget() => DisplayTarget.NewLayer(Source);
+        public (ILayerModel, DisplayTarget) GetTarget() => (Source, DisplayTarget.NewLayer(Source));
 
         public void Dispose()
         {

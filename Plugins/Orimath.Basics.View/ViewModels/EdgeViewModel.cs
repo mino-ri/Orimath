@@ -7,8 +7,10 @@ namespace Orimath.Basics.View.ViewModels
 {
     public class EdgeViewModel : NotifyPropertyChanged, IDisplayTargetViewModel
     {
-        public EdgeViewModel(Edge edge, IViewPointConverter pointConverter)
+        private readonly ILayerModel? _layer;
+        public EdgeViewModel(ILayerModel? layer, Edge edge, IViewPointConverter pointConverter)
         {
+            _layer = layer;
             Source = edge;
             (X1, Y1) = pointConverter.ModelToView(edge.Line.Point1);
             (X2, Y2) = pointConverter.ModelToView(edge.Line.Point2);
@@ -26,7 +28,11 @@ namespace Orimath.Basics.View.ViewModels
         public double Angle => NearlyEquatable.UnaryPlus(Math.Atan2(XFactor, YFactor) / Math.PI * 180.0) % 180.0;
         public double Length => Source.Line.Length;
 
-        public DisplayTarget GetTarget() => DisplayTarget.NewEdge(Source);
+        public (ILayerModel, DisplayTarget) GetTarget()
+        {
+            if (_layer is null) throw new InvalidOperationException();
+            return (_layer, DisplayTarget.NewEdge(Source));
+        }
         public override string ToString() => $"{Source.Line.Line}\r\n傾き:{Slope:0.#####} 角度:{Angle:0.#####}°";
     }
 }

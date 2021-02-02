@@ -7,8 +7,11 @@ namespace Orimath.Basics.View.ViewModels
 {
     public class LineViewModel : NotifyPropertyChanged, IDisplayTargetViewModel
     {
-        public LineViewModel(LineSegment line, IViewPointConverter pointConverter)
+        private readonly ILayerModel? _layer;
+
+        public LineViewModel(ILayerModel? layer, LineSegment line, IViewPointConverter pointConverter)
         {
+            _layer = layer;
             Source = line;
             (X1, Y1) = pointConverter.ModelToView(line.Point1);
             (X2, Y2) = pointConverter.ModelToView(line.Point2);
@@ -26,7 +29,11 @@ namespace Orimath.Basics.View.ViewModels
         public double Angle => NearlyEquatable.UnaryPlus(Math.Atan2(XFactor, YFactor) / Math.PI * 180.0) % 180.0;
         public double Length => Source.Length;
 
-        public DisplayTarget GetTarget() => DisplayTarget.NewLine(Source);
+        public (ILayerModel, DisplayTarget) GetTarget()
+        {
+            if (_layer is null) throw new InvalidOperationException();
+            return (_layer, DisplayTarget.NewLine(Source));
+        }
         public override string ToString() => $"{Source.Line}\r\n傾き:{Slope:0.#####} 角度:{Angle:0.#####}°";
     }
 }

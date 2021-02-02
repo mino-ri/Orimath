@@ -1,4 +1,5 @@
-﻿using Orimath.Core;
+﻿using System;
+using Orimath.Core;
 using Orimath.Plugins;
 using Mvvm;
 
@@ -6,8 +7,11 @@ namespace Orimath.Basics.View.ViewModels
 {
     public class PointViewModel : NotifyPropertyChanged, IDisplayTargetViewModel
     {
-        public PointViewModel(Point point, IViewPointConverter pointConverter)
+        private readonly ILayerModel? _layer;
+
+        public PointViewModel(ILayerModel? layer, Point point, IViewPointConverter pointConverter)
         {
+            _layer = layer;
             Source = point;
             (X, Y) = pointConverter.ModelToView(point);
         }
@@ -16,7 +20,11 @@ namespace Orimath.Basics.View.ViewModels
         public double X { get; }
         public double Y { get; }
 
-        public DisplayTarget GetTarget() => DisplayTarget.NewPoint(Source);
+        public (ILayerModel, DisplayTarget) GetTarget()
+        {
+            if (_layer is null) throw new InvalidOperationException();
+            return (_layer, DisplayTarget.NewPoint(Source));
+        }
         public override string ToString() => Source.ToString();
     }
 }

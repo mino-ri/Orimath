@@ -28,11 +28,6 @@ type SelectorTool(workspace: IWorkspace) =
     default _.OnClick(target, modifier) =
         if modifier = OperationModifier.None then
             match target.Target with
-            |DisplayTarget.None ->
-                workspace.Paper.SelectedLayers .<- Array.empty
-                workspace.Paper.SelectedEdges .<- Array.empty
-                workspace.Paper.SelectedLines .<- Array.empty
-                workspace.Paper.SelectedPoints .<- Array.empty
             |DisplayTarget.Layer(l) ->
                 workspace.Paper.SelectedLayers .<- [| l |]
                 workspace.Paper.SelectedEdges .<- Array.empty

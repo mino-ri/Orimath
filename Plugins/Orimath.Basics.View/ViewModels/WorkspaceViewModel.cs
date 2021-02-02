@@ -22,7 +22,7 @@ namespace Orimath.Basics.View.ViewModels
 
         private OperationTarget ToModelTarget(ScreenOperationTarget target)
         {
-            return new OperationTarget(_pointConverter.ViewToModel(target.Point), target.Target);
+            return new OperationTarget(_pointConverter.ViewToModel(target.Point), target.Layer, target.Target);
         }
 
         public void OnClick(ScreenOperationTarget target, OperationModifier modifier)
@@ -53,12 +53,13 @@ namespace Orimath.Basics.View.ViewModels
     public class ScreenOperationTarget
     {
         public System.Windows.Point Point { get; }
+        public ILayerModel Layer { get; }
         public DisplayTarget Target { get; }
 
-        public ScreenOperationTarget(System.Windows.Point point, DisplayTarget target)
+        public ScreenOperationTarget(System.Windows.Point point, (ILayerModel, DisplayTarget) target)
         {
             Point = point;
-            Target = target;
+            (Layer, Target) = target;
         }
     }
 }

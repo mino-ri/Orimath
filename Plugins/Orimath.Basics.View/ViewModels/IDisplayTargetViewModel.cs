@@ -4,6 +4,6 @@ namespace Orimath.Basics.View.ViewModels
 {
     public interface IDisplayTargetViewModel
     {
-        DisplayTarget GetTarget();
+        (ILayerModel, DisplayTarget) GetTarget();
     }
 }
