@@ -15,7 +15,7 @@ type private SplittedLayer =
     { Original: ILayerModel
       Static: LayerSource option
       Dynamic: LayerSource option
-      mutable TurnOver: bool }
+      mutable IsTarget: bool }
 
 let chooseUnzip (f: 'T -> 'U1 option * 'U2 option) (source: seq<'T>) =
     let leftResult = ResizeArray()
@@ -52,10 +52,10 @@ let private splitLine (line: Line) (target: LineSegment) =
         Some(LineSegment.FromPoints(target.Point1, cross).Value)
     | _ -> None, None
 
-let private splitLines (foldLine: Line) (layer: ILayer) =
+let private splitLines foldLine (layer: ILayer) =
     layer.Lines |> chooseUnzip (splitLine foldLine)
 
-let private splitEdge (line: Line) (target: Edge) =
+let private splitEdge line (target: Edge) =
     let positive, negative = splitLine line target.Line
     positive |> Option.map (fun l -> Edge(l, target.Inner)),
     negative |> Option.map (fun l -> Edge(l, target.Inner))
@@ -113,7 +113,7 @@ let private splitEdges (foldLine: Line) (layer: ILayer) =
             negativeEdges.Add(edge)
     positiveEdges, negativeEdges
 
-let private splitOriginalEdges (foldLine: Line) (positiveEdgesCount: int) (layer: ILayer) =
+let private splitOriginalEdges foldLine positiveEdgesCount (layer: ILayer) =
     let foldLineInOrigin = layer.Matrix.MultiplyInv(foldLine)
     let edges1, edges2 = splitEdges foldLineInOrigin (layer.GetOriginal())
     match positiveEdgesCount >= 3, edges1.Count >= 3 with
@@ -127,7 +127,7 @@ let private splitOriginalEdges (foldLine: Line) (positiveEdgesCount: int) (layer
         if edgeSign > 0 then edges1, edges2 else edges2, edges1
 
 // returns positive-side, negative-side
-let private splitLayerCore (foldLine: Line) (layer: ILayer) =
+let private splitLayerCore foldLine layer =
     let positiveEdges, negativeEdges = splitEdges foldLine layer
     let originalPositiveEdges, originalNegativeEdges = splitOriginalEdges foldLine positiveEdges.Count layer
     let positivePoints, negativePoints = splitPoints foldLine layer
@@ -169,7 +169,7 @@ let private createLayer (workspace: IWorkspace) (foldLine: Line) (layer: ILayer)
             layer.Matrix * Matrix.OfReflection(foldLine))
 
 // returns static-side, dynamic-side
-let private splitLayer (workspace: IWorkspace) (foldLine: Line) (isPositiveStatic: bool) (layer: ILayer) =
+let private splitLayer workspace foldLine isPositiveStatic layer =
     let positive, negative = splitLayerCore foldLine layer
     if isPositiveStatic
     then Option.map (createLayer workspace foldLine layer false) positive,
@@ -177,73 +177,105 @@ let private splitLayer (workspace: IWorkspace) (foldLine: Line) (isPositiveStati
     else Option.map (createLayer workspace foldLine layer false) negative,
          Option.map (createLayer workspace foldLine layer true) positive
 
-let private isContacted (originalEdges1: seq<Edge>) (originalEdge2: seq<Edge>) =
+let private isContacted originalEdges1 originalEdge2 =
     let innerEdges (edges: seq<Edge>) = edges |> Seq.filter(fun e -> e.Inner)
-    Seq.allPairs (innerEdges originalEdges1) (innerEdges  originalEdge2)
+    Seq.allPairs (innerEdges originalEdges1) (innerEdges originalEdge2)
     |> Seq.exists(fun (e1, e2) -> e1.Line =~ e2.Line)
 
-let isPositiveStatic (line: Line) (dynamicPoint: Point option) =
+let isPositiveStatic (line: Line) dynamicPoint =
     match dynamicPoint with
     | Some(point) -> not (line.IsPositiveSide(point))
     | None -> line.IsPositiveSide(center)
 
-let foldBack (workspace: IWorkspace) (line: Line) (dynamicPoint: Point option) =
+let private setContactedLayers (layers: SplittedLayer[]) firstIndices =
+    firstIndices |> Seq.iter(fun i -> layers.[i].IsTarget <- true)
+    for srcIndex = 0 to layers.Length - 2 do
+        if layers.[srcIndex].IsTarget then
+            for dstIndex = 0 to layers.Length - 1 do
+                if srcIndex <> dstIndex && not layers.[dstIndex].IsTarget then
+                    match layers.[srcIndex].Dynamic, layers.[dstIndex].Dynamic with
+                    | Some(src), Some(dst) when isContacted src.OriginalEdges dst.OriginalEdges ->
+                        layers.[dstIndex].IsTarget <- true
+                    | _ -> ()
+
+let foldBack (workspace: IWorkspace) line dynamicPoint =
     let positiveStatic = isPositiveStatic line dynamicPoint
     let staticLayers, dynamicLayers =
         workspace.Paper.Layers |> chooseUnzip (splitLayer workspace line positiveStatic)
     workspace.Paper.Clear(workspace.CreatePaper(Seq.append staticLayers (Seq.rev dynamicLayers)))
 
-let private setContactedLayers (layers: SplittedLayer[]) firstIndices =
-    firstIndices |> Seq.iter(fun i -> layers.[i].TurnOver <- true)
-    for srcIndex = 0 to layers.Length - 2 do
-        if layers.[srcIndex].TurnOver then
-            for dstIndex = 0 to layers.Length - 1 do
-                if srcIndex <> dstIndex && not layers.[dstIndex].TurnOver then
-                    match layers.[srcIndex].Dynamic, layers.[dstIndex].Dynamic with
-                    | Some(src), Some(dst) when isContacted src.OriginalEdges dst.OriginalEdges ->
-                        layers.[dstIndex].TurnOver <- true
-                    | _ -> ()
-
-let foldBackFirst (workspace: IWorkspace) (line: Line) (dynamicPoint: Point option) =
-    let positiveStatic = isPositiveStatic line dynamicPoint
+let private getTargetLayersCore (paper: IPaperModel) (line: Line) (dynamicPoint: Point option) (targets: OperationTarget list) =
     let layers =
-        workspace.Paper.Layers
+        paper.Layers
         |> Seq.map(fun layer ->
             let positive, negative = splitLayerCore line layer
-            if positiveStatic
-            then { Original = layer; Static = positive; Dynamic = negative; TurnOver = false }
-            else { Original = layer; Static = negative; Dynamic = positive; TurnOver = false })
+            if  isPositiveStatic line dynamicPoint
+            then { Original = layer; Static = positive; Dynamic = negative; IsTarget = false }
+            else { Original = layer; Static = negative; Dynamic = positive; IsTarget = false })
+        |> Seq.rev
         |> Seq.toArray
-    System.Array.Reverse(layers)
-    match layers |> Array.tryFindIndex(fun item -> item.Static.IsSome && item.Dynamic.IsSome) with
-    | None -> ()
-    | Some(firstIndex) ->
-        let rec setDynamicLayers indices =
+    let getIndex t = paper.Layers.Count - 1 - (paper.Layers |> Seq.findIndex ((=) t.Layer))
+    let contains (layer: ILayerModel) (target: OperationTarget) =
+        match target.Target with
+        | DisplayTarget.Edge(e) -> layer.Contains(e.Line)
+        | DisplayTarget.Line(l) -> layer.Contains(l)
+        | DisplayTarget.Point(p) -> layer.Contains(p)
+        | _ -> false
+    let firstIndices =
+        match targets with
+        | [] ->
+            layers
+            |> Array.tryFindIndex(fun item -> item.Static.IsSome && item.Dynamic.IsSome)
+            |> Option.toList
+        | [t] -> [getIndex t]
+        | ts ->
+            match ts |> List.tryFind(fun t -> List.forall (contains t.Layer) ts) with
+            | Some(t) -> [getIndex t]
+            | None -> ts |> List.map getIndex
+    match firstIndices with
+    | [] -> None
+    | firstIndices ->
+        let rec setDynamicLayers (indices: seq<int>) =
             setContactedLayers layers indices
-            let lastIndex = Array.findIndexBack (fun l -> l.TurnOver) layers
+            let lastIndex = Array.findIndexBack (fun l -> l.IsTarget) layers
             let mergedLine =
                 layers
-                |> Seq.filter(fun l -> l.TurnOver)
+                |> Seq.filter(fun l -> l.IsTarget)
                 |> Seq.choose(fun l -> l.Dynamic)
                 |> Seq.collect(fun dl -> dl.Edges.Clip(line))
                 |> LineSegmentExtensions.Merge
                 |> Seq.toList
             seq { 0..lastIndex }
             |> Seq.tryFind(fun i ->
-                not layers.[i].TurnOver &&
+                not layers.[i].IsTarget &&
                 layers.[i].Dynamic |> Option.exists(fun dl ->
                     mergedLine |> List.exists(fun l -> not (Seq.isEmpty (dl.Edges.Clip(l))))))
             // 末尾最適化のため、Option.iter を使わない
             |> function
             | None -> ()
             | Some(ix) -> setDynamicLayers [|ix|]
-        setDynamicLayers [|firstIndex|]
+        setDynamicLayers firstIndices
+        Some(layers)
+
+let foldBackFirst (workspace: IWorkspace) line dynamicPoint targets =
+    match getTargetLayersCore workspace.Paper line dynamicPoint targets with
+    | Some(layers) ->
         let staticLaters = layers |> Seq.choose(fun l ->
-            if l.TurnOver
+            if l.IsTarget
             then l.Static |> Option.map(createLayer workspace line l.Original false)
             else Some(upcast l.Original))
         let dynamicLayers = layers |> Seq.choose(fun l ->
-            if l.TurnOver
+            if l.IsTarget
             then l.Dynamic |> Option.map(createLayer workspace line l.Original true)
             else None)
         workspace.Paper.Clear(workspace.CreatePaper(Seq.append (Seq.rev staticLaters) dynamicLayers))
+    | None -> ()
+
+let getTargetLayers (workspace: IWorkspace) line dynamicPoint targets =
+    match getTargetLayersCore workspace.Paper line dynamicPoint targets with
+    | Some(ls) ->
+        ls
+        |> Seq.filter(fun s -> s.IsTarget)
+        |> Seq.map(fun s -> s.Original)
+        |> Seq.toArray
+    | None -> System.Array.Empty()

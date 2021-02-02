@@ -4,7 +4,6 @@ open Orimath.Core
 open Orimath.Core.NearlyEquatable
 open Orimath.FoldingInstruction
 open Orimath.Plugins
-open FoldOperation
 open ApplicativeProperty.PropOperators
 
 type internal InstructionWrapper(paper: IPaper) =
@@ -16,7 +15,7 @@ type internal InstructionWrapper(paper: IPaper) =
         instruction.Arrows .<- Array.Empty()
         instruction.Points .<- Array.Empty()
 
-    member _.SetLines(lines, chosen) =
+    member _.SetLines(layers: seq<ILayerModel>, lines: seq<Line>, chosen) =
         let mapping l = {
                 Line = l
                 Color =
@@ -24,8 +23,8 @@ type internal InstructionWrapper(paper: IPaper) =
                 | Some(c) when c =~ l.Line -> InstructionColor.Blue
                 | _ -> InstructionColor.LightGray
             }
-        instruction.Lines .<- (lines
-            |> Seq.collect(paper.Clip)
+        instruction.Lines .<- (layers
+            |> Seq.collect(fun ly -> lines |> Seq.collect ly.Clip)
             |> LineSegmentExtensions.Merge
             |> Seq.map mapping
             |> Seq.toArray)
@@ -34,7 +33,7 @@ type internal InstructionWrapper(paper: IPaper) =
         instruction.Arrows .<- Array.Empty()
         instruction.Points .<- Array.Empty()
 
-    member _.SetArrow(source: OperationTarget, target: OperationTarget, chosen: Line, opr: FoldOperation) =
+    member _.SetArrow(chosen: Line, opr: FoldOperation) =
         let getGeneralArrow() =
             match paper.ClipBound(chosen) with
             | None -> Array.Empty()

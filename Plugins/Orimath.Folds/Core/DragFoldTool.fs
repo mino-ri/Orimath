@@ -10,6 +10,10 @@ type DragFoldTool(workspace: IWorkspace) =
     let paper = workspace.Paper
     let instruction = InstructionWrapper(paper)
 
+    member private _.GetSourcePoint(opr) =
+        getSourcePoint opr
+        |> Option.orElseWith(fun () -> Array.tryHead paper.SelectedPoints.Value)
+
     member _.MakeCrease(line: Line) =
         for layer in paper.Layers do layer.AddLines([line])
 
@@ -30,7 +34,7 @@ type DragFoldTool(workspace: IWorkspace) =
                 match target.Target with
                 | DisplayTarget.Line(line) ->
                     if modifier.HasFlag(OperationModifier.Ctrl)
-                    then FoldBack.foldBackFirst workspace line.Line None
+                    then FoldBack.foldBackFirst workspace line.Line None []
                     else FoldBack.foldBack workspace line.Line None
                 | _ -> ()
             else
@@ -75,10 +79,17 @@ type DragFoldTool(workspace: IWorkspace) =
                 | _ ->
                     let lines = getLines opr
                     lines, chooseLine lines opr
-            instruction.SetLines(lines, chosen)
             match chosen with
-            | Some(c) -> instruction.SetArrow(source, target, c, opr)
-            | None -> instruction.ResetArrows()
+            | Some(c) ->
+                let targetLayers =
+                    if modifier.HasFlag(OperationModifier.Ctrl)
+                    then FoldBack.getTargetLayers workspace c (this.GetSourcePoint(opr)) [source; target] :> seq<_>
+                    else paper.Layers :> seq<_>
+                instruction.SetLines(targetLayers, lines, chosen)
+                instruction.SetArrow(c, opr)
+            | None ->
+                instruction.SetLines(paper.Layers, lines, chosen)
+                instruction.ResetArrows()
             match target with
             | FreePoint true _ | LineOrEdge _ -> true
             | _ -> false
@@ -96,12 +107,13 @@ type DragFoldTool(workspace: IWorkspace) =
             match chooseLine (getLines opr) opr with
             | Some(line) ->
                 use __ = paper.BeginChange()
-                if modifier.HasFlag(OperationModifier.Ctrl) then
-                    FoldBack.foldBackFirst workspace line (FoldOperation.getSourcePoint opr)
-                elif modifier.HasFlag(OperationModifier.Shift) then
-                    FoldBack.foldBack workspace line (FoldOperation.getSourcePoint opr)
-                else
-                    this.MakeCrease(line)
+                match modifier.HasFlag(OperationModifier.Shift), modifier.HasFlag(OperationModifier.Ctrl) with
+                | false, false -> this.MakeCrease(line)
+                | false, true ->
+                    FoldBack.getTargetLayers workspace line (this.GetSourcePoint(opr)) [source; target]
+                    |> Array.iter(fun l -> l.AddLines([line]))
+                | true, false -> FoldBack.foldBack workspace line (this.GetSourcePoint(opr))
+                | true, true -> FoldBack.foldBackFirst workspace line (this.GetSourcePoint(opr)) [source; target]
             | None -> ()
             instruction.ResetAll()
 
