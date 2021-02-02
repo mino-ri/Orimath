@@ -1,4 +1,4 @@
-﻿module internal Orimath.Folds.Core.FoldBack
+﻿module internal Orimath.Basics.Folds.FoldBack
 open Orimath.Core
 open Orimath.Plugins
 open Orimath.Core.NearlyEquatable

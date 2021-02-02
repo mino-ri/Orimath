@@ -32,6 +32,18 @@
     <Resource Include="defaultIcon.png" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="FoldingInstructionControl.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="FoldingInstructionControl.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+  </ItemGroup>
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="copy $(TargetDir)$(TargetName).* $(ProjectDir)..\..\Orimath\bin\$(ConfigurationName)\net5.0-windows\Plugins\" />
   </Target>

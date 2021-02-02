@@ -1,4 +1,4 @@
-﻿namespace Orimath.Folds.Core
+﻿namespace Orimath.Basics.Folds
 open Orimath.Core
 open Orimath.Core.NearlyEquatable
 open Orimath.Plugins

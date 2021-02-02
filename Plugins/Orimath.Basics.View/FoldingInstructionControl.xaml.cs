@@ -1,4 +1,4 @@
-﻿using Orimath.FoldingInstruction.View.ViewModels;
+﻿using Orimath.Basics.View.ViewModels;
 using Orimath.Plugins;
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Orimath.FoldingInstruction.View
+namespace Orimath.Basics.View
 {
     /// <summary>
     /// FoldingInstructionControl.xaml の相互作用ロジック

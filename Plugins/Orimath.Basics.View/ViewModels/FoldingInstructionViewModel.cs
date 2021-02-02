@@ -1,10 +1,10 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Mvvm;
 using Orimath.Plugins;
+using Orimath.FoldingInstruction;
 using ApplicativeProperty;
 
-namespace Orimath.FoldingInstruction.View.ViewModels
+namespace Orimath.Basics.View.ViewModels
 {
     public class FoldingInstructionViewModel : NotifyPropertyChanged
     {

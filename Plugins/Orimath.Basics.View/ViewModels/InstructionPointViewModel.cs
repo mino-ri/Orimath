@@ -1,7 +1,8 @@
 ﻿using Mvvm;
 using Orimath.Plugins;
+using Orimath.FoldingInstruction;
 
-namespace Orimath.FoldingInstruction.View.ViewModels
+namespace Orimath.Basics.View.ViewModels
 {
     public class InstructionPointViewModel : NotifyPropertyChanged
     {

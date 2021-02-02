@@ -1,6 +1,5 @@
-﻿namespace Orimath.Measure
+﻿namespace Orimath.Basics
 open System
-open System.Reflection
 open Orimath.Core
 open Orimath.FoldingInstruction
 open Orimath.Plugins
@@ -47,7 +46,7 @@ type MeasureTool(workspace: IWorkspace) =
     interface ITool with
         member _.Name = "計測"
         member _.ShortcutKey = "Ctrl+M"
-        member _.Icon = Assembly.GetExecutingAssembly().GetManifestResourceStream("Orimath.Measure.Icon.png")
+        member _.Icon = InternalModule.getIcon "measure"
         member this.OnActivated() = this.ClearSelection()
         member _.OnDeactivated() = ()
 

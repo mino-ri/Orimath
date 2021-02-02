@@ -2,8 +2,9 @@
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
+using Orimath.FoldingInstruction;
 
-namespace Orimath.FoldingInstruction.View.Controls
+namespace Orimath.Basics.View.Controls
 {
     [ValueConversion(typeof(InstructionColor), typeof(Brush))]
     public class UniversalColorConverter : IValueConverter

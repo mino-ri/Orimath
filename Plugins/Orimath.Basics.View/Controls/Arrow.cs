@@ -3,8 +3,9 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using FpmOptions = System.Windows.FrameworkPropertyMetadataOptions;
+using Orimath.FoldingInstruction;
 
-namespace Orimath.FoldingInstruction.View.Controls
+namespace Orimath.Basics.View.Controls
 {
     public class Arrow : Shape
     {

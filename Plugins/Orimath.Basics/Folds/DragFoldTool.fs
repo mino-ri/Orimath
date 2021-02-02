@@ -1,4 +1,4 @@
-﻿namespace Orimath.Folds.Core
+﻿namespace Orimath.Basics.Folds
 open System.Reflection
 open Orimath.Core
 open Orimath.FoldingInstruction
@@ -20,7 +20,7 @@ type DragFoldTool(workspace: IWorkspace) =
     interface ITool with
         member _.Name = "折り線"
         member _.ShortcutKey = "Ctrl+F"
-        member _.Icon = Assembly.GetExecutingAssembly().GetManifestResourceStream("Orimath.Folds.Icon.png")
+        member _.Icon = Orimath.Basics.InternalModule.getIcon "fold"
         member _.OnActivated() =
             paper.SelectedLayers .<- array.Empty()
             paper.SelectedPoints .<- array.Empty()
