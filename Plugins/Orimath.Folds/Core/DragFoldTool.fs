@@ -4,7 +4,6 @@ open Orimath.Core
 open Orimath.FoldingInstruction
 open Orimath.Plugins
 open FoldOperation
-open ApplicativeProperty
 open ApplicativeProperty.PropOperators
 
 type DragFoldTool(workspace: IWorkspace) =
@@ -31,8 +30,8 @@ type DragFoldTool(workspace: IWorkspace) =
                 match target.Target with
                 | DisplayTarget.Line(line) ->
                     if modifier.HasFlag(OperationModifier.Ctrl)
-                    then FoldBack.foldBackFirst workspace line.Line
-                    else FoldBack.foldBack workspace line.Line
+                    then FoldBack.foldBackFirst workspace line.Line None
+                    else FoldBack.foldBack workspace line.Line None
                 | _ -> ()
             else
                 let clearOther = not (modifier.HasFlag(OperationModifier.Shift))
@@ -98,9 +97,9 @@ type DragFoldTool(workspace: IWorkspace) =
             | Some(line) ->
                 use __ = paper.BeginChange()
                 if modifier.HasFlag(OperationModifier.Ctrl) then
-                    FoldBack.foldBackFirst workspace line
+                    FoldBack.foldBackFirst workspace line (FoldOperation.getSourcePoint opr)
                 elif modifier.HasFlag(OperationModifier.Shift) then
-                    FoldBack.foldBack workspace line
+                    FoldBack.foldBack workspace line (FoldOperation.getSourcePoint opr)
                 else
                     this.MakeCrease(line)
             | None -> ()

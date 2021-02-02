@@ -113,17 +113,17 @@ type LineSegmentExtensions =
         let grouped = lineSegments |> Seq.groupBy(fun s -> Nearly(s.Line))
         let result = ResizeArray<LineSegment>()
         for line, segs in grouped do
-            System.Diagnostics.Debug.Print("■" + line.ToString())
+            let getD = if line.Value.YFactor = 0.0 then (fun s -> s.Y) else (fun s -> s.X)
             segs
             |> Seq.map(fun s ->
-                if (if line.Value.YFactor = 0.0 then s.Point1.Y > s.Point2.Y else s.Point1.X > s.Point2.X)
+                if getD s.Point1 > getD s.Point2
                 then LineSegment(line.Value, s.Point2, s.Point1)
                 else s)
-            |> Seq.sortBy(fun s -> if line.Value.YFactor = 0.0 then s.Point1.Y else s.Point1.X)
+            |> Seq.sortBy(fun s -> getD s.Point1)
             |> Seq.iter(fun s ->
-                System.Diagnostics.Debug.Print(s.ToString())
                 if result.Count > 0 && result.[result.Count - 1].HasIntersection(s) then
-                    result.[result.Count - 1] <- LineSegment(line.Value, result.[result.Count - 1].Point1, s.Point2)
+                    if getD s.Point2 > getD result.[result.Count - 1].Point2 then
+                        result.[result.Count - 1] <- LineSegment(line.Value, result.[result.Count - 1].Point1, s.Point2)
                 else
                     result.Add(s))
         result :> seq<_>

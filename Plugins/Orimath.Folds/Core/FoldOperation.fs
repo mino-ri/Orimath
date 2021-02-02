@@ -3,16 +3,19 @@ open Orimath.Core
 open Orimath.Core.NearlyEquatable
 open Orimath.Plugins
 
+[<Struct>]
+type FoldDirection = PointToLine | LineToPoint
+
 type FoldOperation =
     | NoOperation
     | Axiom1 of Point * Point
     | Axiom2 of Point * Point
     | Axiom3 of (LineSegment * Point) * (LineSegment * Point)
     | Axiom4 of LineSegment * Point * isEdge: bool
-    | Axiom5 of pass: Point * (LineSegment * Point) * Point
-    | Axiom6 of LineSegment * Point * (LineSegment * Point) * Point
-    | Axiom7 of pass: LineSegment * LineSegment * Point * isPassEdge: bool
-    | AxiomP of LineSegment * Point
+    | Axiom5 of pass: Point * (LineSegment * Point) * Point * direction: FoldDirection
+    | Axiom6 of LineSegment * Point * (LineSegment * Point) * Point * direction: FoldDirection
+    | Axiom7 of pass: LineSegment * (LineSegment * Point) * Point * isPassEdge: bool * direction: FoldDirection
+    | AxiomP of (LineSegment * Point) * Point * direction: FoldDirection
 
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module internal FoldOperation =
@@ -53,16 +56,18 @@ module internal FoldOperation =
             | LineOrEdge2(line, isEdge), FreePoint free (point) -> Axiom4(line, point, isEdge)
             | _ -> NoOperation
         else
+            let lpOpr direction line point =
+                match getPass paper with
+                | Some(pass), None -> Axiom5(pass, line, point, direction)
+                | None, Some(pass, isEdge) -> Axiom7(pass, line, point, isEdge, direction)
+                | Some(p), Some(l, _) -> Axiom6(l, p, line, point, direction)
+                | _ -> AxiomP(line, point, direction)
+
             match source, target with
             | FreePoint free (point1), FreePoint free (point2) -> Axiom2(point1, point2)
             | LineOrEdge(line1), LineOrEdge(line2) -> Axiom3(line1, line2)
-            | FreePoint free (point), LineOrEdge(line)
-            | LineOrEdge(line), FreePoint free (point) ->
-                match getPass paper with
-                | Some(pass), None -> Axiom5(pass, line, point)
-                | None, Some(pass, isEdge) -> Axiom7(pass, fst line, point, isEdge)
-                | Some(p), Some(l, _) -> Axiom6(l, p, line, point)
-                | _ -> AxiomP(fst line, point)
+            | FreePoint free (point), LineOrEdge(line) -> lpOpr PointToLine line point
+            | LineOrEdge(line), FreePoint free (point) -> lpOpr LineToPoint line point
             | _ -> NoOperation
 
     let getLines opr =
@@ -72,10 +77,10 @@ module internal FoldOperation =
         | Axiom2(point1, point2) -> Fold.axiom2 point1 point2 |> Option.toList
         | Axiom3((line1, _), (line2, _)) -> Fold.axiom3 line1.Line line2.Line
         | Axiom4(line, point, _) -> [Fold.axiom4 line.Line point]
-        | Axiom5(pass, (line, _), point) -> Fold.axiom5 pass line.Line point
-        | Axiom6(line1, point1, (line2, _), point2) -> Fold.axiom6 line1.Line point1 line2.Line point2
-        | Axiom7(pass, line, point, _) -> Fold.axiom7 pass.Line line.Line point |> Option.toList
-        | AxiomP(line, point) -> Fold.axiomP line.Line point |> Option.toList
+        | Axiom5(pass, (line, _), point, _) -> Fold.axiom5 pass line.Line point
+        | Axiom6(line1, point1, (line2, _), point2, _) -> Fold.axiom6 line1.Line point1 line2.Line point2
+        | Axiom7(pass, (line, _), point, _, _) -> Fold.axiom7 pass.Line line.Line point |> Option.toList
+        | AxiomP((line, _), point, _) -> Fold.axiomP line.Line point |> Option.toList
 
     let chooseLine (lines: Line list) (opr: FoldOperation) =
         match lines with
@@ -95,7 +100,22 @@ module internal FoldOperation =
                         if x1 <=~ cross.X && cross.X <=~ x2 && y1 <=~ cross.Y && cross.Y <=~ y2
                         then Some(lines.[0])
                         else Some(lines.[1])
-            | Axiom5(_, (_, point1), point2)
-            | Axiom6(_, _, (_, point1), point2) ->
+            | Axiom5(_, (_, point1), point2, _)
+            | Axiom6(_, _, (_, point1), point2, _) ->
                 Some(lines |> List.minBy(fun line -> point1.GetDistance(line.Reflect(point2))))
             | _ -> Some(lines.[0])
+
+    let getSourcePoint opr =
+        match opr with
+        | NoOperation
+        | Axiom1 _
+        | Axiom4 _ -> None
+        | Axiom2(p, _)
+        | Axiom3((_, p), _) -> Some(p)
+        | Axiom5(_, (_, lp), p, dir)
+        | Axiom6(_, _, (_, lp), p, dir)
+        | Axiom7(_, (_, lp), p, _, dir)
+        | AxiomP((_, lp), p, dir) ->
+            match dir with
+            | LineToPoint -> Some(lp)
+            | PointToLine -> Some(p)

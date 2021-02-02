@@ -26,6 +26,7 @@ type internal InstructionWrapper(paper: IPaper) =
             }
         instruction.Lines .<- (lines
             |> Seq.collect(paper.Clip)
+            |> LineSegmentExtensions.Merge
             |> Seq.map mapping
             |> Seq.toArray)
 
@@ -58,6 +59,10 @@ type internal InstructionWrapper(paper: IPaper) =
                     if p =~ reflected then Array.Empty()
                     else [| InstructionArrow.ValleyFold(p, chosen.Reflect(p), InstructionColor.Blue) |]
         let arrows, points =
+            let swapByDir dir point linePoint =
+                match dir with
+                | LineToPoint -> linePoint, point
+                | PointToLine -> point, linePoint
             match opr with
             | NoOperation -> Array.Empty(), Array.Empty()
             | Axiom1(_, _) -> getGeneralArrow(), Array.Empty()
@@ -66,27 +71,34 @@ type internal InstructionWrapper(paper: IPaper) =
             | Axiom4(line, _, isEdge) ->
                 let perpendicular = getPerpendicularArrow line chosen isEdge
                 (if Array.isEmpty perpendicular then getGeneralArrow() else perpendicular), Array.Empty()
-            | Axiom5(_, _, point) ->
+            | Axiom5(_, _, point, dir) ->
                 let reflected = chosen.Reflect(point)
-                [| InstructionArrow.ValleyFold(point, reflected, InstructionColor.Blue) |],
+                let pStart, pEnd = swapByDir dir point reflected
+                [| InstructionArrow.ValleyFold(pStart, pEnd, InstructionColor.Blue) |],
                 [| { Point = reflected; Color = InstructionColor.Brown } |]
-            | Axiom6(_, point1, _, point2) ->
+            | Axiom6(_, point1, _, point2, dir) ->
                 let reflected1 = chosen.Reflect(point1)
                 let reflected2 = chosen.Reflect(point2)
-                [| InstructionArrow.ValleyFold(point1, reflected1, InstructionColor.Blue)
-                   InstructionArrow.ValleyFold(point2, reflected2, InstructionColor.Blue) |],
+                let pStart1, pEnd1 = swapByDir dir point1 reflected1
+                let pStart2, pEnd2 =
+                    if chosen.GetDistanceSign(pStart1) = chosen.GetDistanceSign(point2)
+                    then point2, reflected2
+                    else reflected2, point2
+                [| InstructionArrow.ValleyFold(pStart1, pEnd1, InstructionColor.Blue)
+                   InstructionArrow.ValleyFold(pStart2, pEnd2, InstructionColor.Blue) |],
                 [| { Point = reflected1; Color = InstructionColor.Brown }
                    { Point = reflected2; Color = InstructionColor.Brown } |]
-            | Axiom7(pass, _, point, isEdge) ->
+            | Axiom7(pass, _, point, isEdge, dir) ->
                 let reflected = chosen.Reflect(point)
+                let pStart, pEnd = swapByDir dir point reflected
                 let arrows =
                     Array.append
                         (getPerpendicularArrow pass chosen isEdge)
-                        [| InstructionArrow.ValleyFold(point, reflected, InstructionColor.Blue) |]
+                        [| InstructionArrow.ValleyFold(pStart, pEnd, InstructionColor.Blue) |]
                 arrows, [| { Point = reflected; Color = InstructionColor.Brown } |]
-            | AxiomP(_, point) ->
-                match source with
-                | LineOrEdge _ -> [| InstructionArrow.ValleyFold(chosen.Reflect(point), point, InstructionColor.Blue) |], Array.Empty()
-                | _ -> [| InstructionArrow.ValleyFold(point, chosen.Reflect(point), InstructionColor.Blue) |], Array.Empty()
+            | AxiomP(_, point, dir) ->
+                let reflected = chosen.Reflect(point)
+                let pStart, pEnd = swapByDir dir point reflected
+                [| InstructionArrow.ValleyFold(pStart, pEnd, InstructionColor.Blue) |], Array.Empty()
         instruction.Arrows .<- arrows
         instruction.Points .<- points
