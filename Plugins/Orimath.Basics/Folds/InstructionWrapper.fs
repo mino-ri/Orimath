@@ -46,11 +46,11 @@ type internal InstructionWrapper(paper: IPaper) =
             then InstructionArrow.ValleyFold(startPoint, endPoint, InstructionColor.Blue, dir)
             else InstructionArrow.Create(startPoint, endPoint, ArrowType.ValleyFold, ArrowType.ValleyFold, InstructionColor.Green, dir)
         let getGeneralArrow() =
-            match paper.ClipBound(chosen) with
+            match Paper.clipBoundBy paper chosen with
             | None -> array.Empty()
             | Some(first, last) ->
                 let middle = (first + last) / 2.0
-                match paper.ClipBound(Fold.axiom4 chosen middle) with
+                match Paper.clipBoundBy paper (Fold.axiom4 chosen middle) with
                 | None -> array.Empty()
                 | Some(point1, point2) ->
                     let point = if middle.GetDistance(point1) <= middle.GetDistance(point2) then point1 else point2

@@ -1,15 +1,12 @@
 ﻿namespace Orimath.Core
 open System.Collections.Generic
-open System.Runtime.CompilerServices
 
 type IPaper =
     abstract member Layers : IReadOnlyList<ILayer>
 
-[<Extension>]
-type PaperExtensions =
+module Paper =
     /// この紙の範囲内に収まるように、指定された直線をカットします。
-    [<Extension>]
-    static member Clip(paper: IPaper, line: Line) =
+    let clipBy (paper: IPaper) (line: Line) =
         let mutable result = []
         paper.Layers
         |> Seq.collect(fun l -> l.Clip(line))
@@ -27,10 +24,7 @@ type PaperExtensions =
         result
 
     /// この紙の範囲内に収まるように指定された直線をカットし、その両端の位置を返します。
-    [<Extension>]
-    static member ClipBound(paper: IPaper, line: Line) =
-        let segments = paper.Clip(line)
-        if segments.IsEmpty then
-            None
-        else
-            Some((List.last segments).Point1, segments.Head.Point2)
+    let clipBoundBy (paper: IPaper) (line: Line) =
+        match clipBy paper line with
+        | [] -> None
+        | segments -> Some((List.last segments).Point1, segments.Head.Point2)
