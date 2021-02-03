@@ -1,5 +1,4 @@
 ﻿namespace Orimath.Basics.Folds
-open System.Reflection
 open Orimath.Core
 open Orimath.FoldingInstruction
 open Orimath.Plugins

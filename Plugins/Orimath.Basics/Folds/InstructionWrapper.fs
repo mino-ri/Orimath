@@ -1,5 +1,4 @@
 ﻿namespace Orimath.Basics.Folds
-open System
 open Orimath.Core
 open Orimath.Core.NearlyEquatable
 open Orimath.FoldingInstruction
@@ -12,9 +11,9 @@ type internal InstructionWrapper(paper: IPaper) =
     member _.Instruction = instruction
 
     member _.ResetAll() =
-        instruction.Lines .<- Array.Empty()
-        instruction.Arrows .<- Array.Empty()
-        instruction.Points .<- Array.Empty()
+        instruction.Lines .<- array.Empty()
+        instruction.Arrows .<- array.Empty()
+        instruction.Points .<- array.Empty()
 
     member _.SetLines(layers: seq<ILayerModel>, lines: seq<Line>, chosen) =
         let mapping l = {
@@ -31,8 +30,8 @@ type internal InstructionWrapper(paper: IPaper) =
             |> Seq.toArray)
 
     member _.ResetArrows() =
-        instruction.Arrows .<- Array.Empty()
-        instruction.Points .<- Array.Empty()
+        instruction.Arrows .<- array.Empty()
+        instruction.Points .<- array.Empty()
 
     member _.SetArrow(chosen: Line, opr: FoldOperation, foldBack: bool) =
         let createArrow startPoint endPoint center =
@@ -48,26 +47,26 @@ type internal InstructionWrapper(paper: IPaper) =
             else InstructionArrow.Create(startPoint, endPoint, ArrowType.ValleyFold, ArrowType.ValleyFold, InstructionColor.Green, dir)
         let getGeneralArrow() =
             match paper.ClipBound(chosen) with
-            | None -> Array.Empty()
+            | None -> array.Empty()
             | Some(first, last) ->
                 let middle = (first + last) / 2.0
                 match paper.ClipBound(Fold.axiom4 chosen middle) with
-                | None -> Array.Empty()
+                | None -> array.Empty()
                 | Some(point1, point2) ->
                     let point = if middle.GetDistance(point1) <= middle.GetDistance(point2) then point1 else point2
                     if chosen.Contains(point)
-                    then Array.Empty()
+                    then array.Empty()
                     else [| createArrow point (chosen.Reflect(point)) center |]
         let getPerpendicularArrow (line: LineSegment) (chosen: Line) (isEdge: bool) =
-            if isEdge then Array.Empty()
+            if isEdge then array.Empty()
             else
                 let p1 = chosen.GetSignedDistance(line.Point1)
                 let p2 = chosen.GetSignedDistance(line.Point2)
-                if sign p1 = sign p2 then Array.Empty()
+                if sign p1 = sign p2 then array.Empty()
                 else
                     let p = if abs p1 < abs p2 then line.Point1 else line.Point2
                     let reflected = chosen.Reflect(p)
-                    if p =~ reflected then Array.Empty()
+                    if p =~ reflected then array.Empty()
                     else [| createArrow p (chosen.Reflect(p)) center |]
         let arrows, points =
             let swapByDir dir point linePoint =
@@ -75,15 +74,15 @@ type internal InstructionWrapper(paper: IPaper) =
                 | LineToPoint -> linePoint, point
                 | PointToLine -> point, linePoint
             match opr with
-            | NoOperation -> Array.Empty(), Array.Empty()
-            | Axiom1(_, _) -> getGeneralArrow(), Array.Empty()
-            | Axiom2(point1, point2) -> [| createArrow point1 point2 center |], Array.Empty()
+            | NoOperation -> array.Empty(), array.Empty()
+            | Axiom1(_, _) -> getGeneralArrow(), array.Empty()
+            | Axiom2(point1, point2) -> [| createArrow point1 point2 center |], array.Empty()
             | Axiom3((line1, point), (line2, _)) ->
                 let center = line1.Line.GetCrossPoint(line2.Line) |> Option.defaultValue center
-                [| createArrow point (chosen.Reflect(point)) center |], Array.Empty()
+                [| createArrow point (chosen.Reflect(point)) center |], array.Empty()
             | Axiom4(line, _, isEdge) ->
                 let perpendicular = getPerpendicularArrow line chosen isEdge
-                (if Array.isEmpty perpendicular then getGeneralArrow() else perpendicular), Array.Empty()
+                (if Array.isEmpty perpendicular then getGeneralArrow() else perpendicular), array.Empty()
             | Axiom5(pass, _, point, dir) ->
                 let reflected = chosen.Reflect(point)
                 let pStart, pEnd = swapByDir dir point reflected
@@ -112,6 +111,6 @@ type internal InstructionWrapper(paper: IPaper) =
             | AxiomP(_, point, dir) ->
                 let reflected = chosen.Reflect(point)
                 let pStart, pEnd = swapByDir dir point reflected
-                [| createArrow pStart pEnd center |], Array.Empty()
+                [| createArrow pStart pEnd center |], array.Empty()
         instruction.Arrows .<- arrows
         instruction.Points .<- points

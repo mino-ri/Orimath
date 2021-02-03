@@ -1,5 +1,4 @@
 ﻿namespace Orimath.Basics
-open System
 open Orimath.Core
 open Orimath.FoldingInstruction
 open Orimath.Plugins
@@ -78,7 +77,7 @@ type MeasureTool(workspace: IWorkspace) =
             | _ -> false
 
         member _.DragLeave(_, target, _) =
-            instruction.Lines .<- Array.Empty()
+            instruction.Lines .<- array.Empty()
             match target with
             | FreePoint _ | LineOrEdge _ -> true
             | _ -> false
@@ -91,7 +90,7 @@ type MeasureTool(workspace: IWorkspace) =
                 if modifier.HasFlag(OperationModifier.Shift)
                 then Array.append paper.SelectedLines.Value (Option.toArray(this.GetDistanceLine(source, target)))
                 else Option.toArray(this.GetDistanceLine(source, target))
-            instruction.Lines .<- Array.Empty()
+            instruction.Lines .<- array.Empty()
 
     interface IFoldingInstructionTool with
         member _.FoldingInstruction = instruction

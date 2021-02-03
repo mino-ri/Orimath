@@ -28,3 +28,5 @@ type ExistsBuilder() =
     member inline _.Return(x: bool) = x
 
 let exists = ExistsBuilder()
+
+let swapWhen cond a b = if cond then b, a else a, b

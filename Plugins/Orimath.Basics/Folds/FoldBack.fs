@@ -71,9 +71,9 @@ let private splitEdges (foldLine: Line) (layer: ILayer) =
         let positiveEdge, negativeEdge =
             match layer.ClipBound(foldLine) with
             | Some(a, b) ->
-                if edge.Line.Contains(a) = positiveToNegative
-                then LineSegment.FromPoints(a, b), LineSegment.FromPoints(b, a)
-                else LineSegment.FromPoints(b, a), LineSegment.FromPoints(a, b)
+                swapWhen (edge.Line.Contains(a) = positiveToNegative)
+                         (LineSegment.FromPoints(b, a))
+                         (LineSegment.FromPoints(a, b))
             | None -> None, None
         positiveEdge |> Option.iter(fun e -> positiveEdges.Add(Edge(e, true)))
         negativeEdge |> Option.iter(fun e -> negativeEdges.Add(Edge(e, true)))
@@ -214,7 +214,7 @@ let private getTargetLayersCore (paper: IPaperModel) (line: Line) (dynamicPoint:
         paper.Layers
         |> Seq.mapi(fun i layer ->
             let positive, negative = splitLayerCore line layer
-            if  isPositiveStatic line dynamicPoint
+            if isPositiveStatic line dynamicPoint
             then { Original = layer; Static = positive; Dynamic = negative; IsTarget = false }
             else { Original = layer; Static = negative; Dynamic = positive; IsTarget = false })
         |> Seq.rev
@@ -283,9 +283,5 @@ let foldBackFirst (workspace: IWorkspace) line dynamicPoint targets =
 
 let getTargetLayers (workspace: IWorkspace) line dynamicPoint targets =
     match getTargetLayersCore workspace.Paper line dynamicPoint targets with
-    | Some(ls) ->
-        ls
-        |> Seq.filter(fun s -> s.IsTarget)
-        |> Seq.map(fun s -> s.Original)
-        |> Seq.toArray
-    | None -> System.Array.Empty()
+    | Some(ls) -> [| for s in ls do if s.IsTarget then yield s.Original |]
+    | None -> array.Empty()

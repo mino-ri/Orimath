@@ -36,8 +36,7 @@ type NewPaperExecutor(workspace: IWorkspace) =
             member _.ShortcutKey = "Ctrl+Delete"
             member _.Icon = InternalModule.getIcon "delete"
             member _.CanExecute = upcast Prop.ctrue
-            member _.Execute() = this.NewPaper()
-        }
+            member _.Execute() = this.NewPaper() }
 
     member this.NewPaperEffect =
         { new IParametricEffect with
@@ -47,5 +46,4 @@ type NewPaperExecutor(workspace: IWorkspace) =
             member _.Icon = InternalModule.getIcon "new_paper"
             member _.CanExecute = upcast Prop.ctrue
             member _.Execute() = this.NewPaper()
-            member _.GetParameter() = this :> obj
-        }
+            member _.GetParameter() = this :> obj }
