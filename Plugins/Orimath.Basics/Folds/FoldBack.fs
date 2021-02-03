@@ -1,6 +1,7 @@
 ﻿module internal Orimath.Basics.Folds.FoldBack
 open Orimath.Core
 open Orimath.Plugins
+open Orimath.Basics.InternalModule
 open Orimath.Core.NearlyEquatable
 
 let private center = { X = 0.5; Y = 0.5 }
@@ -11,6 +12,7 @@ type private LayerSource =
       Points: Point list
       Lines: LineSegment list }
 
+[<ReferenceEquality; NoComparison>]
 type private SplittedLayer =
     { Original: ILayerModel
       Static: LayerSource option
@@ -187,16 +189,19 @@ let isPositiveStatic (line: Line) dynamicPoint =
     | Some(point) -> not (line.IsPositiveSide(point))
     | None -> line.IsPositiveSide(center)
 
-let private setContactedLayers (layers: SplittedLayer[]) firstIndices =
-    firstIndices |> Seq.iter(fun i -> layers.[i].IsTarget <- true)
-    for srcIndex = 0 to layers.Length - 2 do
-        if layers.[srcIndex].IsTarget then
-            for dstIndex = 0 to layers.Length - 1 do
-                if srcIndex <> dstIndex && not layers.[dstIndex].IsTarget then
-                    match layers.[srcIndex].Dynamic, layers.[dstIndex].Dynamic with
-                    | Some(src), Some(dst) when isContacted src.OriginalEdges dst.OriginalEdges ->
-                        layers.[dstIndex].IsTarget <- true
-                    | _ -> ()
+let private clusterLayers (layers: SplittedLayer[]) =
+    let clusterIndices = ResizeArray<SplittedLayer list>()
+    for layer in layers do
+        layer.Dynamic |> Option.iter(fun dl ->
+            clusterIndices
+            |> Seq.tryFindIndex(fun cluster -> exists {
+                let! cl = cluster
+                let! c = cl.Dynamic
+                return isContacted dl.OriginalEdges c.OriginalEdges })
+            |> function
+            | Some(i) -> clusterIndices.[i] <- layer :: clusterIndices.[i]
+            | None -> clusterIndices.Add([layer]))
+    clusterIndices
 
 let foldBack (workspace: IWorkspace) line dynamicPoint =
     let positiveStatic = isPositiveStatic line dynamicPoint
@@ -207,36 +212,39 @@ let foldBack (workspace: IWorkspace) line dynamicPoint =
 let private getTargetLayersCore (paper: IPaperModel) (line: Line) (dynamicPoint: Point option) (targets: OperationTarget list) =
     let layers =
         paper.Layers
-        |> Seq.map(fun layer ->
+        |> Seq.mapi(fun i layer ->
             let positive, negative = splitLayerCore line layer
             if  isPositiveStatic line dynamicPoint
             then { Original = layer; Static = positive; Dynamic = negative; IsTarget = false }
             else { Original = layer; Static = negative; Dynamic = positive; IsTarget = false })
         |> Seq.rev
         |> Seq.toArray
-    let getIndex t = paper.Layers.Count - 1 - (paper.Layers |> Seq.findIndex ((=) t.Layer))
+    let getLayer t = layers |> Seq.find (fun sl -> sl.Original = t.Layer)
     let contains (layer: ILayerModel) (target: OperationTarget) =
         match target.Target with
-        | DisplayTarget.Edge(e) -> layer.Contains(e.Line)
-        | DisplayTarget.Line(l) -> layer.Contains(l)
+        | DisplayTarget.Edge(e) -> layer.Clip(e.Line) |> Seq.isEmpty |> not
+        | DisplayTarget.Line(l) -> layer.Clip(l) |> Seq.isEmpty |> not
         | DisplayTarget.Point(p) -> layer.Contains(p)
         | _ -> false
-    let firstIndices =
-        match targets with
+    let firstLayers =
+        match targets |> List.map getLayer |> List.filter(fun l -> l.Dynamic.IsSome) with
         | [] ->
             layers
-            |> Array.tryFindIndex(fun item -> item.Static.IsSome && item.Dynamic.IsSome)
+            |> Array.tryFind(fun item -> item.Static.IsSome && item.Dynamic.IsSome)
             |> Option.toList
-        | [t] -> [getIndex t]
+        | [t] -> [t]
         | ts ->
-            match ts |> List.tryFind(fun t -> List.forall (contains t.Layer) ts) with
-            | Some(t) -> [getIndex t]
-            | None -> ts |> List.map getIndex
-    match firstIndices with
-    | [] -> None
-    | firstIndices ->
-        let rec setDynamicLayers (indices: seq<int>) =
-            setContactedLayers layers indices
+            match ts |> Seq.tryFind(fun t -> List.forall (contains t.Original) targets) with
+            | Some(t) -> [t]
+            | None -> ts
+    if firstLayers.IsEmpty then
+        None
+    else
+        let clusters = clusterLayers layers
+        let rec setDynamicLayers firstLayers =
+            for layer in firstLayers do
+                for l in Seq.find (List.contains layer) clusters do
+                    l.IsTarget <- true
             let lastIndex = Array.findIndexBack (fun l -> l.IsTarget) layers
             let mergedLine =
                 layers
@@ -245,16 +253,18 @@ let private getTargetLayersCore (paper: IPaperModel) (line: Line) (dynamicPoint:
                 |> Seq.collect(fun dl -> dl.Edges.Clip(line))
                 |> LineSegmentExtensions.Merge
                 |> Seq.toList
-            seq { 0..lastIndex }
-            |> Seq.tryFind(fun i ->
-                not layers.[i].IsTarget &&
-                layers.[i].Dynamic |> Option.exists(fun dl ->
-                    mergedLine |> List.exists(fun l -> not (Seq.isEmpty (dl.Edges.Clip(l))))))
+            layers
+            |> Seq.take (lastIndex + 1)
+            |> Seq.tryFind(fun layer ->
+                not layer.IsTarget && exists {
+                    let! dl = layer.Dynamic
+                    let! l = mergedLine
+                    return not (dl.Edges.Clip(l) |> Seq.isEmpty) })
             // 末尾最適化のため、Option.iter を使わない
             |> function
             | None -> ()
-            | Some(ix) -> setDynamicLayers [|ix|]
-        setDynamicLayers firstIndices
+            | Some(layer) -> setDynamicLayers [layer]
+        setDynamicLayers firstLayers
         Some(layers)
 
 let foldBackFirst (workspace: IWorkspace) line dynamicPoint targets =

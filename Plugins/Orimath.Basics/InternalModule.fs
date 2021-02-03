@@ -19,3 +19,12 @@ let transform (workspace: IWorkspace) (matrix: Matrix) (reverse: bool) =
                 layer.OriginalEdges,
                 layer.Matrix * matrix))
     workspace.Paper.Clear(workspace.CreatePaper(if reverse then Seq.rev newLayers else newLayers))
+
+type ExistsBuilder() =
+    member inline _.Bind(m, f) = Option.exists f m
+    member inline _.Bind(m, f) = List.exists f m
+    member inline _.Bind(m, f) = Array.exists f m
+    member inline _.Bind(m, f) = Seq.exists f m
+    member inline _.Return(x: bool) = x
+
+let exists = ExistsBuilder()
