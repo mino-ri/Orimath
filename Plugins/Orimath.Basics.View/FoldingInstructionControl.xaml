@@ -34,6 +34,7 @@
                          Fill="{Binding Color, Mode=OneWay, Converter={StaticResource CudConverter}}"
                          StartType="{Binding StartType, Mode=OneWay}"
                          EndType="{Binding EndType, Mode=OneWay}"
+                         Direction="{Binding Direction, Mode=OneWay}"
                          StrokeThickness="4" />
         </DataTemplate>
         <ControlTemplate TargetType="{x:Type Control}" x:Key="PointControlTemplate">

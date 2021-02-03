@@ -29,6 +29,9 @@ namespace Orimath.Basics.View.ViewModels
         private InstructionColor _color;
         public InstructionColor Color { get => _color; set => SetValue(ref _color, value); }
 
+        private ArrowDirection _direction;
+        public ArrowDirection Direction { get => _direction; set => SetValue(ref _direction, value); }
+
         public InstructionArrowViewModel(IViewPointConverter pointConverter)
         {
             _pointConverter = pointConverter;
@@ -51,6 +54,7 @@ namespace Orimath.Basics.View.ViewModels
             StartType = model.StartType;
             EndType = model.EndType;
             Color = model.Color;
+            Direction = model.Direction;
         }
     }
 }

@@ -66,6 +66,11 @@ type ArrowType =
     | MountainFold = 2
     | ValleyFold = 3
 
+type ArrowDirection =
+    | Auto = 0
+    | Clockwise = 1
+    | Counterclockwise = 2
+
 [<Struct; NoComparison>]
 type InstructionArrow =
     {
@@ -73,21 +78,29 @@ type InstructionArrow =
         StartType: ArrowType
         EndType: ArrowType
         Color: InstructionColor
+        Direction: ArrowDirection
     }
     
-    static member Create(startPoint: Point, endPoint: Point, startType: ArrowType, endType: ArrowType, color: InstructionColor) =
+    static member Create(startPoint, endPoint, startType, endType, color, direction) =
         {
             Line = LineSegment.FromPoints(startPoint, endPoint).Value
             StartType = startType
             EndType = endType
             Color = color
+            Direction = direction
         }
 
-    static member Create(startPoint: Point, endPoint: Point, endType: ArrowType, color: InstructionColor) =
+    static member Create(startPoint, endPoint, startType, endType, color) =
+        InstructionArrow.Create(startPoint, endPoint, startType, endType, color, ArrowDirection.Auto)
+
+    static member Create(startPoint, endPoint, endType, color) =
         InstructionArrow.Create(startPoint, endPoint, ArrowType.None, endType, color)
 
-    static member Create(startPoint: Point, endPoint: Point, endType: ArrowType) =
+    static member Create(startPoint, endPoint, endType) =
         InstructionArrow.Create(startPoint, endPoint, ArrowType.None, endType, InstructionColor.Black)
+
+    static member Normal(startPoint, endPoint, color, direction) =
+        InstructionArrow.Create(startPoint, endPoint, ArrowType.None, ArrowType.Normal, color, direction)
 
     static member Normal(startPoint, endPoint, color) =
         InstructionArrow.Create(startPoint, endPoint, ArrowType.Normal, color)
@@ -95,11 +108,17 @@ type InstructionArrow =
     static member Normal(startPoint, endPoint) =
         InstructionArrow.Create(startPoint, endPoint, ArrowType.Normal)
 
+    static member MountainFold(startPoint, endPoint, color, direction) =
+        InstructionArrow.Create(startPoint, endPoint, ArrowType.None, ArrowType.MountainFold, color, direction)
+
     static member MountainFold(startPoint, endPoint, color) =
         InstructionArrow.Create(startPoint, endPoint, ArrowType.MountainFold, color)
 
     static member MountainFold(startPoint, endPoint) =
         InstructionArrow.Create(startPoint, endPoint, ArrowType.MountainFold)
+
+    static member ValleyFold(startPoint, endPoint, color, direction) =
+        InstructionArrow.Create(startPoint, endPoint, ArrowType.None, ArrowType.ValleyFold, color, direction)
 
     static member ValleyFold(startPoint, endPoint, color) =
         InstructionArrow.Create(startPoint, endPoint, ArrowType.ValleyFold, color)

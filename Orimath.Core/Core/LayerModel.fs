@@ -18,7 +18,7 @@ and internal IInternalPaperModel =
     inherit IPaperModel
     abstract member PushUndoOpr : opr: PaperOpr -> unit
 
-and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Layer) as this =
+and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Layer) =
     let layerLines = ReactiveCollection<LineSegment>(init.Lines)
     let layerPoints = ReactiveCollection<Point>(init.Points)
     

@@ -86,7 +86,7 @@ type DragFoldTool(workspace: IWorkspace) =
                     then FoldBack.getTargetLayers workspace c (this.GetSourcePoint(opr)) [source; target] :> seq<_>
                     else paper.Layers :> seq<_>
                 instruction.SetLines(targetLayers, lines, chosen)
-                instruction.SetArrow(c, opr)
+                instruction.SetArrow(c, opr, modifier.HasFlag(OperationModifier.Shift))
             | None ->
                 instruction.SetLines(paper.Layers, lines, chosen)
                 instruction.ResetArrows()

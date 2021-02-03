@@ -58,6 +58,11 @@ namespace Orimath.Basics.View.Controls
             DependencyProperty.Register(nameof(EndType), typeof(ArrowType), typeof(Arrow),
                 new FrameworkPropertyMetadata(ArrowType.None, FpmOptions.AffectsMeasure | FpmOptions.AffectsRender));
 
+        public ArrowDirection Direction { get => (ArrowDirection)GetValue(DirectionProperty); set => SetValue(DirectionProperty, value); }
+        public static readonly DependencyProperty DirectionProperty =
+            DependencyProperty.Register(nameof(Direction), typeof(ArrowDirection), typeof(Arrow),
+                new FrameworkPropertyMetadata(ArrowDirection.Auto, FpmOptions.AffectsMeasure | FpmOptions.AffectsRender));
+
         protected override Geometry DefiningGeometry
         {
             get
@@ -66,7 +71,13 @@ namespace Orimath.Basics.View.Controls
                 var v2 = new Vector(X2, Y2);
                 var normal = v2 - v1;
                 normal.Normalize();
-                var vertical = normal.X > 0d
+                var direction = Direction switch
+                {
+                    ArrowDirection.Clockwise => SweepDirection.Clockwise,
+                    ArrowDirection.Counterclockwise => SweepDirection.Counterclockwise,
+                    _ => normal.X > 0d ? SweepDirection.Clockwise : SweepDirection.Counterclockwise,
+                };
+                var vertical = direction == SweepDirection.Clockwise
                     ? new Vector(normal.Y, -normal.X)
                     : new Vector(-normal.Y, normal.X);
                 var pointMargin = PointMargin;
@@ -79,8 +90,9 @@ namespace Orimath.Basics.View.Controls
                     var point2 = v2 - normal * (pointMargin * Sin60) + vertical * (pointMargin * Cos60);
                     var distance = (point2 - point1).Length;
 
+
                     DrawArrow(true, StartType, point1, normal, vertical);
-                    context.ArcTo((Point)point2, new Size(distance, distance), 0d, false, normal.X > 0d ? SweepDirection.Clockwise : SweepDirection.Counterclockwise, true, false);
+                    context.ArcTo((Point)point2, new Size(distance, distance), 0d, false, direction, true, false);
                     DrawArrow(false, EndType, point2, -normal, vertical);
 
                     void DrawArrow(bool begin, ArrowType type, Vector basePoint, Vector normal, Vector vertical)
