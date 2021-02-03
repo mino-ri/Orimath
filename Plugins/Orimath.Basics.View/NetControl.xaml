@@ -1,0 +1,43 @@
+﻿<UserControl x:Class="Orimath.Basics.View.NetControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vm="clr-namespace:Orimath.Basics.View.ViewModels"
+             xmlns:ctrl="clr-namespace:Orimath.Basics.View.Controls"
+             mc:Ignorable="d"
+             Margin="-136,0,0,0"
+             VerticalContentAlignment="Bottom"
+             d:DataContext="{d:DesignData Type={x:Type vm:NetViewModel}}">
+    <UserControl.Resources>
+        <ctrl:UniversalColorConverter x:Key="universalColorConverter" />
+        <ControlTemplate TargetType="{x:Type ctrl:LineControl}" x:Key="lineTemplate">
+            <Line Stroke="{TemplateBinding BorderBrush}"
+                  StrokeThickness="{TemplateBinding StrokeThickness}"
+                  StrokeStartLineCap="Round"
+                  StrokeEndLineCap="Round"
+                  X1="{TemplateBinding X1}"
+                  X2="{TemplateBinding X2}"
+                  Y1="{TemplateBinding Y1}"
+                  Y2="{TemplateBinding Y2}" />
+        </ControlTemplate>
+    </UserControl.Resources>
+    <ItemsControl Width="136" Height="136" Padding="4" ItemsSource="{Binding Lines, Mode=OneTime}">
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <Grid />
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+            <DataTemplate DataType="{x:Type vm:NetLineViewModel}">
+                <ctrl:LineControl Template="{StaticResource lineTemplate}"
+                                  BorderBrush="{Binding Color, Converter={StaticResource universalColorConverter}}"
+                                  BorderThickness="2"
+                                  X1="{Binding X1, Mode=OneTime}"
+                                  X2="{Binding X2, Mode=OneTime}"
+                                  Y1="{Binding Y1, Mode=OneTime}"
+                                  Y2="{Binding Y2, Mode=OneTime}" />
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>
+</UserControl>

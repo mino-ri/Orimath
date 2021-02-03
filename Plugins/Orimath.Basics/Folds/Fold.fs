@@ -1,6 +1,5 @@
 ﻿module Orimath.Basics.Folds.Fold
 open Orimath.Core
-open NearlyEquatable
 
 let axiom1 p1 p2 =
     Line.FromPoints(p1, p2)

@@ -43,6 +43,15 @@ namespace Orimath.Basics.View
         }
     }
 
+    [DisplayName("ビュー: 展開図"), Description("展開図を表示します。")]
+    public class NetViewPlugin : IViewPlugin
+    {
+        public void Execute(ViewPluginArgs args)
+        {
+            args.Messenger.AddViewModel(new NetViewModel(args.Workspace.Paper, args.Dispatcher));
+        }
+    }
+
     [DisplayName("ビュー: 計測"), Description("選択中の点・線の情報を表示します。")]
     public class MeasureViewPlugin : IViewPlugin
     {
