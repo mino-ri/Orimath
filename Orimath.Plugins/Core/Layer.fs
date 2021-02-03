@@ -24,13 +24,13 @@ type ILayer =
 [<Extension>]
 type LayerExtensions =
     [<Extension>]
-    static member Contains(edges, point: Point) =
+    static member Contains(edges: Edge list, point: Point) =
         let rec recSelf acm (edges: Edge list) =
             match edges with
             | head :: tail ->
                 let p1 = head.Line.Point1
                 let p2 = head.Line.Point2
-                if head.Line.Contains(point) then
+                if LineSegment.containsPoint point head.Line then
                     true
                 else
                     if (p1.Y <= point.Y && point.Y < p2.Y || p2.Y <= point.Y && point.Y < p1.Y) &&
@@ -69,7 +69,7 @@ type LayerExtensions =
     [<Extension>]
     static member HasLine(layer: ILayer, line: LineSegment) =
         layer.Edges |> Seq.exists(fun e -> e.Line.Line =~ line.Line) ||
-        layer.Lines |> Seq.exists(fun l -> l.Contains(line))
+        layer.Lines |> Seq.exists (LineSegment.containsSeg line)
 
     /// このレイヤーに、指定した直線と同じ線分が存在するか判断します。
     [<Extension>]
@@ -83,7 +83,7 @@ type LayerExtensions =
         let points = ResizeArray()
         for edge in edges do
             match Line.cross edge.Line.Line line with
-            | Some(p) when edge.Line.Contains(p) && not (points |> Seq.exists((=~) p))
+            | Some(p) when LineSegment.containsPoint p edge.Line && not (points |> Seq.exists((=~) p))
                 -> points.Add(p)
             | _ -> ()
         points
@@ -112,7 +112,7 @@ type LayerExtensions =
         points.Add(line.Point1)
         points.Add(line.Point2)
         for edge in edges do
-            match edge.Line.GetCrossPoint(line) with
+            match LineSegment.cross edge.Line line with
             | Some(p) when not (points |> Seq.exists((=~) p)) -> points.Add(p)
             | _ -> ()
         points
@@ -143,9 +143,9 @@ type LayerExtensions =
     static member private AppendCross(layer: ILayer, line: LineSegment, points: Point list) =
         let mutable points = points
         for edge in layer.Edges do
-            points <- LayerExtensions.TryAddPoint(layer, points, edge.Line.GetCrossPoint(line))
+            points <- LayerExtensions.TryAddPoint(layer, points, LineSegment.cross edge.Line line)
         for layerLine in layer.Lines do
-            points <- LayerExtensions.TryAddPoint(layer, points, layerLine.GetCrossPoint(line))
+            points <- LayerExtensions.TryAddPoint(layer, points, LineSegment.cross layerLine line)
         points
             
     /// このレイヤー内の全ての折線と、指定した線分との交点を取得します。
@@ -162,7 +162,7 @@ type LayerExtensions =
                 if (points |> List.forall((<>~) line.Point1)) && not (layer.HasPoint(line.Point1)) then points <- line.Point1 :: points
                 if (points |> List.forall((<>~) line.Point2)) && not (layer.HasPoint(line.Point2)) then points <- line.Point2 :: points
                 points <- LayerExtensions.AppendCross(layer, line, points)
-                for tailLine in tail do points <- LayerExtensions.TryAddPoint(layer, points, tailLine.GetCrossPoint(line))
+                for tailLine in tail do points <- LayerExtensions.TryAddPoint(layer, points, LineSegment.cross tailLine line)
                 recSelf tail points
             | _ -> points
         recSelf (asList lines) []

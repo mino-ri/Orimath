@@ -96,11 +96,13 @@ type OpenAllEffect(workspace: IWorkspace) =
             use __ = workspace.Paper.BeginChange()
             let layers = workspace.Paper.Layers |> Seq.toArray
             let joinedLayer =
-                let edges = ResizeArray(LineSegmentExtensions.Merge(seq {
-                    for ly in layers do
-                    for e in ly.OriginalEdges do
-                    if not e.Inner then
-                        yield e.Line }))
+                let edges =
+                    seq { for ly in layers do
+                          for e in ly.OriginalEdges do
+                          if not e.Inner then
+                              yield e.Line }
+                    |> LineSegment.merge
+                    |> ResizeArray
                 let points = ResizeArray()
                 let mutable currentPoint = edges.[0].Point1
                 while edges.Count > 0 do
@@ -111,9 +113,10 @@ type OpenAllEffect(workspace: IWorkspace) =
                     edges.RemoveAt(index)
                 workspace.CreateLayerFromPolygon(points, LayerType.BackSide)
             workspace.Paper.Clear(workspace.CreatePaper([joinedLayer]))
-            let lines = LineSegmentExtensions.Merge(seq {
-                for layer in layers do
-                let inv = layer.Matrix.Invert()
-                yield! seq { for e in layer.Edges -> e.Line * inv }
-                yield! seq { for x in layer.Lines -> x * inv } })
+            let lines = 
+                seq { for layer in layers do
+                      let inv = layer.Matrix.Invert()
+                      yield! seq { for e in layer.Edges -> e.Line * inv }
+                      yield! seq { for x in layer.Lines -> x * inv } }
+                |> LineSegment.merge
             workspace.Paper.Layers.[0].AddLines(lines)

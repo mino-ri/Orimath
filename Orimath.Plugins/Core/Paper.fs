@@ -18,7 +18,8 @@ type PaperExtensions =
             match result with
             | [] -> result <- [l]
             | head :: tail ->
-                if head.Contains(l.Point1) && not (head.Contains(l.Point2)) then
+                if LineSegment.containsPoint l.Point1 head &&
+                   not (LineSegment.containsPoint l.Point2 head) then
                     match LineSegment.FromPoints(head.Point1, l.Point2) with
                     | Some(newLine) -> result <- newLine :: tail
                     | None -> ()

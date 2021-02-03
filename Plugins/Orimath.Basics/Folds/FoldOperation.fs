@@ -102,7 +102,7 @@ module internal FoldOperation =
                         else Some(lines.[1])
             | Axiom5(_, (_, point1), point2, _)
             | Axiom6(_, _, (_, point1), point2, _) ->
-                Some(lines |> List.minBy(fun line -> Point.dist point1 (Line.reflectPoint point2 line)))
+                Some(lines |> List.minBy(fun line -> Point.dist point1 (Point.reflectBy line point2)))
             | _ -> Some(lines.[0])
 
     let getSourcePoint opr =

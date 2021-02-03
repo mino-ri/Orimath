@@ -49,6 +49,7 @@ type Line = private { A: float; B: float; C: float } with
     static member FromPointsCSharp(p1, p2) =
         Option.toNullable(Line.FromPoints(p1, p2))
 
+
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Line =
     /// 直線と点の距離を取得します。直線の右側か左側かによって符号が変わります。
@@ -113,18 +114,29 @@ module Line =
             X = point.X - line.A * sDist
             Y = point.Y - line.B * sDist
         }
-        
-    /// 現在の直線を鏡として、直線を反転させます。
-    [<CompiledName("Reflect")>]
-    let reflectLine target line =
-        let e = 2.0 * (line.A * target.A + line.B * target.B)
-        Line.Create(target.A - line.A * e, target.B - line.B * e, target.C - line.C * e)
 
-    /// 現在の直線を鏡として、点を反転させます。
+    /// 直線を鏡として、直線を反転させます。
     [<CompiledName("Reflect")>]
-    let reflectPoint point line =
-        let sDist = 2.0 * signedDist point line
+    let reflectBy mirror line =
+        let e = 2.0 * (mirror.A * line.A + mirror.B * line.B)
+        Line.Create(line.A - mirror.A * e, line.B - mirror.B * e, line.C - mirror.C * e)
+
+
+[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
+module Point =
+    /// 点と点の距離を求めます。
+    [<CompiledName("GetDistance")>]
+    let dist (p1: Point) p2 = p1.GetDistance(p2)
+
+    /// 点のノルムを求めます。
+    [<CompiledName("GetNorm")>]
+    let norm (p: Point) = p.Norm
+
+    /// 直線を鏡として、点を反転させます。
+    [<CompiledName("ReflectBy")>]
+    let reflectBy mirror point =
+        let sDist = 2.0 * Line.signedDist point mirror
         {
-            X = point.X - line.A * sDist
-            Y = point.Y - line.B * sDist
+            X = point.X - mirror.A * sDist
+            Y = point.Y - mirror.B * sDist
         }

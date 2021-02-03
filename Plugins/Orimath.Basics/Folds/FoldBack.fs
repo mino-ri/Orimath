@@ -71,7 +71,7 @@ let private splitEdges (foldLine: Line) (layer: ILayer) =
         let positiveEdge, negativeEdge =
             match layer.ClipBound(foldLine) with
             | Some(a, b) ->
-                swapWhen (edge.Line.Contains(a) = positiveToNegative)
+                swapWhen (LineSegment.containsPoint a edge.Line = positiveToNegative)
                          (LineSegment.FromPoints(b, a))
                          (LineSegment.FromPoints(a, b))
             | None -> None, None
@@ -163,9 +163,9 @@ let private createLayer (workspace: IWorkspace) (foldLine: Line) (layer: ILayer)
             layer.Matrix)
     else
         workspace.CreateLayer(
-            source.Edges |> Seq.map(fun e -> Edge(e.Line.ReflectBy(foldLine), e.Inner)),
-            source.Lines |> Seq.map(fun ls -> ls.ReflectBy(foldLine)),
-            source.Points |> Seq.map(fun p -> Line.reflectPoint p foldLine),
+            source.Edges |> Seq.map(fun e -> Edge(LineSegment.reflectBy foldLine e.Line, e.Inner)),
+            source.Lines |> Seq.map (LineSegment.reflectBy foldLine),
+            source.Points |> Seq.map (Point.reflectBy foldLine),
             layer.LayerType.TurnOver(),
             source.OriginalEdges,
             layer.Matrix * Matrix.OfReflection(foldLine))
@@ -251,7 +251,7 @@ let private getTargetLayersCore (paper: IPaperModel) (line: Line) (dynamicPoint:
                 |> Seq.filter(fun l -> l.IsTarget)
                 |> Seq.choose(fun l -> l.Dynamic)
                 |> Seq.collect(fun dl -> dl.Edges.Clip(line))
-                |> LineSegmentExtensions.Merge
+                |> LineSegment.merge
                 |> Seq.toList
             layers
             |> Seq.take (lastIndex + 1)

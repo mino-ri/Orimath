@@ -26,8 +26,3 @@ type Point = { X: float; Y: float } with
     static member ( * ) (scalar: float, a: Point) = { X = a.X * scalar; Y = a.Y * scalar }
     static member ( / ) (a: Point, scalar: float) = { X = a.X / scalar; Y = a.Y / scalar }
     static member ( / ) (scalar: float, a: Point) = { X = a.X / scalar; Y = a.Y / scalar }
-
-module Point =
-    let dist (p1: Point) p2 = p1.GetDistance(p2)
-
-    let norm (p: Point) = p.Norm

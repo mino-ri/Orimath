@@ -25,7 +25,7 @@ type internal InstructionWrapper(paper: IPaper) =
             }
         instruction.Lines .<- (layers
             |> Seq.collect(fun ly -> lines |> Seq.collect ly.Clip)
-            |> LineSegmentExtensions.Merge
+            |> LineSegment.merge
             |> Seq.map mapping
             |> Seq.toArray)
 
@@ -56,7 +56,7 @@ type internal InstructionWrapper(paper: IPaper) =
                     let point = if middle.GetDistance(point1) <= middle.GetDistance(point2) then point1 else point2
                     if Line.contains point chosen
                     then array.Empty()
-                    else [| createArrow point (Line.reflectPoint point chosen) center |]
+                    else [| createArrow point (Point.reflectBy chosen point) center |]
         let getPerpendicularArrow (line: LineSegment) (chosen: Line) (isEdge: bool) =
             if isEdge then array.Empty()
             else
@@ -65,9 +65,9 @@ type internal InstructionWrapper(paper: IPaper) =
                 if sign p1 = sign p2 then array.Empty()
                 else
                     let p = if abs p1 < abs p2 then line.Point1 else line.Point2
-                    let reflected = Line.reflectPoint p chosen
+                    let reflected = Point.reflectBy chosen p
                     if p =~ reflected then array.Empty()
-                    else [| createArrow p (Line.reflectPoint p chosen) center |]
+                    else [| createArrow p (Point.reflectBy chosen p) center |]
         let arrows, points =
             let swapByDir dir point linePoint =
                 match dir with
@@ -79,18 +79,18 @@ type internal InstructionWrapper(paper: IPaper) =
             | Axiom2(point1, point2) -> [| createArrow point1 point2 center |], array.Empty()
             | Axiom3((line1, point), (line2, _)) ->
                 let center = Line.cross line1.Line line2.Line |> Option.defaultValue center
-                [| createArrow point (Line.reflectPoint point chosen) center |], array.Empty()
+                [| createArrow point (Point.reflectBy chosen point) center |], array.Empty()
             | Axiom4(line, _, isEdge) ->
                 let perpendicular = getPerpendicularArrow line chosen isEdge
                 (if Array.isEmpty perpendicular then getGeneralArrow() else perpendicular), array.Empty()
             | Axiom5(pass, _, point, dir) ->
-                let reflected = Line.reflectPoint point chosen
+                let reflected = Point.reflectBy chosen point
                 let pStart, pEnd = swapByDir dir point reflected
                 [| createArrow pStart pEnd pass |],
                 [| { Point = reflected; Color = InstructionColor.Brown } |]
             | Axiom6(_, point1, _, point2, dir) ->
-                let reflected1 = Line.reflectPoint point1 chosen
-                let reflected2 = Line.reflectPoint point2 chosen
+                let reflected1 = Point.reflectBy chosen point1
+                let reflected2 = Point.reflectBy chosen point2
                 let pStart2, pEnd2 = swapByDir dir point2 reflected2
                 let pStart1, pEnd1 =
                     if Line.distSign pStart2 chosen = Line.distSign point1 chosen
@@ -101,7 +101,7 @@ type internal InstructionWrapper(paper: IPaper) =
                 [| { Point = reflected1; Color = InstructionColor.Brown }
                    { Point = reflected2; Color = InstructionColor.Brown } |]
             | Axiom7(pass, _, point, isEdge, dir) ->
-                let reflected = Line.reflectPoint point chosen
+                let reflected = Point.reflectBy chosen point
                 let pStart, pEnd = swapByDir dir point reflected
                 let arrows =
                     Array.append
@@ -109,7 +109,7 @@ type internal InstructionWrapper(paper: IPaper) =
                         [| createArrow pStart pEnd center |]
                 arrows, [| { Point = reflected; Color = InstructionColor.Brown } |]
             | AxiomP(_, point, dir) ->
-                let reflected = Line.reflectPoint point chosen
+                let reflected = Point.reflectBy chosen point
                 let pStart, pEnd = swapByDir dir point reflected
                 [| createArrow pStart pEnd center |], array.Empty()
         instruction.Arrows .<- arrows
