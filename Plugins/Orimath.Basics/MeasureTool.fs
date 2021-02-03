@@ -23,15 +23,15 @@ type MeasureTool(workspace: IWorkspace) =
         match source, target with
         | FreePoint(p1), FreePoint(p2) -> LineSegment.FromPoints(p1, p2)
         | FreePoint(p1), LineOrEdge(l1, _) 
-        | LineOrEdge(l1, _), FreePoint(p1) -> LineSegment.FromPoints(p1, l1.GetPerpendicularFoot(p1))
+        | LineOrEdge(l1, _), FreePoint(p1) -> LineSegment.FromPoints(p1, Line.perpFoot p1 l1)
         | LineOrEdge(l1, p1), LineOrEdge(l2, _) ->
-            match l1.GetCrossPoint(l2) with
+            match Line.cross l1 l2 with
             | Some(crossPoint) ->
                 let cosTheta = abs (l1.XFactor * l2.XFactor + l1.YFactor * l2.YFactor)
                 let sinTheta = -sqrt(1.0 - cosTheta * cosTheta)
                 Some(LineSegment.FromFactorsAndPoint(sinTheta, cosTheta, crossPoint))
             | None ->
-                match Line.FromFactorsAndPoint(l1.YFactor, -l1.XFactor, p1).GetCrossPoint(l2) with
+                match Line.cross l2 (Line.FromFactorsAndPoint(l1.YFactor, -l1.XFactor, p1)) with
                 | Some(p2) -> LineSegment.FromPoints(p1, p2)
                 | None -> None
         | _ -> None

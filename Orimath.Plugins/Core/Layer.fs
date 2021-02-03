@@ -34,7 +34,7 @@ type LayerExtensions =
                     true
                 else
                     if (p1.Y <= point.Y && point.Y < p2.Y || p2.Y <= point.Y && point.Y < p1.Y) &&
-                        point.X < head.Line.Line.GetX(point.Y) then
+                        point.X < Line.getX point.Y head.Line.Line then
                         recSelf (acm + 1) tail
                     else
                         recSelf acm tail
@@ -82,7 +82,7 @@ type LayerExtensions =
     static member Clip(edges: Edge list, line: Line) =
         let points = ResizeArray()
         for edge in edges do
-            match edge.Line.Line.GetCrossPoint(line) with
+            match Line.cross edge.Line.Line line with
             | Some(p) when edge.Line.Contains(p) && not (points |> Seq.exists((=~) p))
                 -> points.Add(p)
             | _ -> ()

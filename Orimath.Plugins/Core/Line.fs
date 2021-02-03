@@ -13,70 +13,6 @@ type Line = private { A: float; B: float; C: float } with
         yFactor <- this.B
         intercept <- this.C
     
-    /// 直線と点の距離を取得します。直線の右側か左側かによって符号が変わります。
-    member this.GetSignedDistance(point: Point) = this.A * point.X + this.B * point.Y + this.C
-
-    /// 直線と点の距離を取得します。
-    member this.GetDistance(point: Point) = abs (this.GetSignedDistance(point))
-
-    /// 直線から点への符号付き距離の符号を取得します。
-    member this.GetDistanceSign(point: Point) =
-        let s = this.GetSignedDistance(point)
-        if s =~~ 0.0 then 0 else sign s
-
-    /// 直線から点への符号付き距離の符号が正の範囲にあるか判断します。
-    member this.IsPositiveSide(point: Point) = 0 < this.GetDistanceSign(point)
-
-    /// 直線から点への符号付き距離の符号が負の範囲にあるか判断します。
-    member this.IsNegativeSide(point: Point) = this.GetDistanceSign(point) < 0
-
-    /// 2つの直線が交差する点を求めます。
-    member this.GetCrossPoint(other: Line) =
-        let divider = this.A * other.B - other.A * this.B
-        if divider =~~ 0.0 then
-            None
-        else
-            Some {
-                X = !+((this.B * other.C - other.B * this.C) / divider)
-                Y = !-((this.A * other.C - other.A * this.C) / divider)
-            }
-
-    /// 直線が指定した点を含んでいるか判定します。
-    member line.Contains(point: Point) = line.GetDistance(point) =~~ 0.0
-            
-    /// 直線上の指定したY値におけるX値を取得します。
-    member line.GetX(y) = !-((line.B * y + line.C) / line.A)
-            
-    /// 直線上の指定したX値におけるY値を取得します。
-    member line.GetY(x) = !-((line.A * x + line.C) / line.B)
-            
-    /// 直線上の指定したX値における点を取得します。
-    member line.XOf(x) = { X = x; Y = line.GetY(x) }
-            
-    /// 直線上の指定したY値における点を取得します。
-    member line.YOf(y) = { X = line.GetX(y); Y = y }
-            
-    /// 点から直線に下した垂線の足を取得します。
-    member line.GetPerpendicularFoot(point: Point) =
-        let sDist = line.GetSignedDistance(point)
-        {
-            X = point.X - line.A * sDist
-            Y = point.Y - line.B * sDist
-        }
-            
-    /// 現在の直線を鏡として、直線を反転させます。
-    member this.Reflect(target: Line) =
-        let e = 2.0 * (this.A * target.A + this.B * target.B)
-        Line.Create(target.A - this.A * e, target.B - this.B * e, target.C - this.C * e)
-
-    /// 現在の直線を鏡として、点を反転させます。
-    member this.Reflect(point: Point) =
-        let sDist = 2.0 * this.GetSignedDistance(point)
-        {
-            X = point.X - this.A * sDist
-            Y = point.Y - this.B * sDist
-        }
-
     override this.ToString() = System.String.Format("[{0:0.#####}, {1:0.#####}, {2:0.#####}]", this.A, this.B, this.C)
 
     interface INearlyEquatable<Line> with
@@ -112,3 +48,83 @@ type Line = private { A: float; B: float; C: float } with
     [<CompiledName("FromPoints")>]
     static member FromPointsCSharp(p1, p2) =
         Option.toNullable(Line.FromPoints(p1, p2))
+
+[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
+module Line =
+    /// 直線と点の距離を取得します。直線の右側か左側かによって符号が変わります。
+    [<CompiledName("GetSignedDistance")>]
+    let signedDist point line = line.A * point.X + line.B * point.Y + line.C
+
+    /// 直線と点の距離を取得します。
+    [<CompiledName("GetDistance")>]
+    let dist point line = abs (signedDist point line)
+
+    /// 直線から点への符号付き距離の符号を取得します。
+    [<CompiledName("GetDistanceSign")>]
+    let distSign point line =
+        let s = signedDist point line
+        if s =~~ 0.0 then 0 else sign s
+
+    /// 直線から点への符号付き距離の符号が正の範囲にあるか判断します。
+    [<CompiledName("IsPositiveSide")>]
+    let isPositiveSide point line = 0 < distSign point line
+
+    /// 直線から点への符号付き距離の符号が負の範囲にあるか判断します。
+    [<CompiledName("IsNegativeSide")>]
+    let isNegativeSide point line = distSign point line < 0
+
+    /// 2つの直線が交差する点を求めます。
+    [<CompiledName("GetCrossPoint")>]
+    let cross line1 line2 =
+        let divider = line1.A * line2.B - line2.A * line1.B
+        if divider =~~ 0.0 then
+            None
+        else
+            Some {
+                X = !+((line1.B * line2.C - line2.B * line1.C) / divider)
+                Y = !-((line1.A * line2.C - line2.A * line1.C) / divider)
+            }
+
+    /// 直線が指定した点を含んでいるか判定します。
+    [<CompiledName("Contains")>]
+    let contains point line = dist point line =~~ 0.0
+        
+    /// 直線上の指定したY値におけるX値を取得します。
+    [<CompiledName("GetX")>]
+    let getX y line = !-((line.B * y + line.C) / line.A)
+        
+    /// 直線上の指定したX値におけるY値を取得します。
+    [<CompiledName("GetY")>]
+    let getY x line = !-((line.A * x + line.C) / line.B)
+        
+    /// 直線上の指定したX値における点を取得します。
+    [<CompiledName("XOf")>]
+    let xOf x line = { X = x; Y = getY x line }
+        
+    /// 直線上の指定したY値における点を取得します。
+    [<CompiledName("YOf")>]
+    let yOf y line = { X = getX y line; Y = y }
+        
+    /// 点から直線に下した垂線の足を取得します。
+    [<CompiledName("GetPerpendicularFoot")>]
+    let perpFoot point line =
+        let sDist = signedDist point line
+        {
+            X = point.X - line.A * sDist
+            Y = point.Y - line.B * sDist
+        }
+        
+    /// 現在の直線を鏡として、直線を反転させます。
+    [<CompiledName("Reflect")>]
+    let reflectLine target line =
+        let e = 2.0 * (line.A * target.A + line.B * target.B)
+        Line.Create(target.A - line.A * e, target.B - line.B * e, target.C - line.C * e)
+
+    /// 現在の直線を鏡として、点を反転させます。
+    [<CompiledName("Reflect")>]
+    let reflectPoint point line =
+        let sDist = 2.0 * signedDist point line
+        {
+            X = point.X - line.A * sDist
+            Y = point.Y - line.B * sDist
+        }

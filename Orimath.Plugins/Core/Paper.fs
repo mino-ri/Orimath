@@ -1,7 +1,6 @@
 ﻿namespace Orimath.Core
 open System.Collections.Generic
 open System.Runtime.CompilerServices
-open NearlyEquatable
 
 type IPaper =
     abstract member Layers : IReadOnlyList<ILayer>

@@ -30,7 +30,7 @@ type LineSegment internal (line: Line, p1: Point, p2: Point) =
     member private this.ContainsCore(point) = this.ContainsX(point.X) && this.ContainsY(point.Y)
             
     /// 直線が指定した点を含んでいるか判定します。
-    member this.Contains(point) = this.ContainsCore(point) && this.Line.Contains(point)
+    member this.Contains(point) = this.ContainsCore(point) && Line.contains point this.Line
             
     /// 線分が指定した線分を含んでいるか判定します。
     member this.Contains(target: LineSegment) =
@@ -47,7 +47,7 @@ type LineSegment internal (line: Line, p1: Point, p2: Point) =
     /// 2つの線分が交差する点を求めます。
     [<CompiledName("GetCrossPointOption")>]
     member this.GetCrossPoint(other: LineSegment) =
-        this.Line.GetCrossPoint(other.Line)
+        Line.cross this.Line other.Line
         |> Option.filter(fun p -> this.ContainsCore(p) && other.ContainsCore(p))
             
     /// 2つの線分が交差する点を求めます。
@@ -56,19 +56,19 @@ type LineSegment internal (line: Line, p1: Point, p2: Point) =
             
     /// 直線上の指定したY値におけるX値を取得します。
     [<CompiledName("GetXFSharp")>]
-    member this.GetX(y) = if this.ContainsY(y) then Some(this.Line.GetX(y)) else None
+    member this.GetX(y) = if this.ContainsY(y) then Some(Line.getX y this.Line) else None
             
     /// 直線上の指定したX値におけるY値を取得します。
     [<CompiledName("GetYFSharp")>]
-    member this.GetY(x) = if this.ContainsX(x) then Some(this.Line.GetY(x)) else None
+    member this.GetY(x) = if this.ContainsX(x) then Some(Line.getY x this.Line) else None
             
     /// 直線上の指定したX値における点を取得します。
     [<CompiledName("XOfFSharp")>]
-    member this.XOf(x) = if this.ContainsX(x) then Some(this.Line.XOf(x)) else None
+    member this.XOf(x) = if this.ContainsX(x) then Some(Line.xOf x this.Line) else None
             
     /// 直線上の指定したY値における点を取得します。
     [<CompiledName("YOfFSharp")>]
-    member this.YOf(y) = if this.ContainsY(y) then Some(this.Line.YOf(y)) else None
+    member this.YOf(y) = if this.ContainsY(y) then Some(Line.yOf y this.Line) else None
             
     /// 直線上の指定したY値におけるX値を取得します。
     [<CompiledName("GetX")>]
@@ -88,8 +88,8 @@ type LineSegment internal (line: Line, p1: Point, p2: Point) =
 
     /// 現在の線分を、指定した直線で反転させます。
     member _.ReflectBy(line: Line) =
-        let p1 = line.Reflect(p1)
-        let p2 = line.Reflect(p2)
+        let p1 = Line.reflectPoint p1 line
+        let p2 = Line.reflectPoint p2 line
         LineSegment(Line.FromPoints(p1, p2).Value, p1, p2)
 
     static member FromFactorsAndPoint(xFactor, yFactor, p) =

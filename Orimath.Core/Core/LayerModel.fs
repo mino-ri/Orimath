@@ -1,5 +1,4 @@
 ﻿namespace Orimath.Core
-open System.Collections.Generic
 open Orimath.Plugins
 open ApplicativeProperty
 

@@ -92,7 +92,7 @@ module internal FoldOperation =
                 match Fold.axiom1 point1 point2 with
                 | None -> Some(lines.[0])
                 | Some(opLine) ->
-                    match opLine.GetCrossPoint(lines.[0]) with
+                    match Line.cross opLine lines.[0] with
                     | None -> Some(lines.[0])
                     | Some(cross) ->
                         let x1, x2 = if point1.X <= point2.X then point1.X, point2.X else point2.X, point1.X
@@ -102,7 +102,7 @@ module internal FoldOperation =
                         else Some(lines.[1])
             | Axiom5(_, (_, point1), point2, _)
             | Axiom6(_, _, (_, point1), point2, _) ->
-                Some(lines |> List.minBy(fun line -> point1.GetDistance(line.Reflect(point2))))
+                Some(lines |> List.minBy(fun line -> Point.dist point1 (Line.reflectPoint point2 line)))
             | _ -> Some(lines.[0])
 
     let getSourcePoint opr =

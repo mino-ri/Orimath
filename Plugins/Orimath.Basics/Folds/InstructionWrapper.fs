@@ -33,7 +33,7 @@ type internal InstructionWrapper(paper: IPaper) =
         instruction.Arrows .<- array.Empty()
         instruction.Points .<- array.Empty()
 
-    member _.SetArrow(chosen: Line, opr: FoldOperation, foldBack: bool) =
+    member _.SetArrow(chosen, opr, foldBack) =
         let createArrow startPoint endPoint center =
             let dir =
                 let s = startPoint - center
@@ -54,20 +54,20 @@ type internal InstructionWrapper(paper: IPaper) =
                 | None -> array.Empty()
                 | Some(point1, point2) ->
                     let point = if middle.GetDistance(point1) <= middle.GetDistance(point2) then point1 else point2
-                    if chosen.Contains(point)
+                    if Line.contains point chosen
                     then array.Empty()
-                    else [| createArrow point (chosen.Reflect(point)) center |]
+                    else [| createArrow point (Line.reflectPoint point chosen) center |]
         let getPerpendicularArrow (line: LineSegment) (chosen: Line) (isEdge: bool) =
             if isEdge then array.Empty()
             else
-                let p1 = chosen.GetSignedDistance(line.Point1)
-                let p2 = chosen.GetSignedDistance(line.Point2)
+                let p1 = Line.signedDist line.Point1 chosen
+                let p2 = Line.signedDist line.Point2 chosen
                 if sign p1 = sign p2 then array.Empty()
                 else
                     let p = if abs p1 < abs p2 then line.Point1 else line.Point2
-                    let reflected = chosen.Reflect(p)
+                    let reflected = Line.reflectPoint p chosen
                     if p =~ reflected then array.Empty()
-                    else [| createArrow p (chosen.Reflect(p)) center |]
+                    else [| createArrow p (Line.reflectPoint p chosen) center |]
         let arrows, points =
             let swapByDir dir point linePoint =
                 match dir with
@@ -78,22 +78,22 @@ type internal InstructionWrapper(paper: IPaper) =
             | Axiom1(_, _) -> getGeneralArrow(), array.Empty()
             | Axiom2(point1, point2) -> [| createArrow point1 point2 center |], array.Empty()
             | Axiom3((line1, point), (line2, _)) ->
-                let center = line1.Line.GetCrossPoint(line2.Line) |> Option.defaultValue center
-                [| createArrow point (chosen.Reflect(point)) center |], array.Empty()
+                let center = Line.cross line1.Line line2.Line |> Option.defaultValue center
+                [| createArrow point (Line.reflectPoint point chosen) center |], array.Empty()
             | Axiom4(line, _, isEdge) ->
                 let perpendicular = getPerpendicularArrow line chosen isEdge
                 (if Array.isEmpty perpendicular then getGeneralArrow() else perpendicular), array.Empty()
             | Axiom5(pass, _, point, dir) ->
-                let reflected = chosen.Reflect(point)
+                let reflected = Line.reflectPoint point chosen
                 let pStart, pEnd = swapByDir dir point reflected
                 [| createArrow pStart pEnd pass |],
                 [| { Point = reflected; Color = InstructionColor.Brown } |]
             | Axiom6(_, point1, _, point2, dir) ->
-                let reflected1 = chosen.Reflect(point1)
-                let reflected2 = chosen.Reflect(point2)
+                let reflected1 = Line.reflectPoint point1 chosen
+                let reflected2 = Line.reflectPoint point2 chosen
                 let pStart2, pEnd2 = swapByDir dir point2 reflected2
                 let pStart1, pEnd1 =
-                    if chosen.GetDistanceSign(pStart2) = chosen.GetDistanceSign(point1)
+                    if Line.distSign pStart2 chosen = Line.distSign point1 chosen
                     then point1, reflected1
                     else reflected1, point1
                 [| createArrow pStart1 pEnd1 center
@@ -101,7 +101,7 @@ type internal InstructionWrapper(paper: IPaper) =
                 [| { Point = reflected1; Color = InstructionColor.Brown }
                    { Point = reflected2; Color = InstructionColor.Brown } |]
             | Axiom7(pass, _, point, isEdge, dir) ->
-                let reflected = chosen.Reflect(point)
+                let reflected = Line.reflectPoint point chosen
                 let pStart, pEnd = swapByDir dir point reflected
                 let arrows =
                     Array.append
@@ -109,7 +109,7 @@ type internal InstructionWrapper(paper: IPaper) =
                         [| createArrow pStart pEnd center |]
                 arrows, [| { Point = reflected; Color = InstructionColor.Brown } |]
             | AxiomP(_, point, dir) ->
-                let reflected = chosen.Reflect(point)
+                let reflected = Line.reflectPoint point chosen
                 let pStart, pEnd = swapByDir dir point reflected
                 [| createArrow pStart pEnd center |], array.Empty()
         instruction.Arrows .<- arrows

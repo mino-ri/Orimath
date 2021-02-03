@@ -32,7 +32,7 @@ let private splitPoints (foldLine: Line) (layer: ILayer) =
     let positivePoints = ResizeArray()
     let negativePoints = ResizeArray()
     for point in Seq.append layer.Points (layer.GetCrosses(layer.Clip(foldLine))) do
-        match foldLine.GetDistanceSign(point) with
+        match Line.distSign point foldLine with
         | 1 -> positivePoints.Add(point)
         | -1 -> negativePoints.Add(point)
         | _ ->
@@ -41,15 +41,15 @@ let private splitPoints (foldLine: Line) (layer: ILayer) =
     positivePoints, negativePoints
 
 let private splitLine (line: Line) (target: LineSegment) =
-    match line.GetDistanceSign(target.Point1), line.GetDistanceSign(target.Point2) with
+    match Line.distSign target.Point1 line, Line.distSign target.Point2 line with
     | 1, 1 | 1, 0 | 0, 1 -> Some(target), None
     | -1, -1 | -1, 0 | 0, -1 -> None, Some(target)
     | 1, -1 ->
-        let cross = line.GetCrossPoint(target.Line).Value
+        let cross = Line.cross line target.Line |> Option.get
         Some(LineSegment.FromPoints(target.Point1, cross).Value),
         Some(LineSegment.FromPoints(cross, target.Point2).Value)
     | -1, 1 ->
-        let cross = line.GetCrossPoint(target.Line).Value
+        let cross = Line.cross line target.Line |> Option.get
         Some(LineSegment.FromPoints(cross, target.Point2).Value),
         Some(LineSegment.FromPoints(target.Point1, cross).Value)
     | _ -> None, None
@@ -124,7 +124,7 @@ let private splitOriginalEdges foldLine positiveEdgesCount (layer: ILayer) =
     | true, true ->
         let edgeSign =
             edges1
-            |> Seq.map(fun e -> foldLine.GetDistanceSign(e.Line.Point1 * layer.Matrix))
+            |> Seq.map(fun e -> Line.distSign (e.Line.Point1 * layer.Matrix) foldLine)
             |> Seq.find(fun d -> d <> 0)
         if edgeSign > 0 then edges1, edges2 else edges2, edges1
 
@@ -165,7 +165,7 @@ let private createLayer (workspace: IWorkspace) (foldLine: Line) (layer: ILayer)
         workspace.CreateLayer(
             source.Edges |> Seq.map(fun e -> Edge(e.Line.ReflectBy(foldLine), e.Inner)),
             source.Lines |> Seq.map(fun ls -> ls.ReflectBy(foldLine)),
-            source.Points |> Seq.map foldLine.Reflect,
+            source.Points |> Seq.map(fun p -> Line.reflectPoint p foldLine),
             layer.LayerType.TurnOver(),
             source.OriginalEdges,
             layer.Matrix * Matrix.OfReflection(foldLine))
@@ -186,8 +186,8 @@ let private isContacted originalEdges1 originalEdge2 =
 
 let isPositiveStatic (line: Line) dynamicPoint =
     match dynamicPoint with
-    | Some(point) -> not (line.IsPositiveSide(point))
-    | None -> line.IsPositiveSide(center)
+    | Some(point) -> not (Line.isPositiveSide point line)
+    | None -> Line.isPositiveSide center line
 
 let private clusterLayers (layers: SplittedLayer[]) =
     let clusterIndices = ResizeArray<SplittedLayer list>()

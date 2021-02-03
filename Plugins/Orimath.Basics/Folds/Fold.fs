@@ -24,7 +24,7 @@ let axiom3 (line1: Line) (line2: Line) =
 let axiom4 (line: Line) point = Line.Create(-line.YFactor, line.XFactor, line.YFactor * point.X - line.XFactor * point.Y)
 
 let axiom5 pass (ontoLine: Line) ontoPoint =
-    if ontoLine.Contains(ontoPoint) then []
+    if  Line.contains ontoPoint ontoLine then []
     else
         let n = (ontoLine.XFactor * pass.X + ontoLine.YFactor * pass.Y + ontoLine.Intercept)
         let dist = (pass.X - ontoPoint.X) * (pass.X - ontoPoint.X) + (pass.Y - ontoPoint.Y) * (pass.Y - ontoPoint.Y)
@@ -94,12 +94,12 @@ let axiom6 (line1: Line) (point1: Point) (line2: Line) (point2: Point) =
             let b = b2 + t * a2
             let c = t * (x2 * b2 - y2 * a2) + ((x2 * a2 + y2 * b2) * (t * t - 1.0) + c2 * (t * t + 1.0)) / 2.0
             Line.Create(a, b, c))
-    if line1.Contains(point1) || line2.Contains(point2) then []
+    if Line.contains point1 line1 || Line.contains point2 line2 then []
     else
         getFactors line1.XFactor line1.YFactor line1.Intercept point1.X point1.Y line2.XFactor line2.YFactor line2.Intercept point2.X point2.Y
 
 let axiom7 (passLine: Line) (ontoLine: Line) ontoPoint =
-    if ontoLine.Contains(ontoPoint) then None
+    if Line.contains ontoPoint ontoLine then None
     else
         let c = passLine.YFactor * ontoPoint.X - passLine.XFactor * ontoPoint.Y -
                 (ontoLine.XFactor * ontoPoint.X + ontoLine.YFactor * ontoPoint.Y + ontoLine.Intercept) / (2.0 * (ontoLine.XFactor * passLine.YFactor - passLine.XFactor * ontoLine.YFactor))
