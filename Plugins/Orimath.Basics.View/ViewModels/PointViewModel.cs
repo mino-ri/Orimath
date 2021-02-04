@@ -1,7 +1,7 @@
 ﻿using System;
 using Orimath.Core;
 using Orimath.Plugins;
-using Mvvm;
+using Orimath.Controls;
 
 namespace Orimath.Basics.View.ViewModels
 {

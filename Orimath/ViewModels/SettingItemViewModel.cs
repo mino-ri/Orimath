@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
-using Mvvm;
+using Orimath.Controls;
 using Orimath.Reflection;
 
 namespace Orimath.ViewModels

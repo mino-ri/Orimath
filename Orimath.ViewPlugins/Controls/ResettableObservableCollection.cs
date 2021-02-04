@@ -3,7 +3,7 @@ using System.Collections.Specialized;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 
-namespace Mvvm
+namespace Orimath.Controls
 {
     public class ResettableObservableCollection<T> : ObservableCollection<T>
     {

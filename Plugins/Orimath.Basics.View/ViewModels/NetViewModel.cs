@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Mvvm;
+using Orimath.Controls;
 using Orimath.Core;
 using Orimath.FoldingInstruction;
 using Orimath.Plugins;

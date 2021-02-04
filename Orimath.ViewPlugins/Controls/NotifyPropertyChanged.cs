@@ -1,8 +1,7 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Mvvm
+namespace Orimath.Controls
 {
     public class NotifyPropertyChanged : INotifyPropertyChanged
     {

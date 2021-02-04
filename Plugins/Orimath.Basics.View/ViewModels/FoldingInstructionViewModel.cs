@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using Mvvm;
+using Orimath.Controls;
 using Orimath.Plugins;
 using Orimath.FoldingInstruction;
 using ApplicativeProperty;
@@ -8,7 +8,6 @@ namespace Orimath.Basics.View.ViewModels
 {
     public class FoldingInstructionViewModel : NotifyPropertyChanged
     {
-        private readonly IWorkspace _workspace;
         private readonly IDispatcher _dispatcher;
         private readonly IViewPointConverter _pointConverter;
         private CompositeDisposable? _disposables;
@@ -19,7 +18,6 @@ namespace Orimath.Basics.View.ViewModels
 
         public FoldingInstructionViewModel(IWorkspace workspace, IDispatcher dispatcher, IViewPointConverter pointConverter)
         {
-            _workspace = workspace;
             _dispatcher = dispatcher;
             _pointConverter = pointConverter;
             workspace.CurrentTool.Subscribe(Workspace_CurrentToolChanged);

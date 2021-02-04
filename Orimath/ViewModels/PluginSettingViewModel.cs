@@ -1,12 +1,13 @@
-﻿using Mvvm;
-using Orimath.Plugins;
-using Sssl;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Input;
+using Orimath.Controls;
+using Orimath.Plugins;
+using ApplicativeProperty;
+using Sssl;
 
 namespace Orimath.ViewModels
 {
@@ -26,7 +27,7 @@ namespace Orimath.ViewModels
                     PluginExecutor.ConfigurablePlugins.Select(c => new PluginItemSettingViewModel(c)))
                 .ToArray();
 
-            SaveCommand = new ActionCommand(_loadSetting.Save);
+            SaveCommand = Prop.True.ToCommand(_loadSetting.Save);
             CloseCommand = messenger.CloseDialogCommand;
         }
 
@@ -55,8 +56,9 @@ namespace Orimath.ViewModels
             SetViewModels(PluginExecutor.LoadedPluginTypes.Concat(PluginExecutor.LoadedViewPluginTypes).ToArray(),
                           PluginExecutor.Setting.PluginOrder, Plugins);
 
-            _upPluginCommand = new ActionCommand(UpPlugin, _ => 1 <= PluginIndex && PluginIndex < Plugins.Count);
-            _downPluginCommand = new ActionCommand(DownPlugin, _ => 0 <= PluginIndex && PluginIndex < Plugins.Count - 1);
+            PluginIndex = new ValueProp<int>(0);
+            UpPluginCommand = PluginIndex.Select(i => 1 <= i && i < Plugins.Count).ToCommand(UpPlugin);
+            DownPluginCommand = PluginIndex.Select(i => 0 <= i && i < Plugins.Count - 1).ToCommand(DownPlugin);
         }
 
         private static void SetViewModels(Type[] pluginTypes, string[] order, ObservableCollection<PluginViewModel> collection)
@@ -81,19 +83,7 @@ namespace Orimath.ViewModels
             }
         }
 
-        private int _pluginIndex;
-        public int PluginIndex
-        {
-            get => _pluginIndex;
-            set
-            {
-                if (SetValue(ref _pluginIndex, value))
-                {
-                    _upPluginCommand.OnCanExecuteChanged();
-                    _downPluginCommand.OnCanExecuteChanged();
-                }
-            }
-        }
+        public ValueProp<int> PluginIndex { get; }
 
         public void Save(object? dummy)
         {
@@ -104,15 +94,13 @@ namespace Orimath.ViewModels
             _messenger.CloseDialog();
         }
 
-        public void UpPlugin(object? dummy) => Plugins.Move(PluginIndex, PluginIndex - 1);
+        public void UpPlugin(object? dummy) => Plugins.Move(PluginIndex.Value, PluginIndex.Value - 1);
 
-        public void DownPlugin(object? dummy) => Plugins.Move(PluginIndex, PluginIndex + 1);
+        public void DownPlugin(object? dummy) => Plugins.Move(PluginIndex.Value, PluginIndex.Value + 1);
 
-        private readonly ActionCommand _upPluginCommand;
-        public ICommand UpPluginCommand => _upPluginCommand;
+        public ICommand UpPluginCommand { get; }
 
-        private readonly ActionCommand _downPluginCommand;
-        public ICommand DownPluginCommand => _downPluginCommand;
+        public ICommand DownPluginCommand { get; }
     }
 
     public class PluginItemSettingViewModel : PluginSettingPageViewModel

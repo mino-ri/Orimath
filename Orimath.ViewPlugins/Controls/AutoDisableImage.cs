@@ -4,7 +4,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using FpmOptions = System.Windows.FrameworkPropertyMetadataOptions;
 
-namespace Mvvm
+namespace Orimath.Controls
 {
     public class AutoDisableImage : Image
     {

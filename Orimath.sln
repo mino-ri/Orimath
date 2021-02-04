@@ -13,15 +13,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{52E0
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Orimath.Basics", "Plugins\Orimath.Basics\Orimath.Basics.fsproj", "{51CB0336-A340-4DDC-A70A-4B345EBD4AE0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mvvm", "Mvvm\Mvvm.csproj", "{3E853F21-B6B6-4393-A30B-C22D124CEEBB}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orimath.Basics.View", "Plugins\Orimath.Basics.View\Orimath.Basics.View.csproj", "{54479B62-86E9-465C-8CBB-9A314AC22D69}"
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Orimath.FoldingInstruction", "Plugins\Orimath.FoldingInstruction\Orimath.FoldingInstruction.fsproj", "{40D1E5E6-7DF5-4DFE-A262-5251A3DF7651}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Orimath.ViewPlugins", "Orimath.ViewPlugins\Orimath.ViewPlugins.csproj", "{FEA70879-2998-4E8A-AC8F-4BCC1393BE99}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Orimath.UITest", "Plugins\Orimath.UITest\Orimath.UITest.fsproj", "{E213A209-9785-42A5-9CA6-32988C12515D}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Orimath.UITest", "Plugins\Orimath.UITest\Orimath.UITest.fsproj", "{E213A209-9785-42A5-9CA6-32988C12515D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,10 +43,6 @@ Global
 		{51CB0336-A340-4DDC-A70A-4B345EBD4AE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{51CB0336-A340-4DDC-A70A-4B345EBD4AE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{51CB0336-A340-4DDC-A70A-4B345EBD4AE0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3E853F21-B6B6-4393-A30B-C22D124CEEBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3E853F21-B6B6-4393-A30B-C22D124CEEBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3E853F21-B6B6-4393-A30B-C22D124CEEBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3E853F21-B6B6-4393-A30B-C22D124CEEBB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{54479B62-86E9-465C-8CBB-9A314AC22D69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{54479B62-86E9-465C-8CBB-9A314AC22D69}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54479B62-86E9-465C-8CBB-9A314AC22D69}.Release|Any CPU.ActiveCfg = Release|Any CPU

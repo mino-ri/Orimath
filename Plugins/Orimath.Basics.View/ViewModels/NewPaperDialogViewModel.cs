@@ -1,6 +1,7 @@
 ﻿using System.Windows.Input;
-using Mvvm;
+using Orimath.Controls;
 using Orimath.Plugins;
+using ApplicativeProperty;
 
 namespace Orimath.Basics.View.ViewModels
 {
@@ -15,7 +16,7 @@ namespace Orimath.Basics.View.ViewModels
             _messenger = messenger;
             _dispatcher = dispatcher;
             _executor = executor;
-            ExecuteCommand = new ActionCommand(_ => Execute());
+            ExecuteCommand = Prop.True.ToCommand(_ => Execute());
             CloseCommand = messenger.CloseDialogCommand;
 
             if (_executor.NewPaperType.IsSquare)

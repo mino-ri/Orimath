@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Media;
-using Mvvm;
+using Orimath.Controls;
 using Orimath.Core;
 using Orimath.Plugins;
 using LineSegment = Orimath.Core.LineSegment;

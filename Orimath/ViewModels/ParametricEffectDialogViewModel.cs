@@ -1,6 +1,7 @@
 ﻿using System.Windows.Input;
-using Mvvm;
+using Orimath.Controls;
 using Orimath.Plugins;
+using ApplicativeProperty;
 
 namespace Orimath.ViewModels
 {
@@ -22,7 +23,7 @@ namespace Orimath.ViewModels
 
             Header = effect.Name;
             Parameter = parent.GetEffectParameterViewModel(_effect.GetParameter());
-            ExecuteCommand = new ActionCommand(Execute);
+            ExecuteCommand = Prop.True.ToCommand(Execute);
         }
 
         public async void Execute(object? dummy)

@@ -23,7 +23,7 @@
                 </Grid.ColumnDefinitions>
                 <ListBox Grid.Column="0" Margin="8,4,4,4"
                          ItemsSource="{Binding Plugins, Mode=OneTime}"
-                         SelectedIndex="{Binding PluginIndex, Mode=TwoWay}"
+                         SelectedIndex="{Binding PluginIndex.Value, Mode=TwoWay}"
                          ItemTemplate="{StaticResource PluginItemTemplate}" />
                 <StackPanel Grid.Column="1" Margin="0,4,8,4" Orientation="Vertical" VerticalAlignment="Center">
                     <Button Content="▲" Command="{Binding UpPluginCommand, Mode=OneTime}" MinWidth="0" Padding="6" Margin="1" ToolTip="上へ(Alt + ↑)" />
