@@ -26,34 +26,35 @@ namespace Orimath.Basics.View.ViewModels
             _disposer = source.Subscribe(Source_CollectionChanged);
         }
 
-        private async void Source_CollectionChanged(CollectionChange<TModel> e)
+        private void Source_CollectionChanged(CollectionChange<TModel> e)
         {
-            await _dispatcher.SwitchToUI();
-            switch (e)
-            {
-                case CollectionChange<TModel>.Add add:
-                    foreach (var item in add.items) Add(_mapper(item));
-                    break;
+            _dispatcher.OnUIAsync(() => {
+                switch (e)
+                {
+                    case CollectionChange<TModel>.Add add:
+                        foreach (var item in add.items) Add(_mapper(item));
+                        break;
 
-                case CollectionChange<TModel>.Remove remove:
-                    var length = Count;
-                    for (var index = length - 1; index >= length - remove.items.Count; index--)
-                    {
-                        _onRemove(this[index]);
-                        RemoveAt(index);
-                    }
-                    break;
+                    case CollectionChange<TModel>.Remove remove:
+                        var length = Count;
+                        for (var index = length - 1; index >= length - remove.items.Count; index--)
+                        {
+                            _onRemove(this[index]);
+                            RemoveAt(index);
+                        }
+                        break;
 
-                case CollectionChange<TModel>.Replace replace:
-                    _onRemove(this[replace.index]);
-                    this[replace.index] = _mapper(replace.newItem);
-                    break;
+                    case CollectionChange<TModel>.Replace replace:
+                        _onRemove(this[replace.index]);
+                        this[replace.index] = _mapper(replace.newItem);
+                        break;
 
-                case CollectionChange<TModel>.Reset reset:
-                    foreach (var item in this) _onRemove(item);
-                    Reset(reset.newItems.Select(_mapper));
-                    break;
-            }
+                    case CollectionChange<TModel>.Reset reset:
+                        foreach (var item in this) _onRemove(item);
+                        Reset(reset.newItems.Select(_mapper));
+                        break;
+                }
+            });
         }
 
         public void Dispose()

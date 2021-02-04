@@ -1,24 +1,14 @@
-﻿using Mvvm;
-using Orimath.Core;
+﻿using Orimath.Controls;
 using Orimath.Plugins;
 using Orimath.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 using ScreenPoint = System.Windows.Point;
 using ApplicativeProperty;
@@ -73,11 +63,16 @@ namespace Orimath
             var viewModel = (WorkspaceViewModel)DataContext;
             await Task.Run(viewModel.Initialize);
 
-            foreach (var (viewModelType, (_, uiType)) in viewModel.ViewDefinitions)
+            foreach (var (viewModelType, (_, viewDecl)) in viewModel.ViewDefinitions)
             {
                 var template = new DataTemplate(viewModelType)
                 {
-                    VisualTree = new FrameworkElementFactory(uiType),
+                    VisualTree = viewDecl switch
+                    {
+                        ViewDeclaration.ViewType(var type) => new FrameworkElementFactory(type),
+                        ViewDeclaration.ViewUri(var uri) => FromUri(uri),
+                        _ => throw new InvalidOperationException(),
+                    },
                 };
                 Resources.Add(template.DataTemplateKey, template);
             }
@@ -100,6 +95,13 @@ namespace Orimath
 
             MainScrollViewer.ScrollToVerticalOffset((MainScrollViewer.ExtentHeight - MainScrollViewer.ActualHeight) / 2.0);
             MainScrollViewer.ScrollToHorizontalOffset((MainScrollViewer.ExtentWidth - MainScrollViewer.ActualWidth) / 2.0);
+
+            FrameworkElementFactory FromUri(string uri)
+            {
+                var factory = new FrameworkElementFactory(typeof(ContentControl));
+                factory.SetValue(ContentProperty, new LoadExtension(uri));
+                return factory;
+            }
 
             void SetShortcutKey(MenuItemViewModel menuItem)
             {

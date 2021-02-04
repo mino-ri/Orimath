@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using Orimath.Plugins;
 using Orimath.Basics.View.ViewModels;
 
@@ -10,6 +11,7 @@ namespace Orimath.Basics.View
         public void Execute(ViewPluginArgs args)
         {
             args.Messenger.AddViewModel(new WorkspaceViewModel(args.Workspace, args.PointConverter, args.Dispatcher));
+            args.Messenger.RegisterView<WorkspaceViewModel, PaperControl>(ViewPane.Main);
         }
     }
 
@@ -22,6 +24,7 @@ namespace Orimath.Basics.View
             args.Workspace.AddEffect(newPaperExecutor.NewPaperEffect);
             args.Workspace.AddEffect(newPaperExecutor.ResetEffect);
             args.Messenger.SetEffectParameterViewModel<NewPaperExecutor>(p => new NewPaperDialogViewModel(args.Messenger, args.Dispatcher, p));
+            args.Messenger.RegisterView<NewPaperDialogViewModel, NewPaperDialogControl>(ViewPane.Dialog);
         }
     }
 
@@ -31,6 +34,7 @@ namespace Orimath.Basics.View
         public void Execute(ViewPluginArgs args)
         {
             args.Messenger.AddViewModel(new EffectListViewModel(args.Workspace, args.Messenger));
+            args.Messenger.RegisterView<EffectListViewModel, EffectListControl>(ViewPane.Top);
         }
     }
 
@@ -40,6 +44,7 @@ namespace Orimath.Basics.View
         public void Execute(ViewPluginArgs args)
         {
             args.Messenger.AddViewModel(new ToolListViewModel(args.Workspace, args.Dispatcher));
+            args.Messenger.RegisterView<ToolListViewModel, ToolListControl>(ViewPane.Side);
         }
     }
 
@@ -49,6 +54,7 @@ namespace Orimath.Basics.View
         public void Execute(ViewPluginArgs args)
         {
             args.Messenger.AddViewModel(new NetViewModel(args.Workspace.Paper, args.Dispatcher));
+            args.Messenger.RegisterView<NetViewModel, NetControl>(ViewPane.Side);
         }
     }
 
@@ -58,6 +64,7 @@ namespace Orimath.Basics.View
         public void Execute(ViewPluginArgs args)
         {
             args.Messenger.AddViewModel(new MeasureViewModel(args.Workspace.Paper, args.PointConverter, args.Dispatcher));
+            args.Messenger.RegisterView<MeasureViewModel, MeasureControl>(ViewPane.Side);
         }
     }
 
@@ -67,6 +74,7 @@ namespace Orimath.Basics.View
         public void Execute(ViewPluginArgs args)
         {
             args.Messenger.AddViewModel(new FoldingInstructionViewModel(args.Workspace, args.Dispatcher, args.PointConverter));
+            args.Messenger.RegisterView<FoldingInstructionViewModel, FoldingInstructionControl>(ViewPane.Main);
         }
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using System.Windows.Threading;
 using Mvvm;
 using Orimath.IO;
 using Orimath.Plugins;
@@ -25,7 +24,7 @@ namespace Orimath.ViewModels
 
         private bool _initialized;
 
-        public Dictionary<Type, (ViewPane pane, Type type)> ViewDefinitions { get; } = new();
+        public Dictionary<Type, (ViewPane pane, ViewDeclaration declaration)> ViewDefinitions { get; } = new();
 
         public ObservableCollection<object> MainViewModels { get; } = new();
 
@@ -112,14 +111,11 @@ namespace Orimath.ViewModels
         {
             var pointConverter = new ViewPointConverter(_setting.ViewSize, -_setting.ViewSize, _setting.ViewSize * 0.5, _setting.ViewSize * 1.5);
 
-            var viewArgs = PluginExecutor.ExecutePlugins(new ViewPluginArgs(
+            PluginExecutor.ExecutePlugins(new ViewPluginArgs(
                 _workspace,
                 this,
                 _dispatcher,
                 pointConverter));
-
-            foreach (var (viewType, att) in viewArgs)
-                ViewDefinitions[att.ViewModelType] = (att.Pane, viewType);
 
             foreach (var effect in _workspace.Effects.Concat(_systemEffects))
                 _effectCommands[effect] = EffectCommand.Create(effect, _dispatcher, this);
@@ -186,9 +182,19 @@ namespace Orimath.ViewModels
             GetViewModelCollection(viewModel.GetType())?.Add(viewModel);
         }
 
-        public void SetEffectParameterViewModel<T>(Func<T, object> mapping)
+        public void RegisterView(ViewPane viewPane, Type viewModelType, Type viewType)
         {
-            _effectParameterCreator[typeof(T)] = p => mapping((T)p);
+            ViewDefinitions[viewModelType] = (viewPane, ViewDeclaration.NewType(viewType));
+        }
+
+        public void RegisterView(ViewPane viewPane, Type viewModelType, string viewUri)
+        {
+            ViewDefinitions[viewModelType] = (viewPane, ViewDeclaration.NewUri(viewUri));
+        }
+
+        public void SetEffectParameterViewModel<TViewModel>(Func<TViewModel, object> mapping)
+        {
+            _effectParameterCreator[typeof(TViewModel)] = p => mapping((TViewModel)p);
         }
 
         public object GetEffectParameterViewModel(object parameter)
@@ -217,5 +223,27 @@ namespace Orimath.ViewModels
                 ? command
                 : null!;
         }
+    }
+
+    public abstract class ViewDeclaration
+    {
+        private ViewDeclaration() { }
+
+        public class ViewType : ViewDeclaration
+        {
+            public Type Type { get; }
+            public ViewType(Type type) => Type = type;
+            public void Deconstruct(out Type type) => type = Type;
+        }
+
+        public class ViewUri : ViewDeclaration
+        {
+            public string Uri { get; }
+            public ViewUri(string uri) => Uri = uri;
+            public void Deconstruct(out string uri) => uri = Uri;
+        }
+
+        public static ViewDeclaration NewType(Type type) => new ViewType(type);
+        public static ViewDeclaration NewUri(string uri) => new ViewUri(uri);
     }
 }

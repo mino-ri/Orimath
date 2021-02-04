@@ -9,7 +9,7 @@ namespace Orimath.ViewModels
 {
     public class OrimathDispatcher : IDispatcher
     {
-        private ValueProp<int> _processCount = new ValueProp<int>(0);
+        private readonly ValueProp<int> _processCount = new ValueProp<int>(0);
         public Dispatcher UIDispatcher { get; } = Dispatcher.CurrentDispatcher;
         public SynchronizationContext SynchronizationContext { get; }
 
@@ -36,13 +36,6 @@ namespace Orimath.ViewModels
         {
             BeginBackground();
             try { await Task.Run(action); }
-            finally { EndBackground(); }
-        }
-
-        public async Task OnBackgroundAsync(Func<Task> action)
-        {
-            BeginBackground();
-            try { await action(); }
             finally { EndBackground(); }
         }
 

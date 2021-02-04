@@ -15,6 +15,7 @@ namespace Orimath.UITest
         public void Execute(ViewPluginArgs args)
         {
             args.Workspace.AddEffect(new UITestEffect(args.Messenger, args.Dispatcher, (UITestPluginSetting)Setting));
+            args.Messenger.RegisterView<ControlListViewModel, UIListControl>(ViewPane.Dialog);
         }
     }
 

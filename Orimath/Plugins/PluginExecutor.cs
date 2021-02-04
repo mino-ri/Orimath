@@ -119,15 +119,7 @@ namespace Orimath.Plugins
             }
         }
 
-        private static IEnumerable<(Type, ViewAttribute)> GetViewTypes(Type[] types)
-        {
-            return types
-                .Where(t => t.IsClass && !t.IsAbstract && typeof(FrameworkElement).IsAssignableFrom(t))
-                .Select(t => (t, t.GetCustomAttribute<ViewAttribute>()!))
-                .Where(tuple => tuple.Item2 is not null);
-        }
-
-        public static IEnumerable<(Type, ViewAttribute)> ExecutePlugins(ViewPluginArgs viewArgs)
+        public static void ExecutePlugins(ViewPluginArgs viewArgs)
         {
             var args = new PluginArgs(viewArgs.Workspace);
             var types = LoadPluginTypes();
@@ -135,8 +127,6 @@ namespace Orimath.Plugins
             LoadedPluginTypes = types.Where(t => t.IsClass && !t.IsAbstract && typeof(IPlugin).IsAssignableFrom(t)).ToArray();
             LoadedViewPluginTypes = types.Where(t => t.IsClass && !t.IsAbstract && typeof(IViewPlugin).IsAssignableFrom(t)).ToArray();
             ExecuteCore(setting, args, viewArgs);
-
-            return GetViewTypes(types);
         }
     }
 }
