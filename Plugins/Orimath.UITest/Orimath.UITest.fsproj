@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
-    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -11,9 +10,18 @@
     <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
 
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy $(TargetDir)$(TargetName).* $(ProjectDir)..\..\Orimath\bin\$(ConfigurationName)\net5.0-windows\Plugins\" />
-  </Target>
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="Data.fs" />
+    <Compile Include="ViewModels\AlignmentConverter.fs" />
+    <Compile Include="ViewModels\ControlListViewModel.fs" />
+    <Compile Include="UIListControl.fs" />
+    <Compile Include="PluginImplementations.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="UIListControl.xaml" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Orimath.Plugins\Orimath.Plugins.fsproj" />
@@ -25,5 +33,8 @@
       <HintPath>..\..\Libraries\ApplicativeProperty.dll</HintPath>
     </Reference>
   </ItemGroup>
-
+  
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy $(TargetDir)$(TargetName).* $(ProjectDir)..\..\Orimath\bin\$(ConfigurationName)\net5.0-windows\Plugins\" />
+  </Target>
 </Project>
