@@ -7,11 +7,17 @@ type LayerType =
     | BackSide = 0
     | FrontSide = 1
 
-type Edge (line: LineSegment, inner: bool) =
-    member _.Line = line
-    member _.Inner = inner
 
-    override _.ToString() = line.ToString()
+[<Extension; CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
+module LayerType =
+    /// LayerType を裏表逆転させます。
+    [<Extension; CompiledName("TurnOver")>]
+    let turnOver (layerType: LayerType) =
+        match layerType with
+        | LayerType.FrontSide -> LayerType.BackSide
+        | LayerType.BackSide -> LayerType.FrontSide
+        | _ -> layerType
+
 
 type ILayer =
     abstract member Edges : IReadOnlyList<Edge>
@@ -21,168 +27,100 @@ type ILayer =
     abstract member OriginalEdges : IReadOnlyList<Edge>
     abstract member Matrix : Matrix
 
-[<Extension>]
-type LayerExtensions =
-    [<Extension>]
-    static member Contains(edges: Edge list, point: Point) =
-        let rec recSelf acm (edges: Edge list) =
-            match edges with
-            | head :: tail ->
-                let p1 = head.Line.Point1
-                let p2 = head.Line.Point2
-                if LineSegment.containsPoint point head.Line then
-                    true
-                else
-                    if (p1.Y <= point.Y && point.Y < p2.Y || p2.Y <= point.Y && point.Y < p1.Y) &&
-                        point.X < Line.getX point.Y head.Line.Line then
-                        recSelf (acm + 1) tail
-                    else
-                        recSelf acm tail
-            | [] -> acm % 2 = 1
-        recSelf 0 edges
-
-    /// このレイヤーの領域に指定した線分が完全に含まれているか判断します。
-    [<Extension>]
-    static member Contains(edges: Edge list, line: LineSegment) = edges.Contains(line.Point1) && edges.Contains(line.Point2)
+[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
+module Layer =
 
     /// このレイヤーの領域に指定した点が含まれているか判断します。
-    [<Extension>]
-    static member Contains(layer: ILayer, point: Point) = LayerExtensions.Contains(asList layer.Edges, point)
+    [<CompiledName("Contains")>]
+    let containsPoint point (layer: ILayer) = Edge.containsPoint point (asList layer.Edges)
 
     /// このレイヤーの領域に指定した線分が完全に含まれているか判断します。
-    [<Extension>]
-    static member Contains(layer: ILayer, line: LineSegment) = layer.Contains(line.Point1) && layer.Contains(line.Point2)
+    [<CompiledName("Contains")>]
+    let containsSeg (line: LineSegment) (layer: ILayer) = containsPoint line.Point1 layer && containsPoint line.Point2 layer
 
     /// このレイヤーの領域に全ての点が含まれているか判断します。
-    [<Extension>]
-    static member ContainsAll(layer: ILayer, points: seq<Point>) = points |> Seq.forall(layer.Contains)
+    [<CompiledName("ContainsAll")>]
+    let containsAllPoint points layer = Seq.forall (flip containsPoint layer) points
 
     /// このレイヤーの領域に全ての線分が完全に含まれているか判断します。
-    [<Extension>]
-    static member ContainsAll(layer: ILayer, lines: seq<LineSegment>) = lines |> Seq.forall(layer.Contains)
+    [<CompiledName("ContainsAll")>]
+    let containsAllSeg segs layer = Seq.forall (flip containsSeg layer) segs
 
     /// このレイヤーに、指定した点と同じ点が存在するか判断します。
-    [<Extension>]
-    static member HasPoint(layer: ILayer, point) = layer.Points |> Seq.exists((=~) point)
+    [<CompiledName("HasPoint")>]
+    let hasPoint point (layer: ILayer) = layer.Points |> Seq.exists ((=~) point)
 
     /// このレイヤーに、指定した線分と同じ線分が存在するか判断します。
-    [<Extension>]
-    static member HasLine(layer: ILayer, line: LineSegment) =
-        layer.Edges |> Seq.exists(fun e -> e.Line.Line =~ line.Line) ||
-        layer.Lines |> Seq.exists (LineSegment.containsSeg line)
+    [<CompiledName("HasLineSegment")>]
+    let hasSeg (seg: LineSegment) (layer: ILayer) =
+        layer.Edges |> Seq.exists(fun e -> e.Line.Line =~ seg.Line) ||
+        layer.Lines |> Seq.exists (LineSegment.containsSeg seg)
+
+    /// このレイヤーの範囲内に収まるように、指定された直線をカットします。
+    [<CompiledName("Clip")>]
+    let clip line (layer: ILayer) = Edge.clip line (asList layer.Edges)
+
+    /// このレイヤーの範囲内に収まるように、指定された線分をカットします。
+    [<CompiledName("Clip")>]
+    let clipSeg line (layer: ILayer) = Edge.clipSeg line (asList layer.Edges)
 
     /// このレイヤーに、指定した直線と同じ線分が存在するか判断します。
-    [<Extension>]
-    static member HasLine(layer: ILayer, line: Line) =
-        layer.Clip(line)
-        |> Seq.forall(layer.HasLine : LineSegment -> bool)
-
-    /// このレイヤーの範囲内に収まるように、指定された直線をカットします。
-    [<Extension>]
-    static member Clip(edges: Edge list, line: Line) =
-        let points = ResizeArray()
-        for edge in edges do
-            match Line.cross edge.Line.Line line with
-            | Some(p) when LineSegment.containsPoint p edge.Line && not (points |> Seq.exists((=~) p))
-                -> points.Add(p)
-            | _ -> ()
-        points
-        |> Seq.sortBy(fun p -> if line.YFactor = 0.0 then p.Y else p.X)
-        |> Seq.pairwise
-        |> Seq.filter(fun (p1, p2) -> edges.Contains((p1 + p2) / 2.0))
-        |> Seq.choose(LineSegment.FromPoints)
-
-    /// このレイヤーの範囲内に収まるように、指定された直線をカットします。
-    [<Extension>]
-    static member Clip(layer: ILayer, line: Line) = (asList layer.Edges).Clip(line)
+    [<CompiledName("HasLine")>]
+    let hasLine line layer = clip line layer |> Seq.forall (flip hasSeg layer)
         
+    let private clipBoundCore (segments: LineSegment[]) =
+        if segments.Length = 0
+        then None
+        else Some(segments.[0].Point1, (Array.last segments).Point2)
+
     /// このレイヤーの範囲内に収まるように指定された直線をカットし、その両端の位置を返します。
-    [<Extension>]
-    static member ClipBound(layer: ILayer, line: Line) =
-        let segments = layer.Clip(line) |> Seq.toArray
-        if segments.Length = 0 then
-            None
-        else
-            Some(segments.[0].Point1, segments.[segments.Length - 1].Point2)
-
-    /// このレイヤーの範囲内に収まるように、指定された線分をカットします。
-    [<Extension>]
-    static member Clip(edges: Edge list, line: LineSegment) =
-        let points = ResizeArray()
-        points.Add(line.Point1)
-        points.Add(line.Point2)
-        for edge in edges do
-            match LineSegment.cross edge.Line line with
-            | Some(p) when not (points |> Seq.exists((=~) p)) -> points.Add(p)
-            | _ -> ()
-        points
-        |> Seq.sortBy(fun p -> if line.Line.YFactor = 0.0 then p.Y else p.X)
-        |> Seq.pairwise
-        |> Seq.filter(fun (p1, p2) -> edges.Contains((p1 + p2) / 2.0))
-        |> Seq.choose(LineSegment.FromPoints)
-
-    /// このレイヤーの範囲内に収まるように、指定された線分をカットします。
-    [<Extension>]
-    static member Clip(layer: ILayer, line: LineSegment) = (asList layer.Edges).Clip(line)
+    [<CompiledName("ClipBound")>]
+    let clipBound line layer = clip line layer |> Seq.toArray |> clipBoundCore
         
     /// このレイヤーの範囲内に収まるように指定された線分をカットし、その両端の位置を返します。
-    [<Extension>]
-    static member ClipBound(layer: ILayer, line: LineSegment) =
-        let segments = layer.Clip(line) |> Seq.toArray
-        if segments.Length = 0 then
-            None
-        else
-            Some(segments.[0].Point1, segments.[segments.Length - 1].Point2)
-
-    static member private TryAddPoint(layer: ILayer, points: Point list, addingPoint: Point option) =
+    [<CompiledName("ClipBound")>]
+    let clipBoundSeg seg layer = clipSeg seg layer |> Seq.toArray |> clipBoundCore
+ 
+    let private tryAddPoint points addingPoint layer =
         match addingPoint with
-        | Some(p) when (points |> List.forall((<>~) p)) && not (layer.HasPoint(p)) ->
+        | Some(p) when (points |> List.forall((<>~) p)) && not (hasPoint p layer) ->
             p :: points
         | _ -> points
 
-    static member private AppendCross(layer: ILayer, line: LineSegment, points: Point list) =
+    let private appendCross seg points (layer: ILayer) =
         let mutable points = points
         for edge in layer.Edges do
-            points <- LayerExtensions.TryAddPoint(layer, points, LineSegment.cross edge.Line line)
+            points <- tryAddPoint points (LineSegment.cross edge.Line seg) layer
         for layerLine in layer.Lines do
-            points <- LayerExtensions.TryAddPoint(layer, points, LineSegment.cross layerLine line)
+            points <- tryAddPoint points (LineSegment.cross layerLine seg) layer
         points
             
     /// このレイヤー内の全ての折線と、指定した線分との交点を取得します。
-    [<Extension>]
-    static member GetCrosses(layer: ILayer, line: LineSegment) = LayerExtensions.AppendCross(layer, line, [line.Point1; line.Point2])
+    [<CompiledName("GetCrosses")>]
+    let crosses seg layer = appendCross seg [seg.Point1; seg.Point2] layer
             
     /// このレイヤー内の全ての折線と、指定した全ての線分との交点を取得します。
-    [<Extension>]
-    static member GetCrosses(layer: ILayer, lines: seq<LineSegment>) =
+    [<CompiledName("GetCrosses")>]
+    let crossesAll (segs: seq<LineSegment>) layer =
         let rec recSelf (lines: LineSegment list) points =
             let mutable points = points
             match lines with
             | line :: tail ->
-                if (points |> List.forall((<>~) line.Point1)) && not (layer.HasPoint(line.Point1)) then points <- line.Point1 :: points
-                if (points |> List.forall((<>~) line.Point2)) && not (layer.HasPoint(line.Point2)) then points <- line.Point2 :: points
-                points <- LayerExtensions.AppendCross(layer, line, points)
-                for tailLine in tail do points <- LayerExtensions.TryAddPoint(layer, points, LineSegment.cross tailLine line)
+                if (points |> List.forall((<>~) line.Point1)) && not (hasPoint line.Point1 layer) then points <- line.Point1 :: points
+                if (points |> List.forall((<>~) line.Point2)) && not (hasPoint line.Point2 layer) then points <- line.Point2 :: points
+                points <- appendCross line points layer
+                for tailLine in tail do points <- tryAddPoint points (LineSegment.cross tailLine line) layer
                 recSelf tail points
             | _ -> points
-        recSelf (asList lines) []
+        recSelf (asList segs) []
 
     /// このレイヤーの OriginalEdges を辺として持ち、点・折線を持たないレイヤーを取得します。
-    [<Extension>]
-    static member GetOriginal(layer: ILayer) =
+    [<CompiledName("GetOriginal")>]
+    let original (layer: ILayer) =
         { new ILayer with
             member _.Edges = layer.OriginalEdges
             member _.Lines = upcast []
             member _.Points = upcast []
             member _.LayerType = layer.LayerType
             member _.OriginalEdges = layer.OriginalEdges
-            member _.Matrix = Matrix.Identity
-        }
-
-    /// LayerType を裏表逆転させます。
-    [<Extension>]
-    static member TurnOver(layerType: LayerType) =
-        match layerType with
-        | LayerType.FrontSide -> LayerType.BackSide
-        | LayerType.BackSide -> LayerType.FrontSide
-        | _ -> layerType
+            member _.Matrix = Matrix.Identity }

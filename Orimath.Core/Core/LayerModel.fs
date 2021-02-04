@@ -38,20 +38,20 @@ and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Lay
     member _.GetSnapShot() = Layer.Create(init.Edges, layerLines, layerPoints, init.LayerType, init.OriginalEdges, init.Matrix)
 
     member this.AddLineCore(lines: seq<LineSegment>, addCross: bool) =
-        let lines = lines |> Seq.filter(this.HasLine >> not) |> Seq.toList
+        let lines = [for l in lines do if not (Layer.hasSeg l this) then yield l]
         if lines <> [] then
-            let points = if addCross then this.GetCrosses(lines) else []
+            let points = if addCross then Layer.crossesAll lines this else []
             use __ = parent.TryBeginChange()
             layerLines.AddRange(lines)
             layerPoints.AddRange(points)
 
-    member this.AddLinesRaw(lines: seq<Line>) = this.AddLineCore(lines |> Seq.collect(this.Clip), false)
+    member this.AddLinesRaw(lines: seq<Line>) = this.AddLineCore(lines |> Seq.collect (flip Layer.clip this), false)
 
-    member this.AddLinesRaw(lines: seq<LineSegment>) = this.AddLineCore(lines |> Seq.collect(this.Clip), false)
+    member this.AddLinesRaw(lines: seq<LineSegment>) = this.AddLineCore(lines |> Seq.collect (flip Layer.clipSeg this), false)
 
-    member this.AddLines(lines: seq<Line>) = this.AddLineCore(lines |> Seq.collect(this.Clip), true)
+    member this.AddLines(lines: seq<Line>) = this.AddLineCore(lines |> Seq.collect (flip Layer.clip this), true)
 
-    member this.AddLines(lines: seq<LineSegment>) = this.AddLineCore(lines |> Seq.collect(this.Clip), true)
+    member this.AddLines(lines: seq<LineSegment>) = this.AddLineCore(lines |> Seq.collect (flip Layer.clipSeg this), true)
 
     member _.RemoveLines(count: int) =
         if count > 0 then
@@ -59,7 +59,7 @@ and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Lay
             layerLines.RemoveTail(count)
 
     member this.AddPoints(points: seq<Point>) =
-        let points = points |> Seq.filter(fun p -> this.Contains(p) && not (this.HasPoint(p))) |> Seq.toList
+        let points = [for p in points do if Layer.containsPoint p this && not (Layer.hasPoint p this) then yield p ]
         if points <> [] then
             use __ = parent.TryBeginChange()
             layerPoints.AddRange(points)

@@ -7,7 +7,7 @@ let getIcon iconName =
     Assembly.GetExecutingAssembly().GetManifestResourceStream("Orimath.Basics.Icons." + iconName + ".png")
 
 let transform (workspace: IWorkspace) (matrix: Matrix) (reverse: bool) =
-    let getLayerType (lt: LayerType) = if reverse then lt.TurnOver() else lt
+    let getLayerType lt = if reverse then LayerType.turnOver lt else lt
     let newLayers =
         workspace.Paper.Layers
         |> Seq.map(fun layer ->

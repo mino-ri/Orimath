@@ -9,7 +9,7 @@ module Paper =
     let clipBy (paper: IPaper) (line: Line) =
         let mutable result = []
         paper.Layers
-        |> Seq.collect(fun l -> l.Clip(line))
+        |> Seq.collect(Layer.clip line)
         |> Seq.sortBy(fun l -> if line.YFactor = 0.0 then l.Point1.Y else l.Point1.X)
         |> Seq.iter(fun l ->
             match result with

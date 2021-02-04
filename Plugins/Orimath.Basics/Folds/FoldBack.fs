@@ -28,10 +28,10 @@ let chooseUnzip (f: 'T -> 'U1 option * 'U2 option) (source: seq<'T>) =
         Option.iter rightResult.Add right
     leftResult, rightResult
 
-let private splitPoints (foldLine: Line) (layer: ILayer) =
+let private splitPoints foldLine layer =
     let positivePoints = ResizeArray()
     let negativePoints = ResizeArray()
-    for point in Seq.append layer.Points (layer.GetCrosses(layer.Clip(foldLine))) do
+    for point in (Layer.crossesAll (Layer.clip foldLine layer) layer) |> Seq.append layer.Points do
         match Line.distSign point foldLine with
         | 1 -> positivePoints.Add(point)
         | -1 -> negativePoints.Add(point)
@@ -69,7 +69,7 @@ let private splitEdges (foldLine: Line) (layer: ILayer) =
     let negativeEdges = ResizeArray()
     let cross (edge: Edge) positiveToNegative =
         let positiveEdge, negativeEdge =
-            match layer.ClipBound(foldLine) with
+            match Layer.clipBound foldLine layer with
             | Some(a, b) ->
                 swapWhen (LineSegment.containsPoint a edge.Line = positiveToNegative)
                          (LineSegment.FromPoints(b, a))
@@ -117,7 +117,7 @@ let private splitEdges (foldLine: Line) (layer: ILayer) =
 
 let private splitOriginalEdges foldLine positiveEdgesCount (layer: ILayer) =
     let foldLineInOrigin = layer.Matrix.MultiplyInv(foldLine)
-    let edges1, edges2 = splitEdges foldLineInOrigin (layer.GetOriginal())
+    let edges1, edges2 = splitEdges foldLineInOrigin (Layer.original layer)
     match positiveEdgesCount >= 3, edges1.Count >= 3 with
     | false, false -> edges1, edges2
     | true, false | false, true -> edges2, edges1
@@ -166,7 +166,7 @@ let private createLayer (workspace: IWorkspace) (foldLine: Line) (layer: ILayer)
             source.Edges |> Seq.map(fun e -> Edge(LineSegment.reflectBy foldLine e.Line, e.Inner)),
             source.Lines |> Seq.map (LineSegment.reflectBy foldLine),
             source.Points |> Seq.map (Point.reflectBy foldLine),
-            layer.LayerType.TurnOver(),
+            LayerType.turnOver layer.LayerType,
             source.OriginalEdges,
             layer.Matrix * Matrix.OfReflection(foldLine))
 
@@ -222,9 +222,9 @@ let private getTargetLayersCore (paper: IPaperModel) (line: Line) (dynamicPoint:
     let getLayer t = layers |> Seq.find (fun sl -> sl.Original = t.Layer)
     let contains (layer: ILayerModel) (target: OperationTarget) =
         match target.Target with
-        | DisplayTarget.Edge(e) -> layer.Clip(e.Line) |> Seq.isEmpty |> not
-        | DisplayTarget.Line(l) -> layer.Clip(l) |> Seq.isEmpty |> not
-        | DisplayTarget.Point(p) -> layer.Contains(p)
+        | DisplayTarget.Edge(e) -> Layer.clipSeg e.Line layer |> Seq.isEmpty |> not
+        | DisplayTarget.Line(l) -> Layer.clipSeg l layer |> Seq.isEmpty |> not
+        | DisplayTarget.Point(p) -> Layer.containsPoint p layer
         | _ -> false
     let firstLayers =
         match targets |> List.map getLayer |> List.filter(fun l -> l.Dynamic.IsSome) with
@@ -250,7 +250,7 @@ let private getTargetLayersCore (paper: IPaperModel) (line: Line) (dynamicPoint:
                 layers
                 |> Seq.filter(fun l -> l.IsTarget)
                 |> Seq.choose(fun l -> l.Dynamic)
-                |> Seq.collect(fun dl -> dl.Edges.Clip(line))
+                |> Seq.collect(fun dl -> Edge.clip line dl.Edges)
                 |> LineSegment.merge
                 |> Seq.toList
             layers
@@ -259,7 +259,7 @@ let private getTargetLayersCore (paper: IPaperModel) (line: Line) (dynamicPoint:
                 not layer.IsTarget && exists {
                     let! dl = layer.Dynamic
                     let! l = mergedLine
-                    return not (dl.Edges.Clip(l) |> Seq.isEmpty) })
+                    return not (Edge.clipSeg l dl.Edges |> Seq.isEmpty) })
             // 末尾最適化のため、Option.iter を使わない
             |> function
             | None -> ()

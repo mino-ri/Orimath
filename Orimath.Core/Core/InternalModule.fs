@@ -16,3 +16,5 @@ let createArrayProp<'T when 'T : equality>() =
         member _.Equals(a, b) = a.Length = b.Length && Array.forall2 (=) a b
         member _.GetHashCode(_) = 0 // not used
     }, System.Threading.SynchronizationContext.Current)
+
+let inline flip f x y = f y x

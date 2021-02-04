@@ -23,8 +23,8 @@ type internal InstructionWrapper(paper: IPaper) =
                 | Some(c) when c =~ l.Line -> InstructionColor.Blue
                 | _ -> InstructionColor.LightGray
             }
-        instruction.Lines .<- (layers
-            |> Seq.collect(fun ly -> lines |> Seq.collect ly.Clip)
+        instruction.Lines .<- (lines
+            |> Seq.collect(fun l -> layers |> Seq.collect (Layer.clip l))
             |> LineSegment.merge
             |> Seq.map mapping
             |> Seq.toArray)
