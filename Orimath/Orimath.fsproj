@@ -1,0 +1,66 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Win32Resource>.\icon.res</Win32Resource>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="Null.fs" />
+    <Compile Include="BoolOption.fs" />
+    <Compile Include="Internal.fs" />
+    <Compile Include="IO\GlobalSetting.fs" />
+    <Compile Include="IO\PluginSetting.fs" />
+    <Compile Include="IO\Settings.fs" />
+    <Compile Include="Plugins\PluginExecutor.fs" />
+    <Compile Include="ViewModels\OrimathDispatcher.fs" />
+    <Compile Include="ViewModels\EnumValueViewModel.fs" />
+    <Compile Include="ViewModels\SettingItemViewModel.fs" />
+    <Compile Include="ViewModels\SettingViewModel.fs" />
+    <Compile Include="ViewModels\MenuItemViewModel.fs" />
+    <Compile Include="ViewModels\ParametricEffectDialogViewModel.fs" />
+    <Compile Include="ViewModels\PluginSettingViewModel.fs" />
+    <Compile Include="ViewModels\GlobalSettingEffect.fs" />
+    <Compile Include="ViewModels\PluginSettingEffect.fs" />
+    <Compile Include="ViewModels\WorkspaceViewModel.fs" />
+    <Compile Include="ViewModels\RootViewModel.fs" />
+    <Compile Include="Controls\MarkupExtensions.fs" />
+    <Compile Include="Controls\Converters.fs" />
+    <Compile Include="Controls\IconImageConverter.fs" />
+    <Compile Include="Controls\App.xaml.fs" />
+    <Compile Include="Controls\MainWindow.xaml.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="icon_ho.ico" />
+    <Resource Include="ParametricEffectControl.xaml" />
+    <Resource Include="PluginSettingControl.xaml" />
+    <Resource Include="App.xaml" />
+    <Resource Include="MainWindow.xaml" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\Orimath.Core\Orimath.Core.fsproj" />
+    <ProjectReference Include="..\Orimath.Plugins\Orimath.Plugins.fsproj" />
+    <ProjectReference Include="..\Orimath.ViewPlugins\Orimath.ViewPlugins.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="ApplicativeProperty">
+      <HintPath>..\Libraries\ApplicativeProperty.dll</HintPath>
+    </Reference>
+    <Reference Include="Sssl">
+      <HintPath>..\Libraries\Sssl.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

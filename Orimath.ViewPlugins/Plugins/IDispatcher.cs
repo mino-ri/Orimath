@@ -7,7 +7,7 @@ namespace Orimath.Plugins
     public interface IDispatcher
     {
         SynchronizationContext SynchronizationContext { get; }
-        Task OnBackgroundAsync(Action action);
-        Task OnUIAsync(Action action);
+        void OnBackgroundAsync(Action action);
+        void OnUIAsync(Action action);
     }
 }

@@ -1,12 +1,11 @@
-﻿<Application x:Class="Orimath.App"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:vm="clr-namespace:Orimath.ViewModels"
-             xmlns:ctrl="clr-namespace:Orimath.Controls"
-             xmlns:th="clr-namespace:Orimath.Themes;assembly=Orimath.ViewPlugins"
-             StartupUri="MainWindow.xaml"
-             Startup="Application_Startup"
-             Exit="Application_Exit">
+﻿<ctrl:App xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+          xmlns:vm="clr-namespace:Orimath.ViewModels;assembly=Orimath"
+          xmlns:ctrl="clr-namespace:Orimath.Controls;assembly=Orimath"
+          xmlns:th="clr-namespace:Orimath.Themes;assembly=Orimath.ViewPlugins"
+          StartupUri="MainWindow.xaml"
+          Startup="Application_Startup"
+          Exit="Application_Exit">
     <Application.Resources>
         <vm:RootViewModel x:Key="rootViewModel" />
         <ctrl:HalfCornerRadiusValueConverter x:Key="HalfCornerRadius" />
@@ -1664,4 +1663,4 @@
             </Setter>
         </Style>
     </Application.Resources>
-</Application>
+</ctrl:App>

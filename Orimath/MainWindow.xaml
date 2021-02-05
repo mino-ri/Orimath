@@ -1,10 +1,11 @@
-﻿<Window x:Class="Orimath.MainWindow"
+﻿<ctrl:MainWindow
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:ctrl="clr-namespace:Orimath.Controls"
-        xmlns:vm="clr-namespace:Orimath.ViewModels"
+        xmlns:ctrl="clr-namespace:Orimath.Controls;assembly=Orimath"
+        xmlns:vm="clr-namespace:Orimath.ViewModels;assembly=Orimath"
+        xmlns:core="clr-namespace:Orimath.Controls;assembly=Orimath.ViewPlugins"
         xmlns:th="clr-namespace:Orimath.Themes;assembly=Orimath.ViewPlugins"
         mc:Ignorable="d"
         Title="Orimath"
@@ -31,7 +32,7 @@
         </ItemsPanelTemplate>
         <ctrl:IconImageConverter x:Key="IconImageConverter" />
         <DataTemplate DataType="{x:Type vm:PluginSettingViewModel}">
-            <ctrl:PluginSettingControl />
+            <ContentControl Content="{core:Load Uri=/Orimath;component/PluginSettingControl.xaml}" />
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:DoubleSettingItemViewModel}">
             <DockPanel>
@@ -75,7 +76,7 @@
             <ItemsControl ItemsSource="{Binding Items, Mode=OneTime}" />
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:ParametricEffectDialogViewModel}">
-            <ctrl:ParametricEffectControl />
+            <ContentControl Content="{core:Load Uri=/Orimath;component/ParametricEffectControl.xaml}" />
         </DataTemplate>
     </Window.Resources>
     <Window.InputBindings>
@@ -131,4 +132,4 @@
                             Margin="16" />
         </Grid>
     </Grid>
-</Window>
+</ctrl:MainWindow>

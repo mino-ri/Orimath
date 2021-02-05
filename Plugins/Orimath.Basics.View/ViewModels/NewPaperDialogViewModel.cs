@@ -117,10 +117,13 @@ namespace Orimath.Basics.View.ViewModels
             _executor.NewPaperType = NewPaperType.NewRegularPolygon(NumberOfPolygon);
         }
 
-        public async void Execute()
+        public void Execute()
         {
-            await _dispatcher.OnBackgroundAsync(_executor.NewPaper);
-            _messenger.CloseDialog();
+            _dispatcher.OnBackgroundAsync(() =>
+            {
+                _executor.NewPaper();
+                _dispatcher.OnUIAsync(_messenger.CloseDialog);
+            });
         }
 
         public ICommand ExecuteCommand { get; }
