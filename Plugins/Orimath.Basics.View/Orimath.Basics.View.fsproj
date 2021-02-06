@@ -1,0 +1,68 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="Null.fs" />
+    <Compile Include="Internal.fs" />
+    <Compile Include="ViewModels\NewPaperDialogViewModel.fs" />
+    <Compile Include="ViewModels\InstructionPointViewModel.fs" />
+    <Compile Include="ViewModels\InstructionLineViewModel.fs" />
+    <Compile Include="ViewModels\InstructionArrowViewModel.fs" />
+    <Compile Include="ViewModels\FoldingInstructionViewModel.fs" />
+    <Compile Include="ViewModels\AttachedObservableCollection.fs" />
+    <Compile Include="ViewModels\ScreenOperationTarget.fs" />
+    <Compile Include="ViewModels\PointViewModel.fs" />
+    <Compile Include="ViewModels\LineViewModel.fs" />
+    <Compile Include="ViewModels\EdgeViewModel.fs" />
+    <Compile Include="ViewModels\LayerViewModel.fs" />
+    <Compile Include="ViewModels\PaperViewModel.fs" />
+    <Compile Include="ViewModels\MeasureViewModel.fs" />
+    <Compile Include="ViewModels\WorkspaceViewModel.fs" />
+    <Compile Include="ViewModels\EffectViewModel.fs" />
+    <Compile Include="ViewModels\ToolViewModel.fs" />
+    <Compile Include="ViewModels\CreasePatternViewModel.fs" />
+    <Compile Include="Controls\UniversalColorConverter.fs" />
+    <Compile Include="Controls\IconImageConverter.fs" />
+    <Compile Include="Controls\Arrow.fs" />
+    <Compile Include="Controls\PolygonControl.fs" />
+    <Compile Include="Controls\LineControl.fs" />
+    <Compile Include="Controls\MouseHandler.fs" />
+    <Compile Include="PluginImplementations.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Orimath.Plugins\Orimath.Plugins.fsproj" />
+    <ProjectReference Include="..\..\Orimath.ViewPlugins\Orimath.ViewPlugins.csproj" />
+    <ProjectReference Include="..\Orimath.Basics\Orimath.Basics.fsproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="defaultIcon.png" />
+    <Resource Include="*.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Remove="CreasePatternControl.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="ApplicativeProperty">
+      <HintPath>..\..\Libraries\ApplicativeProperty.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy $(TargetDir)$(TargetName).* $(ProjectDir)..\..\Orimath\bin\$(ConfigurationName)\net5.0-windows\Plugins\" />
+  </Target>
+
+</Project>

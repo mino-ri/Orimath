@@ -42,10 +42,7 @@
 
   <ItemGroup>
     <Resource Include="icon_ho.ico" />
-    <Resource Include="ParametricEffectControl.xaml" />
-    <Resource Include="PluginSettingControl.xaml" />
-    <Resource Include="App.xaml" />
-    <Resource Include="MainWindow.xaml" />
+    <Resource Include="*.xaml" />
   </ItemGroup>
   
   <ItemGroup>

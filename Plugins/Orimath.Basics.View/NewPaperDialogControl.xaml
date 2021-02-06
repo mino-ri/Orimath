@@ -1,33 +1,32 @@
-﻿<UserControl x:Class="Orimath.Basics.View.NewPaperDialogControl"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:vm="clr-namespace:Orimath.Basics.View.ViewModels"
+             xmlns:vm="clr-namespace:Orimath.Basics.View.ViewModels;assembly=Orimath.Basics.View"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="400"
              d:DataContext="{d:DesignData Type={x:Type vm:NewPaperDialogViewModel}}">
     <StackPanel Orientation="Vertical">
-        <RadioButton Content="正方形" IsChecked="{Binding IsSquareSelected}" Margin="8" />
-        <RadioButton IsChecked="{Binding IsRectangleSelected}" Margin="8">
+        <RadioButton Content="正方形" IsChecked="{Binding IsSquareSelected.Value}" Margin="8" />
+        <RadioButton IsChecked="{Binding IsRectangleSelected.Value}" Margin="8">
             <StackPanel Orientation="Horizontal">
                 <TextBlock VerticalAlignment="Center" Text="長方形" Margin="0,0,8,0" />
                 <TextBlock VerticalAlignment="Center" Text="幅: " />
-                <TextBox VerticalAlignment="Center" Width="80" Text="{Binding Width}" Margin="8,0" IsEnabled="{Binding IsRectangleSelected}" />
+                <TextBox VerticalAlignment="Center" Width="80" Text="{Binding Width.Value}" Margin="8,0" IsEnabled="{Binding IsRectangleSelected.Value}" />
                 <TextBlock VerticalAlignment="Center" Text="× 高さ: " />
-                <TextBox VerticalAlignment="Center" Width="80" Text="{Binding Height}" Margin="8,0" IsEnabled="{Binding IsRectangleSelected}" />
+                <TextBox VerticalAlignment="Center" Width="80" Text="{Binding Height.Value}" Margin="8,0" IsEnabled="{Binding IsRectangleSelected.Value}" />
             </StackPanel>
         </RadioButton>
-        <RadioButton IsChecked="{Binding IsPolygonSelected}" Margin="8"
+        <RadioButton IsChecked="{Binding IsPolygonSelected.Value}" Margin="8"
                      HorizontalContentAlignment="Stretch">
             <DockPanel>
                 <TextBlock DockPanel.Dock="Left" Text="多角形" Margin="0,0,8,0" />
                 <TextBlock DockPanel.Dock="Left" Text="正" />
-                <TextBlock DockPanel.Dock="Left" Width="20" TextAlignment="Right" Text="{Binding NumberOfPolygon}" />
+                <TextBlock DockPanel.Dock="Left" Width="20" TextAlignment="Right" Text="{Binding NumberOfPolygon.Value}" />
                 <TextBlock DockPanel.Dock="Left" Text="角形" />
-                <Slider IsEnabled="{Binding IsPolygonSelected}"
+                <Slider IsEnabled="{Binding IsPolygonSelected.Value}"
                         Minimum="3" Maximum="12" SmallChange="1" LargeChange="1" Interval="1"
-                        Value="{Binding NumberOfPolygon}"
+                        Value="{Binding NumberOfPolygon.Value}"
                         Margin="8,0" />
             </DockPanel>
         </RadioButton>

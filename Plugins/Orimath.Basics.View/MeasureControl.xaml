@@ -1,9 +1,8 @@
-﻿<UserControl x:Class="Orimath.Basics.View.MeasureControl"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+﻿<UserControl xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:vm="clr-namespace:Orimath.Basics.View.ViewModels"
+             xmlns:vm="clr-namespace:Orimath.Basics.View.ViewModels;assembly=Orimath.Basics.View"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="220"
              d:DataContext="{d:DesignData Type={x:Type vm:MeasureViewModel}}"
@@ -19,7 +18,7 @@
                 <Setter Property="Background" Value="{x:Static Brushes.Transparent}" />
             </Style>
         </StackPanel.Resources>
-        <ItemsControl ItemsSource="{Binding SelectedEdges, Mode=OneWay}">
+        <ItemsControl ItemsSource="{Binding SelectedEdges.Value, Mode=OneWay}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="{x:Type vm:EdgeViewModel}">
                     <Grid VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="4">
@@ -51,7 +50,7 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <ItemsControl ItemsSource="{Binding SelectedLines, Mode=OneWay}">
+        <ItemsControl ItemsSource="{Binding SelectedLines.Value, Mode=OneWay}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="{x:Type vm:LineViewModel}">
                     <Grid VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="4">
@@ -83,7 +82,7 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
-        <ItemsControl ItemsSource="{Binding SelectedPoints, Mode=OneWay}">
+        <ItemsControl ItemsSource="{Binding SelectedPoints.Value, Mode=OneWay}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate DataType="{x:Type vm:PointViewModel}">
                     <Grid VerticalAlignment="Top" HorizontalAlignment="Stretch" Margin="4">
