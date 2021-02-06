@@ -13,7 +13,7 @@ type UITestEffect(messenger: IMessenger, dispatcher: IDispatcher, setting: UITes
         member _.ShortcutKey = ""
         member _.Icon = null
         member _.CanExecute: IGetProp<bool> = upcast Prop.ctrue
-        member _.Execute() = ignore <| dispatcher.OnUIAsync(Action(fun () -> messenger.OpenDialog(viewModel.Value)))
+        member _.Execute() = dispatcher.UI { messenger.OpenDialog(viewModel.Value) }
 
 
 type UITestPlugin() =

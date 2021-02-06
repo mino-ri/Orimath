@@ -16,7 +16,7 @@ type SettingViewModel(object: obj, dispatcher: IDispatcher) =
 
     member private _.LoadItems() =
         loaded <- true
-        Async.Start(async {
+        dispatcher.Background {
             let result = [|
                 for prop in object.GetType().GetProperties(BindingFlags.Public ||| BindingFlags.Instance) do
                 if isNotNull (prop.GetGetMethod()) && isNotNull (prop.GetSetMethod()) &&
@@ -34,5 +34,6 @@ type SettingViewModel(object: obj, dispatcher: IDispatcher) =
                         yield upcast StringSettingItemViewModel(prop, object)
                     elif propertyType.IsEnum then
                         yield upcast EnumSettingItemViewModel(prop, object) |]
-            do! Async.SwitchToContext(dispatcher.SynchronizationContext)
-            items.Reset(result) })
+            do! dispatcher.UI
+            items.Reset(result)
+        }

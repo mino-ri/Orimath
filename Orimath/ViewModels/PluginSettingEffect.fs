@@ -10,5 +10,4 @@ type PluginSettingEffect(messenger: IMessenger, dispatcher: IDispatcher, createV
         member _.ShortcutKey = ""
         member _.Icon = null
         member _.CanExecute = upcast Prop.ctrue
-        member _.Execute() =
-            dispatcher.OnUIAsync(Action(fun () -> messenger.OpenDialog(createViewModel())))
+        member _.Execute() = dispatcher.UI { messenger.OpenDialog(createViewModel()) }

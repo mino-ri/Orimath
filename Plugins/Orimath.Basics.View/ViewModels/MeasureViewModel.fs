@@ -5,7 +5,7 @@ open ApplicativeProperty
 
 type MeasureViewModel(paper: IPaperModel, pointConverter: IViewPointConverter, dispatcher: IDispatcher) =
     inherit NotifyPropertyChanged()
-    let mapArray mapping prop = prop |> Prop.map (Array.map mapping) |> Prop.fetch dispatcher.SynchronizationContext
+    let mapArray mapping prop = prop |> Prop.map (Array.map mapping) |> Prop.fetch dispatcher.SyncContext
 
     member val SelectedPoints =
         paper.SelectedPoints |> mapArray(fun p -> PointViewModel(p, pointConverter))

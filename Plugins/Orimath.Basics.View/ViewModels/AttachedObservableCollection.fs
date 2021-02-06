@@ -14,7 +14,7 @@ type AttachedObservableCollection<'Model, 'ViewModel>
         source |> Observable.subscribe2(this.SourceCollectionChanged)
     
     member private this.SourceCollectionChanged(e) =
-        dispatcher.OnUIAsync(Action(fun () ->
+        dispatcher.UI.Invoke(fun () ->
             match e with
             | CollectionChange.Add(index, items) ->
                 if index = this.Count then
@@ -32,7 +32,7 @@ type AttachedObservableCollection<'Model, 'ViewModel>
                 this.[index] <- mapping newItem
             | CollectionChange.Reset(_, newItems) ->
                 this |> Seq.iter onRemove
-                this.Reset(newItems |> Seq.map mapping)))
+                this.Reset(newItems |> Seq.map mapping))
 
     member _.Dispose() = disconnector.Dispose()
 

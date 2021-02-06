@@ -1,5 +1,4 @@
 ﻿namespace Orimath.Basics.View.ViewModels
-open System
 open Orimath.Controls
 open Orimath.Plugins
 open Orimath.FoldingInstruction
@@ -37,17 +36,19 @@ type FoldingInstructionViewModel(workspace: IWorkspace, dispatcher: IDispatcher,
                 then (arrows, ars) ||> Seq.iter2(fun vm m -> vm.SetModel(m))
                 else arrows.Reset(seq { for a in ars -> InstructionArrowViewModel.Create(pointConverter, a) }))
             |> disposables.Add
-            dispatcher.OnUIAsync(Action(fun () ->
+            dispatcher.UI {
                 points.Reset(seq { for p in fTool.FoldingInstruction.Points.Value -> InstructionPointViewModel.Create(pointConverter, p) })
                 lines.Reset(seq { for l in fTool.FoldingInstruction.Lines.Value -> InstructionLineViewModel.Create(pointConverter, l) })
                 arrows.Reset(seq { for a in fTool.FoldingInstruction.Arrows.Value -> InstructionArrowViewModel.Create(pointConverter, a) })
-                visible.Value <- true))
+                visible.Value <- true
+            }
         | _ ->
-            dispatcher.OnUIAsync(Action(fun () ->
+            dispatcher.UI {
                 points.Clear()
                 lines.Clear()
                 arrows.Clear()
-                visible.Value <- false))))
+                visible.Value <- false
+            }))
 
     member _.Visible = visible
     member _.Points = points

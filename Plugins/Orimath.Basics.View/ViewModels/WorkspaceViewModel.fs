@@ -13,7 +13,7 @@ type WorkspaceViewModel(workspace: IWorkspace, pointConverter: IViewPointConvert
     member _.OnClick(target, modifier) =
         match workspace.CurrentTool.Value with
         | :? IClickTool as tool ->
-            dispatcher.OnBackgroundAsync(Action(fun () -> tool.OnClick(toModelTarget(target), modifier)))
+            dispatcher.Background { tool.OnClick(toModelTarget(target), modifier) }
         | _ -> ()
 
     member _.BeginDrag(source, modifier) =
@@ -39,5 +39,5 @@ type WorkspaceViewModel(workspace: IWorkspace, pointConverter: IViewPointConvert
     member _.Drop(source, target, modifier) =
         match workspace.CurrentTool.Value with
         | :? IDragTool as tool ->
-            dispatcher.OnBackgroundAsync(Action(fun () -> tool.Drop(toModelTarget(source), toModelTarget(target), modifier)))
+            dispatcher.Background { tool.Drop(toModelTarget(source), toModelTarget(target), modifier) }
         | _ -> ()

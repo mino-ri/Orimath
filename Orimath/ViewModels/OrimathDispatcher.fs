@@ -1,5 +1,4 @@
 ﻿namespace Orimath.ViewModels
-open System
 open System.Threading
 open System.Windows.Threading
 open Orimath.Plugins
@@ -8,28 +7,27 @@ open ApplicativeProperty.PropOperators
 
 type OrimathDispatcher() =
     let processCount = Prop.value 0
-    let syncContext = DispatcherSynchronizationContext(Dispatcher.CurrentDispatcher)
+    let uiDispatcher = Dispatcher.CurrentDispatcher
+    let syncContext = DispatcherSynchronizationContext(uiDispatcher)
     do SynchronizationContext.SetSynchronizationContext(syncContext)
-    member val UIDispatcher = Dispatcher.CurrentDispatcher
+    let ui =
+        { new IDispatcherInvoker with
+            member _.Invoke(action) = ignore (uiDispatcher.InvokeAsync(action)) }
+    let background =
+        { new IDispatcherInvoker with
+            member _.Invoke(action) =
+                Prop.incr processCount
+                Async.Start(async {
+                    try action()
+                    finally ui.Invoke(fun () -> Prop.decr processCount)
+                }) }
+
     member val IsExecuting = processCount .> 0
-
-    member _.SynchronizationContext = syncContext
-
-    member private _.BeginBackground() = Prop.incr processCount
-
-    member private _.EndBackground() = Prop.decr processCount
-        
-    member this.OnUI(action: Action) = ignore (this.UIDispatcher.InvokeAsync(action))
-
-    member this.OnBackground(action: Action) =
-        this.BeginBackground()
-        Async.Start(async {
-            try
-                action.Invoke()
-            finally
-                this.OnUI(Action(this.EndBackground)) })
+    member _.SyncContext = syncContext
+    member _.UI = ui
+    member _.Background = background
 
     interface IDispatcher with
-        member this.SynchronizationContext = upcast this.SynchronizationContext
-        member this.OnBackgroundAsync(action) = this.OnBackground(action)
-        member this.OnUIAsync(action) = this.OnUI(action)
+        member _.SyncContext = upcast syncContext
+        member _.Background = background
+        member _.UI = ui

@@ -82,11 +82,11 @@ type WorkspaceViewModel(workspace: IWorkspace) =
             effectCommands.[effect] <-
                 match effect with
                 | :? IParametricEffect as parametric ->
-                    (effect.CanExecute .&&. this.RootEnable, dispatcher.SynchronizationContext)
+                    (effect.CanExecute .&&. this.RootEnable, dispatcher.SyncContext)
                         ||> Prop.commands (fun _ -> this.OpenDialog(ParametricEffectDialogViewModel(parametric, dispatcher, this, this.GetEffectParameterViewModel)))
                 | effect ->
-                    (effect.CanExecute .&&. this.RootEnable, dispatcher.SynchronizationContext)
-                        ||> Prop.commands (fun _ -> dispatcher.OnBackground(Action(effect.Execute)))
+                    (effect.CanExecute .&&. this.RootEnable, dispatcher.SyncContext)
+                        ||> Prop.commands (fun _ -> dispatcher.Background.Invoke(effect.Execute))
         for tool in workspace.Tools do
             Internal.convertToKeyGesture(tool.ShortcutKey)
             |> Option.iter (fun gesture -> this.ToolGestures.[gesture] <- tool)

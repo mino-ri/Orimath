@@ -12,7 +12,7 @@ type PaperViewModel(paper: IPaperModel, pointConverter: IViewPointConverter, dis
              paper.Layers,
              (fun l -> new LayerViewModel(l, pointConverter, dispatcher)),
              (fun l -> l.Dispose()))
-    let mapArray mapping prop = prop |> Prop.map (Array.map mapping) |> Prop.fetch dispatcher.SynchronizationContext
+    let mapArray mapping prop = prop |> Prop.map (Array.map mapping) |> Prop.fetch dispatcher.SyncContext
 
     member _.Layers = layers :> ObservableCollection<_>
     

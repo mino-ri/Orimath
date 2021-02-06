@@ -1,5 +1,4 @@
 ﻿namespace Orimath.ViewModels
-open System
 open Orimath.Controls
 open Orimath.Plugins
 open ApplicativeProperty
@@ -13,6 +12,7 @@ type ParametricEffectDialogViewModel(effect: IParametricEffect, dispatcher: IDis
     member _.CloseCommand = parent.CloseDialogCommand
 
     member _.Execute(_: obj) =
-        dispatcher.OnBackgroundAsync(Action(fun () ->
+        dispatcher.Background {
             effect.Execute()
-            dispatcher.OnUIAsync(Action(parent.CloseDialog))))
+            dispatcher.UI.Invoke(parent.CloseDialog)            
+        }
