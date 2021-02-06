@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <Compile Include="Internal.fs" />
+    <Compile Include="Controls\AutoDisableImage.fs" />
+    <Compile Include="Controls\ResettableObservableCollection.fs" />
+    <Compile Include="Controls\NotifyPropertyChanged.fs" />
+    <Compile Include="Controls\LoadExtension.fs" />
+    <Compile Include="Plugins\IDispatcher.fs" />
+    <Compile Include="Plugins\ViewPointConverter.fs" />
+    <Compile Include="Plugins\IMessenger.fs" />
+    <Compile Include="Plugins\IViewPlugin.fs" />
+    <Compile Include="Themes\ThemeBrush.fs" />
+    <Compile Include="Themes\ThemeBrushExtension.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Orimath.Plugins\Orimath.Plugins.fsproj" />
+  </ItemGroup>
+
+</Project>

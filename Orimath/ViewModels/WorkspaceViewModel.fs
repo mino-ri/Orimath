@@ -77,8 +77,7 @@ type WorkspaceViewModel(workspace: IWorkspace) =
     member this.Initialize() =
         let pointConverter =
             new ViewPointConverter(float(setting.ViewSize), -float(setting.ViewSize), float(setting.ViewSize) * 0.5, float(setting.ViewSize) * 1.5)
-        PluginExecutor.ExecutePlugins(new ViewPluginArgs
-            (workspace, this, dispatcher, pointConverter))
+        PluginExecutor.ExecutePlugins({ Workspace = workspace; Messenger = this; Dispatcher = dispatcher; PointConverter = pointConverter })
         for effect in Seq.append workspace.Effects systemEffects do
             effectCommands.[effect] <-
                 match effect with
@@ -133,8 +132,8 @@ type WorkspaceViewModel(workspace: IWorkspace) =
     member this.RegisterView(viewPane: ViewPane, viewModelType: Type, viewUri: string) =
         this.ViewDefinitions.[viewModelType] <- (viewPane, ViewUri(viewUri))
         
-    member _.SetEffectParameterViewModel<'ViewModel>(mapping: Func<'ViewModel, obj>) =
-        effectParameterCreator.[typeof<'ViewModel>] <- fun p -> mapping.Invoke(p :?> 'ViewModel)
+    member _.SetEffectParameterViewModel<'ViewModel>(mapping: 'ViewModel -> obj) =
+        effectParameterCreator.[typeof<'ViewModel>] <- fun p -> mapping (p :?> 'ViewModel)
 
     member _.GetEffectParameterViewModel(parameter: obj) =
         match effectParameterCreator.TryGetValue(parameter.GetType()) with
