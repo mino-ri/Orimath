@@ -14,7 +14,7 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Compile Include="InternalModule.fs" />
+    <Compile Include="Internal.fs" />
     <Compile Include="Folds\Fold.fs" />
     <Compile Include="Folds\FoldOperation.fs" />
     <Compile Include="Folds\FoldBack.fs" />

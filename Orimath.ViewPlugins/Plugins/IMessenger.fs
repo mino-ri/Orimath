@@ -1,6 +1,5 @@
 ﻿namespace Orimath.Plugins
 open System
-open System.Windows
 open System.Windows.Input
 
 type ViewPane =
@@ -8,6 +7,7 @@ type ViewPane =
     | Top = 1
     | Side = 2
     | Dialog = 3   
+
 
 type IMessenger =
     abstract member AddViewModel : viewModel: obj -> unit

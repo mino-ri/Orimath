@@ -20,7 +20,7 @@ type GlobalSetting() =
     [<Editable(false)>]
     member val Top = nan with get, set
 
-    member this.Clone() = this.MemberwiseClone()
+    member this.Clone() = this.MemberwiseClone() :?> GlobalSetting
 
     interface ICloneable with
         member this.Clone() = this.MemberwiseClone()

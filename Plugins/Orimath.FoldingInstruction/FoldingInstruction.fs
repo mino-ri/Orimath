@@ -11,6 +11,7 @@ module internal Internal =
             member _.GetHashCode(_) = 0 // not used
         }, System.Threading.SynchronizationContext.Current)
 
+
 type InstructionColor =
     /// CUD黒 / #000000
     | Black = 0
@@ -53,12 +54,12 @@ type InstructionColor =
     /// CUD明るい紫 / #C7B2DE
     | LightPurple = 19
 
+
 [<Struct; NoComparison>]
 type InstructionLine =
-    {
-        Line: LineSegment
-        Color: InstructionColor
-    }
+    { Line: LineSegment
+      Color: InstructionColor }
+
 
 type ArrowType =
     | None = 0
@@ -66,29 +67,27 @@ type ArrowType =
     | MountainFold = 2
     | ValleyFold = 3
 
+
 type ArrowDirection =
     | Auto = 0
     | Clockwise = 1
     | Counterclockwise = 2
 
+
 [<Struct; NoComparison>]
 type InstructionArrow =
-    {
-        Line: LineSegment
-        StartType: ArrowType
-        EndType: ArrowType
-        Color: InstructionColor
-        Direction: ArrowDirection
-    }
+    { Line: LineSegment
+      StartType: ArrowType
+      EndType: ArrowType
+      Color: InstructionColor
+      Direction: ArrowDirection }
     
     static member Create(startPoint, endPoint, startType, endType, color, direction) =
-        {
-            Line = LineSegment.FromPoints(startPoint, endPoint).Value
-            StartType = startType
-            EndType = endType
-            Color = color
-            Direction = direction
-        }
+        { Line = LineSegment.FromPoints(startPoint, endPoint).Value
+          StartType = startType
+          EndType = endType
+          Color = color
+          Direction = direction }
 
     static member Create(startPoint, endPoint, startType, endType, color) =
         InstructionArrow.Create(startPoint, endPoint, startType, endType, color, ArrowDirection.Auto)
@@ -128,10 +127,8 @@ type InstructionArrow =
 
 [<Struct; NoComparison>]
 type InstructionPoint =
-    {
-        Point: Point
-        Color: InstructionColor
-    }
+    { Point: Point
+      Color: InstructionColor }
 
 type FoldingInstruction() =
     member val Lines = Internal.createArrayProp<InstructionLine>()

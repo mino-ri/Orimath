@@ -1,5 +1,5 @@
 ﻿[<AutoOpen>]
-module Orimath.Internal
+module internal Orimath.Internal
 
 let isNotNull x = not (isNull x)
 

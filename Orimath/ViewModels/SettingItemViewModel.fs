@@ -2,7 +2,6 @@
 open System
 open System.Collections.Concurrent
 open System.ComponentModel.DataAnnotations
-open System.Diagnostics.CodeAnalysis
 open System.Linq.Expressions
 open System.Reflection
 open Orimath
@@ -26,9 +25,9 @@ type internal PropertyAccessor private (prop: PropertyInfo) =
         |> assign (value |> convert prop.PropertyType)
         |> compileLambda [| object; value |]
     
-    member _.GetValue(instance: obj) = getValue.Invoke(instance)
+    member _.GetValue(instance) = getValue.Invoke(instance)
     
-    member _.SetValue(instance: obj, value: obj) = setValue.Invoke(instance, value)
+    member _.SetValue(instance, value) = setValue.Invoke(instance, value)
 
     static member GetInstance(prop) = cache.GetOrAdd(prop, fun p -> PropertyAccessor(p))
 
@@ -45,9 +44,9 @@ type SettingItemViewModel(property: PropertyInfo, object: obj) =
 
     member _.PropertyInfo = property
 
-    member _.GetValue<'T>() = accessor.GetValue(object) :?> 'T
+    member _.GetValue() = accessor.GetValue(object) :?> 'T
 
-    member _.SetValue<'T>(value: 'T) = accessor.SetValue(object, box value)
+    member _.SetValue(value: 'T) = accessor.SetValue(object, box value)
 
 
 [<AbstractClass>]
@@ -63,8 +62,8 @@ type RangeSettingItemViewModel<'T>(property: PropertyInfo, object: obj, defaultM
     member _.Maximum = max
 
     member this.Value
-        with get() = this.GetValue<'T>()
-        and set v = this.SetValue<'T>(v); this.OnPropertyChanged()
+        with get() = this.GetValue() : 'T
+        and set(v: 'T) = this.SetValue(v); this.OnPropertyChanged()
 
 
 type DoubleSettingItemViewModel(property: PropertyInfo, object: obj) =
@@ -79,16 +78,16 @@ type BooleanSettingItemViewModel(property: PropertyInfo, object: obj) =
     inherit SettingItemViewModel(property, object)
 
     member this.Value
-        with get() = this.GetValue<bool>()
-        and set v = this.SetValue<bool>(v); this.OnPropertyChanged()
+        with get() = this.GetValue() : bool
+        and set(v: bool) = this.SetValue(v); this.OnPropertyChanged()
 
 
 type StringSettingItemViewModel(property: PropertyInfo, object: obj) =
     inherit SettingItemViewModel(property, object)
 
     member this.Value
-        with get() = this.GetValue<string>()
-        and set v = this.SetValue<string>(v); this.OnPropertyChanged()
+        with get() = this.GetValue() : string
+        and set(v: string) = this.SetValue(v); this.OnPropertyChanged()
 
     member val MaxLength =
         property.GetCustomAttribute<StringLengthAttribute>()
@@ -105,6 +104,6 @@ type EnumSettingItemViewModel(property: PropertyInfo, object: obj) =
         with get() =
             let value = this.GetValue<Enum>()
             this.Choices |> Array.find(fun v -> v.Value.Equals(value))
-        and set (v: EnumValueViewModel) =
+        and set(v: EnumValueViewModel) =
             this.SetValue(v.Value)
             this.OnPropertyChanged()

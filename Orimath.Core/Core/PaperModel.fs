@@ -15,8 +15,8 @@ type PaperModel internal () as this =
     let selectedPoints = createArrayProp<Point>()
     let selectedLines = createArrayProp<LineSegment>()
     let layerModels = ReactiveCollection<ILayerModel>()
-    let canUndo = ValueProp<bool>(false)
-    let canRedo = ValueProp<bool>(false)
+    let canUndo = Prop.value false
+    let canRedo = Prop.value false
 
     do layerModels.Add(function
         | CollectionChange.Add(index, layers) ->
@@ -46,10 +46,10 @@ type PaperModel internal () as this =
         |> Paper.Create
 
     member _.ResetSelection() =
-        selectedLayers .<- Array.Empty()
-        selectedEdges .<- Array.Empty()
-        selectedPoints .<- Array.Empty()
-        selectedLines .<- Array.Empty()
+        selectedLayers .<- array.Empty()
+        selectedEdges .<- array.Empty()
+        selectedPoints .<- array.Empty()
+        selectedLines .<- array.Empty()
 
     member private _.UpdateCanUndo() =
         canUndo .<- (undoOprStack.Count > 0)
@@ -113,8 +113,7 @@ type PaperModel internal () as this =
                 if undoOprStack.Peek() = BeginChangeBlock then
                     ignore (undoOprStack.Pop())
                 changeBlockDeclared <- false
-                this.UpdateCanUndo()
-        }
+                this.UpdateCanUndo() }
 
     member private this.BeginUndo() =
         if changeBlockDeclared then invalidOp "変更ブロックが定義されているため、Undoを開始できません。"
@@ -124,8 +123,7 @@ type PaperModel internal () as this =
             member _.Dispose() =
                 changeBlockDeclared <- false
                 changeBlockDisabled <- false
-                this.UpdateCanUndo()
-        }
+                this.UpdateCanUndo() }
 
     member private this.ClearRaw(layers: ILayerModel list) =
         use __ = this.TryBeginChange()
@@ -197,4 +195,4 @@ type PaperModel internal () as this =
         member this.ClearUndoStack() = this.ClearUndoStack()
         member this.AddLayers(layers) = this.AddLayers(layers)
         member this.RemoveLayers(count) = this.RemoveLayers(count)
-        member this.ReplaceLayer(index: int, newLayer: ILayer) = this.ReplaceLayer(index, newLayer)
+        member this.ReplaceLayer(index, newLayer) = this.ReplaceLayer(index, newLayer)

@@ -1,5 +1,4 @@
 ﻿namespace Orimath.Basics.View.ViewModels
-open System
 open Orimath.Controls
 open Orimath.Plugins
 open ApplicativeProperty

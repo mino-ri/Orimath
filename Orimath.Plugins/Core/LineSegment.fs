@@ -1,5 +1,4 @@
 ﻿namespace Orimath.Core
-open System.Diagnostics.CodeAnalysis
 open System.Runtime.CompilerServices
 open NearlyEquatable
 
@@ -20,7 +19,6 @@ type LineSegment internal (line: Line, p1: Point, p2: Point) =
     static member FromFactorsAndPoint(xFactor, yFactor, p) =
         LineSegment(Line.FromFactorsAndPoint(xFactor, yFactor, p), p, p)
 
-    [<CompiledName("FromPoints")>]
     static member FromPoints(p1, p2) =
         Line.FromPoints(p1, p2)
         |> Option.map(fun line -> LineSegment(line, p1, p2))
@@ -56,25 +54,20 @@ module LineSegment =
          containsCore seg.Point1 target || containsCore seg.Point2 target)
 
     /// 2つの線分が交差する点を求めます。
-    [<CompiledName("GetCrossPoint")>]
     let cross (seg1: LineSegment) (seg2: LineSegment) =
         Line.cross seg1.Line seg2.Line
         |> Option.filter(fun p -> containsCore p seg1 && containsCore p seg2)
         
     /// 直線上の指定したY値におけるX値を取得します。
-    [<CompiledName("GetX")>]
     let getX y seg = if containsY y seg then Some(Line.getX y seg.Line) else None
         
     /// 直線上の指定したX値におけるY値を取得します。
-    [<CompiledName("GetY")>]
     let getY x seg = if containsX x seg then Some(Line.getY x seg.Line) else None
         
     /// 直線上の指定したX値における点を取得します。
-    [<CompiledName("XOf")>]
     let xOf x seg = if containsX x seg then Some(Line.xOf x seg.Line) else None
         
     /// 直線上の指定したY値における点を取得します。
-    [<CompiledName("YOf")>]
     let yOf y seg = if containsY y seg then Some(Line.yOf y seg.Line) else None
         
     /// 現在の線分を、指定した直線で反転させます。
@@ -83,7 +76,6 @@ module LineSegment =
         let p2 = Point.reflectBy line seg.Point2
         LineSegment(Line.FromPoints(p1, p2).Value, p1, p2)
 
-    [<Extension>]
     let merge (lineSegments: seq<LineSegment>) =
         let grouped = lineSegments |> Seq.groupBy(fun s -> Nearly(s.Line))
         let result = ResizeArray<LineSegment>()
@@ -102,5 +94,3 @@ module LineSegment =
                 else
                     result.Add(s))
         result :> seq<_>
-
-    

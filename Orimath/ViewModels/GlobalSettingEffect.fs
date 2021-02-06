@@ -2,6 +2,7 @@
 open Orimath.IO
 open Orimath.Plugins
 open ApplicativeProperty
+open Orimath.Internal
 
 type GlobalSettingEffect(rootSetting: GlobalSetting) =
     let mutable setting = Unchecked.defaultof<_>
@@ -12,10 +13,10 @@ type GlobalSettingEffect(rootSetting: GlobalSetting) =
         member _.ShortcutKey = ""
         member _.Icon = null
         member _.GetParameter() =
-            setting <- rootSetting.Clone() :?> GlobalSetting
+            setting <- rootSetting.Clone()
             box setting
         member _.CanExecute = upcast Prop.ctrue
         member _.Execute() =
-            if not (isNull (box setting)) then
+            if isNotNull (box setting) then
                 rootSetting.ViewSize <- setting.ViewSize
                 Settings.save Settings.Global rootSetting

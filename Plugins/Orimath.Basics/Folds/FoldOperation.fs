@@ -6,6 +6,7 @@ open Orimath.Plugins
 [<Struct>]
 type FoldDirection = PointToLine | LineToPoint
 
+
 type FoldOperation =
     | NoOperation
     | Axiom1 of Point * Point
@@ -17,12 +18,13 @@ type FoldOperation =
     | Axiom7 of pass: LineSegment * (LineSegment * Point) * Point * isPassEdge: bool * direction: FoldDirection
     | AxiomP of (LineSegment * Point) * Point * direction: FoldDirection
 
+
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module internal FoldOperation =
-    let (|FreePoint|_|) (free: bool) (dt: OperationTarget) =
+    let (|FreePoint|_|) isFree (dt: OperationTarget) =
         match dt.Target with
         | DisplayTarget.Point(point) -> Some(point)
-        | DisplayTarget.Layer(_) when free -> Some(dt.Point)
+        | DisplayTarget.Layer(_) when isFree -> Some(dt.Point)
         | _ -> None
 
     let (|LineOrEdge|_|) (dt: OperationTarget) =
@@ -47,7 +49,7 @@ module internal FoldOperation =
             else None
         passPoint, passLine
 
-    let getOperation (paper: IPaperModel) (source: OperationTarget) (target: OperationTarget) (modifier: OperationModifier) =
+    let getOperation (paper: IPaperModel) source target (modifier: OperationModifier) =
         let free = modifier.HasFlag(OperationModifier.Alt)
         if modifier.HasFlag(OperationModifier.RightButton) then
             match source, target with
@@ -82,7 +84,7 @@ module internal FoldOperation =
         | Axiom7(pass, (line, _), point, _, _) -> Fold.axiom7 pass.Line line.Line point |> Option.toList
         | AxiomP((line, _), point, _) -> Fold.axiomP line.Line point |> Option.toList
 
-    let chooseLine (lines: Line list) (opr: FoldOperation) =
+    let chooseLine (lines: Line list) opr =
         match lines with
         | [] -> None
         | [l] -> Some(l)

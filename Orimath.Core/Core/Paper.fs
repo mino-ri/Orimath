@@ -13,7 +13,7 @@ type Paper private (layers: Layer list) =
         then invalidArg (nameof(layers)) "少なくとも1つのレイヤーが必要です。"
         else Paper(layers)
 
-    static member FromSize(width: float, height: float) = Paper([ Layer.FromSize(width, height, LayerType.BackSide) ])
+    static member FromSize(width, height) = Paper([ Layer.FromSize(width, height, LayerType.BackSide) ])
 
     static member AsPaper(source: IPaper) =
         match source with

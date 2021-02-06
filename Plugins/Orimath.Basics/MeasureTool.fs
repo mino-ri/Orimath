@@ -7,7 +7,6 @@ open ApplicativeProperty.PropOperators
 type MeasureTool(workspace: IWorkspace) =
     let paper = workspace.Paper
     let instruction = FoldingInstruction()
-
     let (|FreePoint|_|) (dt: OperationTarget) =
         match dt.Target with
         | DisplayTarget.Point(point) -> Some(point)
@@ -19,7 +18,7 @@ type MeasureTool(workspace: IWorkspace) =
         | DisplayTarget.Edge(edge) -> Some(edge.Line.Line, dt.Point)
         | _ -> None
 
-    member _.GetDistanceLine(source: OperationTarget, target: OperationTarget) =
+    member _.GetDistanceLine(source, target) =
         match source, target with
         | FreePoint(p1), FreePoint(p2) -> LineSegment.FromPoints(p1, p2)
         | FreePoint(p1), LineOrEdge(l1, _) 
@@ -45,7 +44,7 @@ type MeasureTool(workspace: IWorkspace) =
     interface ITool with
         member _.Name = "計測"
         member _.ShortcutKey = "Ctrl+M"
-        member _.Icon = InternalModule.getIcon "measure"
+        member _.Icon = Internal.getIcon "measure"
         member this.OnActivated() = this.ClearSelection()
         member _.OnDeactivated() = ()
 

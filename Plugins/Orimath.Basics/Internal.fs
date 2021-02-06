@@ -1,4 +1,4 @@
-﻿module internal Orimath.Basics.InternalModule
+﻿module internal Orimath.Basics.Internal
 open System.Reflection
 open Orimath.Core
 open Orimath.Plugins
@@ -6,7 +6,7 @@ open Orimath.Plugins
 let getIcon iconName =
     Assembly.GetExecutingAssembly().GetManifestResourceStream("Orimath.Basics.Icons." + iconName + ".png")
 
-let transform (workspace: IWorkspace) (matrix: Matrix) (reverse: bool) =
+let transform (workspace: IWorkspace) (matrix: Matrix) reverse =
     let getLayerType lt = if reverse then LayerType.turnOver lt else lt
     let newLayers =
         workspace.Paper.Layers

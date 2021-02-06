@@ -67,9 +67,9 @@ type WorkspaceViewModel(workspace: IWorkspace) =
     member this.LoadSetting() =
         setting <- Settings.load Settings.Global |> Option.defaultWith GlobalSetting
         this.ViewSize <- float(setting.ViewSize) * 2.0
-        systemEffects <- [|
-            new GlobalSettingEffect(setting) :> IEffect
-            new PluginSettingEffect(this, dispatcher, fun () -> box (PluginSettingViewModel(this, dispatcher))) :> IEffect |]
+        systemEffects <-
+            [| new GlobalSettingEffect(setting) :> IEffect
+               new PluginSettingEffect(this, dispatcher, fun () -> box (PluginSettingViewModel(this, dispatcher))) :> IEffect |]
 
     member _.SaveSetting() =
         Settings.save Settings.Global setting
@@ -112,7 +112,7 @@ type WorkspaceViewModel(workspace: IWorkspace) =
     member this.AddViewModel(viewModel: obj) =
         if isNull viewModel then nullArg (nameof viewModel)
         this.GetViewModelCollection(viewModel.GetType())
-        |> Null.iter (fun c -> c.Add(viewModel))
+        |> Null.iter(fun c -> c.Add(viewModel))
 
     member this.RemoveViewModel(viewModelType: Type) =
         if isNull viewModelType then nullArg (nameof viewModelType)
@@ -137,7 +137,7 @@ type WorkspaceViewModel(workspace: IWorkspace) =
 
     member _.GetEffectParameterViewModel(parameter: obj) =
         match effectParameterCreator.TryGetValue(parameter.GetType()) with
-        | BoolSome(creator) -> creator(parameter)
+        | BoolSome(creator) -> creator parameter
         | BoolNone -> box (SettingViewModel(parameter, dispatcher))
 
     member _.OpenDialog(viewModel: obj) =

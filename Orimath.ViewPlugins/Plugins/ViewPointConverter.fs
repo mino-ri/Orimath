@@ -3,9 +3,11 @@ open Orimath.Core
 
 type ScreenPoint = System.Windows.Point
 
+
 type IViewPointConverter =
     abstract member ModelToView : point: Point -> ScreenPoint
     abstract member ViewToModel : point: ScreenPoint -> Point
+
 
 type ViewPointConverter(scaleX: float, scaleY: float, offsetX: float, offsetY: float) =
     member _.ModelToView(point: Point) = ScreenPoint(point.X * scaleX + offsetX, point.Y * scaleY + offsetY)

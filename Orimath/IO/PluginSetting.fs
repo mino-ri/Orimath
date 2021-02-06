@@ -9,7 +9,7 @@ type PluginSetting() =
 
     member val Settings = Dictionary<string, SsslObject>() with get, set
 
-    member this.Clone() = this.MemberwiseClone()
+    member this.Clone() = this.MemberwiseClone() :?> PluginSetting
 
     interface ICloneable with
         member this.Clone() = this.MemberwiseClone()

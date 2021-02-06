@@ -11,9 +11,9 @@ type AttachedObservableCollection<'Model, 'ViewModel>
      onRemove: 'ViewModel -> unit) as this =
     inherit ResettableObservableCollection<'ViewModel>(source |> Seq.map mapping)
     let disconnector =
-        source |> Observable.subscribe2(this.Source_CollectionChanged)
+        source |> Observable.subscribe2(this.SourceCollectionChanged)
     
-    member private this.Source_CollectionChanged(e) =
+    member private this.SourceCollectionChanged(e) =
         dispatcher.OnUIAsync(Action(fun () ->
             match e with
             | CollectionChange.Add(index, items) ->

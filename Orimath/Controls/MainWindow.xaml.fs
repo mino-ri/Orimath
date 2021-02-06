@@ -97,5 +97,4 @@ type MainWindow() =
             viewModel.Initialize()
             do! Async.AwaitTask(this.Dispatcher.InvokeAsync(Action(process1)).Task)
             do! Async.AwaitTask(this.Dispatcher.InvokeAsync(Action(process2)).Task)
-            do! Async.AwaitTask(this.Dispatcher.InvokeAsync(Action(process3)).Task)
-        })
+            do! Async.AwaitTask(this.Dispatcher.InvokeAsync(Action(process3)).Task) })

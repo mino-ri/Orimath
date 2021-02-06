@@ -8,10 +8,6 @@ type Point = { X: float; Y: float } with
     member this.GetDistance(other) =
         sqrt ((this.X - other.X) * (this.X - other.X) + (this.Y - other.Y) * (this.Y - other.Y))
 
-    member this.Deconstruct(x: outref<float>, y: outref<float>) =
-        x <- this.X
-        y <- this.Y
-
     override this.ToString() = System.String.Format("({0:0.#####}, {1:0.#####})", this.X, this.Y)
 
     interface INearlyEquatable<Point> with

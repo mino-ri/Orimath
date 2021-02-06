@@ -26,14 +26,14 @@ type IPaperModel =
     abstract member RemoveLayers : count: int -> unit
     abstract member ReplaceLayer : index: int * newLayer: ILayer -> unit
 
+
 [<Extension>]
 type PaperModelExtensions =
     [<Extension>]
     static member TryBeginChange(paper: IPaperModel) =
-        if paper.ChangeBlockDeclared then
-            { new IDisposable with member _.Dispose() = () }
-        else
-            paper.BeginChange()
+        if paper.ChangeBlockDeclared
+        then { new IDisposable with member _.Dispose() = () }
+        else paper.BeginChange()
 
     [<Extension>]
     static member IsSelected(paper: IPaperModel, point) =

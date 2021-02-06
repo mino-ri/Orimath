@@ -13,6 +13,7 @@ type VerticalAlignmentConverter() =
             | :? bool as b when b -> box VerticalAlignment.Stretch
             | _ -> box VerticalAlignment.Center
 
+
 [<ValueConversion(typeof<bool>, typeof<HorizontalAlignment>)>]
 type HorizontalAlignmentConverter() =
     interface IValueConverter with

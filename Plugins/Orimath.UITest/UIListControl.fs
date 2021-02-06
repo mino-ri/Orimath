@@ -14,7 +14,7 @@ type UIListControl() =
 
     let noPreviewTypes = [| typeof<Page>; typeof<Window>; typeof<ToolTip>; typeof<ContextMenu> |]
 
-    member this.ListBox_SelectionChanged(sender: obj, e: SelectionChangedEventArgs) =
+    member this.ListBox_SelectionChanged(_: obj, e: SelectionChangedEventArgs) =
         if e.AddedItems.Count = 1 then
             match e.AddedItems.[0], this.FindName("previewHost") with
             | (:? Type as t), (:? Border as previewHost) ->

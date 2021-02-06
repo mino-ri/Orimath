@@ -17,8 +17,7 @@ type ToolViewModel(tool: ITool) =
 
 
 type ToolListViewModel(workspace: IWorkspace, dispatcher: IDispatcher) =
-    let lazyTool =
-        lazy([| for e in workspace.Tools -> ToolViewModel(e) |])
+    let lazyTool = lazy([| for e in workspace.Tools -> ToolViewModel(e) |])
 
     member _.Tools = lazyTool.Value
 

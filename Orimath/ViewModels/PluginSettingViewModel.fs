@@ -22,6 +22,8 @@ type PluginViewModel(pluginType: Type, isEnabled: bool) =
     inherit NotifyPropertyChanged()
 
     member val IsEnabled = Prop.value isEnabled
+    member _.FullName = pluginType.FullName
+    member _.Type = pluginType
 
     member val Name =
         pluginType.GetCustomAttribute<DisplayNameAttribute>()
@@ -32,10 +34,6 @@ type PluginViewModel(pluginType: Type, isEnabled: bool) =
         pluginType.GetCustomAttribute<DescriptionAttribute>()
         |> Null.bind(fun att -> att.Description)
         |> Null.defaultValue "(No description)"
-
-    member _.FullName = pluginType.FullName
-
-    member _.Type = pluginType
 
 
 
@@ -71,7 +69,6 @@ type PluginLoadSettingViewModel(messenger: IMessenger) =
             plugins.Add(plugin)
 
     member _.Plugins = plugins
-
     member _.PluginIndex = pluginIndex
     
     member val UpPluginCommand =
@@ -100,10 +97,10 @@ type PluginSettingViewModel(messenger: IMessenger, dispatcher: IDispatcher) =
     inherit NotifyPropertyChanged()
     let loadSetting = PluginLoadSettingViewModel(messenger)
 
-    member val Pages = [|
-        yield loadSetting :> PluginSettingPageViewModel
-        for c in PluginExecutor.configurablePlugins do
-            yield upcast PluginItemSettingViewModel(c, dispatcher) |]
+    member val Pages =
+        [| yield loadSetting :> PluginSettingPageViewModel
+           for c in PluginExecutor.configurablePlugins do
+               yield upcast PluginItemSettingViewModel(c, dispatcher) |]
 
     member val SaveCommand = Prop.ctrue |> Prop.command loadSetting.Save
 

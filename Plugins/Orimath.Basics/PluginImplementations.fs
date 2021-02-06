@@ -14,10 +14,12 @@ type BasicPlugin() =
             args.Workspace.AddEffect(TurnHorizontallyEffect(args.Workspace))
             args.Workspace.AddEffect(OpenAllEffect(args.Workspace))
 
+
 [<DisplayName("ツール: 折り線"); Description("ドラッグ操作で折線をつけるツール。")>]
 type FoldsPlugin() =
     interface IPlugin with
         member _.Execute(args) = args.Workspace.AddTool(Folds.DragFoldTool(args.Workspace))
+
 
 [<DisplayName("ツール: 計測"); Description("ドラッグ操作で角度と距離を測るツール。")>]
 type MeasurePlugin() =

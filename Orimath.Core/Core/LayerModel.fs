@@ -13,9 +13,11 @@ type internal PaperOpr =
     | PointAddition of layerIndex: int * index: int * points: Point list
     | PointRemoving of layerIndex: int * index: int * points: Point list
 
+
 and internal IInternalPaperModel =
     inherit IPaperModel
     abstract member PushUndoOpr : opr: PaperOpr -> unit
+
 
 and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Layer) =
     let layerLines = ReactiveCollection<LineSegment>(init.Lines)
@@ -37,8 +39,8 @@ and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Lay
 
     member _.GetSnapShot() = Layer.Create(init.Edges, layerLines, layerPoints, init.LayerType, init.OriginalEdges, init.Matrix)
 
-    member this.AddLineCore(lines: seq<LineSegment>, addCross: bool) =
-        let lines = [for l in lines do if not (Layer.hasSeg l this) then yield l]
+    member this.AddLineCore(segs, addCross) =
+        let lines = [for l in segs do if not (Layer.hasSeg l this) then yield l]
         if lines <> [] then
             let points = if addCross then Layer.crossesAll lines this else []
             use __ = parent.TryBeginChange()
@@ -47,24 +49,24 @@ and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Lay
 
     member this.AddLinesRaw(lines: seq<Line>) = this.AddLineCore(lines |> Seq.collect (flip Layer.clip this), false)
 
-    member this.AddLinesRaw(lines: seq<LineSegment>) = this.AddLineCore(lines |> Seq.collect (flip Layer.clipSeg this), false)
+    member this.AddLinesRaw(segs: seq<LineSegment>) = this.AddLineCore(segs |> Seq.collect (flip Layer.clipSeg this), false)
 
     member this.AddLines(lines: seq<Line>) = this.AddLineCore(lines |> Seq.collect (flip Layer.clip this), true)
 
-    member this.AddLines(lines: seq<LineSegment>) = this.AddLineCore(lines |> Seq.collect (flip Layer.clipSeg this), true)
+    member this.AddLines(segs: seq<LineSegment>) = this.AddLineCore(segs |> Seq.collect (flip Layer.clipSeg this), true)
 
-    member _.RemoveLines(count: int) =
+    member _.RemoveLines(count) =
         if count > 0 then
             use __ = parent.TryBeginChange()
             layerLines.RemoveTail(count)
 
-    member this.AddPoints(points: seq<Point>) =
+    member this.AddPoints(points) =
         let points = [for p in points do if Layer.containsPoint p this && not (Layer.hasPoint p this) then yield p ]
         if points <> [] then
             use __ = parent.TryBeginChange()
             layerPoints.AddRange(points)
 
-    member _.RemovePoints(count: int) =
+    member _.RemovePoints(count) =
         if count > 0 then
             use __ = parent.TryBeginChange()
             layerPoints.RemoveTail(count)
@@ -85,6 +87,6 @@ and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Lay
         member this.AddLines(lines: seq<LineSegment>) = this.AddLines(lines)
         member this.AddLinesRaw(lines: seq<Line>) = this.AddLinesRaw(lines)
         member this.AddLinesRaw(lines: seq<LineSegment>) = this.AddLinesRaw(lines)
-        member this.RemoveLines(count: int) = this.RemoveLines(count)
+        member this.RemoveLines(count) = this.RemoveLines(count)
         member this.AddPoints(points) = this.AddPoints(points)
         member this.RemovePoints(count) = this.RemovePoints(count)

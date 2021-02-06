@@ -6,5 +6,6 @@ type ViewPluginArgs =
       Dispatcher: IDispatcher
       PointConverter: IViewPointConverter }
 
+
 type IViewPlugin =
     abstract member Execute : args: ViewPluginArgs -> unit

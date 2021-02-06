@@ -5,7 +5,7 @@ open ApplicativeProperty
 
 type Workspace() as this =
     let paper = PaperModel()
-    let currentTool = ValueProp(SelectorTool(this) :> ITool)
+    let currentTool = Prop.value (SelectorTool(this) :> ITool)
     let tools = ResizeArray<ITool>()
     let effects = ResizeArray<IEffect>()
     let mutable initialized = false

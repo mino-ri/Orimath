@@ -28,6 +28,7 @@ let private loadPluginTypes() =
 
 let saveSetting() = Settings.save Settings.Plugin setting
 
+[<RequiresExplicitTypeArguments>]
 let getFullNames<'T>(types: Type[]) =
     [| for t in types do
        if typeof<'T>.IsAssignableFrom(t) then

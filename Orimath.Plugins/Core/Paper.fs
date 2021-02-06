@@ -4,9 +4,10 @@ open System.Collections.Generic
 type IPaper =
     abstract member Layers : IReadOnlyList<ILayer>
 
+
 module Paper =
     /// この紙の範囲内に収まるように、指定された直線をカットします。
-    let clipBy (paper: IPaper) (line: Line) =
+    let clipBy (paper: IPaper) line =
         let mutable result = []
         paper.Layers
         |> Seq.collect(Layer.clip line)
@@ -24,7 +25,7 @@ module Paper =
         result
 
     /// この紙の範囲内に収まるように指定された直線をカットし、その両端の位置を返します。
-    let clipBoundBy (paper: IPaper) (line: Line) =
+    let clipBoundBy paper line =
         match clipBy paper line with
         | [] -> None
         | segments -> Some((List.last segments).Point1, segments.Head.Point2)

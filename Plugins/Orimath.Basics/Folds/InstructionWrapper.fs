@@ -2,7 +2,6 @@
 open Orimath.Core
 open Orimath.Core.NearlyEquatable
 open Orimath.FoldingInstruction
-open Orimath.Plugins
 open ApplicativeProperty.PropOperators
 
 type internal InstructionWrapper(paper: IPaper) =
@@ -15,7 +14,7 @@ type internal InstructionWrapper(paper: IPaper) =
         instruction.Arrows .<- array.Empty()
         instruction.Points .<- array.Empty()
 
-    member _.SetLines(layers: seq<ILayerModel>, lines: seq<Line>, chosen) =
+    member _.SetLines(layers, lines, chosen) =
         let mapping l = {
                 Line = l
                 Color =

@@ -1,5 +1,5 @@
 ﻿[<AutoOpen>]
-module internal Orimath.Core.InternalModule
+module internal Orimath.Core.Internal
 open System
 open System.Collections.Generic
 open ApplicativeProperty

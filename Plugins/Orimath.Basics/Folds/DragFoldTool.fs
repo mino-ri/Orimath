@@ -19,7 +19,7 @@ type DragFoldTool(workspace: IWorkspace) =
     interface ITool with
         member _.Name = "折り線"
         member _.ShortcutKey = "Ctrl+F"
-        member _.Icon = Orimath.Basics.InternalModule.getIcon "fold"
+        member _.Icon = Orimath.Basics.Internal.getIcon "fold"
         member _.OnActivated() =
             paper.SelectedLayers .<- array.Empty()
             paper.SelectedPoints .<- array.Empty()

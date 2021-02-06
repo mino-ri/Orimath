@@ -29,8 +29,7 @@ module Edge =
     let containsSeg (seg: LineSegment) edges = containsPoint seg.Point1 edges && containsPoint seg.Point2 edges
     
     /// このレイヤーの範囲内に収まるように、指定された直線をカットします。
-    [<CompiledName("Clip")>]
-    let clip (line: Line) (edges: Edge list) =
+    let clip line (edges: Edge list) =
         let points = ResizeArray()
         for edge in edges do
             match Line.cross edge.Line.Line line with
@@ -44,7 +43,6 @@ module Edge =
         |> Seq.choose(LineSegment.FromPoints)
 
     /// このレイヤーの範囲内に収まるように、指定された線分をカットします。
-    [<CompiledName("Clip")>]
     let clipSeg (line: LineSegment) (edges: Edge list) =
         let points = ResizeArray()
         points.Add(line.Point1)

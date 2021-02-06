@@ -1,5 +1,5 @@
 ﻿[<AutoOpen>]
-module internal Orimath.Core.InternalModule
+module internal Orimath.Core.Internal
 
 let asList(s: seq<'a>) =
     match s with

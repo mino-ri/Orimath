@@ -10,10 +10,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Core\InternalModule.fs" />
+    <Compile Include="Core\Internal.fs" />
     <Compile Include="Core\Layer.fs" />
     <Compile Include="Core\Paper.fs" />
-    <Compile Include="Core\LayerModule.fs" />
     <Compile Include="Core\LayerModel.fs" />
     <Compile Include="Core\PaperModel.fs" />
     <Compile Include="Core\Workspace.fs" />

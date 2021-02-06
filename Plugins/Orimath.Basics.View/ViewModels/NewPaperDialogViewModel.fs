@@ -1,5 +1,4 @@
 ﻿namespace Orimath.Basics.View.ViewModels
-open System.Windows.Input
 open Orimath.Basics
 open Orimath.Controls
 open Orimath.Plugins
@@ -41,7 +40,7 @@ type NewPaperDialogViewModel(messenger: IMessenger, dispatcher: IDispatcher, exe
     member _.NumberOfPolygon = numberOfPolygon
 
     member val ExecuteCommand = Prop.ctrue |> Prop.command(fun _ ->
-        executor.NewPaper()
+        executor.NewPaper() // todo: async run
         messenger.CloseDialog())
 
     member _.CloseCommand = messenger.CloseDialogCommand

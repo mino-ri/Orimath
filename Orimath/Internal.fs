@@ -9,10 +9,8 @@ let private keyGestureConverter = KeyGestureConverter()
 
 let convertToKeyGesture source =
     if not (String.IsNullOrWhiteSpace(source)) then
-        try
-            Some(keyGestureConverter.ConvertFromInvariantString(source) :?> KeyGesture)
-        with
-        | _ -> None
+        try Some(keyGestureConverter.ConvertFromInvariantString(source) :?> KeyGesture)
+        with _ -> None
     else
         None
 
