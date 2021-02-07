@@ -10,9 +10,9 @@ module Paper =
     let clipBy (paper: IPaper) line =
         let mutable result = []
         paper.Layers
-        |> Seq.collect(Layer.clip line)
-        |> Seq.sortBy(fun l -> if line.YFactor = 0.0 then l.Point1.Y else l.Point1.X)
-        |> Seq.iter(fun l ->
+        |> Seq.collect (Layer.clip line)
+        |> Seq.sortBy (fun l -> if line.YFactor = 0.0 then l.Point1.Y else l.Point1.X)
+        |> Seq.iter (fun l ->
             match result with
             | [] -> result <- [l]
             | head :: tail ->
@@ -21,7 +21,8 @@ module Paper =
                     match LineSegment.FromPoints(head.Point1, l.Point2) with
                     | Some(newLine) -> result <- newLine :: tail
                     | None -> ()
-                else result <- l :: head :: tail)
+                else
+                    result <- l :: head :: tail)
         result
 
     /// この紙の範囲内に収まるように指定された直線をカットし、その両端の位置を返します。

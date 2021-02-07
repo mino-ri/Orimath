@@ -40,7 +40,7 @@ and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Lay
     member _.GetSnapShot() = Layer.Create(init.Edges, layerLines, layerPoints, init.LayerType, init.OriginalEdges, init.Matrix)
 
     member this.AddLineCore(segs, addCross) =
-        let lines = [for l in segs do if not (Layer.hasSeg l this) then yield l]
+        let lines = [for l in segs do if not (Layer.hasSeg l this) then l]
         if lines <> [] then
             let points = if addCross then Layer.crossesAll lines this else []
             use __ = parent.TryBeginChange()
@@ -61,7 +61,7 @@ and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Lay
             layerLines.RemoveTail(count)
 
     member this.AddPoints(points) =
-        let points = [for p in points do if Layer.containsPoint p this && not (Layer.hasPoint p this) then yield p ]
+        let points = [ for p in points do if Layer.containsPoint p this && not (Layer.hasPoint p this) then p ]
         if points <> [] then
             use __ = parent.TryBeginChange()
             layerPoints.AddRange(points)

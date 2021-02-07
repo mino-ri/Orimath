@@ -21,8 +21,7 @@ let private loadPluginTypes() =
     if Directory.Exists(pluginDirectory) then
         [| for file in Directory.GetFiles(pluginDirectory, "*.dll", SearchOption.TopDirectoryOnly) do
            for t in Assembly.LoadFrom(file).GetExportedTypes() do
-           if t.IsClass && not t.IsAbstract then
-               yield t |]
+           if t.IsClass && not t.IsAbstract then t |]
     else
         Type.EmptyTypes
 
@@ -31,8 +30,7 @@ let saveSetting() = Settings.save Settings.Plugin setting
 [<RequiresExplicitTypeArguments>]
 let getFullNames<'T>(types: Type[]) =
     [| for t in types do
-       if typeof<'T>.IsAssignableFrom(t) then
-           yield t.FullName |]
+       if typeof<'T>.IsAssignableFrom(t) then t.FullName |]
 
 let private loadSetting (types: Type[]) =
     match Settings.load Settings.Plugin with
@@ -59,17 +57,17 @@ let private setSetting (plugin: obj) fullName (setting: PluginSetting) =
     | _ -> ()
 
 let private executeCore (setting: PluginSetting) args viewArgs =
-    let pluginTypes = loadedPluginTypes |> Seq.map(fun t -> t.FullName, t) |> Map.ofSeq
-    let viewPluginTypes = loadedViewPluginTypes |> Seq.map(fun t -> t.FullName, t) |> Map.ofSeq
+    let pluginTypes = Map.ofSeq (seq { for t in loadedPluginTypes -> t.FullName, t })
+    let viewPluginTypes = Map.ofSeq (seq { for t in loadedViewPluginTypes -> t.FullName, t })
     for fullName in setting.PluginOrder do
         Map.tryFind fullName pluginTypes
         |> Option.bind createInstanceAs<IPlugin>
-        |> Option.iter(fun plugin ->
+        |> Option.iter (fun plugin ->
             setSetting plugin fullName setting
             plugin.Execute(args))
         Map.tryFind fullName viewPluginTypes
         |> Option.bind createInstanceAs<IViewPlugin>
-        |> Option.iter(fun viewPlugin ->
+        |> Option.iter (fun viewPlugin ->
             setSetting viewPlugin fullName setting
             viewPlugin.Execute(viewArgs))
 

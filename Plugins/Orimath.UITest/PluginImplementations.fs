@@ -1,5 +1,4 @@
 ﻿namespace Orimath.UITest
-open System
 open Orimath.Plugins
 open Orimath.UITest.ViewModels
 open ApplicativeProperty

@@ -5,7 +5,8 @@ open System.Windows
 open System.Windows.Media
 open Orimath
 
-[<AllowNullLiteral; TypeConverter(typeof<BrushSetConverter>)>]
+[<AllowNullLiteral>]
+[<TypeConverter(typeof<BrushSetConverter>)>]
 type BrushSet(basedOn: BrushSet, background: Brush, foreground: Brush, border: Brush) =
     let tryFreeze (brush: Brush) =
         if isNotNull brush && brush.CanFreeze && not brush.IsFrozen then
@@ -39,7 +40,8 @@ type BrushSet(basedOn: BrushSet, background: Brush, foreground: Brush, border: B
     static member Default = BrushSet(null, null, null, null)
 
 
-and [<AllowNullLiteral>] ThemeBrush(basedOn: ThemeBrush, normal: BrushSet, hovered: BrushSet, highlight: BrushSet, disabled: BrushSet) =
+and [<AllowNullLiteral>]
+    ThemeBrush(basedOn: ThemeBrush, normal: BrushSet, hovered: BrushSet, highlight: BrushSet, disabled: BrushSet) =
     let mutable normal = normal
     let mutable hovered = hovered
     let mutable highlight = highlight
@@ -78,7 +80,10 @@ and [<AllowNullLiteral>] ThemeBrush(basedOn: ThemeBrush, normal: BrushSet, hover
     static member GetTheme(o: DependencyObject) = o.GetValue(ThemeBrush.ThemeProperty) :?> ThemeBrush
     static member SetTheme(o: DependencyObject, value: ThemeBrush) = o.SetValue(ThemeBrush.ThemeProperty, box value)
     static member val ThemeProperty =
-        DependencyProperty.RegisterAttached("Theme", typeof<ThemeBrush>, typeof<ThemeBrush>,
+        DependencyProperty.RegisterAttached(
+            "Theme",
+            typeof<ThemeBrush>,
+            typeof<ThemeBrush>,
             FrameworkPropertyMetadata(ThemeBrush(), FrameworkPropertyMetadataOptions.AffectsRender))
 
 

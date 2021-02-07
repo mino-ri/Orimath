@@ -26,8 +26,7 @@ type PaperModel internal () as this =
         | CollectionChange.Replace(index, oldLayer, newLayer) ->
             this.PushUndoOpr(LayerReplace(index, oldLayer, newLayer))
         | CollectionChange.Reset(odlLayers, newLayers) ->
-            this.PushUndoOpr(Clear(asList odlLayers, asList newLayers))
-        )
+            this.PushUndoOpr(Clear(asList odlLayers, asList newLayers)))
 
     member _.Layers = layerModels :> IReadOnlyList<ILayerModel>
     member val CanUndo = Prop.asGet canUndo
@@ -134,8 +133,7 @@ type PaperModel internal () as this =
         use __ = this.TryBeginChange()
         let layers =
             paper.Layers
-            |> Seq.indexed
-            |> Seq.map(fun (index, ly) -> LayerModel(this, index, Layer.AsLayer(ly)) :> ILayerModel)
+            |> Seq.mapi (fun index ly -> LayerModel(this, index, Layer.AsLayer(ly)) :> ILayerModel)
             |> Seq.toList
         this.ClearRaw(layers)
 
@@ -155,8 +153,7 @@ type PaperModel internal () as this =
     member this.AddLayers(layers: seq<ILayer>) =
         let layers =
             layers
-            |> Seq.indexed
-            |> Seq.map(fun (index, ly) -> LayerModel(this, layerModels.Count + index, Layer.AsLayer(ly)) :> ILayerModel)
+            |> Seq.mapi (fun index ly -> LayerModel(this, layerModels.Count + index, Layer.AsLayer(ly)) :> ILayerModel)
             |> Seq.toList
         this.AddLayersRaw(layers)
 

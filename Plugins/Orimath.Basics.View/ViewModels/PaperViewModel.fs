@@ -17,13 +17,13 @@ type PaperViewModel(paper: IPaperModel, pointConverter: IViewPointConverter, dis
     member _.Layers = layers :> ObservableCollection<_>
     
     member val SelectedPoints =
-        paper.SelectedPoints |> mapArray(fun p -> PointViewModel(p, pointConverter))
+        paper.SelectedPoints |> mapArray (fun p -> PointViewModel(p, pointConverter))
     
     member val SelectedLines =
-        paper.SelectedLines |> mapArray(fun l -> LineViewModel(l, pointConverter))
+        paper.SelectedLines |> mapArray (fun l -> LineViewModel(l, pointConverter))
     
     member val SelectedEdges =
-        paper.SelectedEdges |> mapArray(fun e -> EdgeViewModel(e, pointConverter))
+        paper.SelectedEdges |> mapArray (fun e -> EdgeViewModel(e, pointConverter))
     
     member val SelectedLayers =
-        paper.SelectedLayers |> mapArray(fun l -> new LayerViewModel(l, pointConverter, dispatcher))
+        paper.SelectedLayers |> mapArray (fun l -> new LayerViewModel(l, pointConverter, dispatcher))

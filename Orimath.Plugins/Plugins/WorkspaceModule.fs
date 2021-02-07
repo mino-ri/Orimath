@@ -1,42 +1,24 @@
 ﻿[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Orimath.Plugins.Workspace
 
-[<RequiresExplicitTypeArguments>]
-let getTool<'T when 'T :> ITool> (ws: IWorkspace) =
-    ws.Tools
-    |> Seq.pick(fun t ->
-        match t with
-        | :? 'T as target -> Some(target)
-        | _ -> None)
+let private tryCastTool<'T when 'T :> ITool> (o: ITool) =
+    match o with
+    | :? 'T as casted -> Some(casted)
+    | _ -> None
+
+let private tryCastEffect<'T when 'T :> IEffect> (o: IEffect) =
+    match o with
+    | :? 'T as casted -> Some(casted)
+    | _ -> None
 
 [<RequiresExplicitTypeArguments>]
-let trygetTool<'T when 'T :> ITool> (ws: IWorkspace) =
-    ws.Tools
-    |> Seq.tryPick(fun t ->
-        match t with
-        | :? 'T as target -> Some(target)
-        | _ -> None)
+let getTool<'T when 'T :> ITool> (ws: IWorkspace) = Seq.pick tryCastTool<'T> ws.Tools
 
 [<RequiresExplicitTypeArguments>]
-let getToolOrDefault<'T when 'T :> ITool> (ws: IWorkspace) : 'T =
-    Option.defaultValue (Unchecked.defaultof<'T>) (trygetTool<'T> ws)
+let trygetTool<'T when 'T :> ITool> (ws: IWorkspace) = Seq.tryPick tryCastTool<'T> ws.Tools
 
 [<RequiresExplicitTypeArguments>]
-let getEffect<'T when 'T :> IEffect> (ws: IWorkspace) : 'T =
-    ws.Effects
-    |> Seq.pick(fun t ->
-        match t with
-        | :? 'T as target -> Some(target)
-        | _ -> None)
+let getEffect<'T when 'T :> IEffect> (ws: IWorkspace) = Seq.pick tryCastEffect<'T> ws.Effects
 
 [<RequiresExplicitTypeArguments>]
-let trygetEffect<'T when 'T :> IEffect> (ws: IWorkspace) : 'T option =
-    ws.Effects
-    |> Seq.tryPick(fun t ->
-        match t with
-        | :? 'T as target -> Some(target)
-        | _ -> None)
-
-[<RequiresExplicitTypeArguments>]
-let getEffectOrDefault<'T when 'T :> IEffect> (ws: IWorkspace) : 'T =
-    Option.defaultValue (Unchecked.defaultof<'T>) (trygetEffect<'T> ws)
+let trygetEffect<'T when 'T :> IEffect> (ws: IWorkspace) = Seq.tryPick tryCastEffect<'T> ws.Effects

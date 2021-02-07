@@ -68,8 +68,10 @@ module Line =
         if divider =~~ 0.0 then
             None
         else
-            Some { X = !+((line1.B * line2.C - line2.B * line1.C) / divider)
-                   Y = !-((line1.A * line2.C - line2.A * line1.C) / divider) }
+            Some {
+                X = !+((line1.B * line2.C - line2.B * line1.C) / divider)
+                Y = !-((line1.A * line2.C - line2.A * line1.C) / divider)
+            }
 
     /// 直線が指定した点を含んでいるか判定します。
     let contains point line = dist point line =~~ 0.0

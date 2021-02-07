@@ -15,18 +15,20 @@ type internal InstructionWrapper(paper: IPaper) =
         instruction.Points .<- array.Empty()
 
     member _.SetLines(layers, lines, chosen) =
-        let mapping l = {
+        let mapping l =
+            {
                 Line = l
                 Color =
-                match chosen with
-                | Some(c) when c =~ l.Line -> InstructionColor.Blue
-                | _ -> InstructionColor.LightGray
+                    match chosen with
+                    | Some(c) when c =~ l.Line -> InstructionColor.Blue
+                    | _ -> InstructionColor.LightGray
             }
-        instruction.Lines .<- (lines
-            |> Seq.collect(fun l -> layers |> Seq.collect (Layer.clip l))
-            |> LineSegment.merge
-            |> Seq.map mapping
-            |> Seq.toArray)
+        instruction.Lines .<-
+            (lines
+             |> Seq.collect (fun l -> layers |> Seq.collect (Layer.clip l))
+             |> LineSegment.merge
+             |> Seq.map mapping
+             |> Seq.toArray)
 
     member _.ResetArrows() =
         instruction.Arrows .<- array.Empty()
@@ -74,7 +76,7 @@ type internal InstructionWrapper(paper: IPaper) =
                 | PointToLine -> point, linePoint
             match opr with
             | NoOperation -> array.Empty(), array.Empty()
-            | Axiom1(_, _) -> getGeneralArrow(), array.Empty()
+            | Axiom1 _ -> getGeneralArrow(), array.Empty()
             | Axiom2(point1, point2) -> [| createArrow point1 point2 center |], array.Empty()
             | Axiom3((line1, point), (line2, _)) ->
                 let center = Line.cross line1.Line line2.Line |> Option.defaultValue center

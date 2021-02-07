@@ -28,8 +28,8 @@ module NearlyEquatable =
 
     let (!+) x = if x = 0.0 then 0.0 else x
 
-    [<CustomEquality; NoComparison>]
-    type Nearly<'T when 'T: equality and 'T :> INearlyEquatable<'T>>(value: 'T) = struct
+    [<CustomEquality; NoComparison; Struct>]
+    type Nearly<'T when 'T: equality and 'T :> INearlyEquatable<'T>>(value: 'T) =
         member _.Value = value
         override _.Equals(other) = 
             match other with
@@ -39,4 +39,3 @@ module NearlyEquatable =
         override _.ToString() = value.ToString()
         interface IEquatable<Nearly<'T>> with
             member _.Equals(other) = value.NearlyEquals(other.Value, defaultMargin)
-    end

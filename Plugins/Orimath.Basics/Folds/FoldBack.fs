@@ -79,8 +79,8 @@ let private splitEdges foldLine layer =
                          (LineSegment.FromPoints(b, a))
                          (LineSegment.FromPoints(a, b))
             | None -> None, None
-        positiveEdge |> Option.iter(fun e -> positiveEdges.Add(Edge(e, true)))
-        negativeEdge |> Option.iter(fun e -> negativeEdges.Add(Edge(e, true)))
+        positiveEdge |> Option.iter (fun e -> positiveEdges.Add(Edge(e, true)))
+        negativeEdge |> Option.iter (fun e -> negativeEdges.Add(Edge(e, true)))
     for edge in layer.Edges do
         match splitEdge foldLine edge with
         | Some(positive), None ->
@@ -128,8 +128,8 @@ let private splitOriginalEdges foldLine positiveEdgesCount (layer: ILayer) =
     | true, true ->
         let edgeSign =
             edges1
-            |> Seq.map(fun e -> Line.distSign (e.Line.Point1 * layer.Matrix) foldLine)
-            |> Seq.find(fun d -> d <> 0)
+            |> Seq.map (fun e -> Line.distSign (e.Line.Point1 * layer.Matrix) foldLine)
+            |> Seq.find (fun d -> d <> 0)
         if edgeSign > 0 then edges1, edges2 else edges2, edges1
 
 // returns positive-side, negative-side
@@ -140,18 +140,22 @@ let private splitLayerCore foldLine layer =
     let positiveLines, negativeLines = splitLines foldLine layer
     let positive =
         if positiveEdges.Count >= 3 then
-            Some { Edges = Seq.toList positiveEdges
-                   OriginalEdges = Seq.toList originalPositiveEdges
-                   Points = Seq.toList positivePoints
-                   Lines = Seq.toList positiveLines }
+            Some {
+                Edges = Seq.toList positiveEdges
+                OriginalEdges = Seq.toList originalPositiveEdges
+                Points = Seq.toList positivePoints
+                Lines = Seq.toList positiveLines
+            }
         else
             None
     let negative =
         if negativeEdges.Count >= 3 then
-            Some { Edges = Seq.toList negativeEdges
-                   OriginalEdges = Seq.toList originalNegativeEdges
-                   Points = Seq.toList negativePoints
-                   Lines = Seq.toList negativeLines }
+            Some {
+                Edges = Seq.toList negativeEdges
+                OriginalEdges = Seq.toList originalNegativeEdges
+                Points = Seq.toList negativePoints
+                Lines = Seq.toList negativeLines
+            }
         else
             None
     positive, negative
@@ -167,7 +171,7 @@ let private createLayer (workspace: IWorkspace) foldLine (layer: ILayer) turnOve
             layer.Matrix)
     else
         workspace.CreateLayer(
-            source.Edges |> Seq.map(fun e -> Edge(LineSegment.reflectBy foldLine e.Line, e.Inner)),
+            source.Edges |> Seq.map (fun e -> Edge(LineSegment.reflectBy foldLine e.Line, e.Inner)),
             source.Lines |> Seq.map (LineSegment.reflectBy foldLine),
             source.Points |> Seq.map (Point.reflectBy foldLine),
             LayerType.turnOver layer.LayerType,
@@ -184,9 +188,9 @@ let private splitLayer workspace foldLine isPositiveStatic layer =
          Option.map (createLayer workspace foldLine layer true) positive
 
 let private isContacted originalEdges1 originalEdge2 =
-    let innerEdges (edges: seq<Edge>) = edges |> Seq.filter(fun e -> e.Inner)
-    Seq.allPairs (innerEdges originalEdges1) (innerEdges originalEdge2)
-    |> Seq.exists(fun (e1, e2) -> e1.Line =~ e2.Line)
+    let innerEdges (edges: seq<Edge>) = edges |> Seq.filter (fun e -> e.Inner)
+    (innerEdges originalEdges1, innerEdges originalEdge2)
+    ||> Seq.exists2 (fun e1 e2 -> e1.Line =~ e2.Line)
 
 let isPositiveStatic foldLine dynamicPoint =
     match dynamicPoint with
@@ -196,7 +200,7 @@ let isPositiveStatic foldLine dynamicPoint =
 let private clusterLayers (layers: SplittedLayer[]) =
     let clusterIndices = ResizeArray<SplittedLayer list>()
     for layer in layers do
-        layer.Dynamic |> Option.iter(fun dl ->
+        layer.Dynamic |> Option.iter (fun dl ->
             clusterIndices
             |> Seq.tryFindIndex(fun cluster -> exists {
                 let! cl = cluster
@@ -216,7 +220,7 @@ let foldBack (workspace: IWorkspace) line dynamicPoint =
 let private getTargetLayersCore (paper: IPaperModel) foldLine dynamicPoint targets =
     let layers =
         paper.Layers
-        |> Seq.map(fun layer ->
+        |> Seq.map (fun layer ->
             let positive, negative = splitLayerCore foldLine layer
             if isPositiveStatic foldLine dynamicPoint
             then { Original = layer; Static = positive; Dynamic = negative; IsTarget = false }
@@ -252,40 +256,44 @@ let private getTargetLayersCore (paper: IPaperModel) foldLine dynamicPoint targe
             let lastIndex = Array.findIndexBack (fun l -> l.IsTarget) layers
             let mergedLine =
                 layers
-                |> Seq.filter(fun l -> l.IsTarget)
-                |> Seq.choose(fun l -> l.Dynamic)
-                |> Seq.collect(fun dl -> Edge.clip foldLine dl.Edges)
+                |> Seq.filter (fun l -> l.IsTarget)
+                |> Seq.choose (fun l -> l.Dynamic)
+                |> Seq.collect (fun dl -> Edge.clip foldLine dl.Edges)
                 |> LineSegment.merge
                 |> Seq.toList
             layers
             |> Seq.take (lastIndex + 1)
-            |> Seq.tryFind(fun layer ->
+            |> Seq.tryFind (fun layer ->
                 not layer.IsTarget && exists {
                     let! dl = layer.Dynamic
                     let! l = mergedLine
-                    return not (Edge.clipSeg l dl.Edges |> Seq.isEmpty) })
+                    return Edge.clipSeg l dl.Edges |> Seq.isEmpty |> not })
             // 末尾最適化のため、Option.iter を使わない
             |> function
             | None -> ()
-            | Some(layer) -> setDynamicLayers [layer]
+            | Some(layer) -> setDynamicLayers [ layer ]
         setDynamicLayers firstLayers
         Some(layers)
 
 let foldBackFirst (workspace: IWorkspace) foldLine dynamicPoint targets =
     match getTargetLayersCore workspace.Paper foldLine dynamicPoint targets with
     | Some(layers) ->
-        let staticLaters = layers |> Seq.choose(fun l ->
-            if l.IsTarget
-            then l.Static |> Option.map(createLayer workspace foldLine l.Original false)
-            else Some(upcast l.Original))
-        let dynamicLayers = layers |> Seq.choose(fun l ->
-            if l.IsTarget
-            then l.Dynamic |> Option.map(createLayer workspace foldLine l.Original true)
-            else None)
+        let staticLaters =
+            layers
+            |> Seq.choose (fun l ->
+                if l.IsTarget
+                then Option.map (createLayer workspace foldLine l.Original false) l.Static
+                else Some(upcast l.Original))
+        let dynamicLayers =
+            layers
+            |> Seq.choose (fun l ->
+                if l.IsTarget
+                then Option.map (createLayer workspace foldLine l.Original true) l.Dynamic
+                else None)
         workspace.Paper.Clear(workspace.CreatePaper(Seq.append (Seq.rev staticLaters) dynamicLayers))
     | None -> ()
 
 let getTargetLayers (workspace: IWorkspace) foldLine dynamicPoint targets =
     match getTargetLayersCore workspace.Paper foldLine dynamicPoint targets with
-    | Some(ls) -> [| for s in ls do if s.IsTarget then yield s.Original |]
+    | Some(ls) -> [| for s in ls do if s.IsTarget then s.Original |]
     | None -> array.Empty()

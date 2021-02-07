@@ -22,14 +22,14 @@ type internal PropertyAccessor private (prop: PropertyInfo) =
         object
         |> convert prop.DeclaringType
         |> property prop
-        |> assign (value |> convert prop.PropertyType)
+        |> assign (convert prop.PropertyType value)
         |> compileLambda [| object; value |]
     
     member _.GetValue(instance) = getValue.Invoke(instance)
     
     member _.SetValue(instance, value) = setValue.Invoke(instance, value)
 
-    static member GetInstance(prop) = cache.GetOrAdd(prop, fun p -> PropertyAccessor(p))
+    static member GetInstance(prop) = cache.GetOrAdd(prop, PropertyAccessor)
 
 
 [<AbstractClass>]
@@ -39,7 +39,7 @@ type SettingItemViewModel(property: PropertyInfo, object: obj) =
 
     member val Name =
         property.GetCustomAttribute<DisplayAttribute>()
-        |> Null.bind(fun att -> att.Name)
+        |> Null.bind (fun att -> att.Name)
         |> Null.defaultValue property.Name
 
     member _.PropertyInfo = property
@@ -54,7 +54,7 @@ type RangeSettingItemViewModel<'T>(property: PropertyInfo, object: obj, defaultM
     inherit SettingItemViewModel(property, object)
     let hasRange, min, max =
         property.GetCustomAttribute<RangeAttribute>()
-        |> Null.mapv(fun att -> true, att.Minimum :?> 'T, att.Maximum :?> 'T)
+        |> Null.mapv (fun att -> true, att.Minimum :?> 'T, att.Maximum :?> 'T)
         |> Option.defaultValue (false, defaultMinimum, defaultMaximum)
 
     member _.HasRange = hasRange
@@ -63,7 +63,9 @@ type RangeSettingItemViewModel<'T>(property: PropertyInfo, object: obj, defaultM
 
     member this.Value
         with get() = this.GetValue() : 'T
-        and set(v: 'T) = this.SetValue(v); this.OnPropertyChanged()
+        and set(v: 'T) =
+            this.SetValue(v)
+            this.OnPropertyChanged()
 
 
 type DoubleSettingItemViewModel(property: PropertyInfo, object: obj) =
@@ -79,7 +81,9 @@ type BooleanSettingItemViewModel(property: PropertyInfo, object: obj) =
 
     member this.Value
         with get() = this.GetValue() : bool
-        and set(v: bool) = this.SetValue(v); this.OnPropertyChanged()
+        and set(v: bool) =
+            this.SetValue(v)
+            this.OnPropertyChanged()
 
 
 type StringSettingItemViewModel(property: PropertyInfo, object: obj) =
@@ -87,11 +91,13 @@ type StringSettingItemViewModel(property: PropertyInfo, object: obj) =
 
     member this.Value
         with get() = this.GetValue() : string
-        and set(v: string) = this.SetValue(v); this.OnPropertyChanged()
+        and set(v: string) =
+            this.SetValue(v)
+            this.OnPropertyChanged()
 
     member val MaxLength =
         property.GetCustomAttribute<StringLengthAttribute>()
-        |> Null.mapv(fun att -> att.MaximumLength)
+        |> Null.mapv (fun att -> att.MaximumLength)
         |> Option.defaultValue 0
     
 
@@ -103,7 +109,7 @@ type EnumSettingItemViewModel(property: PropertyInfo, object: obj) =
     member this.Value
         with get() =
             let value = this.GetValue<Enum>()
-            this.Choices |> Array.find(fun v -> v.Value.Equals(value))
+            this.Choices |> Array.find (fun v -> v.Value.Equals(value))
         and set(v: EnumValueViewModel) =
             this.SetValue(v.Value)
             this.OnPropertyChanged()

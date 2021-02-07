@@ -26,11 +26,11 @@ type NewPaperDialogViewModel(messenger: IMessenger, dispatcher: IDispatcher, exe
             numberOfPolygon .<- number
     do isSquareSelected.Add(fun b -> if b then executor.NewPaperType <- Square)
     do (isRectangleSelected, width, height)
-       |||> Prop.map3(fun b w h -> b, Rectangle(w, h))
-       |> Observable.add(fun (b, pt) -> if b then executor.NewPaperType <- pt)
+       |||> Prop.map3 (fun b w h -> b, Rectangle(w, h))
+       |> Observable.add (fun (b, pt) -> if b then executor.NewPaperType <- pt)
     do (isPolygonSelected, numberOfPolygon)
        ||> Prop.map2(fun b n -> b, RegularPolygon(n))
-       |> Observable.add(fun (b, pt) -> if b then executor.NewPaperType <- pt)
+       |> Observable.add (fun (b, pt) -> if b then executor.NewPaperType <- pt)
 
     member _.IsSquareSelected = isSquareSelected
     member _.IsRectangleSelected = isRectangleSelected
@@ -39,8 +39,10 @@ type NewPaperDialogViewModel(messenger: IMessenger, dispatcher: IDispatcher, exe
     member _.Height = height
     member _.NumberOfPolygon = numberOfPolygon
 
-    member val ExecuteCommand = Prop.ctrue |> Prop.command(fun _ ->
-        executor.NewPaper() // todo: async run
-        messenger.CloseDialog())
+    member val ExecuteCommand = Prop.ctrue |> Prop.command (fun _ ->
+        dispatcher.Background {
+            executor.NewPaper()
+            dispatcher.UI.Invoke(messenger.CloseDialog)
+        })
 
     member _.CloseCommand = messenger.CloseDialogCommand

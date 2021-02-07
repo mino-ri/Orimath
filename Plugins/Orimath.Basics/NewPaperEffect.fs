@@ -25,8 +25,10 @@ type NewPaperExecutor(workspace: IWorkspace) =
         | NewPaperType.RegularPolygon(number) when 3 <= number && number <= 12 ->
             let unit = Math.PI / float number
             let size = 0.5
-            let vertexes =
-                [ for i in 1..2..(number * 2) -> { X = 0.5 + sin (unit * float i) * size; Y = 0.5 - cos (unit * float i) * size } ]
+            let vertexes = [
+                for i in 1..2..(number * 2) ->
+                { X = 0.5 + sin (unit * float i) * size; Y = 0.5 - cos (unit * float i) * size }
+            ]
             workspace.Paper.Clear(workspace.CreatePaper([| workspace.CreateLayerFromPolygon(vertexes, LayerType.BackSide) |]))
         | _ -> ()
 

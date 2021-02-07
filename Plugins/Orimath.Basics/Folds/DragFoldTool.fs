@@ -11,10 +11,10 @@ type DragFoldTool(workspace: IWorkspace) =
 
     member private _.GetSourcePoint(opr) =
         getSourcePoint opr
-        |> Option.orElseWith(fun () -> Array.tryHead paper.SelectedPoints.Value)
+        |> Option.orElseWith (fun () -> Array.tryHead paper.SelectedPoints.Value)
 
     member _.MakeCrease(line: Line) =
-        for layer in paper.Layers do layer.AddLines([line])
+        for layer in paper.Layers do layer.AddLines([ line ])
 
     interface ITool with
         member _.Name = "折り線"
@@ -109,8 +109,8 @@ type DragFoldTool(workspace: IWorkspace) =
                 match modifier.HasFlag(OperationModifier.Shift), modifier.HasFlag(OperationModifier.Ctrl) with
                 | false, false -> this.MakeCrease(line)
                 | false, true ->
-                    FoldBack.getTargetLayers workspace line (this.GetSourcePoint(opr)) [source; target]
-                    |> Array.iter(fun l -> l.AddLines([line]))
+                    for l in FoldBack.getTargetLayers workspace line (this.GetSourcePoint(opr)) [source; target] do
+                        l.AddLines([ line ])
                 | true, false -> FoldBack.foldBack workspace line (this.GetSourcePoint(opr))
                 | true, true -> FoldBack.foldBackFirst workspace line (this.GetSourcePoint(opr)) [source; target]
             | None -> ()

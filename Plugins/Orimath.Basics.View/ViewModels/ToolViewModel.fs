@@ -13,7 +13,8 @@ type ToolViewModel(tool: ITool) =
     member _.IconStream = tool.Icon
     member _.ToolTip =
         if String.IsNullOrWhiteSpace(tool.ShortcutKey)
-        then tool.Name else $"%s{tool.Name} (%s{tool.ShortcutKey})"
+        then tool.Name
+        else $"%s{tool.Name} (%s{tool.ShortcutKey})"
 
 
 type ToolListViewModel(workspace: IWorkspace, dispatcher: IDispatcher) =
@@ -24,6 +25,6 @@ type ToolListViewModel(workspace: IWorkspace, dispatcher: IDispatcher) =
     member val CurrentTool =
         workspace.CurrentTool
         |> Prop.mapBoth
-            (fun tool -> lazyTool.Value |> Array.tryFind(fun t -> t.Source = tool) |> Option.defaultValue null)
+            (fun tool -> lazyTool.Value |> Array.tryFind (fun t -> t.Source = tool) |> Option.defaultValue null)
             (fun v -> if isNull v then Unchecked.defaultof<_> else v.Source)
         |> Prop.fetchBoth dispatcher.SyncContext

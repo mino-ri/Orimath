@@ -11,8 +11,9 @@ type ThemeBrushExtension(path: string) =
     override this.ProvideValue(_) =
         let parts = this.Path.Split('.')
         if parts.Length <> 3 then invalidOp "Invalid Path."
-        box (ThemeBrushes.ResolveThemeBrushPath(parts.[0])
+        upcast
+            ThemeBrushes.ResolveThemeBrushPath(parts.[0])
             .ResolveBrushSetPath(parts.[1])
-            .ResolveBrushPath(parts.[2]))
+            .ResolveBrushPath(parts.[2])
 
     new() = ThemeBrushExtension("")

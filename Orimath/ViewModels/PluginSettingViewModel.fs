@@ -27,12 +27,12 @@ type PluginViewModel(pluginType: Type, isEnabled: bool) =
 
     member val Name =
         pluginType.GetCustomAttribute<DisplayNameAttribute>()
-        |> Null.bind(fun att -> att.DisplayName)
+        |> Null.bind (fun att -> att.DisplayName)
         |> Null.defaultValue pluginType.Name
 
     member val Description =
         pluginType.GetCustomAttribute<DescriptionAttribute>()
-        |> Null.bind(fun att -> att.Description)
+        |> Null.bind (fun att -> att.Description)
         |> Null.defaultValue "(No description)"
 
 
@@ -42,7 +42,7 @@ type PluginItemSettingViewModel(plugin: IConfigurablePlugin, dispatcher: IDispat
     let pluginType = plugin.GetType()
     let header =
         pluginType.GetCustomAttribute<DisplayNameAttribute>()
-        |> Null.bind(fun att -> att.DisplayName)
+        |> Null.bind (fun att -> att.DisplayName)
         |> Null.defaultValue pluginType.Name
 
     override _.Header = header
@@ -62,7 +62,7 @@ type PluginLoadSettingViewModel(messenger: IMessenger) =
             match pluginMap.TryGetValue(fullName) with
             | BoolSome(plugin) ->
                 plugin.IsEnabled.Value <- true
-                ignore (pluginMap.Remove(fullName))
+                ignore <| pluginMap.Remove(fullName)
                 plugins.Add(plugin)
             | BoolNone -> ()
         for plugin in pluginMap.Values do
@@ -73,19 +73,19 @@ type PluginLoadSettingViewModel(messenger: IMessenger) =
     
     member val UpPluginCommand =
         pluginIndex
-        |> Prop.map(fun i -> 1 <= i && i < plugins.Count)
-        |> Prop.command(fun _ -> plugins.Move(pluginIndex.Value, pluginIndex.Value - 1))
+        |> Prop.map (fun i -> 1 <= i && i < plugins.Count)
+        |> Prop.command (fun _ -> plugins.Move(pluginIndex.Value, pluginIndex.Value - 1))
     
     member val DownPluginCommand =
         pluginIndex
-        |> Prop.map(fun i -> 0 <= i && i < plugins.Count - 1)
-        |> Prop.command(fun _ -> plugins.Move(pluginIndex.Value, pluginIndex.Value + 1))
+        |> Prop.map (fun i -> 0 <= i && i < plugins.Count - 1)
+        |> Prop.command (fun _ -> plugins.Move(pluginIndex.Value, pluginIndex.Value + 1))
 
     override _.Header = "ON/OFFと読み込み順"
 
     member _.Save(_: obj) =
         PluginExecutor.setting.PluginOrder <-
-            [| for x in plugins do if x.IsEnabled.Value then yield x.FullName |]
+            [| for x in plugins do if x.IsEnabled.Value then x.FullName |]
         for configurable in PluginExecutor.configurablePlugins do
             PluginExecutor.setting.Settings.[configurable.GetType().ToString()] <-
                 SsslObject.ConvertFrom(configurable.Setting)

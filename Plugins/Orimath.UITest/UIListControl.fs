@@ -18,8 +18,8 @@ type UIListControl() =
         if e.AddedItems.Count = 1 then
             match e.AddedItems.[0], this.FindName("previewHost") with
             | (:? Type as t), (:? Border as previewHost) ->
-                if t.GetConstructors() |> Array.forall(fun c -> c.GetParameters().Length <> 0) ||
-                   noPreviewTypes |> Array.exists(fun np -> np.IsAssignableFrom(t)) then
+                if t.GetConstructors() |> Array.forall (fun c -> c.GetParameters().Length <> 0) ||
+                   noPreviewTypes |> Array.exists (fun np -> np.IsAssignableFrom(t)) then
                     let textBlock = TextBlock()
                     textBlock.Text <- "No Preview"
                     previewHost.Child <- textBlock

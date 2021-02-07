@@ -4,16 +4,22 @@ open System.Windows.Controls
 open System.Windows.Media
 open System.Windows.Media.Imaging
 
+type internal FpmOptions = FrameworkPropertyMetadataOptions
+
 type AutoDisableImage() =
     inherit Image()
     static let mutable init = false
     do
         if not init then
             init <- true
-            AutoDisableImage.IsEnabledProperty.OverrideMetadata(typeof<AutoDisableImage>,
-                new FrameworkPropertyMetadata(true, FrameworkPropertyMetadataOptions.AffectsRender))
-            AutoDisableImage.SourceProperty.OverrideMetadata(typeof<AutoDisableImage>,
-                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsMeasure ||| FrameworkPropertyMetadataOptions.AffectsRender,
+            AutoDisableImage.IsEnabledProperty.OverrideMetadata(
+                typeof<AutoDisableImage>,
+                new FrameworkPropertyMetadata(true, FpmOptions.AffectsRender))
+            AutoDisableImage.SourceProperty.OverrideMetadata(
+                typeof<AutoDisableImage>,
+                new FrameworkPropertyMetadata(
+                    null,
+                    FpmOptions.AffectsMeasure ||| FpmOptions.AffectsRender,
                     PropertyChangedCallback AutoDisableImage.OnSourceChanged))
 
     member val GraySource: BitmapSource option = None with get, set
@@ -38,11 +44,12 @@ type AutoDisableImage() =
                 let b = float pixels.[i]
                 let g = float pixels.[i + 1]
                 let r = float pixels.[i + 2]
-                let gray = int(r * 0.298912 + g * 0.586611 + b * 0.114478)
+                let gray = int (r * 0.298912 + g * 0.586611 + b * 0.114478)
                 let v = if gray > 255 then 255uy else byte gray
                 pixels.[i] <- v
                 pixels.[i + 1] <- v
                 pixels.[i + 2] <- v
-                pixels.[i + 3] <- byte(float pixels.[i + 3] * 0.75)
-            image.GraySource <- Some(BitmapSource.Create(width, height, bitmap.DpiX, bitmap.DpiY, PixelFormats.Bgra32, null, pixels, stride))
+                pixels.[i + 3] <- byte (float pixels.[i + 3] * 0.75)
+            image.GraySource <-
+                Some(BitmapSource.Create(width, height, bitmap.DpiX, bitmap.DpiY, PixelFormats.Bgra32, null, pixels, stride))
         | _ -> ()

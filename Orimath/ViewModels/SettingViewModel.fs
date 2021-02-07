@@ -20,9 +20,9 @@ type SettingViewModel(object: obj, dispatcher: IDispatcher) =
             let result = [|
                 for prop in object.GetType().GetProperties(BindingFlags.Public ||| BindingFlags.Instance) do
                 if isNotNull (prop.GetGetMethod()) && isNotNull (prop.GetSetMethod()) &&
-                    (prop.GetCustomAttribute<EditableAttribute>()
-                    |> Null.mapv(fun att -> att.AllowEdit)
-                    |> Option.defaultValue true) then
+                   (prop.GetCustomAttribute<EditableAttribute>()
+                   |> Null.mapv (fun att -> att.AllowEdit)
+                   |> Option.defaultValue true) then
                     let propertyType = prop.PropertyType
                     if propertyType = typeof<float> then
                         yield DoubleSettingItemViewModel(prop, object) :> SettingItemViewModel

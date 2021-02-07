@@ -18,10 +18,9 @@ module Edge =
                     true
                 else
                     if (p1.Y <= point.Y && point.Y < p2.Y || p2.Y <= point.Y && point.Y < p1.Y) &&
-                        point.X < Line.getX point.Y head.Line.Line then
-                        recSelf (acm + 1) tail
-                    else
-                        recSelf acm tail
+                        point.X < Line.getX point.Y head.Line.Line
+                    then recSelf (acm + 1) tail
+                    else recSelf acm tail
             | [] -> acm % 2 = 1
         recSelf 0 edges
 
@@ -33,14 +32,14 @@ module Edge =
         let points = ResizeArray()
         for edge in edges do
             match Line.cross edge.Line.Line line with
-            | Some(p) when LineSegment.containsPoint p edge.Line && not (points |> Seq.exists((=~) p))
-                -> points.Add(p)
+            | Some(p) when LineSegment.containsPoint p edge.Line && not (points |> Seq.exists((=~) p)) ->
+                points.Add(p)
             | _ -> ()
         points
-        |> Seq.sortBy(fun p -> if line.YFactor = 0.0 then p.Y else p.X)
+        |> Seq.sortBy (fun p -> if line.YFactor = 0.0 then p.Y else p.X)
         |> Seq.pairwise
-        |> Seq.filter(fun (p1, p2) -> containsPoint ((p1 + p2) / 2.0) edges)
-        |> Seq.choose(LineSegment.FromPoints)
+        |> Seq.filter (fun (p1, p2) -> containsPoint ((p1 + p2) / 2.0) edges)
+        |> Seq.choose LineSegment.FromPoints
 
     /// このレイヤーの範囲内に収まるように、指定された線分をカットします。
     let clipSeg (line: LineSegment) (edges: Edge list) =
@@ -49,10 +48,10 @@ module Edge =
         points.Add(line.Point2)
         for edge in edges do
             match LineSegment.cross edge.Line line with
-            | Some(p) when not (points |> Seq.exists((=~) p)) -> points.Add(p)
+            | Some(p) when not (points |> Seq.exists ((=~) p)) -> points.Add(p)
             | _ -> ()
         points
-        |> Seq.sortBy(fun p -> if line.Line.YFactor = 0.0 then p.Y else p.X)
+        |> Seq.sortBy (fun p -> if line.Line.YFactor = 0.0 then p.Y else p.X)
         |> Seq.pairwise
-        |> Seq.filter(fun (p1, p2) -> containsPoint ((p1 + p2) / 2.0) edges)
-        |> Seq.choose(LineSegment.FromPoints)
+        |> Seq.filter (fun (p1, p2) -> containsPoint ((p1 + p2) / 2.0) edges)
+        |> Seq.choose LineSegment.FromPoints

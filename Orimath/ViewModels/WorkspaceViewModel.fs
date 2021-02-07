@@ -39,13 +39,13 @@ type WorkspaceViewModel(workspace: IWorkspace) =
     member val HasDialog = isNotNull <|. dialog
     member val HasNotDialog = isNull <|. dialog
     member val RootEnable =
-        (dispatcher.IsExecuting, dialog) ||> Prop.map2(fun exec d -> not exec && isNull d)
+        (dispatcher.IsExecuting, dialog) ||> Prop.map2 (fun exec d -> not exec && isNull d)
     member val CloseDialogCommand =
-        dialog .|> isNotNull |> Prop.command(fun _ -> dialog.Value <- null)
+        dialog .|> isNotNull |> Prop.command (fun _ -> dialog.Value <- null)
 
     member _.Height with get() = setting.Height and set value = setting.Height <- value
     member _.Width with get() = setting.Width and set value = setting.Width <- value
-    member _.IsExecuting = dispatcher.IsExecuting;
+    member _.IsExecuting = dispatcher.IsExecuting
 
     member private this.GetViewModelCollection(viewModelType: Type) =
         if not initialized then
@@ -67,15 +67,27 @@ type WorkspaceViewModel(workspace: IWorkspace) =
         this.ViewSize <- float(setting.ViewSize) * 2.0
         systemEffects <-
             [| new GlobalSettingEffect(setting) :> IEffect
-               new PluginSettingEffect(this, dispatcher, fun () -> box (PluginSettingViewModel(this, dispatcher))) :> IEffect |]
+               new PluginSettingEffect(this,
+                   dispatcher,
+                   fun () -> upcast PluginSettingViewModel(this, dispatcher))
+               :> IEffect |]
 
     member _.SaveSetting() =
         Settings.save Settings.Global setting
 
     member this.Initialize() =
         let pointConverter =
-            new ViewPointConverter(float(setting.ViewSize), -float(setting.ViewSize), float(setting.ViewSize) * 0.5, float(setting.ViewSize) * 1.5)
-        PluginExecutor.ExecutePlugins({ Workspace = workspace; Messenger = this; Dispatcher = dispatcher; PointConverter = pointConverter })
+            new ViewPointConverter(
+                float(setting.ViewSize),
+                -float(setting.ViewSize),
+                float(setting.ViewSize) * 0.5,
+                float(setting.ViewSize) * 1.5)
+        PluginExecutor.ExecutePlugins({
+            Workspace = workspace
+            Messenger = this
+            Dispatcher = dispatcher
+            PointConverter = pointConverter
+        })
         for effect in Seq.append workspace.Effects systemEffects do
             effectCommands.[effect] <-
                 match effect with
@@ -95,11 +107,12 @@ type WorkspaceViewModel(workspace: IWorkspace) =
         for effect in Seq.append workspace.Effects systemEffects do
             let mutable targetCollection = this.MenuItems
             for name in effect.MenuHieralchy do
-                let mutable parent = targetCollection.FirstOrDefault(fun x -> x.Name = name)
-                if isNull (box parent) then
-                    parent <- MenuItemViewModel(name)
+                match targetCollection |> Seq.tryFind (fun x -> x.Name = name) with
+                | Some(parent) -> targetCollection <- parent.Children
+                | None ->
+                    let parent = MenuItemViewModel(name)
                     targetCollection.Add(parent)
-                targetCollection <- parent.Children
+                    targetCollection <- parent.Children
             targetCollection.Add(MenuItemViewModel(effect, this))
 
     member this.LoadViewModels() =
@@ -115,13 +128,13 @@ type WorkspaceViewModel(workspace: IWorkspace) =
     member this.RemoveViewModel(viewModelType: Type) =
         if isNull viewModelType then nullArg (nameof viewModelType)
         this.GetViewModelCollection(viewModelType)
-        |> Null.iter(fun c ->
+        |> Null.iter (fun c ->
             for vm in c |> Seq.filter viewModelType.IsInstanceOfType |> Seq.toArray do
-                ignore (c.Remove(vm)))
+                ignore <| c.Remove(vm))
 
     member this.RemoveViewModel(viewModel: obj) =
         if isNull viewModel then nullArg (nameof viewModel)
-        this.GetViewModelCollection(viewModel.GetType()) |> Null.iter(fun c -> c.Add(viewModel))
+        this.GetViewModelCollection(viewModel.GetType()) |> Null.iter (fun c -> c.Add(viewModel))
 
 
     member this.RegisterView(viewPane: ViewPane, viewModelType: Type, viewType: Type) =
@@ -130,20 +143,20 @@ type WorkspaceViewModel(workspace: IWorkspace) =
     member this.RegisterView(viewPane: ViewPane, viewModelType: Type, viewUri: string) =
         this.ViewDefinitions.[viewModelType] <- (viewPane, ViewUri(viewUri))
         
-    member _.SetEffectParameterViewModel<'ViewModel>(mapping: 'ViewModel -> obj) =
+    member _.SetEffectParameterViewModel<'ViewModel>(mapping) =
         effectParameterCreator.[typeof<'ViewModel>] <- fun p -> mapping (p :?> 'ViewModel)
 
-    member _.GetEffectParameterViewModel(parameter: obj) =
+    member _.GetEffectParameterViewModel(parameter) =
         match effectParameterCreator.TryGetValue(parameter.GetType()) with
         | BoolSome(creator) -> creator parameter
-        | BoolNone -> box (SettingViewModel(parameter, dispatcher))
+        | BoolNone -> upcast SettingViewModel(parameter, dispatcher)
 
     member _.OpenDialog(viewModel: obj) =
         if not initialized
         then invalidOp "初期化完了前にダイアログを表示することはできません。"
-        else dialog.Value <- viewModel
+        else dialog .<- viewModel
 
-    member _.CloseDialog() = dialog.Value <- null
+    member _.CloseDialog() = dialog .<- null
 
     member _.GetEffectCommand(effect: IEffect) =
         match effectCommands.TryGetValue(effect) with

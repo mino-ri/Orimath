@@ -9,9 +9,9 @@ type FpmOptions = FrameworkPropertyMetadataOptions
 
 type Arrow() =
     inherit Shape()
-    static let Sin60 = sin(Math.PI / 3.0)
-    static let Cos60 = cos(Math.PI / 3.0)
-    static let IsDoubleFinite = ValidateValueCallback(fun (o: obj) ->
+    static let sin60 = sin(Math.PI / 3.0)
+    static let cos60 = cos(Math.PI / 3.0)
+    static let isDoubleFinite = ValidateValueCallback(fun (o: obj) ->
         match o with
         | :? float as d -> not (Double.IsInfinity(d) || Double.IsNaN(d))
         | _ -> false)
@@ -19,32 +19,32 @@ type Arrow() =
     member this.X1 with get() = this.GetValue(Arrow.X1Property) :?> float and set (v: float) = this.SetValue(Arrow.X1Property, box v)
     static member val X1Property =
         DependencyProperty.Register("X1", typeof<float>, typeof<Arrow>,
-            FrameworkPropertyMetadata(0.0, FpmOptions.AffectsMeasure ||| FpmOptions.AffectsRender), IsDoubleFinite)
+            FrameworkPropertyMetadata(0.0, FpmOptions.AffectsMeasure ||| FpmOptions.AffectsRender), isDoubleFinite)
 
     member this.X2 with get() = this.GetValue(Arrow.X2Property) :?> float and set (v: float) = this.SetValue(Arrow.X2Property, box v)
     static member val X2Property =
         DependencyProperty.Register("X2", typeof<float>, typeof<Arrow>,
-            FrameworkPropertyMetadata(0.0, FpmOptions.AffectsMeasure ||| FpmOptions.AffectsRender), IsDoubleFinite)
+            FrameworkPropertyMetadata(0.0, FpmOptions.AffectsMeasure ||| FpmOptions.AffectsRender), isDoubleFinite)
 
     member this.Y1 with get() = this.GetValue(Arrow.Y1Property) :?> float and set (v: float) = this.SetValue(Arrow.Y1Property, box v)
     static member val Y1Property =
         DependencyProperty.Register("Y1", typeof<float>, typeof<Arrow>,
-            FrameworkPropertyMetadata(0.0, FpmOptions.AffectsMeasure ||| FpmOptions.AffectsRender), IsDoubleFinite)
+            FrameworkPropertyMetadata(0.0, FpmOptions.AffectsMeasure ||| FpmOptions.AffectsRender), isDoubleFinite)
 
     member this.Y2 with get() = this.GetValue(Arrow.Y2Property) :?> float and set (v: float) = this.SetValue(Arrow.Y2Property, box v)
     static member val Y2Property =
         DependencyProperty.Register("Y2", typeof<float>, typeof<Arrow>,
-            FrameworkPropertyMetadata(0.0, FpmOptions.AffectsMeasure ||| FpmOptions.AffectsRender), IsDoubleFinite)
+            FrameworkPropertyMetadata(0.0, FpmOptions.AffectsMeasure ||| FpmOptions.AffectsRender), isDoubleFinite)
 
     member this.PointMargin with get() = this.GetValue(Arrow.PointMarginProperty) :?> float and set (v: float) = this.SetValue(Arrow.PointMarginProperty, box v)
     static member val PointMarginProperty =
         DependencyProperty.Register("PointMargin", typeof<float>, typeof<Arrow>,
-            FrameworkPropertyMetadata(8.0, FpmOptions.AffectsMeasure ||| FpmOptions.AffectsRender), IsDoubleFinite)
+            FrameworkPropertyMetadata(8.0, FpmOptions.AffectsMeasure ||| FpmOptions.AffectsRender), isDoubleFinite)
 
     member this.ArrowSize with get() = this.GetValue(Arrow.ArrowSizeProperty) :?> float and set (v: float) = this.SetValue(Arrow.ArrowSizeProperty, box v)
     static member val ArrowSizeProperty =
         DependencyProperty.Register("ArrowSize", typeof<float>, typeof<Arrow>,
-            FrameworkPropertyMetadata(12.0, FpmOptions.AffectsMeasure ||| FpmOptions.AffectsRender), IsDoubleFinite)
+            FrameworkPropertyMetadata(12.0, FpmOptions.AffectsMeasure ||| FpmOptions.AffectsRender), isDoubleFinite)
 
     member this.StartType with get() = this.GetValue(Arrow.BeginTypeProperty) :?> ArrowType and set (v: ArrowType) = this.SetValue(Arrow.BeginTypeProperty, box v)
     static member val BeginTypeProperty =
@@ -71,7 +71,10 @@ type Arrow() =
             match this.Direction with
             | ArrowDirection.Clockwise -> SweepDirection.Clockwise
             | ArrowDirection.Counterclockwise -> SweepDirection.Counterclockwise
-            | _ -> if normal.X > 0.0 then SweepDirection.Clockwise else SweepDirection.Counterclockwise
+            | _ ->
+                if normal.X > 0.0
+                then SweepDirection.Clockwise
+                else SweepDirection.Counterclockwise
         let vertical =
             if direction = SweepDirection.Clockwise
             then Vector(normal.Y, -normal.X)
@@ -80,27 +83,27 @@ type Arrow() =
         let arrowSize = this.ArrowSize
         let geometry = StreamGeometry()
         use context = geometry.Open()
-        let point1 = v1 + normal * (pointMargin * Sin60) + vertical * (pointMargin * Cos60)
-        let point2 = v2 - normal * (pointMargin * Sin60) + vertical * (pointMargin * Cos60)
+        let point1 = v1 + normal * (pointMargin * sin60) + vertical * (pointMargin * cos60)
+        let point2 = v2 - normal * (pointMargin * sin60) + vertical * (pointMargin * cos60)
         let distance = (point2 - point1).Length
         let drawArrow isBegin ty (basePoint: Vector) (normal: Vector) (vertical: Vector) =
             match ty with
             | ArrowType.Normal
             | ArrowType.ValleyFold ->
                 let isValey = ty = ArrowType.ValleyFold
-                context.BeginFigure(point(basePoint + normal * (arrowSize * Cos60) + vertical * (arrowSize * Sin60)), isValey, isValey)
+                context.BeginFigure(point(basePoint + normal * (arrowSize * cos60) + vertical * (arrowSize * sin60)), isValey, isValey)
                 context.LineTo(point basePoint, true, false)
                 context.LineTo(point(basePoint + normal * arrowSize), true, false)
                 if isBegin then
                     context.BeginFigure(point(basePoint), false, false)
             | ArrowType.MountainFold ->
                 if isBegin then
-                    context.BeginFigure(point(basePoint + normal * (arrowSize * Sin60) + vertical * (arrowSize * Cos60)), false, false)
-                    context.LineTo(point(basePoint + normal * (arrowSize * 1.25 * Cos60) + vertical * (arrowSize * 1.25 * Sin60)), true, false)
+                    context.BeginFigure(point(basePoint + normal * (arrowSize * sin60) + vertical * (arrowSize * cos60)), false, false)
+                    context.LineTo(point(basePoint + normal * (arrowSize * 1.25 * cos60) + vertical * (arrowSize * 1.25 * sin60)), true, false)
                     context.LineTo(point basePoint, true, false)
                 else
-                    context.LineTo(point(basePoint + normal * (arrowSize * 1.25 * Cos60) + vertical * (arrowSize * 1.25 * Sin60)), true, false)
-                    context.LineTo(point(basePoint + normal * (arrowSize * Sin60) + vertical * (arrowSize * Cos60)), true, false)
+                    context.LineTo(point(basePoint + normal * (arrowSize * 1.25 * cos60) + vertical * (arrowSize * 1.25 * sin60)), true, false)
+                    context.LineTo(point(basePoint + normal * (arrowSize * sin60) + vertical * (arrowSize * cos60)), true, false)
             | _ ->
                     if isBegin then
                         context.BeginFigure(point basePoint, false, false)

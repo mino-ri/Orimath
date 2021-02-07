@@ -18,6 +18,6 @@ let isNotNull x = not (isNull x)
 let (|ScreenPoint|) (p: System.Windows.Point) = p.X, p.Y
 
 let subscribeOnUI (dispatcher: IDispatcher) callback observable =
-    observable |> Observable.subscribe2(fun item -> dispatcher.UI { callback item })
+    observable |> Observable.subscribe2 (fun item -> dispatcher.UI { callback item })
 
 let viewPath name = "/Orimath.Basics.View;component/" + name + ".xaml"

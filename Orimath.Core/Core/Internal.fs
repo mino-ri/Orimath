@@ -1,6 +1,5 @@
 ﻿[<AutoOpen>]
 module internal Orimath.Core.Internal
-open System
 open System.Collections.Generic
 open ApplicativeProperty
 
@@ -12,9 +11,11 @@ let asList (s: seq<'a>) =
 let revList s = ([], s) ||> Seq.fold(fun t h -> h :: t)
 
 let createArrayProp<'T when 'T : equality>() =
-    ValueProp<'T[]>(Array.Empty(), { new IEqualityComparer<'T[]> with
-        member _.Equals(a, b) = a.Length = b.Length && Array.forall2 (=) a b
-        member _.GetHashCode(_) = 0 // not used
-    }, System.Threading.SynchronizationContext.Current)
+    ValueProp<'T[]>(
+        array.Empty(),
+        { new IEqualityComparer<'T[]> with
+            member _.Equals(a, b) = a.Length = b.Length && Array.forall2 (=) a b
+            member _.GetHashCode(_) = 0 },
+        System.Threading.SynchronizationContext.Current)
 
 let inline flip f x y = f y x

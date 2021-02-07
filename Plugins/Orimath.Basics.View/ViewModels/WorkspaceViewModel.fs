@@ -6,7 +6,9 @@ open Orimath.Plugins
 type WorkspaceViewModel(workspace: IWorkspace, pointConverter: IViewPointConverter, dispatcher: IDispatcher) =
     inherit NotifyPropertyChanged()
     let toModelTarget (target: ScreenOperationTarget) =
-        { Point = pointConverter.ViewToModel(target.Point); Layer = target.Layer; Target = target.Target }
+        { Point = pointConverter.ViewToModel(target.Point)
+          Layer = target.Layer
+          Target = target.Target }
 
     member val Paper = new PaperViewModel(workspace.Paper, pointConverter, dispatcher)
 

@@ -21,19 +21,19 @@ type FoldingInstructionViewModel(workspace: IWorkspace, dispatcher: IDispatcher,
             fTool.FoldingInstruction.Points
             |> subscribeOnUI dispatcher (fun ps ->
                 if ps.Length = points.Count
-                then (points, ps) ||> Seq.iter2(fun vm m -> vm.SetModel(m))
+                then (points, ps) ||> Seq.iter2 (fun vm m -> vm.SetModel(m))
                 else points.Reset(seq { for p in ps -> InstructionPointViewModel.Create(pointConverter, p) }))
             |> disposables.Add
             fTool.FoldingInstruction.Lines
             |> subscribeOnUI dispatcher (fun ls ->
                 if ls.Length = lines.Count
-                then (lines, ls) ||> Seq.iter2(fun vm m -> vm.SetModel(m))
+                then (lines, ls) ||> Seq.iter2 (fun vm m -> vm.SetModel(m))
                 else lines.Reset(seq { for l in ls -> InstructionLineViewModel.Create(pointConverter, l) }))
             |> disposables.Add
             fTool.FoldingInstruction.Arrows
             |> subscribeOnUI dispatcher (fun ars ->
                 if ars.Length = arrows.Count
-                then (arrows, ars) ||> Seq.iter2(fun vm m -> vm.SetModel(m))
+                then (arrows, ars) ||> Seq.iter2 (fun vm m -> vm.SetModel(m))
                 else arrows.Reset(seq { for a in ars -> InstructionArrowViewModel.Create(pointConverter, a) }))
             |> disposables.Add
             dispatcher.UI {

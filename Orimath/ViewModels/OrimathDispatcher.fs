@@ -20,7 +20,8 @@ type OrimathDispatcher() =
                 Async.Start(async {
                     try action()
                     finally ui.Invoke(fun () -> Prop.decr processCount)
-                }) }
+                })
+        }
 
     member val IsExecuting = processCount .> 0
     member _.SyncContext = syncContext

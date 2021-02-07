@@ -27,7 +27,7 @@ type MeasureTool(workspace: IWorkspace) =
             match Line.cross l1 l2 with
             | Some(crossPoint) ->
                 let cosTheta = abs (l1.XFactor * l2.XFactor + l1.YFactor * l2.YFactor)
-                let sinTheta = -sqrt(1.0 - cosTheta * cosTheta)
+                let sinTheta = -sqrt (1.0 - cosTheta * cosTheta)
                 Some(LineSegment.FromFactorsAndPoint(sinTheta, cosTheta, crossPoint))
             | None ->
                 match Line.cross l2 (Line.FromFactorsAndPoint(l1.YFactor, -l1.XFactor, p1)) with
@@ -87,8 +87,8 @@ type MeasureTool(workspace: IWorkspace) =
             paper.SelectedEdges .<- array.Empty()
             paper.SelectedLines .<- 
                 if modifier.HasFlag(OperationModifier.Shift)
-                then Array.append paper.SelectedLines.Value (Option.toArray(this.GetDistanceLine(source, target)))
-                else Option.toArray(this.GetDistanceLine(source, target))
+                then Array.append paper.SelectedLines.Value (Option.toArray (this.GetDistanceLine(source, target)))
+                else Option.toArray (this.GetDistanceLine(source, target))
             instruction.Lines .<- array.Empty()
 
     interface IFoldingInstructionTool with

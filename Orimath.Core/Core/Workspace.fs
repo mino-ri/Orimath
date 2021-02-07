@@ -44,6 +44,7 @@ type Workspace() as this =
 
         member this.Initialize() = this.Initialize()
         member _.CreatePaper(layers) = upcast Paper.Create(layers)
-        member _.CreateLayer(edges, lines, points, layerType, originalEdges, matrix) = upcast Layer.Create(edges, lines, points, layerType, originalEdges, matrix)
+        member _.CreateLayer(edges, lines, points, layerType, originalEdges, matrix) =
+            upcast Layer.Create(edges, lines, points, layerType, originalEdges, matrix)
         member _.CreateLayerFromSize(width, height, layerType) = upcast Layer.FromSize(width, height, layerType)
         member _.CreateLayerFromPolygon(vertexes, layerType) = upcast Layer.FromPolygon(vertexes, layerType)

@@ -18,6 +18,6 @@ type EnumValueViewModel private (value: Enum, name: string) =
             [| for field in t.GetFields(BindingFlags.Public ||| BindingFlags.Static) do
                let name =
                    field.GetCustomAttribute<DisplayAttribute>()
-                   |> Null.bind(fun att -> att.Name)
+                   |> Null.bind (fun att -> att.Name)
                    |> Null.defaultValue field.Name
                EnumValueViewModel(Enum.Parse(t, field.Name) :?> Enum, name) |])

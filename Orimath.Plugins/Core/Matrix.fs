@@ -3,8 +3,8 @@
 [<NoComparison>]
 type Matrix =
     {
-        M11: float;     M12: float     // 0
-        M21: float;     M22: float     // 0
+        M11:     float; M12:     float // 0
+        M21:     float; M22:     float // 0
         OffsetX: float; OffsetY: float // 1
     }
     with

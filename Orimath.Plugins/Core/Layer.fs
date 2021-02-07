@@ -8,7 +8,8 @@ type LayerType =
     | FrontSide = 1
 
 
-[<Extension; CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
+[<Extension>]
+[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module LayerType =
     /// LayerType を裏表逆転させます。
     let turnOver layerType =
@@ -93,10 +94,13 @@ module Layer =
             let mutable points = points
             match lines with
             | line :: tail ->
-                if (points |> List.forall((<>~) line.Point1)) && not (hasPoint line.Point1 layer) then points <- line.Point1 :: points
-                if (points |> List.forall((<>~) line.Point2)) && not (hasPoint line.Point2 layer) then points <- line.Point2 :: points
+                if List.forall ((<>~) line.Point1) points && not (hasPoint line.Point1 layer) then
+                    points <- line.Point1 :: points
+                if List.forall ((<>~) line.Point2) points && not (hasPoint line.Point2 layer) then
+                    points <- line.Point2 :: points
                 points <- appendCross line points layer
-                for tailLine in tail do points <- tryAddPoint points (LineSegment.cross tailLine line) layer
+                for tailLine in tail do
+                    points <- tryAddPoint points (LineSegment.cross tailLine line) layer
                 recSelf tail points
             | _ -> points
         recSelf (asList segs) []

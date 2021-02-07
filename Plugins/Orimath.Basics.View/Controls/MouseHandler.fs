@@ -60,8 +60,8 @@ type MouseHandler() =
     member private _.ResetWorkspace() = workspace <- None
 
     static member private AttachedMouseHandlerChanged (sender: DependencyObject) (e: DependencyPropertyChangedEventArgs) =
-        sender |> iterOf(fun (ctrl: Control) ->
-            e.OldValue |> iterOf(fun (handler: MouseHandler) ->
+        sender |> iterOf (fun (ctrl: Control) ->
+            e.OldValue |> iterOf (fun (handler: MouseHandler) ->
                 ctrl.MouseDown.RemoveHandler(MouseButtonEventHandler handler.Selector_MouseDown)
                 ctrl.MouseUp.RemoveHandler(MouseButtonEventHandler handler.Selector_MouseUp)
                 ctrl.MouseMove.RemoveHandler(MouseEventHandler handler.Selector_MouseMove)
@@ -71,7 +71,7 @@ type MouseHandler() =
                 ctrl.DragLeave.RemoveHandler(DragEventHandler handler.Selector_DragLeave)
                 ctrl.Drop.RemoveHandler(DragEventHandler handler.Selector_Drop)
                 ctrl.GiveFeedback.RemoveHandler(GiveFeedbackEventHandler handler.Selector_GiveFeedback))
-            e.NewValue |> iterOf(fun (handler: MouseHandler) ->
+            e.NewValue |> iterOf (fun (handler: MouseHandler) ->
                 ctrl.MouseDown.AddHandler(MouseButtonEventHandler handler.Selector_MouseDown)
                 ctrl.MouseUp.AddHandler(MouseButtonEventHandler handler.Selector_MouseUp)
                 ctrl.MouseMove.AddHandler(MouseEventHandler handler.Selector_MouseMove)

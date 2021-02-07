@@ -8,10 +8,10 @@ type MeasureViewModel(paper: IPaperModel, pointConverter: IViewPointConverter, d
     let mapArray mapping prop = prop |> Prop.map (Array.map mapping) |> Prop.fetch dispatcher.SyncContext
 
     member val SelectedPoints =
-        paper.SelectedPoints |> mapArray(fun p -> PointViewModel(p, pointConverter))
+        paper.SelectedPoints |> mapArray (fun p -> PointViewModel(p, pointConverter))
 
     member val SelectedLines =
-        paper.SelectedLines |> mapArray(fun l -> LineViewModel(l, pointConverter))
+        paper.SelectedLines |> mapArray (fun l -> LineViewModel(l, pointConverter))
 
     member val SelectedEdges =
-        paper.SelectedEdges |> mapArray(fun e -> EdgeViewModel(e, pointConverter))
+        paper.SelectedEdges |> mapArray (fun e -> EdgeViewModel(e, pointConverter))
