@@ -13,8 +13,6 @@
         DataContext="{Binding Workspace, Source={StaticResource rootViewModel}, Mode=OneTime}"
         Width="{Binding Width, Mode=TwoWay}"
         Height="{Binding Height, Mode=TwoWay}"
-        Left="{Binding Left, Mode=TwoWay}"
-        Top="{Binding Top, Mode=TwoWay}"
         Style="{StaticResource MainWindowStyle}"
         ResizeMode="CanResizeWithGrip"
         SnapsToDevicePixels="True"

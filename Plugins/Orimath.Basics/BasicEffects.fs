@@ -25,11 +25,9 @@ type RedoEffect(workspace: IWorkspace) =
 
 type TurnVerticallyEffect(workspace: IWorkspace) =
     let matrix =
-        {
-            M11 = 1.0; M12 = 0.0
-            M21 = 0.0; M22 = -1.0
-            OffsetX = 0.0; OffsetY = 1.0
-        }
+        { M11 = 1.0; M12 = 0.0
+          M21 = 0.0; M22 = -1.0
+          OffsetX = 0.0; OffsetY = 1.0 }
     interface IEffect with
         member val MenuHieralchy = [| "編集" |]
         member _.Name = "縦に裏返す"

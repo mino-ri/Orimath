@@ -14,12 +14,6 @@ type GlobalSetting() =
     [<Editable(false)>]
     member val Width = 800.0 with get, set
 
-    [<Editable(false)>]
-    member val Left = nan with get, set
-
-    [<Editable(false)>]
-    member val Top = nan with get, set
-
     member this.Clone() = this.MemberwiseClone() :?> GlobalSetting
 
     interface ICloneable with

@@ -45,8 +45,6 @@ type WorkspaceViewModel(workspace: IWorkspace) =
 
     member _.Height with get() = setting.Height and set value = setting.Height <- value
     member _.Width with get() = setting.Width and set value = setting.Width <- value
-    member _.Left with get() = setting.Left and set value = setting.Left <- value
-    member _.Top with get() = setting.Top and set value = setting.Top <- value
     member _.IsExecuting = dispatcher.IsExecuting;
 
     member private this.GetViewModelCollection(viewModelType: Type) =
