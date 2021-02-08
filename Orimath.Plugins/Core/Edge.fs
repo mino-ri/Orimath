@@ -1,11 +1,9 @@
 ﻿namespace Orimath.Core
 open NearlyEquatable
 
-type Edge (line: LineSegment, inner: bool) =
-    member _.Line = line
-    member _.Inner = inner
+type Edge = { Line: LineSegment; Inner: bool } with
 
-    override _.ToString() = line.ToString()
+    override this.ToString() = this.Line.ToString()
 
 module Edge =
     let containsPoint point edges =
@@ -32,7 +30,7 @@ module Edge =
         let points = ResizeArray()
         for edge in edges do
             match Line.cross edge.Line.Line line with
-            | Some(p) when LineSegment.containsPoint p edge.Line && not (points |> Seq.exists((=~) p)) ->
+            | Some(p) when LineSegment.containsPoint p edge.Line && not (points |> Seq.exists ((=~) p)) ->
                 points.Add(p)
             | _ -> ()
         points

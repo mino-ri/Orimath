@@ -63,14 +63,13 @@ type WorkspaceViewModel(workspace: IWorkspace) =
     member _.SelectTool(tool: ITool) = workspace.CurrentTool.OnNext(tool)
 
     member this.LoadSetting() =
+        let createViewModel () = box <| PluginSettingViewModel(this, dispatcher)
         setting <- Settings.load Settings.Global |> Option.defaultWith GlobalSetting
         this.ViewSize <- float(setting.ViewSize) * 2.0
-        systemEffects <-
-            [| new GlobalSettingEffect(setting) :> IEffect
-               new PluginSettingEffect(this,
-                   dispatcher,
-                   fun () -> upcast PluginSettingViewModel(this, dispatcher))
-               :> IEffect |]
+        systemEffects <- [|
+            new GlobalSettingEffect(setting) :> IEffect
+            new PluginSettingEffect(this, dispatcher, createViewModel) :> IEffect
+        |]
 
     member _.SaveSetting() =
         Settings.save Settings.Global setting
@@ -93,10 +92,10 @@ type WorkspaceViewModel(workspace: IWorkspace) =
                 match effect with
                 | :? IParametricEffect as parametric ->
                     (effect.CanExecute .&&. this.RootEnable, dispatcher.SyncContext)
-                        ||> Prop.commands (fun _ -> this.OpenDialog(ParametricEffectDialogViewModel(parametric, dispatcher, this, this.GetEffectParameterViewModel)))
+                    ||> Prop.commands (fun _ -> this.OpenDialog(ParametricEffectDialogViewModel(parametric, dispatcher, this, this.GetEffectParameterViewModel)))
                 | effect ->
                     (effect.CanExecute .&&. this.RootEnable, dispatcher.SyncContext)
-                        ||> Prop.commands (fun _ -> dispatcher.Background.Invoke(effect.Execute))
+                    ||> Prop.commands (fun _ -> dispatcher.Background.Invoke(effect.Execute))
         for tool in workspace.Tools do
             Internal.convertToKeyGesture(tool.ShortcutKey)
             |> Option.iter (fun gesture -> this.ToolGestures.[gesture] <- tool)

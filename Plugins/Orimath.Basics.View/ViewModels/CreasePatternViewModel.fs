@@ -28,8 +28,12 @@ type CreasePatternViewModel(paper: IPaperModel, dispatcher: IDispatcher) =
             for i = 0 to layers.Length - 1 do
             for edge in layers.[i].OriginalEdges do
             if edge.Inner then
-                if layers |> Seq.take i |> Seq.collect(fun l -> l.OriginalEdges)
-                          |> Seq.forall(fun e -> not e.Inner || edge.Line <>~ e.Line) then
+                let isTopEdge =
+                   layers
+                   |> Seq.take i
+                   |> Seq.collect (fun l -> l.OriginalEdges)
+                   |> Seq.forall (fun e -> not e.Inner || edge.Line <>~ e.Line) 
+                if isTopEdge then
                     yield CreasePatternLineViewModel
                         (edge.Line,
                          pointConverter,

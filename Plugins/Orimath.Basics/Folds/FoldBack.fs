@@ -63,8 +63,8 @@ let private splitLines foldLine (layer: ILayer) =
 
 let private splitEdge foldLine (target: Edge) =
     let positive, negative = splitLine foldLine target.Line
-    positive |> Option.map (fun l -> Edge(l, target.Inner)),
-    negative |> Option.map (fun l -> Edge(l, target.Inner))
+    positive |> Option.map (fun l -> { target with Line = l }),
+    negative |> Option.map (fun l -> { target with Line = l })
 
 let private splitEdges foldLine layer =
     let mutable crossed = false
@@ -75,12 +75,13 @@ let private splitEdges foldLine layer =
         let positiveEdge, negativeEdge =
             match Layer.clipBound foldLine layer with
             | Some(a, b) ->
-                swapWhen (LineSegment.containsPoint a edge.Line = positiveToNegative)
-                         (LineSegment.FromPoints(b, a))
-                         (LineSegment.FromPoints(a, b))
+                swapWhen
+                    (LineSegment.containsPoint a edge.Line = positiveToNegative)
+                    (LineSegment.FromPoints(b, a))
+                    (LineSegment.FromPoints(a, b))
             | None -> None, None
-        positiveEdge |> Option.iter (fun e -> positiveEdges.Add(Edge(e, true)))
-        negativeEdge |> Option.iter (fun e -> negativeEdges.Add(Edge(e, true)))
+        positiveEdge |> Option.iter (fun e -> positiveEdges.Add({ Line = e; Inner = true }))
+        negativeEdge |> Option.iter (fun e -> negativeEdges.Add({ Line = e; Inner = true }))
     for edge in layer.Edges do
         match splitEdge foldLine edge with
         | Some(positive), None ->
@@ -171,7 +172,7 @@ let private createLayer (workspace: IWorkspace) foldLine (layer: ILayer) turnOve
             layer.Matrix)
     else
         workspace.CreateLayer(
-            source.Edges |> Seq.map (fun e -> Edge(LineSegment.reflectBy foldLine e.Line, e.Inner)),
+            source.Edges |> Seq.map (fun e -> { e with Line = LineSegment.reflectBy foldLine e.Line }),
             source.Lines |> Seq.map (LineSegment.reflectBy foldLine),
             source.Points |> Seq.map (Point.reflectBy foldLine),
             LayerType.turnOver layer.LayerType,
@@ -202,10 +203,12 @@ let private clusterLayers (layers: SplittedLayer[]) =
     for layer in layers do
         layer.Dynamic |> Option.iter (fun dl ->
             clusterIndices
-            |> Seq.tryFindIndex(fun cluster -> exists {
-                let! cl = cluster
-                let! c = cl.Dynamic
-                return isContacted dl.OriginalEdges c.OriginalEdges })
+            |> Seq.tryFindIndex (fun cluster ->
+                exists {
+                    let! cl = cluster
+                    let! c = cl.Dynamic
+                    return isContacted dl.OriginalEdges c.OriginalEdges 
+                })
             |> function
             | Some(i) -> clusterIndices.[i] <- layer :: clusterIndices.[i]
             | None -> clusterIndices.Add([layer]))
@@ -240,10 +243,10 @@ let private getTargetLayersCore (paper: IPaperModel) foldLine dynamicPoint targe
             layers
             |> Array.tryFind(fun item -> item.Static.IsSome && item.Dynamic.IsSome)
             |> Option.toList
-        | [t] -> [t]
+        | [ t ] -> [ t ]
         | ts ->
             match ts |> Seq.tryFind(fun t -> List.forall (contains t.Original) targets) with
-            | Some(t) -> [t]
+            | Some(t) -> [ t ]
             | None -> ts
     if firstLayers.IsEmpty then
         None
@@ -267,7 +270,8 @@ let private getTargetLayersCore (paper: IPaperModel) foldLine dynamicPoint targe
                 not layer.IsTarget && exists {
                     let! dl = layer.Dynamic
                     let! l = mergedLine
-                    return Edge.clipSeg l dl.Edges |> Seq.isEmpty |> not })
+                    return Edge.clipSeg l dl.Edges |> Seq.isEmpty |> not
+                })
             // 末尾最適化のため、Option.iter を使わない
             |> function
             | None -> ()

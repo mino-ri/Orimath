@@ -40,7 +40,7 @@ and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Lay
     member _.GetSnapShot() = Layer.Create(init.Edges, layerLines, layerPoints, init.LayerType, init.OriginalEdges, init.Matrix)
 
     member this.AddLineCore(segs, addCross) =
-        let lines = [for l in segs do if not (Layer.hasSeg l this) then l]
+        let lines = [ for l in segs do if not (Layer.hasSeg l this) then l ]
         if lines <> [] then
             let points = if addCross then Layer.crossesAll lines this else []
             use __ = parent.TryBeginChange()

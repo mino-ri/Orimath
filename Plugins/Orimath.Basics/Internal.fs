@@ -12,7 +12,7 @@ let transform (workspace: IWorkspace) (matrix: Matrix) reverse =
         workspace.Paper.Layers
         |> Seq.map(fun layer ->
             workspace.CreateLayer(
-                layer.Edges |> Seq.map (fun e -> Edge(e.Line * matrix, e.Inner)),
+                layer.Edges |> Seq.map (fun e -> { e with Line = e.Line * matrix }),
                 layer.Lines |> Seq.map (fun l -> l * matrix),
                 layer.Points |> Seq.map (fun p -> p * matrix),
                 getLayerType layer.LayerType,

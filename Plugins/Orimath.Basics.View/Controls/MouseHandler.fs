@@ -54,7 +54,7 @@ type MouseHandler() =
                 workspace <-
                     this.PositionRoot
                     |> tryCast<FrameworkElement>
-                    |> Option.bind(fun fe -> fe.DataContext |> tryCast<WorkspaceViewModel>)
+                    |> Option.bind (fun fe -> fe.DataContext |> tryCast<WorkspaceViewModel>)
                 workspace |> Option.defaultValue Unchecked.defaultof<_>
 
     member private _.ResetWorkspace() = workspace <- None
@@ -153,7 +153,7 @@ type MouseHandler() =
             if isValidDropSource(e.Data) && draggingData.IsSome &&
                this.Workspace.DragEnter(draggingData.Value, this.GetOperationTarget(e, dt), getModifier(pressed)) then
                 e.Effects <- DragDropEffects.Scroll
-                ctrl.Tag |> iterOf(fun brush -> ctrl.Foreground <- brush)
+                ctrl.Tag |> iterOf (fun brush -> ctrl.Foreground <- brush)
             else
                 e.Effects <- DragDropEffects.None
             e.Handled <- true

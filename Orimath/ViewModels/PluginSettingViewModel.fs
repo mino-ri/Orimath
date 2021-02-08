@@ -97,10 +97,11 @@ type PluginSettingViewModel(messenger: IMessenger, dispatcher: IDispatcher) =
     inherit NotifyPropertyChanged()
     let loadSetting = PluginLoadSettingViewModel(messenger)
 
-    member val Pages =
-        [| yield loadSetting :> PluginSettingPageViewModel
-           for c in PluginExecutor.configurablePlugins do
-               yield upcast PluginItemSettingViewModel(c, dispatcher) |]
+    member val Pages = [|
+        yield loadSetting :> PluginSettingPageViewModel
+        for c in PluginExecutor.configurablePlugins do
+            yield upcast PluginItemSettingViewModel(c, dispatcher)
+    |]
 
     member val SaveCommand = Prop.ctrue |> Prop.command loadSetting.Save
 

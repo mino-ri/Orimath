@@ -19,18 +19,21 @@ let mutable configurablePlugins = List<IConfigurablePlugin>()
 let private loadPluginTypes() =
     let pluginDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Plugins")
     if Directory.Exists(pluginDirectory) then
-        [| for file in Directory.GetFiles(pluginDirectory, "*.dll", SearchOption.TopDirectoryOnly) do
-           for t in Assembly.LoadFrom(file).GetExportedTypes() do
-           if t.IsClass && not t.IsAbstract then t |]
+        [|
+            for file in Directory.GetFiles(pluginDirectory, "*.dll", SearchOption.TopDirectoryOnly) do
+            for t in Assembly.LoadFrom(file).GetExportedTypes() do
+            if t.IsClass && not t.IsAbstract then t
+        |]
     else
         Type.EmptyTypes
 
 let saveSetting() = Settings.save Settings.Plugin setting
 
 [<RequiresExplicitTypeArguments>]
-let getFullNames<'T>(types: Type[]) =
-    [| for t in types do
-       if typeof<'T>.IsAssignableFrom(t) then t.FullName |]
+let getFullNames<'T>(types: Type[]) = [|
+        for t in types do
+        if typeof<'T>.IsAssignableFrom(t) then t.FullName
+    |]
 
 let private loadSetting (types: Type[]) =
     match Settings.load Settings.Plugin with
@@ -46,7 +49,7 @@ let private setSetting (plugin: obj) fullName (setting: PluginSetting) =
     | :? IConfigurablePlugin as configurable ->
         configurablePlugins.Add(configurable)
         setting.Settings.TryGetValue(fullName)
-        |> BoolOption.bind(fun sssl -> sssl.TryConvertTo(configurable.SettingType))
+        |> BoolOption.bind (fun sssl -> sssl.TryConvertTo(configurable.SettingType))
         |> BoolOption.filter (isNull >> not)
         |> function
         | BoolSome(targetSetting) -> configurable.Setting <- targetSetting

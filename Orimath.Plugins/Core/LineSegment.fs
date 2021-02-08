@@ -21,7 +21,7 @@ type LineSegment internal (line: Line, p1: Point, p2: Point) =
 
     static member FromPoints(p1, p2) =
         Line.FromPoints(p1, p2)
-        |> Option.map(fun line -> LineSegment(line, p1, p2))
+        |> Option.map (fun line -> LineSegment(line, p1, p2))
             
 
 [<Extension>]
@@ -56,7 +56,7 @@ module LineSegment =
     /// 2つの線分が交差する点を求めます。
     let cross (seg1: LineSegment) (seg2: LineSegment) =
         Line.cross seg1.Line seg2.Line
-        |> Option.filter(fun p -> containsCore p seg1 && containsCore p seg2)
+        |> Option.filter (fun p -> containsCore p seg1 && containsCore p seg2)
         
     /// 直線上の指定したY値におけるX値を取得します。
     let getX y seg = if containsY y seg then Some(Line.getX y seg.Line) else None
@@ -77,17 +77,17 @@ module LineSegment =
         LineSegment(Line.FromPoints(p1, p2).Value, p1, p2)
 
     let merge (lineSegments: seq<LineSegment>) =
-        let grouped = lineSegments |> Seq.groupBy(fun s -> Nearly(s.Line))
+        let grouped = lineSegments |> Seq.groupBy (fun s -> Nearly(s.Line))
         let result = ResizeArray<LineSegment>()
         for line, segs in grouped do
             let getD = if line.Value.YFactor = 0.0 then (fun s -> s.Y) else (fun s -> s.X)
             segs
-            |> Seq.map(fun s ->
+            |> Seq.map (fun s ->
                 if getD s.Point1 > getD s.Point2
                 then LineSegment(line.Value, s.Point2, s.Point1)
                 else s)
-            |> Seq.sortBy(fun s -> getD s.Point1)
-            |> Seq.iter(fun s ->
+            |> Seq.sortBy (fun s -> getD s.Point1)
+            |> Seq.iter (fun s ->
                 if result.Count > 0 && hasIntersection s result.[result.Count - 1] then
                     if getD s.Point2 > getD result.[result.Count - 1].Point2 then
                         result.[result.Count - 1] <- LineSegment(line.Value, result.[result.Count - 1].Point1, s.Point2)

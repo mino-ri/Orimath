@@ -15,20 +15,19 @@ type internal InstructionWrapper(paper: IPaper) =
         instruction.Points .<- array.Empty()
 
     member _.SetLines(layers, lines, chosen) =
-        let mapping l =
-            {
-                Line = l
-                Color =
-                    match chosen with
-                    | Some(c) when c =~ l.Line -> InstructionColor.Blue
-                    | _ -> InstructionColor.LightGray
-            }
-        instruction.Lines .<-
-            (lines
-             |> Seq.collect (fun l -> layers |> Seq.collect (Layer.clip l))
-             |> LineSegment.merge
-             |> Seq.map mapping
-             |> Seq.toArray)
+        let mapping l = {
+            Line = l
+            Color =
+                match chosen with
+                | Some(c) when c =~ l.Line -> InstructionColor.Blue
+                | _ -> InstructionColor.LightGray
+        }
+        instruction.Lines.Value <-
+            lines
+            |> Seq.collect (fun l -> Seq.collect (Layer.clip l) layers)
+            |> LineSegment.merge
+            |> Seq.map mapping
+            |> Seq.toArray
 
     member _.ResetArrows() =
         instruction.Arrows .<- array.Empty()

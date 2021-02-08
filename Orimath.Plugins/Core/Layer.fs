@@ -48,7 +48,7 @@ module Layer =
 
     /// このレイヤーに、指定した線分と同じ線分が存在するか判断します。
     let hasSeg (seg: LineSegment) (layer: ILayer) =
-        layer.Edges |> Seq.exists(fun e -> e.Line.Line =~ seg.Line) ||
+        layer.Edges |> Seq.exists (fun e -> e.Line.Line =~ seg.Line) ||
         layer.Lines |> Seq.exists (LineSegment.containsSeg seg)
 
     /// このレイヤーの範囲内に収まるように、指定された直線をカットします。
@@ -73,7 +73,7 @@ module Layer =
  
     let private tryAddPoint points addingPoint layer =
         match addingPoint with
-        | Some(p) when (points |> List.forall((<>~) p)) && not (hasPoint p layer) ->
+        | Some(p) when List.forall ((<>~) p) points && not (hasPoint p layer) ->
             p :: points
         | _ -> points
 

@@ -14,10 +14,11 @@ type EnumValueViewModel private (value: Enum, name: string) =
     override _.ToString() = name
 
     static member GetValues(ty: Type) =
-        cache.GetOrAdd(ty, fun t ->
-            [| for field in t.GetFields(BindingFlags.Public ||| BindingFlags.Static) do
-               let name =
-                   field.GetCustomAttribute<DisplayAttribute>()
-                   |> Null.bind (fun att -> att.Name)
-                   |> Null.defaultValue field.Name
-               EnumValueViewModel(Enum.Parse(t, field.Name) :?> Enum, name) |])
+        cache.GetOrAdd(ty, fun t -> [|
+                for field in t.GetFields(BindingFlags.Public ||| BindingFlags.Static) do
+                let name =
+                    field.GetCustomAttribute<DisplayAttribute>()
+                    |> Null.bind (fun att -> att.Name)
+                    |> Null.defaultValue field.Name
+                EnumValueViewModel(Enum.Parse(t, field.Name) :?> Enum, name)
+            |])

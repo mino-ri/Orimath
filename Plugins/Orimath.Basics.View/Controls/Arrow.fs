@@ -105,8 +105,8 @@ type Arrow() =
                     context.LineTo(point(basePoint + normal * (arrowSize * 1.25 * cos60) + vertical * (arrowSize * 1.25 * sin60)), true, false)
                     context.LineTo(point(basePoint + normal * (arrowSize * sin60) + vertical * (arrowSize * cos60)), true, false)
             | _ ->
-                    if isBegin then
-                        context.BeginFigure(point basePoint, false, false)
+                if isBegin then
+                    context.BeginFigure(point basePoint, false, false)
         drawArrow true this.StartType point1 normal vertical
         context.ArcTo(point point2, Size(distance, distance), 0.0, false, direction, true, false)
         drawArrow false this.EndType point2 (-normal) vertical

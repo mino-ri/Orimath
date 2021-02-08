@@ -26,8 +26,10 @@ type Matrix with
     static member OfReflection(line: Line) =
         let cosL = line.YFactor * line.YFactor - line.XFactor * line.XFactor
         let sinL = -2.0 * line.XFactor * line.YFactor
-        { M11 = cosL; M12 = sinL
-          M21 = sinL; M22 = -cosL
+        { M11 = cosL
+          M12 = sinL
+          M21 = sinL
+          M22 = -cosL
           OffsetX = -2.0 * line.Intercept * line.XFactor
           OffsetY = -2.0 * line.Intercept * line.YFactor }
 

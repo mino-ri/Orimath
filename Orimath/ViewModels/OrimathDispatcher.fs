@@ -12,7 +12,8 @@ type OrimathDispatcher() =
     do SynchronizationContext.SetSynchronizationContext(syncContext)
     let ui =
         { new IDispatcherInvoker with
-            member _.Invoke(action) = ignore (uiDispatcher.InvokeAsync(action)) }
+            member _.Invoke(action) = ignore (uiDispatcher.InvokeAsync(action))
+        }
     let background =
         { new IDispatcherInvoker with
             member _.Invoke(action) =

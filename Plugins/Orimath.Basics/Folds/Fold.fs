@@ -14,12 +14,10 @@ let axiom3 (line1: Line) (line2: Line) =
     else
         let result1 = Line.Create(line1.XFactor + line2.XFactor, line1.YFactor + line2.YFactor, line1.Intercept + line2.Intercept)
         if isParallel then
-            [result1]
+            [ result1 ]
         else
-            [
-                result1
-                Line.Create(line1.XFactor - line2.XFactor, line1.YFactor - line2.YFactor, line1.Intercept - line2.Intercept)
-            ]
+            [ result1
+              Line.Create(line1.XFactor - line2.XFactor, line1.YFactor - line2.YFactor, line1.Intercept - line2.Intercept) ]
 
 let axiom4 (line: Line) point = Line.Create(-line.YFactor, line.XFactor, line.YFactor * point.X - line.XFactor * point.Y)
 
@@ -36,10 +34,8 @@ let axiom5 pass (ontoLine: Line) ontoPoint =
             |> List.choose id
         else
             let s = (sqrt delta)
-            [
-                axiom2 ontoPoint { X = pass.X - (ontoLine.XFactor * n + ontoLine.YFactor * s); Y = pass.Y - (ontoLine.YFactor * n - ontoLine.XFactor * s) }
-                axiom2 ontoPoint { X = pass.X - (ontoLine.XFactor * n - ontoLine.YFactor * s); Y = pass.Y - (ontoLine.YFactor * n + ontoLine.XFactor * s) }
-            ]
+            [ axiom2 ontoPoint { X = pass.X - (ontoLine.XFactor * n + ontoLine.YFactor * s); Y = pass.Y - (ontoLine.YFactor * n - ontoLine.XFactor * s) }
+              axiom2 ontoPoint { X = pass.X - (ontoLine.XFactor * n - ontoLine.YFactor * s); Y = pass.Y - (ontoLine.YFactor * n + ontoLine.XFactor * s) } ]
             |> List.choose id
 
 let axiom6 (line1: Line) (point1: Point) (line2: Line) (point2: Point) =

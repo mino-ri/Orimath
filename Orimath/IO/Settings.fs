@@ -14,7 +14,8 @@ let Global = "global";
 let settingDirectory = 
     Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Settings")
 
-let getSettingPath fileName = Path.Combine(settingDirectory, fileName + ".sssl")
+let getSettingPath fileName =
+    Path.Combine(settingDirectory, fileName + ".sssl")
 
 let save fileName target =
     if not (Directory.Exists(settingDirectory)) then
@@ -23,12 +24,12 @@ let save fileName target =
     match SsslConverter.Default.TryConvertFrom(target) with
     | BoolSome(sssl) ->
         // todo: リトライ処理などを入れる
-        try sssl.Save(getSettingPath(fileName))
+        try sssl.Save(getSettingPath fileName)
         with ex -> Debug.Print(ex.ToString())
     | BoolNone -> ()
 
 let load fileName : 'T option =
-    let path = getSettingPath(fileName)
+    let path = getSettingPath fileName
     if not (File.Exists(path)) then
         None
     else

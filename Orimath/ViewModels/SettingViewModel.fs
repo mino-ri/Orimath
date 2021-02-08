@@ -33,7 +33,8 @@ type SettingViewModel(object: obj, dispatcher: IDispatcher) =
                     elif propertyType = typeof<string> then
                         yield upcast StringSettingItemViewModel(prop, object)
                     elif propertyType.IsEnum then
-                        yield upcast EnumSettingItemViewModel(prop, object) |]
+                        yield upcast EnumSettingItemViewModel(prop, object)
+            |]
             do! dispatcher.UI
             items.Reset(result)
         }

@@ -14,7 +14,8 @@ type internal PropertyAccessor private (prop: PropertyInfo) =
     let value = Expression.Parameter(typeof<obj>, "value")
     let object = Expression.Parameter(typeof<obj>, "object")
     let getValue: Func<obj, obj> =
-        object |> convert prop.DeclaringType
+        object
+        |> convert prop.DeclaringType
         |> property prop
         |> convert typeof<obj>
         |> compileLambda [| object |]
