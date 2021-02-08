@@ -10,16 +10,28 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{52E052D0-7754-4FB7-87FF-2F0347EEEB01}"
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Orimath.Basics", "Plugins\Orimath.Basics\Orimath.Basics.fsproj", "{51CB0336-A340-4DDC-A70A-4B345EBD4AE0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8C921D01-CC99-46B5-8122-41D7B7F7FAAD} = {8C921D01-CC99-46B5-8122-41D7B7F7FAAD}
+	EndProjectSection
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Orimath.FoldingInstruction", "Plugins\Orimath.FoldingInstruction\Orimath.FoldingInstruction.fsproj", "{40D1E5E6-7DF5-4DFE-A262-5251A3DF7651}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8C921D01-CC99-46B5-8122-41D7B7F7FAAD} = {8C921D01-CC99-46B5-8122-41D7B7F7FAAD}
+	EndProjectSection
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Orimath.UITest", "Plugins\Orimath.UITest\Orimath.UITest.fsproj", "{E213A209-9785-42A5-9CA6-32988C12515D}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8C921D01-CC99-46B5-8122-41D7B7F7FAAD} = {8C921D01-CC99-46B5-8122-41D7B7F7FAAD}
+	EndProjectSection
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Orimath", "Orimath\Orimath.fsproj", "{8C921D01-CC99-46B5-8122-41D7B7F7FAAD}"
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Orimath.Basics.View", "Plugins\Orimath.Basics.View\Orimath.Basics.View.fsproj", "{0878B99B-6884-4EF8-8102-EA851C409396}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8C921D01-CC99-46B5-8122-41D7B7F7FAAD} = {8C921D01-CC99-46B5-8122-41D7B7F7FAAD}
+	EndProjectSection
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Orimath.ViewPlugins", "Orimath.ViewPlugins\Orimath.ViewPlugins.fsproj", "{AC92E4C9-347B-47FE-98E8-FCE7A45F2031}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Orimath.ViewPlugins", "Orimath.ViewPlugins\Orimath.ViewPlugins.fsproj", "{AC92E4C9-347B-47FE-98E8-FCE7A45F2031}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
