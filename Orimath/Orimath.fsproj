@@ -32,6 +32,7 @@
     <Compile Include="ViewModels\PluginSettingEffect.fs" />
     <Compile Include="ViewModels\WorkspaceViewModel.fs" />
     <Compile Include="ViewModels\RootViewModel.fs" />
+    <Compile Include="Controls\ThemeHelper.fs" />
     <Compile Include="Controls\MarkupExtensions.fs" />
     <Compile Include="Controls\Converters.fs" />
     <Compile Include="Controls\IconImageConverter.fs" />

@@ -12,11 +12,11 @@ type HalfCornerRadiusValueConverter() =
 
 
 [<ValueConversion(typeof<float>, typeof<float>)>]
-type SubtractionValueConverter() =
+type AdditionValueConverter() =
     member val Amount = 0.0 with get, set
 
     interface IValueConverter with
 
-        member this.Convert(value, _, _, _) = box <| max 0.0 (unbox value - this.Amount)
+        member this.Convert(value, _, _, _) = box <| max 0.0 (unbox value + this.Amount)
         
         member _.ConvertBack(_, _, _, _) = raise (NotImplementedException())
