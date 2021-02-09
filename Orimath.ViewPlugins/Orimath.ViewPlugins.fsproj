@@ -20,6 +20,7 @@
     <Compile Include="Plugins\ViewPointConverter.fs" />
     <Compile Include="Plugins\IMessenger.fs" />
     <Compile Include="Plugins\IViewPlugin.fs" />
+    <Compile Include="Themes\ThemeBrushSource.fs" />
     <Compile Include="Themes\ThemeBrush.fs" />
     <Compile Include="Themes\ThemeBrushExtension.fs" />
   </ItemGroup>

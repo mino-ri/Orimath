@@ -19,6 +19,12 @@
         <th:ThemeBrush x:Key="ProgressBarThemeBrush"
                        BasedOn="{x:Static th:ThemeBrushes.Input}"
                        Highlight="Control.Highlight" />
+        <th:ThemeBrush x:Key="CloseButtonThemeBrush"
+                       BasedOn="{x:Static th:ThemeBrushes.Control}"
+                       Hovered="Control.Alternated" />
+        <th:ThemeBrush x:Key="SelectorThemeBrush"
+                       BasedOn="{x:Static th:ThemeBrushes.Workspace}"
+                       Normal="Workspace.Alternated" />
 
         <Style TargetType="{x:Type Button}">
             <Setter Property="OverridesDefaultStyle" Value="True" />
@@ -802,7 +808,7 @@
             <Setter Property="Padding" Value="3,1" />
             <Setter Property="Background" Value="{x:Static Brushes.Transparent}" />
             <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
-            <Setter Property="th:ThemeBrush.Theme" Value="{x:Static th:ThemeBrushes.Selector}" />
+            <Setter Property="th:ThemeBrush.Theme" Value="{StaticResource SelectorThemeBrush}" />
             <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource FindAncestor, AncestorType=ItemsControl, AncestorLevel=1}}" />
             <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource FindAncestor, AncestorType=ItemsControl, AncestorLevel=1}}" />
             <Setter Property="Template">
@@ -843,7 +849,7 @@
         </Style>
         <Style TargetType="{x:Type ListBox}">
             <Setter Property="OverridesDefaultStyle" Value="True" />
-            <Setter Property="th:ThemeBrush.Theme" Value="{x:Static th:ThemeBrushes.Selector}" />
+            <Setter Property="th:ThemeBrush.Theme" Value="{StaticResource SelectorThemeBrush}" />
             <Setter Property="BorderBrush" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Border, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
             <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
             <Setter Property="BorderThickness" Value="1" />
@@ -962,7 +968,7 @@
         </Style>
         <Style TargetType="{x:Type ComboBox}">
             <Setter Property="OverridesDefaultStyle" Value="True" />
-            <Setter Property="th:ThemeBrush.Theme" Value="{x:Static th:ThemeBrushes.Selector}" />
+            <Setter Property="th:ThemeBrush.Theme" Value="{StaticResource SelectorThemeBrush}" />
             <Setter Property="BorderBrush" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Border, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
             <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
             <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
@@ -1573,7 +1579,7 @@
             </Setter>
         </Style>
         <Style TargetType="{x:Type Button}" x:Key="CloseButton" BasedOn="{StaticResource CaptionButton}">
-            <Setter Property="th:ThemeBrush.Theme" Value="{x:Static th:ThemeBrushes.CloseButton}" />
+            <Setter Property="th:ThemeBrush.Theme" Value="{StaticResource CloseButtonThemeBrush}" />
         </Style>
         <Style TargetType="{x:Type Button}" x:Key="MenuButton" BasedOn="{StaticResource CaptionButton}">
             <Setter Property="Width" Value="26" />
