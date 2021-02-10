@@ -38,7 +38,9 @@ type BrushSet(basedOn: BrushSet, background: Brush, foreground: Brush, border: B
         | nameof this.Border -> this.Border
         | _ -> null
 
-    static member Default = BrushSet(null, null, null, null)
+    new() = BrushSet(null, null, null, null)
+
+    static member Default = BrushSet()
 
 
 and [<AllowNullLiteral>]
@@ -174,7 +176,7 @@ and [<AllowNullLiteral>] ThemeBrushes
         let getBrush text =
             if isNull text
             then null
-            else converter.ConvertFromString(text) :?> Brush
+            else converter.ConvertFromInvariantString(text) :?> Brush
         let getBrushSet (background, foreground, border) =
             BrushSet(null,
                 getBrush background,

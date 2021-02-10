@@ -173,3 +173,5 @@ type WorkspaceViewModel(workspace: IWorkspace) =
         member this.SetEffectParameterViewModel(mapping) = this.SetEffectParameterViewModel(mapping)
         member this.CloseDialog() = this.CloseDialog()
         member this.OpenDialog(viewModel) = this.OpenDialog(viewModel)
+        member _.SaveSetting(name, model) = Settings.save name model
+        member _.LoadSetting(name) = Settings.load name

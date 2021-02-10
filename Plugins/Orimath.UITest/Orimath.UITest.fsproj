@@ -15,11 +15,13 @@
     <Compile Include="Data.fs" />
     <Compile Include="ViewModels\AlignmentConverter.fs" />
     <Compile Include="ViewModels\ControlListViewModel.fs" />
+    <Compile Include="ViewModels\ThemeEditorViewModel.fs" />
     <Compile Include="UIListControl.fs" />
     <Compile Include="PluginImplementations.fs" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="ThemeEditorControl.xaml" />
     <Resource Include="UIListControl.xaml" />
   </ItemGroup>
 

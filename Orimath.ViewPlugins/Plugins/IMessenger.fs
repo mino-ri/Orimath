@@ -20,3 +20,5 @@ type IMessenger =
     abstract member CloseDialog : unit -> unit
     abstract member CloseDialogCommand : ICommand
     abstract member GetEffectCommand : effect: IEffect -> ICommand
+    abstract member SaveSetting : name: string * model: 'T -> unit
+    abstract member LoadSetting : name: string -> 'T option
