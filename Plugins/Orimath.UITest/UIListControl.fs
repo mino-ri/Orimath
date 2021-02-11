@@ -21,7 +21,7 @@ type UIListControl() =
             { Id = 3; Value = "Thrid"; Children = array.Empty() }
         |]
 
-    member this.ListBox_SelectionChanged(_: obj, e: SelectionChangedEventArgs) =
+    member this.ListBoxSelectionChanged(_: obj, e: SelectionChangedEventArgs) =
         if e.AddedItems.Count = 1 then
             match e.AddedItems.[0], this.FindName("previewHost") with
             | (:? Type as t), (:? Border as previewHost) ->

@@ -180,7 +180,7 @@ and [<AllowNullLiteral>] ThemeBrushes
                 BrushSet(null, back, solid 190uy 190uy 190uy, null),
                 BrushSet(null, back, hoveredGray, null),
                 null)
-        new ThemeBrushes(control, workspace, input, scrollBar)
+        ThemeBrushes(control, workspace, input, scrollBar)
 
     static member Load(source: ThemeBrushesSource) =
         let converter = BrushConverter()

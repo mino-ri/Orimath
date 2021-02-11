@@ -16,7 +16,7 @@
                Background="{Binding Path=Normal.Background, Source={x:Static th:ThemeBrushes.Workspace}}">
         <Label DockPanel.Dock="Top" Content="UIテスト" />
         <ListBox DockPanel.Dock="Left" Width="250" ItemsSource="{Binding Path=ControlTypes, Mode=OneTime}"
-                 SelectionChanged="ListBox_SelectionChanged">
+                 SelectionChanged="ListBoxSelectionChanged">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding Name, Mode=OneTime}"

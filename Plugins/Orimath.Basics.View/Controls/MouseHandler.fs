@@ -33,19 +33,30 @@ type MouseHandler() =
         if keys.HasFlag(ModifierKeys.Shift) then result <- result ||| OperationModifier.Shift
         result
     
-    member this.PositionRoot with get() = this.GetValue(MouseHandler.PositionRootProperty) :?> IInputElement and set (v: IInputElement) = this.SetValue(MouseHandler.PositionRootProperty, box v)
+    member this.PositionRoot
+        with get() = this.GetValue(MouseHandler.PositionRootProperty) :?> IInputElement
+        and set (v: IInputElement) = this.SetValue(MouseHandler.PositionRootProperty, box v)
     static member val PositionRootProperty =
-        DependencyProperty.Register("PositionRoot", typeof<IInputElement>, typeof<MouseHandler>, new FrameworkPropertyMetadata(null))
+        DependencyProperty.Register("PositionRoot",
+            typeof<IInputElement>, typeof<MouseHandler>, FrameworkPropertyMetadata(null))
 
-    static member GetAttachedMouseHandler(obj: DependencyObject) = obj.GetValue(MouseHandler.AttachedMouseHandlerProperty) :?> MouseHandler
-    static member SetAttachedMouseHandler(obj: DependencyObject, value: MouseHandler) = obj.SetValue(MouseHandler.AttachedMouseHandlerProperty, box value)
+    static member GetAttachedMouseHandler(obj: DependencyObject) =
+        obj.GetValue(MouseHandler.AttachedMouseHandlerProperty) :?> MouseHandler
+    static member SetAttachedMouseHandler(obj: DependencyObject, value: MouseHandler) =
+        obj.SetValue(MouseHandler.AttachedMouseHandlerProperty, box value)
     static member val AttachedMouseHandlerProperty =
-        DependencyProperty.RegisterAttached("AttachedMouseHandler", typeof<MouseHandler>, typeof<Control>, new FrameworkPropertyMetadata(null, PropertyChangedCallback MouseHandler.AttachedMouseHandlerChanged))
+        DependencyProperty.RegisterAttached("AttachedMouseHandler",
+            typeof<MouseHandler>, typeof<Control>,
+            FrameworkPropertyMetadata(null, PropertyChangedCallback MouseHandler.AttachedMouseHandlerChanged))
 
-    static member GetRootMouseHandler(obj: DependencyObject) = obj.GetValue(MouseHandler.RootMouseHandlerProperty) :?> MouseHandler
-    static member SetRootMouseHandler(obj: DependencyObject, value: MouseHandler) = obj.SetValue(MouseHandler.RootMouseHandlerProperty, box value)
+    static member GetRootMouseHandler(obj: DependencyObject) =
+        obj.GetValue(MouseHandler.RootMouseHandlerProperty) :?> MouseHandler
+    static member SetRootMouseHandler(obj: DependencyObject, value: MouseHandler) =
+        obj.SetValue(MouseHandler.RootMouseHandlerProperty, box value)
     static member val RootMouseHandlerProperty =
-        DependencyProperty.RegisterAttached("RootMouseHandler", typeof<MouseHandler>, typeof<IInputElement>, new PropertyMetadata(null, PropertyChangedCallback MouseHandler.RootMouseHandlerChanged))
+        DependencyProperty.RegisterAttached("RootMouseHandler",
+            typeof<MouseHandler>, typeof<IInputElement>,
+            PropertyMetadata(null, PropertyChangedCallback MouseHandler.RootMouseHandlerChanged))
 
     member this.Workspace =
             match workspace with
@@ -59,28 +70,31 @@ type MouseHandler() =
 
     member private _.ResetWorkspace() = workspace <- None
 
-    static member private AttachedMouseHandlerChanged (sender: DependencyObject) (e: DependencyPropertyChangedEventArgs) =
+    static member private AttachedMouseHandlerChanged
+        (sender: DependencyObject)
+        (e: DependencyPropertyChangedEventArgs)
+        =
         sender |> iterOf (fun (ctrl: Control) ->
             e.OldValue |> iterOf (fun (handler: MouseHandler) ->
-                ctrl.MouseDown.RemoveHandler(MouseButtonEventHandler handler.Selector_MouseDown)
-                ctrl.MouseUp.RemoveHandler(MouseButtonEventHandler handler.Selector_MouseUp)
-                ctrl.MouseMove.RemoveHandler(MouseEventHandler handler.Selector_MouseMove)
-                ctrl.MouseLeave.RemoveHandler(MouseEventHandler handler.Selector_MouseLeave)
-                ctrl.DragEnter.RemoveHandler(DragEventHandler handler.Selector_DragEnter)
-                ctrl.DragOver.RemoveHandler(DragEventHandler handler.Selector_DragOver)
-                ctrl.DragLeave.RemoveHandler(DragEventHandler handler.Selector_DragLeave)
-                ctrl.Drop.RemoveHandler(DragEventHandler handler.Selector_Drop)
-                ctrl.GiveFeedback.RemoveHandler(GiveFeedbackEventHandler handler.Selector_GiveFeedback))
+                ctrl.MouseDown.RemoveHandler(MouseButtonEventHandler handler.SelectorMouseDown)
+                ctrl.MouseUp.RemoveHandler(MouseButtonEventHandler handler.SelectorMouseUp)
+                ctrl.MouseMove.RemoveHandler(MouseEventHandler handler.SelectorMouseMove)
+                ctrl.MouseLeave.RemoveHandler(MouseEventHandler handler.SelectorMouseLeave)
+                ctrl.DragEnter.RemoveHandler(DragEventHandler handler.SelectorDragEnter)
+                ctrl.DragOver.RemoveHandler(DragEventHandler handler.SelectorDragOver)
+                ctrl.DragLeave.RemoveHandler(DragEventHandler handler.SelectorDragLeave)
+                ctrl.Drop.RemoveHandler(DragEventHandler handler.SelectorDrop)
+                ctrl.GiveFeedback.RemoveHandler(GiveFeedbackEventHandler handler.SelectorGiveFeedback))
             e.NewValue |> iterOf (fun (handler: MouseHandler) ->
-                ctrl.MouseDown.AddHandler(MouseButtonEventHandler handler.Selector_MouseDown)
-                ctrl.MouseUp.AddHandler(MouseButtonEventHandler handler.Selector_MouseUp)
-                ctrl.MouseMove.AddHandler(MouseEventHandler handler.Selector_MouseMove)
-                ctrl.MouseLeave.AddHandler(MouseEventHandler handler.Selector_MouseLeave)
-                ctrl.DragEnter.AddHandler(DragEventHandler handler.Selector_DragEnter)
-                ctrl.DragOver.AddHandler(DragEventHandler handler.Selector_DragOver)
-                ctrl.DragLeave.AddHandler(DragEventHandler handler.Selector_DragLeave)
-                ctrl.Drop.AddHandler(DragEventHandler handler.Selector_Drop)
-                ctrl.GiveFeedback.AddHandler(GiveFeedbackEventHandler handler.Selector_GiveFeedback)))
+                ctrl.MouseDown.AddHandler(MouseButtonEventHandler handler.SelectorMouseDown)
+                ctrl.MouseUp.AddHandler(MouseButtonEventHandler handler.SelectorMouseUp)
+                ctrl.MouseMove.AddHandler(MouseEventHandler handler.SelectorMouseMove)
+                ctrl.MouseLeave.AddHandler(MouseEventHandler handler.SelectorMouseLeave)
+                ctrl.DragEnter.AddHandler(DragEventHandler handler.SelectorDragEnter)
+                ctrl.DragOver.AddHandler(DragEventHandler handler.SelectorDragOver)
+                ctrl.DragLeave.AddHandler(DragEventHandler handler.SelectorDragLeave)
+                ctrl.Drop.AddHandler(DragEventHandler handler.SelectorDrop)
+                ctrl.GiveFeedback.AddHandler(GiveFeedbackEventHandler handler.SelectorGiveFeedback)))
 
     static member private RootMouseHandlerChanged (sender: DependencyObject) (e: DependencyPropertyChangedEventArgs) =
         match box sender, e.NewValue with
@@ -92,7 +106,7 @@ type MouseHandler() =
     member private this.GetOperationTarget(e: DragEventArgs, dt: IDisplayTargetViewModel) =
         ScreenOperationTarget(e.GetPosition(this.PositionRoot), dt.GetTarget())
 
-    member private this.Selector_MouseDown (sender: obj) (e: MouseButtonEventArgs) =
+    member private this.SelectorMouseDown (sender: obj) (e: MouseButtonEventArgs) =
         match sender with
         | TargetControl(_, dt) ->
             if e.ChangedButton = MouseButton.Left || e.ChangedButton = MouseButton.Right then
@@ -102,9 +116,9 @@ type MouseHandler() =
             e.Handled <- true
         | _ -> ()
 
-    member private this.Selector_MouseUp (sender: obj) (e: MouseButtonEventArgs) =
+    member private this.SelectorMouseUp (sender: obj) (e: MouseButtonEventArgs) =
         match sender with
-        | TargetControl(_, _) ->
+        | TargetControl _ ->
             if (clickControl = sender && pressed = e.ChangedButton && draggingData.IsSome) then
                 this.Workspace.OnClick(draggingData.Value, getModifier(e.ChangedButton))
                 clickControl <- null
@@ -124,7 +138,7 @@ type MouseHandler() =
             draggingGuid <- ""
             ctrl.ClearValue(Control.ForegroundProperty)
 
-    member private this.Selector_MouseMove (sender: obj) (e: MouseEventArgs) =
+    member private this.SelectorMouseMove (sender: obj) (e: MouseEventArgs) =
         match sender with
         | TargetControl(ctrl, _) ->
             if clickControl = sender && draggingData.IsSome then
@@ -137,7 +151,7 @@ type MouseHandler() =
             e.Handled <- true
         | _ -> ()
 
-    member private this.Selector_MouseLeave (sender: obj) (e: MouseEventArgs) =
+    member private this.SelectorMouseLeave (sender: obj) (e: MouseEventArgs) =
         match sender with
         | TargetControl(ctrl, _) ->
             if clickControl = sender then
@@ -147,7 +161,7 @@ type MouseHandler() =
             e.Handled <- true
         | _ -> ()
 
-    member private this.Selector_DragEnter (sender: obj) (e: DragEventArgs) =
+    member private this.SelectorDragEnter (sender: obj) (e: DragEventArgs) =
         match sender with
         | TargetControl(ctrl, dt) ->
             if isValidDropSource(e.Data) && draggingData.IsSome &&
@@ -159,25 +173,27 @@ type MouseHandler() =
             e.Handled <- true
         | _ -> ()
 
-    member private this.Selector_DragOver (sender: obj) (e: DragEventArgs) =
+    member private this.SelectorDragOver (sender: obj) (e: DragEventArgs) =
         match sender with
         | TargetControl(_, dt) ->
             if isValidDropSource(e.Data) && draggingData.IsSome then
-                ignore (this.Workspace.DragOver(draggingData.Value, this.GetOperationTarget(e, dt), getModifier(pressed)))
+                this.Workspace.DragOver(draggingData.Value, this.GetOperationTarget(e, dt), getModifier(pressed))
+                |> ignore
             e.Handled <- true
         | _ -> ()
 
-    member private this.Selector_DragLeave (sender: obj) (e: DragEventArgs) =
+    member private this.SelectorDragLeave (sender: obj) (e: DragEventArgs) =
         match sender with
         | TargetControl(ctrl, dt) ->
             if isValidDropSource(e.Data) && draggingData.IsSome then
-                ignore (this.Workspace.DragLeave(draggingData.Value, this.GetOperationTarget(e, dt), getModifier(pressed)))
+                this.Workspace.DragLeave(draggingData.Value, this.GetOperationTarget(e, dt), getModifier(pressed))
+                |> ignore
             if ctrl <> draggingSource then
                 ctrl.ClearValue(Control.ForegroundProperty)
             e.Handled <- true
         | _ -> ()
 
-    member private this.Selector_Drop (sender: obj) (e: DragEventArgs) =
+    member private this.SelectorDrop (sender: obj) (e: DragEventArgs) =
         match sender with
         | TargetControl(ctrl, dt) ->
             if isValidDropSource(e.Data) && draggingData.IsSome then
@@ -186,6 +202,6 @@ type MouseHandler() =
             e.Handled <- true
         | _ -> ()
 
-    member private this.Selector_GiveFeedback (sender: obj) (e: GiveFeedbackEventArgs) =
+    member private _.SelectorGiveFeedback (_: obj) (e: GiveFeedbackEventArgs) =
         e.UseDefaultCursors <- false
         e.Handled <- true

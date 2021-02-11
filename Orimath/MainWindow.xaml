@@ -17,7 +17,7 @@
         ResizeMode="CanResizeWithGrip"
         SnapsToDevicePixels="True"
         UseLayoutRounding="True"
-        ContentRendered="Window_ContentRendered">
+        ContentRendered="WindowContentRendered">
     <Window.Resources>
         <ItemsPanelTemplate x:Key="CanvasItemsPanel">
             <Canvas />
@@ -81,11 +81,11 @@
         <KeyBinding Gesture="Escape" Command="{Binding CloseDialogCommand, Mode=OneTime}" />
     </Window.InputBindings>
     <Window.CommandBindings>
-        <CommandBinding Command="{x:Static SystemCommands.CloseWindowCommand}" Executed="Window_Close" />
-        <CommandBinding Command="{x:Static SystemCommands.MaximizeWindowCommand}" Executed="Window_Maximize" />
-        <CommandBinding Command="{x:Static SystemCommands.MinimizeWindowCommand}" Executed="Window_Minimize" />
-        <CommandBinding Command="{x:Static SystemCommands.RestoreWindowCommand}" Executed="Window_Restore" />
-        <CommandBinding Command="{x:Static SystemCommands.ShowSystemMenuCommand}" Executed="Window_ShowSystemMenu" />
+        <CommandBinding Command="{x:Static SystemCommands.CloseWindowCommand}" Executed="WindowClose" />
+        <CommandBinding Command="{x:Static SystemCommands.MaximizeWindowCommand}" Executed="WindowMaximize" />
+        <CommandBinding Command="{x:Static SystemCommands.MinimizeWindowCommand}" Executed="WindowMinimize" />
+        <CommandBinding Command="{x:Static SystemCommands.RestoreWindowCommand}" Executed="WindowRestore" />
+        <CommandBinding Command="{x:Static SystemCommands.ShowSystemMenuCommand}" Executed="WindowShowSystemMenu" />
     </Window.CommandBindings>
     <Grid>
         <Grid.RowDefinitions>

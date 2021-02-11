@@ -10,24 +10,22 @@ open Orimath.Plugins
 open Orimath.ViewModels
 open ApplicativeProperty
 
-type ScreenPoint = System.Windows.Point
-
 type MainWindow() =
     inherit Window()
 
-    member this.Window_Close(_: obj, _: ExecutedRoutedEventArgs) =
+    member this.WindowClose(_: obj, _: ExecutedRoutedEventArgs) =
         SystemCommands.CloseWindow(this)
 
-    member this.Window_Minimize(_: obj, _: ExecutedRoutedEventArgs) =
+    member this.WindowMinimize(_: obj, _: ExecutedRoutedEventArgs) =
         SystemCommands.MinimizeWindow(this)
 
-    member this.Window_Maximize(_: obj, _: ExecutedRoutedEventArgs) =
+    member this.WindowMaximize(_: obj, _: ExecutedRoutedEventArgs) =
         SystemCommands.MaximizeWindow(this)
 
-    member this.Window_Restore(_: obj, _: ExecutedRoutedEventArgs) =
+    member this.WindowRestore(_: obj, _: ExecutedRoutedEventArgs) =
         SystemCommands.RestoreWindow(this)
 
-    member this.Window_ShowSystemMenu(_: obj, e: ExecutedRoutedEventArgs) =
+    member this.WindowShowSystemMenu(_: obj, e: ExecutedRoutedEventArgs) =
         match e.OriginalSource with
         | :? FrameworkElement as source ->
             let position = source.PointToScreen(ScreenPoint(0.0, source.ActualHeight))
@@ -57,7 +55,7 @@ type MainWindow() =
             image.Source <- targetIcon
         | _ -> ()
 
-    member this.Window_ContentRendered(_: obj, _: EventArgs) =
+    member this.WindowContentRendered(_: obj, _: EventArgs) =
         this.SetIcon()
         let viewModel = this.DataContext :?> WorkspaceViewModel
         let process1() =
@@ -65,10 +63,10 @@ type MainWindow() =
                 let template = DataTemplate(viewModelType)
                 template.VisualTree <-
                     match viewDecl with
-                        | ViewType(t) -> new FrameworkElementFactory(t)
+                        | ViewType(t) -> FrameworkElementFactory(t)
                         | ViewUri(uri) ->
                             let factory = FrameworkElementFactory(typeof<ContentControl>)
-                            factory.SetValue(Window.ContentProperty, new LoadExtension(uri))
+                            factory.SetValue(Window.ContentProperty, LoadExtension(uri))
                             factory
                 this.Resources.Add(template.DataTemplateKey, template)
         let process2() =
@@ -90,11 +88,14 @@ type MainWindow() =
                 ignore (this.InputBindings.Add(keyBinding))
         let process3() =
             let mainScrollViewer = this.FindName("MainScrollViewer") :?> ScrollViewer
-            mainScrollViewer.ScrollToVerticalOffset((mainScrollViewer.ExtentHeight - mainScrollViewer.ActualHeight) / 2.0)
-            mainScrollViewer.ScrollToHorizontalOffset((mainScrollViewer.ExtentWidth - mainScrollViewer.ActualWidth) / 2.0)
+            mainScrollViewer.ScrollToVerticalOffset(
+                (mainScrollViewer.ExtentHeight - mainScrollViewer.ActualHeight) / 2.0)
+            mainScrollViewer.ScrollToHorizontalOffset(
+                (mainScrollViewer.ExtentWidth - mainScrollViewer.ActualWidth) / 2.0)
 
-        Async.Start(async {
+        async {
             viewModel.Initialize()
             do! Async.AwaitTask(this.Dispatcher.InvokeAsync(Action(process1)).Task)
             do! Async.AwaitTask(this.Dispatcher.InvokeAsync(Action(process2)).Task)
-            do! Async.AwaitTask(this.Dispatcher.InvokeAsync(Action(process3)).Task) })
+            do! Async.AwaitTask(this.Dispatcher.InvokeAsync(Action(process3)).Task)
+        } |> Async.Start

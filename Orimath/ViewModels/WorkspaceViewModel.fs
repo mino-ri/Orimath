@@ -66,8 +66,8 @@ type WorkspaceViewModel(workspace: IWorkspace) =
         setting <- Settings.load Settings.Global |> Option.defaultWith GlobalSetting
         this.ViewSize <- float(setting.ViewSize) * 2.0
         systemEffects <- [|
-            new GlobalSettingEffect(setting) :> IEffect
-            new PluginSettingEffect(this, dispatcher, createViewModel) :> IEffect
+            GlobalSettingEffect(setting) :> IEffect
+            PluginSettingEffect(this, dispatcher, createViewModel) :> IEffect
         |]
 
     member _.SaveSetting() =
@@ -75,7 +75,7 @@ type WorkspaceViewModel(workspace: IWorkspace) =
 
     member this.Initialize() =
         let pointConverter =
-            new ViewPointConverter(
+            ViewPointConverter(
                 float(setting.ViewSize),
                 -float(setting.ViewSize),
                 float(setting.ViewSize) * 0.5,

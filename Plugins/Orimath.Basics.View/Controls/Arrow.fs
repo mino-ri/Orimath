@@ -16,53 +16,71 @@ type Arrow() =
         | :? float as d -> not (Double.IsInfinity(d) || Double.IsNaN(d))
         | _ -> false)
 
-    member this.X1 with get() = this.GetValue(Arrow.X1Property) :?> float and set (v: float) = this.SetValue(Arrow.X1Property, box v)
+    member this.X1
+        with get() = this.GetValue(Arrow.X1Property) :?> float
+        and set (v: float) = this.SetValue(Arrow.X1Property, box v)
     static member val X1Property =
         DependencyProperty.Register("X1", typeof<float>, typeof<Arrow>,
             FrameworkPropertyMetadata(0.0, FpmOptions.AffectsMeasure ||| FpmOptions.AffectsRender), isDoubleFinite)
 
-    member this.X2 with get() = this.GetValue(Arrow.X2Property) :?> float and set (v: float) = this.SetValue(Arrow.X2Property, box v)
+    member this.X2
+        with get() = this.GetValue(Arrow.X2Property) :?> float
+        and set (v: float) = this.SetValue(Arrow.X2Property, box v)
     static member val X2Property =
         DependencyProperty.Register("X2", typeof<float>, typeof<Arrow>,
             FrameworkPropertyMetadata(0.0, FpmOptions.AffectsMeasure ||| FpmOptions.AffectsRender), isDoubleFinite)
 
-    member this.Y1 with get() = this.GetValue(Arrow.Y1Property) :?> float and set (v: float) = this.SetValue(Arrow.Y1Property, box v)
+    member this.Y1
+        with get() = this.GetValue(Arrow.Y1Property) :?> float
+        and set (v: float) = this.SetValue(Arrow.Y1Property, box v)
     static member val Y1Property =
         DependencyProperty.Register("Y1", typeof<float>, typeof<Arrow>,
             FrameworkPropertyMetadata(0.0, FpmOptions.AffectsMeasure ||| FpmOptions.AffectsRender), isDoubleFinite)
 
-    member this.Y2 with get() = this.GetValue(Arrow.Y2Property) :?> float and set (v: float) = this.SetValue(Arrow.Y2Property, box v)
+    member this.Y2
+        with get() = this.GetValue(Arrow.Y2Property) :?> float
+        and set (v: float) = this.SetValue(Arrow.Y2Property, box v)
     static member val Y2Property =
         DependencyProperty.Register("Y2", typeof<float>, typeof<Arrow>,
             FrameworkPropertyMetadata(0.0, FpmOptions.AffectsMeasure ||| FpmOptions.AffectsRender), isDoubleFinite)
 
-    member this.PointMargin with get() = this.GetValue(Arrow.PointMarginProperty) :?> float and set (v: float) = this.SetValue(Arrow.PointMarginProperty, box v)
+    member this.PointMargin
+        with get() = this.GetValue(Arrow.PointMarginProperty) :?> float
+        and set (v: float) = this.SetValue(Arrow.PointMarginProperty, box v)
     static member val PointMarginProperty =
         DependencyProperty.Register("PointMargin", typeof<float>, typeof<Arrow>,
             FrameworkPropertyMetadata(8.0, FpmOptions.AffectsMeasure ||| FpmOptions.AffectsRender), isDoubleFinite)
 
-    member this.ArrowSize with get() = this.GetValue(Arrow.ArrowSizeProperty) :?> float and set (v: float) = this.SetValue(Arrow.ArrowSizeProperty, box v)
+    member this.ArrowSize
+        with get() = this.GetValue(Arrow.ArrowSizeProperty) :?> float
+        and set (v: float) = this.SetValue(Arrow.ArrowSizeProperty, box v)
     static member val ArrowSizeProperty =
         DependencyProperty.Register("ArrowSize", typeof<float>, typeof<Arrow>,
             FrameworkPropertyMetadata(12.0, FpmOptions.AffectsMeasure ||| FpmOptions.AffectsRender), isDoubleFinite)
 
-    member this.StartType with get() = this.GetValue(Arrow.BeginTypeProperty) :?> ArrowType and set (v: ArrowType) = this.SetValue(Arrow.BeginTypeProperty, box v)
+    member this.StartType
+        with get() = this.GetValue(Arrow.BeginTypeProperty) :?> ArrowType
+        and set (v: ArrowType) = this.SetValue(Arrow.BeginTypeProperty, box v)
     static member val BeginTypeProperty =
         DependencyProperty.Register("StartType", typeof<ArrowType>, typeof<Arrow>,
             FrameworkPropertyMetadata(ArrowType.None, FpmOptions.AffectsMeasure ||| FpmOptions.AffectsRender))
 
-    member this.EndType with get() = this.GetValue(Arrow.EndTypeProperty) :?> ArrowType and set (v: ArrowType) = this.SetValue(Arrow.EndTypeProperty, box v)
+    member this.EndType
+        with get() = this.GetValue(Arrow.EndTypeProperty) :?> ArrowType
+        and set (v: ArrowType) = this.SetValue(Arrow.EndTypeProperty, box v)
     static member val EndTypeProperty =
         DependencyProperty.Register("EndType", typeof<ArrowType>, typeof<Arrow>,
             FrameworkPropertyMetadata(ArrowType.None, FpmOptions.AffectsMeasure ||| FpmOptions.AffectsRender))
 
-    member this.Direction with get() = this.GetValue(Arrow.DirectionProperty) :?> ArrowDirection and set (v: ArrowDirection) = this.SetValue(Arrow.DirectionProperty, box v)
+    member this.Direction
+        with get() = this.GetValue(Arrow.DirectionProperty) :?> ArrowDirection
+        and set (v: ArrowDirection) = this.SetValue(Arrow.DirectionProperty, box v)
     static member val DirectionProperty =
         DependencyProperty.Register("Direction", typeof<ArrowDirection>, typeof<Arrow>,
             FrameworkPropertyMetadata(ArrowDirection.Auto, FpmOptions.AffectsMeasure ||| FpmOptions.AffectsRender))
 
     override this.DefiningGeometry =
-        let inline point v = Vector.op_Explicit(v): Point
+        let inline point v = Vector.op_Explicit(v) : Point
         let v1 = Vector(this.X1, this.Y1)
         let v2 = Vector(this.X2, this.Y2)
         let mutable normal = v2 - v1
@@ -91,19 +109,27 @@ type Arrow() =
             | ArrowType.Normal
             | ArrowType.ValleyFold ->
                 let isValey = ty = ArrowType.ValleyFold
-                context.BeginFigure(point(basePoint + normal * (arrowSize * cos60) + vertical * (arrowSize * sin60)), isValey, isValey)
+                context.BeginFigure(
+                    point (basePoint + normal * (arrowSize * cos60) + vertical * (arrowSize * sin60)), isValey, isValey)
                 context.LineTo(point basePoint, true, false)
-                context.LineTo(point(basePoint + normal * arrowSize), true, false)
+                context.LineTo(point (basePoint + normal * arrowSize), true, false)
                 if isBegin then
-                    context.BeginFigure(point(basePoint), false, false)
+                    context.BeginFigure(point basePoint, false, false)
             | ArrowType.MountainFold ->
                 if isBegin then
-                    context.BeginFigure(point(basePoint + normal * (arrowSize * sin60) + vertical * (arrowSize * cos60)), false, false)
-                    context.LineTo(point(basePoint + normal * (arrowSize * 1.25 * cos60) + vertical * (arrowSize * 1.25 * sin60)), true, false)
-                    context.LineTo(point basePoint, true, false)
+                    context.BeginFigure(
+                        point (basePoint + normal * (arrowSize * sin60) + vertical * (arrowSize * cos60)), false, false)
+                    context.LineTo(
+                        point (basePoint + normal * (arrowSize * 1.25 * cos60) + vertical * (arrowSize * 1.25 * sin60)),
+                        true, false)
+                    context.LineTo(
+                        point basePoint, true, false)
                 else
-                    context.LineTo(point(basePoint + normal * (arrowSize * 1.25 * cos60) + vertical * (arrowSize * 1.25 * sin60)), true, false)
-                    context.LineTo(point(basePoint + normal * (arrowSize * sin60) + vertical * (arrowSize * cos60)), true, false)
+                    context.LineTo(
+                        point (basePoint + normal * (arrowSize * 1.25 * cos60) + vertical * (arrowSize * 1.25 * sin60)),
+                        true, false)
+                    context.LineTo(
+                        point (basePoint + normal * (arrowSize * sin60) + vertical * (arrowSize * cos60)), true, false)
             | _ ->
                 if isBegin then
                     context.BeginFigure(point basePoint, false, false)

@@ -14,10 +14,10 @@ type AutoDisableImage() =
             init <- true
             AutoDisableImage.IsEnabledProperty.OverrideMetadata(
                 typeof<AutoDisableImage>,
-                new FrameworkPropertyMetadata(true, FpmOptions.AffectsRender))
+                FrameworkPropertyMetadata(true, FpmOptions.AffectsRender))
             AutoDisableImage.SourceProperty.OverrideMetadata(
                 typeof<AutoDisableImage>,
-                new FrameworkPropertyMetadata(
+                FrameworkPropertyMetadata(
                     null,
                     FpmOptions.AffectsMeasure ||| FpmOptions.AffectsRender,
                     PropertyChangedCallback AutoDisableImage.OnSourceChanged))
@@ -34,7 +34,7 @@ type AutoDisableImage() =
         let image = d :?> AutoDisableImage
         match image.Source with
         | :? BitmapSource as imageSoure ->
-            let bitmap = new FormatConvertedBitmap(imageSoure, PixelFormats.Bgra32, null, 0.0)
+            let bitmap = FormatConvertedBitmap(imageSoure, PixelFormats.Bgra32, null, 0.0)
             let width = bitmap.PixelWidth
             let height = bitmap.PixelHeight
             let pixels = Array.zeroCreate (width * height * 4) : byte[]

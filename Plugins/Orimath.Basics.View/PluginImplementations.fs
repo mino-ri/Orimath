@@ -11,8 +11,10 @@ type NewPaperPlugin() =
             let newPaperExecutor = NewPaperExecutor(args.Workspace)
             args.Workspace.AddEffect(newPaperExecutor.NewPaperEffect)
             args.Workspace.AddEffect(newPaperExecutor.ResetEffect)
-            args.Messenger.SetEffectParameterViewModel<NewPaperExecutor>(fun p -> upcast NewPaperDialogViewModel(args.Messenger, args.Dispatcher, p))
-            args.Messenger.RegisterView(ViewPane.Dialog, typeof<NewPaperDialogViewModel>, viewPath "NewPaperDialogControl")
+            args.Messenger.SetEffectParameterViewModel<NewPaperExecutor>(
+                fun p -> upcast NewPaperDialogViewModel(args.Messenger, args.Dispatcher, p))
+            args.Messenger.RegisterView(ViewPane.Dialog, typeof<NewPaperDialogViewModel>,
+                viewPath "NewPaperDialogControl")
 
 
 [<DisplayName("ビュー: 折り紙"); Description("メイン描画領域。このプラグインを削除すると、折り紙本体が表示されなくなります。")>]
@@ -51,13 +53,17 @@ type MeasureViewPlugin() =
 type CreasePatternViewPlugin() =
     interface IViewPlugin with
         member _. Execute(args: ViewPluginArgs) =
-            args.Messenger.AddViewModel(new CreasePatternViewModel(args.Workspace.Paper, args.Dispatcher))
-            args.Messenger.RegisterView(ViewPane.Side, typeof<CreasePatternViewModel>, viewPath "CreasePatternControl")
+            args.Messenger.AddViewModel(
+                CreasePatternViewModel(args.Workspace.Paper, args.Dispatcher))
+            args.Messenger.RegisterView(ViewPane.Side, typeof<CreasePatternViewModel>,
+                viewPath "CreasePatternControl")
 
 
 [<DisplayName("ビュー: 折り図"); Description("メインビューの上に折り図を表示します。対応しているツールの操作時に折り図風の図が表示されます。")>]
 type FoldingInstructionPlugin() =
     interface IViewPlugin with
         member _. Execute(args: ViewPluginArgs) =
-            args.Messenger.AddViewModel(new FoldingInstructionViewModel(args.Workspace, args.Dispatcher, args.PointConverter))
-            args.Messenger.RegisterView(ViewPane.Main, typeof<FoldingInstructionViewModel>, viewPath "FoldingInstructionControl")
+            args.Messenger.AddViewModel(
+                FoldingInstructionViewModel(args.Workspace, args.Dispatcher, args.PointConverter))
+            args.Messenger.RegisterView(ViewPane.Main, typeof<FoldingInstructionViewModel>,
+                viewPath "FoldingInstructionControl")

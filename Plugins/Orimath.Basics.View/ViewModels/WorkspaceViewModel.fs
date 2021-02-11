@@ -10,7 +10,7 @@ type WorkspaceViewModel(workspace: IWorkspace, pointConverter: IViewPointConvert
           Layer = target.Layer
           Target = target.Target }
 
-    member val Paper = new PaperViewModel(workspace.Paper, pointConverter, dispatcher)
+    member val Paper = PaperViewModel(workspace.Paper, pointConverter, dispatcher)
 
     member _.OnClick(target, modifier) =
         match workspace.CurrentTool.Value with

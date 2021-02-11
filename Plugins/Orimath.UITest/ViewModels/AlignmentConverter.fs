@@ -7,7 +7,7 @@ open System.Windows.Media
 [<ValueConversion(typeof<bool>, typeof<VerticalAlignment>)>]
 type VerticalAlignmentConverter() =
     interface IValueConverter with
-        member _.ConvertBack(_, _, _, _) = raise (new NotImplementedException())
+        member _.ConvertBack(_, _, _, _) = raise (NotImplementedException())
 
         member _.Convert(value, _, _, _) =
             match value with
@@ -18,7 +18,7 @@ type VerticalAlignmentConverter() =
 [<ValueConversion(typeof<bool>, typeof<HorizontalAlignment>)>]
 type HorizontalAlignmentConverter() =
     interface IValueConverter with
-        member _.ConvertBack(_, _, _, _) = raise (new NotImplementedException())
+        member _.ConvertBack(_, _, _, _) = raise (NotImplementedException())
 
         member _.Convert(value, _, _, _) =
             match value with
@@ -30,7 +30,7 @@ type HorizontalAlignmentConverter() =
 type SolidColorBrushConverter() =
     let brushConverter = BrushConverter()
     interface IValueConverter with
-        member _.ConvertBack(_, _, _, _) = raise (new NotImplementedException())
+        member _.ConvertBack(_, _, _, _) = raise (NotImplementedException())
 
         member _.Convert(value, _, _, _) =
             match value with

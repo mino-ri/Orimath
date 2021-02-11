@@ -23,7 +23,7 @@ let assign right left = Expression.Assign(left, right)
 let compileLambda (parameters: ParameterExpression[]) body =
     Expression.Lambda<'Delegate>(body, parameters).Compile()
 
-let private constructors = new ConcurrentDictionary<Type, Func<obj>>()
+let private constructors = ConcurrentDictionary<Type, Func<obj>>()
 
 let createInstance (ty: Type) =
     let constructor = constructors.GetOrAdd(ty, fun (t: Type) ->
