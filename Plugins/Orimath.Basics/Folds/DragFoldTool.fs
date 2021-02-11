@@ -9,9 +9,16 @@ type DragFoldTool(workspace: IWorkspace) =
     let paper = workspace.Paper
     let instruction = InstructionWrapper(paper)
 
-    member private _.GetSourcePoint(opr) =
+    member private _.GetSourcePoint(opr, chosen) =
         getSourcePoint opr
         |> Option.orElseWith (fun () -> Array.tryHead paper.SelectedPoints.Value)
+        |> Option.orElseWith (fun () ->
+            match opr with
+            | Axiom1 _ -> FoldBack.getGeneralDynamicPoint paper chosen
+            | Axiom4(seg, _, isEdge) ->
+                FoldBack.getPerpendicularDynamicPoint seg chosen isEdge
+                |> Option.orElseWith (fun () -> FoldBack.getGeneralDynamicPoint paper chosen)
+            | _ -> None)
 
     member _.MakeCrease(line: Line) =
         for layer in paper.Layers do layer.AddLines([ line ])
@@ -32,9 +39,10 @@ type DragFoldTool(workspace: IWorkspace) =
             if modifier.HasFlag(OperationModifier.RightButton) then
                 match target.Target with
                 | DisplayTarget.Line(line) ->
+                    let dynamicPoint = paper.SelectedPoints.Value |> Array.tryHead
                     if modifier.HasFlag(OperationModifier.Ctrl)
-                    then FoldBack.foldBackFirst workspace line.Line None []
-                    else FoldBack.foldBack workspace line.Line None
+                    then FoldBack.foldBackFirst workspace line.Line dynamicPoint []
+                    else FoldBack.foldBack workspace line.Line dynamicPoint
                 | _ -> ()
             else
                 let clearOther = not (modifier.HasFlag(OperationModifier.Shift))
@@ -82,7 +90,7 @@ type DragFoldTool(workspace: IWorkspace) =
             | Some(c) ->
                 let targetLayers =
                     if modifier.HasFlag(OperationModifier.Ctrl) then
-                        FoldBack.getTargetLayers workspace c (this.GetSourcePoint(opr)) [source; target] :> seq<_>
+                        FoldBack.getTargetLayers workspace c (this.GetSourcePoint(opr, c)) [source; target] :> seq<_>
                     else
                         paper.Layers :> seq<_>
                 instruction.SetLines(targetLayers, lines, chosen)
@@ -110,10 +118,10 @@ type DragFoldTool(workspace: IWorkspace) =
                 match modifier.HasFlag(OperationModifier.Shift), modifier.HasFlag(OperationModifier.Ctrl) with
                 | false, false -> this.MakeCrease(line)
                 | false, true ->
-                    for l in FoldBack.getTargetLayers workspace line (this.GetSourcePoint(opr)) [source; target] do
+                    for l in FoldBack.getTargetLayers workspace line (this.GetSourcePoint(opr, line)) [source; target] do
                         l.AddLines([ line ])
-                | true, false -> FoldBack.foldBack workspace line (this.GetSourcePoint(opr))
-                | true, true -> FoldBack.foldBackFirst workspace line (this.GetSourcePoint(opr)) [source; target]
+                | true, false -> FoldBack.foldBack workspace line (this.GetSourcePoint(opr, line))
+                | true, true -> FoldBack.foldBackFirst workspace line (this.GetSourcePoint(opr, line)) [source; target]
             | None -> ()
             instruction.ResetAll()
 

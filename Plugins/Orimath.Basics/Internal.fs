@@ -10,7 +10,7 @@ let transform (workspace: IWorkspace) (matrix: Matrix) reverse =
     let getLayerType lt = if reverse then LayerType.turnOver lt else lt
     let newLayers =
         workspace.Paper.Layers
-        |> Seq.map(fun layer ->
+        |> Seq.map (fun layer ->
             workspace.CreateLayer(
                 layer.Edges |> Seq.map (fun e -> { e with Line = e.Line * matrix }),
                 layer.Lines |> Seq.map (fun l -> l * matrix),
@@ -31,3 +31,11 @@ type ExistsBuilder() =
 let exists = ExistsBuilder()
 
 let swapWhen cond a b = if cond then b, a else a, b
+
+type OptionBuilder() =
+    member inline _.Bind(m, f) = Option.bind f m
+    member inline _.Zero() = None
+    member inline _.Return(x) = Some(x)
+    member inline _.ReturnFrom(x: _ option) = x
+
+let option = OptionBuilder()

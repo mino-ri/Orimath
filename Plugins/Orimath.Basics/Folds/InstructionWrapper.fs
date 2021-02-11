@@ -1,10 +1,11 @@
 ﻿namespace Orimath.Basics.Folds
 open Orimath.Core
 open Orimath.Core.NearlyEquatable
+open Orimath.Plugins
 open Orimath.FoldingInstruction
 open ApplicativeProperty.PropOperators
 
-type internal InstructionWrapper(paper: IPaper) =
+type internal InstructionWrapper(paper: IPaperModel) =
     let instruction = FoldingInstruction()
     let center = { X = 0.5; Y = 0.5 }
     member _.Instruction = instruction
@@ -48,28 +49,21 @@ type internal InstructionWrapper(paper: IPaper) =
                 InstructionArrow.Create(startPoint, endPoint,
                     ArrowType.ValleyFold, ArrowType.ValleyFold, InstructionColor.Green, dir)
         let getGeneralArrow() =
-            match Paper.clipBoundBy paper chosen with
-            | None -> array.Empty()
-            | Some(first, last) ->
-                let middle = (first + last) / 2.0
-                match Paper.clipBoundBy paper (Fold.axiom4 chosen middle) with
-                | None -> array.Empty()
-                | Some(point1, point2) ->
-                    let point = if middle.GetDistance(point1) <= middle.GetDistance(point2) then point1 else point2
-                    if Line.contains point chosen
-                    then array.Empty()
-                    else [| createArrow point (Point.reflectBy chosen point) center |]
+            match paper.SelectedPoints.Value with
+            | [| point |] when not (Line.contains point chosen) ->
+                [| createArrow point (Point.reflectBy chosen point) center |]
+            | _ ->
+                FoldBack.getGeneralDynamicPoint paper chosen
+                |> Option.map (fun point -> createArrow point (Point.reflectBy chosen point) center)
+                |> Option.toArray
         let getPerpendicularArrow (line: LineSegment) (chosen: Line) (isEdge: bool) =
-            if isEdge then array.Empty()
-            else
-                let p1 = Line.signedDist line.Point1 chosen
-                let p2 = Line.signedDist line.Point2 chosen
-                if sign p1 = sign p2 then array.Empty()
-                else
-                    let p = if abs p1 < abs p2 then line.Point1 else line.Point2
-                    let reflected = Point.reflectBy chosen p
-                    if p =~ reflected then array.Empty()
-                    else [| createArrow p (Point.reflectBy chosen p) center |]
+            match paper.SelectedPoints.Value with
+            | [| point |] when not (Line.contains point chosen) ->
+                [| createArrow point (Point.reflectBy chosen point) center |]
+            | _ ->
+                FoldBack.getPerpendicularDynamicPoint line chosen isEdge
+                |> Option.map (fun point -> createArrow point (Point.reflectBy chosen point) center)
+                |> Option.toArray
         let arrows, points =
             let swapByDir dir point linePoint =
                 match dir with

@@ -32,6 +32,28 @@ let private chooseUnzip (f: 'T -> 'U1 option * 'U2 option) (source: seq<'T>) =
         Option.iter rightResult.Add right
     leftResult, rightResult
 
+let getGeneralDynamicPoint (paper: IPaper) (foldLine: Line) =
+    option {
+        let! first, last = Paper.clipBoundBy paper foldLine
+        let middle = (first + last) / 2.0
+        let! point1, point2 = Paper.clipBoundBy paper (Fold.axiom4 foldLine middle)
+        let point = if middle.GetDistance(point1) <= middle.GetDistance(point2) then point1 else point2
+        if not (Line.contains point foldLine) then
+            return point
+    }
+
+let getPerpendicularDynamicPoint (line: LineSegment) (foldLine: Line) (isEdge: bool) =
+    option {
+        if not isEdge then
+            let p1 = Line.signedDist line.Point1 foldLine
+            let p2 = Line.signedDist line.Point2 foldLine
+            if sign p1 <> sign p2 then
+                let p = if abs p1 < abs p2 then line.Point1 else line.Point2
+                let reflected = Point.reflectBy foldLine p
+                if p <>~ reflected then
+                    return p
+    }
+
 let private splitPoints foldLine layer =
     let positivePoints = ResizeArray()
     let negativePoints = ResizeArray()
