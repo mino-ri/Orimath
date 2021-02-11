@@ -1,7 +1,7 @@
 ﻿namespace Orimath.UITest
 
-type UITestPluginSetting() =
-    member val ContentText = "Content" with get, set
+type UITestPluginSetting =
+    { mutable ContentText: string }
 
 type TestData =
     { mutable Id: int

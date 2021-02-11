@@ -65,10 +65,10 @@ type Layer private
             invalidArg (nameof width) "紙の幅または高さを0以下にすることはできません。"
         if height <= 0.0 then
             invalidArg (nameof height) "紙の幅または高さを0以下にすることはできません。"
-        let p0 = { X = 0.0; Y = 0.0 }
-        let p1 = { X = width; Y = 0.0 }
-        let p2 = { X = width; Y = height }
-        let p3 = { X = 0.0; Y = height }
+        let p0 = { X = 0.5 - width / 2.0; Y = 0.5 - height / 2.0 }
+        let p1 = { X = 0.5 + width / 2.0; Y = 0.5 - height / 2.0 }
+        let p2 = { X = 0.5 + width / 2.0; Y = 0.5 + height / 2.0 }
+        let p3 = { X = 0.5 - width / 2.0; Y = 0.5 + height / 2.0 }
         Layer.FromPolygon([ p0; p1; p2; p3 ], layerType)
 
     /// 指定した頂点を持つ多角形のレイヤーを生成します。

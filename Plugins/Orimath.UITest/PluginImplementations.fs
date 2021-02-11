@@ -38,16 +38,12 @@ type ThemeEditorEffect(messenger: IMessenger) =
 
 
 type UITestPlugin() =
-    let mutable setting = UITestPluginSetting()
+    inherit ConfigurablePluginBase<UITestPluginSetting>({ ContentText = "Content" }) with
     interface IViewPlugin with
-        member _.Execute(args) =
-            args.Workspace.AddEffect(UITestEffect(args.Messenger, args.Dispatcher, setting))
+        member this.Execute(args) =
+            args.Workspace.AddEffect(UITestEffect(args.Messenger, args.Dispatcher, this.Setting))
             args.Messenger.RegisterView(ViewPane.Dialog, typeof<ControlListViewModel>,
                 "/Orimath.UITest;component/UIListControl.xaml")
-    
-    interface IConfigurablePlugin with
-        member _.SettingType = typeof<UITestPluginSetting>
-        member _.Setting with get() = box setting and set v = setting <- downcast v
 
 
 type ThemeEditorPlugin() =
@@ -57,4 +53,3 @@ type ThemeEditorPlugin() =
             args.Messenger.SetEffectParameterViewModel(box: ThemeBrushesViewModel -> obj)
             args.Messenger.RegisterView(ViewPane.Dialog, typeof<ThemeBrushesViewModel>,
                 "/Orimath.UITest;component/ThemeEditorControl.xaml")
-    
