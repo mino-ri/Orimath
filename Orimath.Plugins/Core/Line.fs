@@ -15,7 +15,10 @@ type Line = private { A: float; B: float; C: float } with
         member this.NearlyEquals(other, margin) =
             nearlyEqualsf margin this.A other.A &&
             nearlyEqualsf margin this.B other.B &&
-            nearlyEqualsf margin this.C other.C
+            nearlyEqualsf margin this.C other.C ||
+            nearlyEqualsf margin this.A -other.A &&
+            nearlyEqualsf margin this.B -other.B &&
+            nearlyEqualsf margin this.C -other.C
 
     static member Create(xFactor, yFactor, intercept) =
         let d = sqrt (xFactor * xFactor + yFactor * yFactor)

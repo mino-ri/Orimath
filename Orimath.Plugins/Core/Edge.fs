@@ -1,5 +1,6 @@
 ﻿namespace Orimath.Core
 open NearlyEquatable
+open Internal
 
 type Edge = { Line: LineSegment; Inner: bool } with
 
@@ -55,3 +56,15 @@ module Edge =
         |> Seq.pairwise
         |> Seq.filter (fun (p1, p2) -> containsPoint ((p1 + p2) / 2.0) edges)
         |> Seq.choose LineSegment.FromPoints
+
+    /// 2つのレイヤーに重なっている領域があるか判定します。
+    let areOverlap edges1 edges2 =
+        edges1 |> Seq.forall (fun e1 -> containsPoint e1.Line.Point1 edges2) ||
+        edges2 |> Seq.forall (fun e2 -> containsPoint e2.Line.Point1 edges1) ||
+        exists {
+            let! e1 = edges1
+            let! e2 = edges2
+            let! point = LineSegment.cross e1.Line e2.Line
+            return point <>~ e1.Line.Point1 && point <>~ e1.Line.Point2 &&
+                   point <>~ e2.Line.Point1 && point <>~ e2.Line.Point2
+        }

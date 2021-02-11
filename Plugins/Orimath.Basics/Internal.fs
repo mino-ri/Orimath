@@ -25,6 +25,7 @@ type ExistsBuilder() =
     member inline _.Bind(m, f) = List.exists f m
     member inline _.Bind(m, f) = Array.exists f m
     member inline _.Bind(m, f) = Seq.exists f m
+    member inline _.Zero() = false
     member inline _.Return(x: bool) = x
 
 let exists = ExistsBuilder()

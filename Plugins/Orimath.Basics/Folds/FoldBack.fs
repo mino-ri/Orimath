@@ -35,7 +35,7 @@ let private chooseUnzip (f: 'T -> 'U1 option * 'U2 option) (source: seq<'T>) =
 let private splitPoints foldLine layer =
     let positivePoints = ResizeArray()
     let negativePoints = ResizeArray()
-    for point in (Layer.crossesAll (Layer.clip foldLine layer) layer) |> Seq.append layer.Points do
+    for point in Layer.crossesAll (Layer.clip foldLine layer) layer |> Seq.append layer.Points do
         match Line.distSign point foldLine with
         | 1 -> positivePoints.Add(point)
         | -1 -> negativePoints.Add(point)
@@ -130,7 +130,7 @@ let private splitOriginalEdges foldLine positiveEdgesCount (layer: ILayer) =
         let edgeSign =
             edges1
             |> Seq.map (fun e -> Line.distSign (e.Line.Point1 * layer.Matrix) foldLine)
-            |> Seq.find (fun d -> d <> 0)
+            |> Seq.find ((<>) 0)
         if edgeSign > 0 then edges1, edges2 else edges2, edges1
 
 // returns positive-side, negative-side
@@ -188,10 +188,12 @@ let private splitLayer workspace foldLine isPositiveStatic layer =
     else Option.map (createLayer workspace foldLine layer false) negative,
          Option.map (createLayer workspace foldLine layer true) positive
 
-let private isContacted originalEdges1 originalEdge2 =
-    let innerEdges (edges: seq<Edge>) = edges |> Seq.filter (fun e -> e.Inner)
-    (innerEdges originalEdges1, innerEdges originalEdge2)
-    ||> Seq.exists2 (fun e1 e2 -> e1.Line =~ e2.Line)
+let private isContacted originalEdges1 originalEdges2 =
+    exists {
+        let! e1 = originalEdges1 |> Seq.filter (fun e -> e.Inner)
+        let! e2 = originalEdges2 |> Seq.filter (fun e -> e.Inner)
+        return e1.Line =~ e2.Line
+    }
 
 let isPositiveStatic foldLine dynamicPoint =
     match dynamicPoint with
@@ -199,10 +201,10 @@ let isPositiveStatic foldLine dynamicPoint =
     | None -> Line.isPositiveSide center foldLine
 
 let private clusterLayers (layers: SplittedLayer[]) =
-    let clusterIndices = ResizeArray<SplittedLayer list>()
+    let clusteredLayers = ResizeArray<SplittedLayer list>()
     for layer in layers do
         layer.Dynamic |> Option.iter (fun dl ->
-            clusterIndices
+            clusteredLayers
             |> Seq.tryFindIndex (fun cluster ->
                 exists {
                     let! cl = cluster
@@ -210,9 +212,9 @@ let private clusterLayers (layers: SplittedLayer[]) =
                     return isContacted dl.OriginalEdges c.OriginalEdges
                 })
             |> function
-            | Some(i) -> clusterIndices.[i] <- layer :: clusterIndices.[i]
-            | None -> clusterIndices.Add([layer]))
-    clusterIndices
+            | Some(i) -> clusteredLayers.[i] <- layer :: clusteredLayers.[i]
+            | None -> clusteredLayers.Add([layer]))
+    clusteredLayers
 
 let foldBack (workspace: IWorkspace) line dynamicPoint =
     let positiveStatic = isPositiveStatic line dynamicPoint
@@ -238,14 +240,14 @@ let private getTargetLayersCore (paper: IPaperModel) foldLine dynamicPoint targe
         | DisplayTarget.Point(p) -> Layer.containsPoint p layer
         | _ -> false
     let firstLayers =
-        match targets |> List.map getLayer |> List.filter(fun l -> l.Dynamic.IsSome) with
+        match targets |> List.map getLayer |> List.filter (fun l -> l.Dynamic.IsSome) with
         | [] ->
             layers
-            |> Array.tryFind(fun item -> item.Static.IsSome && item.Dynamic.IsSome)
+            |> Array.tryFind (fun item -> item.Static.IsSome && item.Dynamic.IsSome)
             |> Option.toList
         | [ t ] -> [ t ]
         | ts ->
-            match ts |> Seq.tryFind(fun t -> List.forall (contains t.Original) targets) with
+            match ts |> Seq.tryFind (fun t -> List.forall (contains t.Original) targets) with
             | Some(t) -> [ t ]
             | None -> ts
     if firstLayers.IsEmpty then
@@ -257,20 +259,17 @@ let private getTargetLayersCore (paper: IPaperModel) foldLine dynamicPoint targe
                 for l in Seq.find (List.contains layer) clusters do
                     l.IsTarget <- true
             let lastIndex = Array.findIndexBack (fun l -> l.IsTarget) layers
-            let mergedLine =
+            let targetLayers, otherLayers =
                 layers
-                |> Seq.filter (fun l -> l.IsTarget)
-                |> Seq.choose (fun l -> l.Dynamic)
-                |> Seq.collect (fun dl -> Edge.clip foldLine dl.Edges)
-                |> LineSegment.merge
-                |> Seq.toList
-            layers
-            |> Seq.take (lastIndex + 1)
-            |> Seq.tryFind (fun layer ->
-                not layer.IsTarget && exists {
-                    let! dl = layer.Dynamic
-                    let! l = mergedLine
-                    return Edge.clipSeg l dl.Edges |> Seq.isEmpty |> not
+                |> Array.take (lastIndex + 1)
+                |> Array.partition (fun layer -> layer.IsTarget)
+            otherLayers
+            |> Array.tryFind (fun layer ->
+                exists {
+                    let! otherLayer = layer.Dynamic
+                    let! targetLayer = targetLayers
+                    let! targetLayer = targetLayer.Dynamic
+                    return Edge.areOverlap otherLayer.Edges targetLayer.Edges
                 })
             // 末尾最適化のため、Option.iter を使わない
             |> function
