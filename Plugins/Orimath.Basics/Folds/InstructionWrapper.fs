@@ -2,7 +2,7 @@
 open Orimath.Core
 open Orimath.Core.NearlyEquatable
 open Orimath.Plugins
-open Orimath.FoldingInstruction
+open Orimath.Combination
 open ApplicativeProperty.PropOperators
 
 type internal InstructionWrapper(paper: IPaperModel) =

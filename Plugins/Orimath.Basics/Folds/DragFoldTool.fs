@@ -1,6 +1,6 @@
 ﻿namespace Orimath.Basics.Folds
 open Orimath.Core
-open Orimath.FoldingInstruction
+open Orimath.Combination
 open Orimath.Plugins
 open FoldOperation
 open ApplicativeProperty.PropOperators

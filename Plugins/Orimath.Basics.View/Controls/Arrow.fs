@@ -3,7 +3,7 @@ open System
 open System.Windows
 open System.Windows.Media
 open System.Windows.Shapes
-open Orimath.FoldingInstruction
+open Orimath.Combination
 
 type FpmOptions = FrameworkPropertyMetadataOptions
 

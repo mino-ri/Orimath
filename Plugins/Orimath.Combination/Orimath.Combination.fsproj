@@ -10,25 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Icons\*.png" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Compile Include="Internal.fs" />
-    <Compile Include="Folds\Fold.fs" />
-    <Compile Include="Folds\FoldOperation.fs" />
-    <Compile Include="Folds\FoldBack.fs" />
-    <Compile Include="Folds\InstructionWrapper.fs" />
-    <Compile Include="Folds\DragFoldTool.fs" />
-    <Compile Include="BasicEffects.fs" />
-    <Compile Include="NewPaperEffect.fs" />
-    <Compile Include="MeasureTool.fs" />
-    <Compile Include="PluginImplementations.fs" />
+    <Compile Include="FoldingInstruction.fs" />
+    <Compile Include="IFoldingInstructionTool.fs" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Orimath.Plugins\Orimath.Plugins.fsproj" />
-    <ProjectReference Include="..\Orimath.Combination\Orimath.Combination.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

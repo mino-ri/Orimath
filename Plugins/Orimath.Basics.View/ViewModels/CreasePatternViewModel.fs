@@ -2,7 +2,7 @@
 open Orimath.Controls
 open Orimath.Core
 open Orimath.Core.NearlyEquatable
-open Orimath.FoldingInstruction
+open Orimath.Combination
 open Orimath.Plugins
 open Orimath.Basics.View
 

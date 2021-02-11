@@ -1,6 +1,6 @@
 ﻿namespace Orimath.Basics
 open Orimath.Core
-open Orimath.FoldingInstruction
+open Orimath.Combination
 open Orimath.Plugins
 open ApplicativeProperty.PropOperators
 

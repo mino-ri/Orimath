@@ -1,7 +1,7 @@
 ﻿namespace Orimath.Basics.View.ViewModels
 open Orimath.Controls
 open Orimath.Plugins
-open Orimath.FoldingInstruction
+open Orimath.Combination
 open ApplicativeProperty
 
 type InstructionLineViewModel(pointConverter: IViewPointConverter) =

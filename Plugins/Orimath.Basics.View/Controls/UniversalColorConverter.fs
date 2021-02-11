@@ -2,7 +2,7 @@
 open System
 open System.Windows.Data
 open System.Windows.Media
-open Orimath.FoldingInstruction
+open Orimath.Combination
 
 type UniversalColorConverter() =
     static let createBrush(value: uint) =
