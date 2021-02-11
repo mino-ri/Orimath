@@ -9,17 +9,17 @@ open Orimath.Plugins
 type LayerViewModel(layer: ILayerModel, pointConverter: IViewPointConverter, dispatcher: IDispatcher) =
     inherit NotifyPropertyChanged()
     let points = 
-        new AttachedObservableCollection<Point, PointViewModel>
-            (dispatcher,
-             layer.Points,
-             (fun p -> PointViewModel(p, pointConverter, layer)),
-             ignore)
+        new AttachedObservableCollection<Point, PointViewModel>(
+            dispatcher,
+            layer.Points,
+            (fun p -> PointViewModel(p, pointConverter, layer)),
+            ignore)
     let lines =
-        new AttachedObservableCollection<LineSegment, LineViewModel>
-            (dispatcher,
-             layer.Lines,
-             (fun l -> new LineViewModel(l, pointConverter, layer)),
-             ignore)
+        new AttachedObservableCollection<LineSegment, LineViewModel>(
+            dispatcher,
+            layer.Lines,
+            (fun l -> new LineViewModel(l, pointConverter, layer)),
+            ignore)
 
     member _.Source = layer
     member val Edges = [| for e in layer.Edges -> new EdgeViewModel(e, pointConverter, layer) |]

@@ -37,9 +37,18 @@ type FoldingInstructionViewModel(workspace: IWorkspace, dispatcher: IDispatcher,
                 else arrows.Reset(seq { for a in ars -> InstructionArrowViewModel.Create(pointConverter, a) }))
             |> disposables.Add
             dispatcher.UI {
-                points.Reset(seq { for p in fTool.FoldingInstruction.Points.Value -> InstructionPointViewModel.Create(pointConverter, p) })
-                lines.Reset(seq { for l in fTool.FoldingInstruction.Lines.Value -> InstructionLineViewModel.Create(pointConverter, l) })
-                arrows.Reset(seq { for a in fTool.FoldingInstruction.Arrows.Value -> InstructionArrowViewModel.Create(pointConverter, a) })
+                points.Reset(seq {
+                    for p in fTool.FoldingInstruction.Points.Value ->
+                    InstructionPointViewModel.Create(pointConverter, p)
+                })
+                lines.Reset(seq {
+                    for l in fTool.FoldingInstruction.Lines.Value ->
+                    InstructionLineViewModel.Create(pointConverter, l)
+                })
+                arrows.Reset(seq {
+                    for a in fTool.FoldingInstruction.Arrows.Value ->
+                    InstructionArrowViewModel.Create(pointConverter, a)
+                })
                 visible.Value <- true
             }
         | _ ->

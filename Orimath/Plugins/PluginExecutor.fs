@@ -17,7 +17,8 @@ let mutable setting = PluginSetting()
 let mutable configurablePlugins = List<IConfigurablePlugin>()
 
 let private loadPluginTypes() =
-    let pluginDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Plugins")
+    let pluginDirectory =
+        Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Plugins")
     if Directory.Exists(pluginDirectory) then
         [|
             for file in Directory.GetFiles(pluginDirectory, "*.dll", SearchOption.TopDirectoryOnly) do
@@ -40,7 +41,8 @@ let private loadSetting (types: Type[]) =
     | Some(s) -> setting <- s
     | None ->
         setting <- PluginSetting()
-        setting.PluginOrder <- Array.append (getFullNames<IPlugin> types) (getFullNames<IViewPlugin> types)
+        setting.PluginOrder <-
+            Array.append (getFullNames<IPlugin> types) (getFullNames<IViewPlugin> types)
         saveSetting()
     setting
 

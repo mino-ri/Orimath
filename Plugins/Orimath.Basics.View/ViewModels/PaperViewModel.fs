@@ -7,11 +7,11 @@ open ApplicativeProperty
 type PaperViewModel(paper: IPaperModel, pointConverter: IViewPointConverter, dispatcher: IDispatcher) =
     inherit NotifyPropertyChanged()
     let layers =
-        new AttachedObservableCollection<ILayerModel, LayerViewModel>
-            (dispatcher,
-             paper.Layers,
-             (fun l -> new LayerViewModel(l, pointConverter, dispatcher)),
-             (fun l -> l.Dispose()))
+        new AttachedObservableCollection<ILayerModel, LayerViewModel>(
+            dispatcher,
+            paper.Layers,
+            (fun l -> new LayerViewModel(l, pointConverter, dispatcher)),
+            (fun l -> l.Dispose()))
     let mapArray mapping prop = prop |> Prop.map (Array.map mapping) |> Prop.fetch dispatcher.SyncContext
 
     member _.Layers = layers :> ObservableCollection<_>

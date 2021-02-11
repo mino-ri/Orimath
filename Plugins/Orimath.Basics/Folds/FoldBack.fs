@@ -207,7 +207,7 @@ let private clusterLayers (layers: SplittedLayer[]) =
                 exists {
                     let! cl = cluster
                     let! c = cl.Dynamic
-                    return isContacted dl.OriginalEdges c.OriginalEdges 
+                    return isContacted dl.OriginalEdges c.OriginalEdges
                 })
             |> function
             | Some(i) -> clusterIndices.[i] <- layer :: clusterIndices.[i]

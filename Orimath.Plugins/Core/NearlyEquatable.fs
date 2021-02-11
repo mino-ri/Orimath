@@ -21,7 +21,7 @@ module NearlyEquatable =
 
     let inline (=~) (x: 'T when 'T :> INearlyEquatable<'T>) y = x.NearlyEquals(y, defaultMargin)
 
-    let inline (<>~) (x: 'T when 'T :> INearlyEquatable<'T>) y = not (x.NearlyEquals(y, defaultMargin))
+    let inline (<>~) (x: 'T when 'T :> INearlyEquatable<'T>) y = not (x =~ y)
 
     // floatの「-0」表現を回避する演算子
     let (!-) x = if x = 0.0 then 0.0 else -x

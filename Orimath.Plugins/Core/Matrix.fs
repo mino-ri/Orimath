@@ -3,13 +3,14 @@
 [<NoComparison>]
 type Matrix =
     {
-        M11:     float; M12:     float // 0
-        M21:     float; M22:     float // 0
+        M11: float; M12: float // 0
+        M21: float; M22: float // 0
         OffsetX: float; OffsetY: float // 1
     }
     with
     override this.ToString() =
-        System.String.Format("[ [{0} {1}] [{2} {3}] [{4} {5}] ]",
+        System.String.Format(
+            "[ [{0} {1}] [{2} {3}] [{4} {5}] ]",
             this.M11, this.M12,
             this.M21, this.M22,
             this.OffsetX, this.OffsetY);

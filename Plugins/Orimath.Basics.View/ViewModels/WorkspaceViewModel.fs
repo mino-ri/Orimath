@@ -25,12 +25,14 @@ type WorkspaceViewModel(workspace: IWorkspace, pointConverter: IViewPointConvert
 
     member _.DragEnter(source, target, modifier) =
         match workspace.CurrentTool.Value with
-        | :? IDragTool as tool -> tool.DragEnter(toModelTarget(source), toModelTarget(target), modifier)
+        | :? IDragTool as tool ->
+            tool.DragEnter(toModelTarget(source), toModelTarget(target), modifier)
         | _ -> false
 
     member _.DragLeave(source, target, modifier) =
         match workspace.CurrentTool.Value with
-        | :? IDragTool as tool -> tool.DragLeave(toModelTarget(source), toModelTarget(target), modifier)
+        | :? IDragTool as tool ->
+            tool.DragLeave(toModelTarget(source), toModelTarget(target), modifier)
         | _ -> false
 
     member _.DragOver(source, target, modifier) =

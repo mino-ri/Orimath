@@ -4,7 +4,9 @@ open Orimath.Core.NearlyEquatable
 open Orimath.Plugins
 
 [<Struct>]
-type FoldDirection = PointToLine | LineToPoint
+type FoldDirection =
+    | PointToLine
+    | LineToPoint
 
 
 type FoldOperation =

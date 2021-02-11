@@ -73,17 +73,18 @@ type DragFoldTool(workspace: IWorkspace) =
             let lines, chosen =
                 match opr with
                 | NoOperation ->
-                    let lines = getLines (getOperation paper source target (modifier ||| OperationModifier.Alt))
-                    lines, None
+                    getLines (getOperation paper source target (modifier ||| OperationModifier.Alt)),
+                    None
                 | _ ->
                     let lines = getLines opr
                     lines, chooseLine lines opr
             match chosen with
             | Some(c) ->
                 let targetLayers =
-                    if modifier.HasFlag(OperationModifier.Ctrl)
-                    then FoldBack.getTargetLayers workspace c (this.GetSourcePoint(opr)) [source; target] :> seq<_>
-                    else paper.Layers :> seq<_>
+                    if modifier.HasFlag(OperationModifier.Ctrl) then
+                        FoldBack.getTargetLayers workspace c (this.GetSourcePoint(opr)) [source; target] :> seq<_>
+                    else
+                        paper.Layers :> seq<_>
                 instruction.SetLines(targetLayers, lines, chosen)
                 instruction.SetArrow(c, opr, modifier.HasFlag(OperationModifier.Shift))
             | None ->

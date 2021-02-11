@@ -5,7 +5,7 @@ open ApplicativeProperty
 
 let asList (s: seq<'a>) =
     match s with
-    | :? list<'a> as lst -> lst
+    | :? ('a list) as lst -> lst
     | _ -> List.ofSeq s
 
 let revList s = ([], s) ||> Seq.fold (fun t h -> h :: t)

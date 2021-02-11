@@ -3,7 +3,12 @@ open Orimath.Controls
 open Orimath.Plugins
 open ApplicativeProperty
 
-type ParametricEffectDialogViewModel(effect: IParametricEffect, dispatcher: IDispatcher, parent: IMessenger, createViewModel: obj -> obj) as this =
+type ParametricEffectDialogViewModel
+    (effect: IParametricEffect,
+     dispatcher: IDispatcher,
+     parent: IMessenger,
+     createViewModel: obj -> obj
+    ) as this =
     inherit NotifyPropertyChanged()
 
     member val Header = effect.Name
@@ -14,5 +19,5 @@ type ParametricEffectDialogViewModel(effect: IParametricEffect, dispatcher: IDis
     member _.Execute(_: obj) =
         dispatcher.Background {
             effect.Execute()
-            dispatcher.UI.Invoke(parent.CloseDialog)            
+            dispatcher.UI.Invoke(parent.CloseDialog)
         }

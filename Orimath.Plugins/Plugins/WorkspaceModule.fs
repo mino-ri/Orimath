@@ -1,4 +1,5 @@
-﻿[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
+﻿[<AutoOpen>]
+[<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Orimath.Plugins.Workspace
 
 let private tryCastTool<'T when 'T :> ITool> (o: ITool) =
@@ -11,14 +12,14 @@ let private tryCastEffect<'T when 'T :> IEffect> (o: IEffect) =
     | :? 'T as casted -> Some(casted)
     | _ -> None
 
-[<RequiresExplicitTypeArguments>]
-let getTool<'T when 'T :> ITool> (ws: IWorkspace) = Seq.pick tryCastTool<'T> ws.Tools
+type IWorkspace with
+    member ws.GetTool() : #ITool = Seq.pick tryCastTool ws.Tools
 
-[<RequiresExplicitTypeArguments>]
-let trygetTool<'T when 'T :> ITool> (ws: IWorkspace) = Seq.tryPick tryCastTool<'T> ws.Tools
+    member ws.TrygetTool() : #ITool option = Seq.tryPick tryCastTool ws.Tools
 
-[<RequiresExplicitTypeArguments>]
-let getEffect<'T when 'T :> IEffect> (ws: IWorkspace) = Seq.pick tryCastEffect<'T> ws.Effects
+    member ws.GetEffect() : #IEffect = Seq.pick tryCastEffect ws.Effects
 
-[<RequiresExplicitTypeArguments>]
-let trygetEffect<'T when 'T :> IEffect> (ws: IWorkspace) = Seq.tryPick tryCastEffect<'T> ws.Effects
+    member ws.TryGetEffect() : #IEffect option = Seq.tryPick tryCastEffect ws.Effects
+
+    member ws.ClearPaper(layers) =
+        ws.Paper.Clear(ws.CreatePaper(layers))

@@ -51,5 +51,7 @@ type AutoDisableImage() =
                 pixels.[i + 2] <- v
                 pixels.[i + 3] <- byte (float pixels.[i + 3] * 0.75)
             image.GraySource <-
-                Some(BitmapSource.Create(width, height, bitmap.DpiX, bitmap.DpiY, PixelFormats.Bgra32, null, pixels, stride))
+                BitmapSource.Create(width, height, bitmap.DpiX, bitmap.DpiY,
+                                    PixelFormats.Bgra32, null, pixels, stride)
+                |> Some
         | _ -> ()

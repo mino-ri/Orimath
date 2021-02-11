@@ -31,4 +31,6 @@ type ThemeBrushesSource
     member val ScrollBar = scrollBar with get, set
 
     new() =
-        ThemeBrushesSource(ThemeBrushSource.Default, ThemeBrushSource.Default, ThemeBrushSource.Default, ThemeBrushSource.Default)
+        ThemeBrushesSource(
+            ThemeBrushSource.Default, ThemeBrushSource.Default,
+            ThemeBrushSource.Default, ThemeBrushSource.Default)

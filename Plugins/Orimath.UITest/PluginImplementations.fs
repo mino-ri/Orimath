@@ -41,8 +41,9 @@ type UITestPlugin() =
     let mutable setting = UITestPluginSetting()
     interface IViewPlugin with
         member _.Execute(args) =
-            args.Workspace.AddEffect(UITestEffect(args.Messenger, args.Dispatcher, setting));
-            args.Messenger.RegisterView(ViewPane.Dialog, typeof<ControlListViewModel>, "/Orimath.UITest;component/UIListControl.xaml")
+            args.Workspace.AddEffect(UITestEffect(args.Messenger, args.Dispatcher, setting))
+            args.Messenger.RegisterView(ViewPane.Dialog, typeof<ControlListViewModel>,
+                "/Orimath.UITest;component/UIListControl.xaml")
     
     interface IConfigurablePlugin with
         member _.SettingType = typeof<UITestPluginSetting>
@@ -54,5 +55,6 @@ type ThemeEditorPlugin() =
         member _.Execute(args) =
             args.Workspace.AddEffect(ThemeEditorEffect(args.Messenger));
             args.Messenger.SetEffectParameterViewModel(box: ThemeBrushesViewModel -> obj)
-            args.Messenger.RegisterView(ViewPane.Dialog, typeof<ThemeBrushesViewModel>, "/Orimath.UITest;component/ThemeEditorControl.xaml")
+            args.Messenger.RegisterView(ViewPane.Dialog, typeof<ThemeBrushesViewModel>,
+                "/Orimath.UITest;component/ThemeEditorControl.xaml")
     

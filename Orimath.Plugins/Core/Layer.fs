@@ -35,7 +35,8 @@ module Layer =
     let containsPoint point (layer: ILayer) = Edge.containsPoint point (asList layer.Edges)
 
     /// このレイヤーの領域に指定した線分が完全に含まれているか判断します。
-    let containsSeg (line: LineSegment) layer = containsPoint line.Point1 layer && containsPoint line.Point2 layer
+    let containsSeg (line: LineSegment) layer =
+        containsPoint line.Point1 layer && containsPoint line.Point2 layer
 
     /// このレイヤーの領域に全ての点が含まれているか判断します。
     let containsAllPoint points layer = Seq.forall (flip containsPoint layer) points

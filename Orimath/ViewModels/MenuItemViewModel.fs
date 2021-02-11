@@ -6,7 +6,13 @@ open Orimath
 open Orimath.Plugins
 open Orimath.Controls
 
-type MenuItemViewModel(name: string, shortcutKey: KeyGesture, shortcutKeyText: string, command: ICommand, iconStream: Stream) =
+type MenuItemViewModel
+    (name: string,
+     shortcutKey: KeyGesture,
+     shortcutKeyText: string,
+     command: ICommand,
+     iconStream: Stream
+    ) =
     inherit NotifyPropertyChanged()
     
     member val Children = ObservableCollection<MenuItemViewModel>()
@@ -25,4 +31,5 @@ type MenuItemViewModel(name: string, shortcutKey: KeyGesture, shortcutKeyText: s
             match Internal.convertToKeyGesture effect.ShortcutKey with
             | Some(sk) -> sk, effect.ShortcutKey
             | None -> null, ""
-        MenuItemViewModel(effect.Name, shortcutKey, shortcutKeyText, messenger.GetEffectCommand(effect), effect.Icon)
+        MenuItemViewModel(effect.Name, shortcutKey, shortcutKeyText,
+            messenger.GetEffectCommand(effect), effect.Icon)

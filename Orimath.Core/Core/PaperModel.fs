@@ -37,7 +37,8 @@ type PaperModel internal () as this =
     member _.SelectedLines = selectedLines
     member _.ChangeBlockDeclared = changeBlockDeclared
 
-    member internal _.PushUndoOpr(opr: PaperOpr) = if not changeBlockDisabled then undoOprStack.Push(opr)
+    member internal _.PushUndoOpr(opr: PaperOpr) =
+        if not changeBlockDisabled then undoOprStack.Push(opr)
 
     member _.GetSnapShot() =
         layerModels
@@ -71,10 +72,14 @@ type PaperModel internal () as this =
                     | LayerAddition(_, layers) -> this.RemoveLayers(layers.Length)
                     | LayerRemoving(_, layers) -> this.AddLayersRaw(layers)
                     | LayerReplace(index, oldLayer, _) -> this.ReplaceLayerRaw(index, oldLayer)
-                    | LineAddition(layerIndex, _, lines) -> layerModels.[layerIndex].RemoveLines(lines.Length)
-                    | LineRemoving(layerIndex, _, lines) -> layerModels.[layerIndex].AddLinesRaw(lines)
-                    | PointAddition(layerIndex, _, points) -> layerModels.[layerIndex].RemovePoints(points.Length)
-                    | PointRemoving(layerIndex, _, points) -> layerModels.[layerIndex].AddPoints(points)
+                    | LineAddition(layerIndex, _, lines) ->
+                        layerModels.[layerIndex].RemoveLines(lines.Length)
+                    | LineRemoving(layerIndex, _, lines) ->
+                        layerModels.[layerIndex].AddLinesRaw(lines)
+                    | PointAddition(layerIndex, _, points) ->
+                        layerModels.[layerIndex].RemovePoints(points.Length)
+                    | PointRemoving(layerIndex, _, points) ->
+                        layerModels.[layerIndex].AddPoints(points)
                     recSelf()
             recSelf()
 
@@ -95,10 +100,14 @@ type PaperModel internal () as this =
                     | LayerAddition(_, layers) -> this.AddLayersRaw(layers)
                     | LayerRemoving(_, layers) -> this.RemoveLayers(layers.Length)
                     | LayerReplace(index, _, newLayer) -> this.ReplaceLayerRaw(index, newLayer)
-                    | LineAddition(layerIndex, _, lines) -> layerModels.[layerIndex].AddLinesRaw(lines)
-                    | LineRemoving(layerIndex, _, lines) -> layerModels.[layerIndex].RemoveLines(lines.Length)
-                    | PointAddition(layerIndex, _, points) -> layerModels.[layerIndex].AddPoints(points)
-                    | PointRemoving(layerIndex, _, points) -> layerModels.[layerIndex].RemovePoints(points.Length)
+                    | LineAddition(layerIndex, _, lines) ->
+                        layerModels.[layerIndex].AddLinesRaw(lines)
+                    | LineRemoving(layerIndex, _, lines) ->
+                        layerModels.[layerIndex].RemoveLines(lines.Length)
+                    | PointAddition(layerIndex, _, points) ->
+                        layerModels.[layerIndex].AddPoints(points)
+                    | PointRemoving(layerIndex, _, points) ->
+                        layerModels.[layerIndex].RemovePoints(points.Length)
                     recSelf()
             recSelf()
 
@@ -153,7 +162,8 @@ type PaperModel internal () as this =
     member this.AddLayers(layers: seq<ILayer>) =
         let layers =
             layers
-            |> Seq.mapi (fun index ly -> LayerModel(this, layerModels.Count + index, Layer.AsLayer(ly)) :> ILayerModel)
+            |> Seq.mapi (fun index ly ->
+                LayerModel(this, layerModels.Count + index, Layer.AsLayer(ly)) :> ILayerModel)
             |> Seq.toList
         this.AddLayersRaw(layers)
 

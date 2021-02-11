@@ -51,7 +51,12 @@ type SettingItemViewModel(property: PropertyInfo, object: obj) =
 
 
 [<AbstractClass>]
-type RangeSettingItemViewModel<'T>(property: PropertyInfo, object: obj, defaultMinimum: 'T, defaultMaximum: 'T) =
+type RangeSettingItemViewModel<'T>
+    (property: PropertyInfo,
+     object: obj,
+     defaultMinimum: 'T,
+     defaultMaximum: 'T
+    ) =
     inherit SettingItemViewModel(property, object)
     let hasRange, min, max =
         property.GetCustomAttribute<RangeAttribute>()

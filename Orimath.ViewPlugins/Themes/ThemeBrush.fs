@@ -44,7 +44,14 @@ type BrushSet(basedOn: BrushSet, background: Brush, foreground: Brush, border: B
 
 
 and [<AllowNullLiteral>]
-    ThemeBrush(basedOn: ThemeBrush, normal: BrushSet, hovered: BrushSet, highlight: BrushSet, disabled: BrushSet, alternated: BrushSet) =
+    ThemeBrush
+    (basedOn: ThemeBrush,
+     normal: BrushSet,
+     hovered: BrushSet,
+     highlight: BrushSet,
+     disabled: BrushSet,
+     alternated: BrushSet
+    ) =
     inherit NotifyPropertyChanged()
     let mutable normal = normal
     let mutable hovered = hovered
@@ -142,28 +149,32 @@ and [<AllowNullLiteral>] ThemeBrushes
         let back = solid 243uy 243uy 243uy
         let hoveredGray = solid 230uy 230uy 230uy
         let control =
-            ThemeBrush(null,
+            ThemeBrush(
+                null,
                 BrushSet(null, normal, Brushes.White, border),
                 BrushSet(null, hover, Brushes.White, border),
                 BrushSet(null, highlight, Brushes.White, highlightBorder),
                 BrushSet(null, disabled, solid 217uy 217uy 217uy, solid 127uy 127uy 127uy),
                 BrushSet(null, solid 232uy 17uy 35uy, Brushes.White, border))
         let workspace =
-            ThemeBrush(null,
-                 BrushSet(null, back, Brushes.Black, normal),
-                 BrushSet(null, hoveredGray, Brushes.Black, hover),
-                 BrushSet(null, highlightLight, Brushes.Black, highlightBorder),
-                 BrushSet(null, back, disabled, disabled),
-                 BrushSet(null, Brushes.White, Brushes.Black, normal))
+            ThemeBrush(
+                null,
+                BrushSet(null, back, Brushes.Black, normal),
+                BrushSet(null, hoveredGray, Brushes.Black, hover),
+                BrushSet(null, highlightLight, Brushes.Black, highlightBorder),
+                BrushSet(null, back, disabled, disabled),
+                BrushSet(null, Brushes.White, Brushes.Black, normal))
         let input =
-            ThemeBrush(null,
+            ThemeBrush(
+                null,
                 BrushSet(null, Brushes.White, Brushes.Black, normal),
                 BrushSet(null, Brushes.White, Brushes.Black, hover),
                 BrushSet(null, Brushes.White, Brushes.Black, highlight),
                 BrushSet(null, back, disabled, disabled),
                 null)
         let scrollBar =
-            ThemeBrush(null,
+            ThemeBrush(
+                null,
                 BrushSet(null, back, solid 217uy 217uy 217uy, null),
                 BrushSet(null, back, solid 190uy 190uy 190uy, null),
                 BrushSet(null, back, solid 190uy 190uy 190uy, null),
@@ -178,12 +189,14 @@ and [<AllowNullLiteral>] ThemeBrushes
             then null
             else converter.ConvertFromInvariantString(text) :?> Brush
         let getBrushSet (background, foreground, border) =
-            BrushSet(null,
+            BrushSet(
+                null,
                 getBrush background,
                 getBrush foreground,
                 getBrush border)
         let getThemeBrush (src: ThemeBrushSource) =
-            ThemeBrush(null,
+            ThemeBrush(
+                null,
                 getBrushSet src.Normal,
                 getBrushSet src.Hovered,
                 getBrushSet src.Highlight,

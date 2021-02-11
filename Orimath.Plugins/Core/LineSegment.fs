@@ -13,8 +13,10 @@ type LineSegment internal (line: Line, p1: Point, p2: Point) =
     interface INearlyEquatable<LineSegment> with
         member this.NearlyEquals(other, margin) =
             nearlyEquals margin this.Line other.Line &&
-            (nearlyEquals margin this.Point1 other.Point1 && nearlyEquals margin this.Point2 other.Point2 ||
-             nearlyEquals margin this.Point1 other.Point2 && nearlyEquals margin this.Point2 other.Point1)
+            (nearlyEquals margin this.Point1 other.Point1 &&
+             nearlyEquals margin this.Point2 other.Point2 ||
+             nearlyEquals margin this.Point1 other.Point2 &&
+             nearlyEquals margin this.Point2 other.Point1)
 
     static member FromFactorsAndPoint(xFactor, yFactor, p) =
         LineSegment(Line.FromFactorsAndPoint(xFactor, yFactor, p), p, p)
@@ -90,7 +92,8 @@ module LineSegment =
             |> Seq.iter (fun s ->
                 if result.Count > 0 && hasIntersection s result.[result.Count - 1] then
                     if getD s.Point2 > getD result.[result.Count - 1].Point2 then
-                        result.[result.Count - 1] <- LineSegment(line.Value, result.[result.Count - 1].Point1, s.Point2)
+                        result.[result.Count - 1] <-
+                            LineSegment(line.Value, result.[result.Count - 1].Point1, s.Point2)
                 else
                     result.Add(s))
         result :> seq<_>

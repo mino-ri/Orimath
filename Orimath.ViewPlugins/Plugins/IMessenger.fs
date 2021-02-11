@@ -6,7 +6,7 @@ type ViewPane =
     | Main = 0
     | Top = 1
     | Side = 2
-    | Dialog = 3   
+    | Dialog = 3
 
 
 type IMessenger =

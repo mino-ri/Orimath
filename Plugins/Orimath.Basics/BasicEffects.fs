@@ -99,7 +99,9 @@ type OpenAllEffect(workspace: IWorkspace) =
                 let points = ResizeArray()
                 let mutable currentPoint = edges.[0].Point1
                 while edges.Count > 0 do
-                    let index = edges |> Seq.findIndex (fun e -> e.Point1 =~ currentPoint || e.Point2 =~ currentPoint)
+                    let index =
+                        edges
+                        |> Seq.findIndex (fun e -> e.Point1 =~ currentPoint || e.Point2 =~ currentPoint)
                     let target = edges.[index]
                     currentPoint <- if target.Point1 =~ currentPoint then target.Point2 else target.Point1
                     points.Add(currentPoint)

@@ -25,6 +25,9 @@ type ToolListViewModel(workspace: IWorkspace, dispatcher: IDispatcher) =
     member val CurrentTool =
         workspace.CurrentTool
         |> Prop.mapBoth
-            (fun tool -> lazyTool.Value |> Array.tryFind (fun t -> t.Source = tool) |> Option.defaultValue null)
+            (fun tool ->
+                lazyTool.Value
+                |> Array.tryFind (fun t -> t.Source = tool)
+                |> Option.defaultValue null)
             (fun v -> if isNull v then Unchecked.defaultof<_> else v.Source)
         |> Prop.fetchBoth dispatcher.SyncContext

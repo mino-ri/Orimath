@@ -42,9 +42,11 @@ type internal InstructionWrapper(paper: IPaper) =
                 if dot =~~ 0.0 then ArrowDirection.Auto
                 elif dot < 0.0 then ArrowDirection.Clockwise
                 else ArrowDirection.Counterclockwise
-            if foldBack
-            then InstructionArrow.ValleyFold(startPoint, endPoint, InstructionColor.Blue, dir)
-            else InstructionArrow.Create(startPoint, endPoint, ArrowType.ValleyFold, ArrowType.ValleyFold, InstructionColor.Green, dir)
+            if foldBack then
+                InstructionArrow.ValleyFold(startPoint, endPoint, InstructionColor.Blue, dir)
+            else
+                InstructionArrow.Create(startPoint, endPoint,
+                    ArrowType.ValleyFold, ArrowType.ValleyFold, InstructionColor.Green, dir)
         let getGeneralArrow() =
             match Paper.clipBoundBy paper chosen with
             | None -> array.Empty()

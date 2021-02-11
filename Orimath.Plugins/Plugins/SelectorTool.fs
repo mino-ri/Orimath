@@ -28,22 +28,22 @@ type SelectorTool(workspace: IWorkspace) =
     default _.OnClick(target, modifier) =
         if modifier = OperationModifier.None then
             match target.Target with
-            |DisplayTarget.Layer(l) ->
+            | DisplayTarget.Layer(l) ->
                 workspace.Paper.SelectedLayers .<- [| l |]
                 workspace.Paper.SelectedEdges .<- Array.empty
                 workspace.Paper.SelectedLines .<- Array.empty
                 workspace.Paper.SelectedPoints .<- Array.empty
-            |DisplayTarget.Edge(e) ->
+            | DisplayTarget.Edge(e) ->
                 workspace.Paper.SelectedLayers .<- Array.empty
                 workspace.Paper.SelectedEdges .<- [| e |]
                 workspace.Paper.SelectedLines .<- Array.empty
                 workspace.Paper.SelectedPoints .<- Array.empty
-            |DisplayTarget.Line(l) ->
+            | DisplayTarget.Line(l) ->
                 workspace.Paper.SelectedLayers .<- Array.empty
                 workspace.Paper.SelectedEdges .<- Array.empty
                 workspace.Paper.SelectedLines .<- [| l |]
                 workspace.Paper.SelectedPoints .<- Array.empty
-            |DisplayTarget.Point(p) ->
+            | DisplayTarget.Point(p) ->
                 workspace.Paper.SelectedLayers .<- Array.empty
                 workspace.Paper.SelectedEdges .<- Array.empty
                 workspace.Paper.SelectedLines .<- Array.empty

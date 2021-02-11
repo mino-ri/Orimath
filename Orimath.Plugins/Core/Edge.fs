@@ -23,14 +23,16 @@ module Edge =
         recSelf 0 edges
 
     /// このレイヤーの領域に指定した線分が完全に含まれているか判断します。
-    let containsSeg (seg: LineSegment) edges = containsPoint seg.Point1 edges && containsPoint seg.Point2 edges
+    let containsSeg (seg: LineSegment) edges =
+        containsPoint seg.Point1 edges && containsPoint seg.Point2 edges
     
     /// このレイヤーの範囲内に収まるように、指定された直線をカットします。
     let clip line (edges: Edge list) =
         let points = ResizeArray()
         for edge in edges do
             match Line.cross edge.Line.Line line with
-            | Some(p) when LineSegment.containsPoint p edge.Line && not (points |> Seq.exists ((=~) p)) ->
+            | Some(p) when LineSegment.containsPoint p edge.Line &&
+                           not (Seq.exists ((=~) p) points) ->
                 points.Add(p)
             | _ -> ()
         points

@@ -2,7 +2,6 @@
 open System
 open System.Collections.Generic
 open System.Collections.ObjectModel
-open System.Linq
 open System.Windows.Input
 open Orimath
 open Orimath.Controls
@@ -92,7 +91,10 @@ type WorkspaceViewModel(workspace: IWorkspace) =
                 match effect with
                 | :? IParametricEffect as parametric ->
                     (effect.CanExecute .&&. this.RootEnable, dispatcher.SyncContext)
-                    ||> Prop.commands (fun _ -> this.OpenDialog(ParametricEffectDialogViewModel(parametric, dispatcher, this, this.GetEffectParameterViewModel)))
+                    ||> Prop.commands (fun _ ->
+                        ParametricEffectDialogViewModel(
+                            parametric, dispatcher, this, this.GetEffectParameterViewModel)
+                        |> this.OpenDialog)
                 | effect ->
                     (effect.CanExecute .&&. this.RootEnable, dispatcher.SyncContext)
                     ||> Prop.commands (fun _ -> dispatcher.Background.Invoke(effect.Execute))
@@ -166,8 +168,10 @@ type WorkspaceViewModel(workspace: IWorkspace) =
         member this.AddViewModel(viewModel) = this.AddViewModel(viewModel)
         member this.CloseDialogCommand = this.CloseDialogCommand
         member this.GetEffectCommand(effect) = this.GetEffectCommand(effect)
-        member this.RegisterView(viewPane: ViewPane, viewModelType: Type, viewType: Type) = this.RegisterView(viewPane, viewModelType, viewType)
-        member this.RegisterView(viewPane: ViewPane, viewModelType: Type, viewUri: string) = this.RegisterView(viewPane, viewModelType, viewUri)
+        member this.RegisterView(viewPane: ViewPane, viewModelType: Type, viewType: Type) =
+            this.RegisterView(viewPane, viewModelType, viewType)
+        member this.RegisterView(viewPane: ViewPane, viewModelType: Type, viewUri: string) =
+            this.RegisterView(viewPane, viewModelType, viewUri)
         member this.RemoveViewModel(viewModelType: Type) = this.RemoveViewModel(viewModelType)
         member this.RemoveViewModel(viewModel: obj) = this.RemoveViewModel(viewModel)
         member this.SetEffectParameterViewModel(mapping) = this.SetEffectParameterViewModel(mapping)
