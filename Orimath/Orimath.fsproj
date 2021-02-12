@@ -5,6 +5,7 @@
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <Win32Resource>.\icon.res</Win32Resource>
+    <InformationalVersion>0.5-beta.0</InformationalVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -25,11 +26,11 @@
     <Compile Include="ViewModels\EnumValueViewModel.fs" />
     <Compile Include="ViewModels\SettingItemViewModel.fs" />
     <Compile Include="ViewModels\SettingViewModel.fs" />
+    <Compile Include="ViewModels\VersionInfoViewModel.fs" />
     <Compile Include="ViewModels\MenuItemViewModel.fs" />
     <Compile Include="ViewModels\ParametricEffectDialogViewModel.fs" />
     <Compile Include="ViewModels\PluginSettingViewModel.fs" />
-    <Compile Include="ViewModels\GlobalSettingEffect.fs" />
-    <Compile Include="ViewModels\PluginSettingEffect.fs" />
+    <Compile Include="ViewModels\SystemEffects.fs" />
     <Compile Include="ViewModels\WorkspaceViewModel.fs" />
     <Compile Include="ViewModels\RootViewModel.fs" />
     <Compile Include="Controls\ThemeHelper.fs" />
@@ -59,6 +60,12 @@
     <Reference Include="Sssl">
       <HintPath>..\Libraries\Sssl.dll</HintPath>
     </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Update="VersionInfoControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

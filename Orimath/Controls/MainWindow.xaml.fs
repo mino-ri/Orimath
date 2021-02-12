@@ -37,20 +37,20 @@ type MainWindow() =
         match this.Template.FindName("IconImage", this) with
         | :? Image as image ->
             let decoder =
-                BitmapDecoder.Create
-                 (Uri("pack://application:,,,/Orimath;component/icon_ho.ico"),
-                  BitmapCreateOptions.None,
-                  BitmapCacheOption.OnLoad)
+                BitmapDecoder.Create(
+                    Uri("pack://application:,,,/Orimath;component/icon_ho.ico"),
+                    BitmapCreateOptions.None,
+                    BitmapCacheOption.OnLoad)
             let dpi = VisualTreeHelper.GetDpi(this)
             let screenWidth = int(16.0 * dpi.DpiScaleX)
             let targetIcon =
                 decoder.Frames
-                 |> Seq.filter(fun x -> x.PixelWidth >= screenWidth)
-                 |> Seq.sortBy(fun x -> x.PixelWidth)
+                 |> Seq.filter (fun x -> x.PixelWidth >= screenWidth)
+                 |> Seq.sortBy (fun x -> x.PixelWidth)
                  |> Seq.tryHead
-                 |> Option.defaultWith(fun () ->
+                 |> Option.defaultWith (fun () ->
                     decoder.Frames
-                     |> Seq.sortByDescending(fun x -> x.PixelWidth)
+                     |> Seq.sortByDescending (fun x -> x.PixelWidth)
                      |> Seq.head)
             image.Source <- targetIcon
         | _ -> ()

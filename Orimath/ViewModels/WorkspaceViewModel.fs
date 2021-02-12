@@ -68,6 +68,8 @@ type WorkspaceViewModel(workspace: IWorkspace) =
         systemEffects <- [|
             GlobalSettingEffect(setting) :> IEffect
             PluginSettingEffect(this, dispatcher, createViewModel) :> IEffect
+            HelpEffect() :> IEffect
+            VersionInfoEffect(this, dispatcher) :> IEffect
         |]
 
     member _.SaveSetting() =

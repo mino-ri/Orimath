@@ -29,9 +29,6 @@
             <StackPanel Orientation="Horizontal" />
         </ItemsPanelTemplate>
         <ctrl:IconImageConverter x:Key="IconImageConverter" />
-        <DataTemplate DataType="{x:Type vm:PluginSettingViewModel}">
-            <ContentControl Content="{core:Load Uri=/Orimath;component/PluginSettingControl.xaml}" />
-        </DataTemplate>
         <DataTemplate DataType="{x:Type vm:DoubleSettingItemViewModel}">
             <DockPanel>
                 <TextBlock DockPanel.Dock="Top" Text="{Binding Name, Mode=OneTime}" />
@@ -73,8 +70,14 @@
         <DataTemplate DataType="{x:Type vm:SettingViewModel}">
             <ItemsControl ItemsSource="{Binding Items, Mode=OneTime}" />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:PluginSettingViewModel}">
+            <ContentControl Content="{core:Load Uri=/Orimath;component/PluginSettingControl.xaml}" />
+        </DataTemplate>
         <DataTemplate DataType="{x:Type vm:ParametricEffectDialogViewModel}">
             <ContentControl Content="{core:Load Uri=/Orimath;component/ParametricEffectControl.xaml}" />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:VersionInfoViewModel}">
+            <ContentControl Content="{core:Load Uri=/Orimath;component/VersionInfoControl.xaml}" />
         </DataTemplate>
     </Window.Resources>
     <Window.InputBindings>
