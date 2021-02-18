@@ -42,7 +42,7 @@ In the official version, Orimath will support saving and loading projects, expor
 
 | OS | Framework | Memory | Storage | CPU |
 | --- | --- | --- | --- | --- |
-| Windows 10 | .NET5 | > 60MB | > 5.4MB | unspecified |
+| Windows 10 | .NET5 | > 60MB | > 5MB | unspecified |
 
 # UI description
 
