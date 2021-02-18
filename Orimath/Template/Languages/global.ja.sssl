@@ -1,0 +1,19 @@
+﻿{
+  "Title": "Orimath(おります)",
+  "PaperSize": "表示サイズ",
+  "Ok": "OK",
+  "Cancel": "キャンセル",
+  "Menu": {
+    "Edit": "編集",
+    "Settings": "設定",
+    "Debug": "デバッグ",
+    "Help": "ヘルプ"
+  },
+  "SystemCommand": {
+    "VersionInfo": "バージョン情報",
+    "Preference": "環境設定",
+    "PluginSettings": "プラグインの設定",
+    "EnabilityAndOrder": "ON/OFFと読み込み順",
+    "Help": "ヘルプの表示..."
+  }
+}

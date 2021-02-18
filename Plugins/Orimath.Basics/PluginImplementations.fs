@@ -2,7 +2,8 @@
 open System.ComponentModel
 open Orimath.Plugins
 
-[<DisplayName("コマンド: 基本機能"); Description("アンドゥ・リドゥなど基本的な操作を含みます。")>]
+[<DisplayName("{basic/BasicCommands.Name}Command: Basics")>]
+[<Description("{basic/BasicCommands.Desc}Basic commands e.g. undo and redo")>]
 type BasicPlugin() =
     interface IPlugin with
         member _.Execute(args) =
@@ -15,13 +16,15 @@ type BasicPlugin() =
             args.Workspace.AddEffect(OpenAllEffect(args.Workspace))
 
 
-[<DisplayName("ツール: 折り線"); Description("ドラッグ操作で折線をつけるツール。")>]
+[<DisplayName("{basic/Folding.Name}Tool: Folding")>]
+[<Description("{basic/Folding.Desc}Fold by dragging")>]
 type FoldsPlugin() =
     interface IPlugin with
         member _.Execute(args) = args.Workspace.AddTool(Folds.DragFoldTool(args.Workspace))
 
 
-[<DisplayName("ツール: 計測"); Description("ドラッグ操作で角度と距離を測るツール。")>]
+[<DisplayName("{basic/Measurement.Name}Tool: Measurement")>]
+[<Description("{basic/Measurement.Desc}Measure angles and distances by dragging")>]
 type MeasurePlugin() =
     interface IPlugin with
         member _.Execute(args) = args.Workspace.AddTool(MeasureTool(args.Workspace))

@@ -1,4 +1,5 @@
 ﻿namespace Orimath.ViewModels
+open Orimath
 open Orimath.Controls
 open Orimath.Plugins
 open ApplicativeProperty
@@ -11,7 +12,9 @@ type ParametricEffectDialogViewModel
     ) as this =
     inherit NotifyPropertyChanged()
 
-    member val Header = effect.Name
+    member val Header = Language.GetWord(effect.Name)
+    member val OkText = Language.GetWord("{Ok}OK")
+    member val CancelText = Language.GetWord("{Cancel}Cancel")
     member val Parameter = createViewModel (effect.GetParameter())
     member val ExecuteCommand = Prop.ctrue |> Prop.command this.Execute
     member _.CloseCommand = parent.CloseDialogCommand

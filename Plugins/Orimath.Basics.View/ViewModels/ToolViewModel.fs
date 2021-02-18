@@ -5,20 +5,20 @@ open Orimath.Plugins
 open ApplicativeProperty
 
 [<AllowNullLiteral>]
-type ToolViewModel(tool: ITool) =
+type ToolViewModel(tool: ITool, messenger: IMessenger) =
     inherit NotifyPropertyChanged()
     member _.Source = tool
-    member _.Name = tool.Name
+    member _.Name = messenger.LocalizeWord(tool.Name)
     member _.ShortcutKey = tool.ShortcutKey
     member _.IconStream = tool.Icon
     member _.ToolTip =
         if String.IsNullOrWhiteSpace(tool.ShortcutKey)
-        then tool.Name
-        else $"%s{tool.Name} (%s{tool.ShortcutKey})"
+        then messenger.LocalizeWord(tool.Name)
+        else $"%s{messenger.LocalizeWord(tool.Name)} (%s{tool.ShortcutKey})"
 
 
-type ToolListViewModel(workspace: IWorkspace, dispatcher: IDispatcher) =
-    let lazyTool = lazy([| for e in workspace.Tools -> ToolViewModel(e) |])
+type ToolListViewModel(messenger: IMessenger, workspace: IWorkspace, dispatcher: IDispatcher) =
+    let lazyTool = lazy([| for e in workspace.Tools -> ToolViewModel(e, messenger) |])
 
     member _.Tools = lazyTool.Value
 

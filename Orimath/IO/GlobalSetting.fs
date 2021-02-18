@@ -4,7 +4,7 @@ open System.ComponentModel.DataAnnotations
 
 [<Sealed>]
 type GlobalSetting() =
-    [<Display(Name = "表示サイズ")>]
+    [<Display(Name = "{PaperSize}Paper size")>]
     [<Range(1, 5000)>]
     member val ViewSize = 512 with get, set
 

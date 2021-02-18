@@ -27,6 +27,7 @@ type WorkspaceViewModel(workspace: IWorkspace) =
     let mutable initialized = false
     let dialog = Prop.value (null: obj)
 
+    member val Title = Language.GetWord("{Title}Orimath")
     member val ViewDefinitions = Dictionary<Type, ViewPane * ViewDeclaration>()
     member val MainViewModels = ObservableCollection<obj>()
     member val TopViewModels = ObservableCollection<obj>()
@@ -110,6 +111,7 @@ type WorkspaceViewModel(workspace: IWorkspace) =
         for effect in Seq.append workspace.Effects systemEffects do
             let mutable targetCollection = this.MenuItems
             for name in effect.MenuHieralchy do
+                let name = Language.GetWord(name)
                 match targetCollection |> Seq.tryFind (fun x -> x.Name = name) with
                 | Some(parent) -> targetCollection <- parent.Children
                 | None ->
@@ -181,3 +183,4 @@ type WorkspaceViewModel(workspace: IWorkspace) =
         member this.OpenDialog(viewModel) = this.OpenDialog(viewModel)
         member _.SaveSetting(name, model) = Settings.save name model
         member _.LoadSetting(name) = Settings.load name
+        member _.LocalizeWord(text) = Language.GetWord(text)

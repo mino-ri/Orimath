@@ -4,6 +4,7 @@ open System.Collections.Concurrent
 open System.Linq.Expressions
 open System.Reflection
 open System.Windows.Input
+open Sssl
 
 let private keyGestureConverter = KeyGestureConverter()
 
@@ -42,3 +43,15 @@ let createInstanceAs<'T> ty = createInstance ty |> tryCast<'T>
 let (|BoolNone|BoolSome|) (hasValue, value) = if hasValue then BoolSome(value) else BoolNone
 
 let isNotNull x = not (isNull x)
+
+let (|SsslNull|SsslNumber|SsslBool|SsslString|SsslPair|SsslRecord|) (sssl: SsslObject) =
+    match sssl with
+    | :? SsslValue as value ->
+        match value.Type with
+        | SsslValueType.Number -> SsslNumber(value.Value :?> float)
+        | SsslValueType.Boolean -> SsslBool(value.Value :?> bool)
+        | SsslValueType.String -> SsslString(value.Value :?> string)
+        | _ -> SsslNull
+    | :? SsslPair as pair -> SsslPair(pair.Key, pair.Value)
+    | :? SsslRecord as record -> SsslRecord(record)
+    | _ -> invalidArg (nameof sssl) "Unknown sssl type."

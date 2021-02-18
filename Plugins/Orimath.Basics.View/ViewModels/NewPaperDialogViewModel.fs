@@ -32,6 +32,14 @@ type NewPaperDialogViewModel(messenger: IMessenger, dispatcher: IDispatcher, exe
        ||> Prop.map2(fun b n -> b, RegularPolygon(n))
        |> Observable.add (fun (b, pt) -> if b then executor.NewPaperType <- pt)
 
+    member val SquareText = messenger.LocalizeWord("{basic/Dialog.NewPaper.Square}Square")
+    member val RectangleText = messenger.LocalizeWord("{basic/Dialog.NewPaper.Rectangle}Rectangle")
+    member val WidthText = messenger.LocalizeWord("{basic/Dialog.NewPaper.Width}Width: ")
+    member val HeightText = messenger.LocalizeWord("{basic/Dialog.NewPaper.Height}Height: ")
+    member val PolygonText = messenger.LocalizeWord("{basic/Dialog.NewPaper.Polygon}Polygon")
+    member val RegularText = messenger.LocalizeWord("{basic/Dialog.NewPaper.Regular}Regular")
+    member val GonText = messenger.LocalizeWord("{basic/Dialog.NewPaper.Gon}-gon")
+
     member _.IsSquareSelected = isSquareSelected
     member _.IsRectangleSelected = isRectangleSelected
     member _.IsPolygonSelected = isPolygonSelected

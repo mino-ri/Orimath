@@ -27,14 +27,13 @@ type PluginViewModel(pluginType: Type, isEnabled: bool) =
 
     member val Name =
         pluginType.GetCustomAttribute<DisplayNameAttribute>()
-        |> Null.bind (fun att -> att.DisplayName)
+        |> Null.bind (fun att -> Language.GetWord(att.DisplayName))
         |> Null.defaultValue pluginType.Name
 
     member val Description =
         pluginType.GetCustomAttribute<DescriptionAttribute>()
-        |> Null.bind (fun att -> att.Description)
+        |> Null.bind (fun att -> Language.GetWord(att.Description))
         |> Null.defaultValue "(No description)"
-
 
 
 type PluginItemSettingViewModel(plugin: IConfigurablePlugin, dispatcher: IDispatcher) =
@@ -81,7 +80,7 @@ type PluginLoadSettingViewModel(messenger: IMessenger) =
         |> Prop.map (fun i -> 0 <= i && i < plugins.Count - 1)
         |> Prop.command (fun _ -> plugins.Move(pluginIndex.Value, pluginIndex.Value + 1))
 
-    override _.Header = "ON/OFFと読み込み順"
+    override val Header = Language.GetWord("{SystemCommand.EnabilityAndOrder}Enability and order")
 
     member _.Save(_: obj) =
         PluginExecutor.setting.PluginOrder <-
@@ -96,6 +95,10 @@ type PluginLoadSettingViewModel(messenger: IMessenger) =
 type PluginSettingViewModel(messenger: IMessenger, dispatcher: IDispatcher) =
     inherit NotifyPropertyChanged()
     let loadSetting = PluginLoadSettingViewModel(messenger)
+
+    member val Title = Language.GetWord("{SystemCommand.PluginSettings}Plugin settings")
+    member val OkText = Language.GetWord("{Ok}OK")
+    member val CancelText = Language.GetWord("{Cancel}Cancel")
 
     member val Pages = [|
         yield loadSetting :> PluginSettingPageViewModel

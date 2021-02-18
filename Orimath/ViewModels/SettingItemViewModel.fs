@@ -40,7 +40,7 @@ type SettingItemViewModel(property: PropertyInfo, object: obj) =
 
     member val Name =
         property.GetCustomAttribute<DisplayAttribute>()
-        |> Null.bind (fun att -> att.Name)
+        |> Null.bind (fun att -> Language.GetWord(att.Name))
         |> Null.defaultValue property.Name
 
     member _.PropertyInfo = property

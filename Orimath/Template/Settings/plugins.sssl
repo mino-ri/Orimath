@@ -1,0 +1,14 @@
+﻿"Orimath.IO.PluginSetting" {
+  "PluginOrder": [
+    "Orimath.Basics.BasicPlugin",
+    "Orimath.Basics.View.NewPaperPlugin",
+    "Orimath.Basics.FoldsPlugin",
+    "Orimath.Basics.MeasurePlugin",
+    "Orimath.Basics.View.BasicViewPlugin",
+    "Orimath.Basics.View.EffectViewPlugin",
+    "Orimath.Basics.View.ToolViewPlugin",
+    "Orimath.Basics.View.MeasureViewPlugin",
+    "Orimath.Basics.View.CreasePatternViewPlugin",
+    "Orimath.Basics.View.FoldingInstructionPlugin",
+  ],
+}

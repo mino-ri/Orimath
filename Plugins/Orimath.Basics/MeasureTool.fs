@@ -42,7 +42,7 @@ type MeasureTool(workspace: IWorkspace) =
         paper.SelectedEdges .<- array.Empty()
 
     interface ITool with
-        member _.Name = "計測"
+        member _.Name = "{basic/Tool.Measurement}Measurement"
         member _.ShortcutKey = "Ctrl+M"
         member _.Icon = Internal.getIcon "measure"
         member this.OnActivated() = this.ClearSelection()

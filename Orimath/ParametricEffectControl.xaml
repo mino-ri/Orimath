@@ -20,8 +20,8 @@
                         Margin="4"
                         IsTabStop="False" />
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="OK" Width="80" Margin="2" IsDefault="True" Command="{Binding ExecuteCommand, Mode=OneTime}" />
-            <Button Content="キャンセル" Width="80" Margin="2" IsCancel="True" Command="{Binding CloseCommand, Mode=OneTime}" />
+            <Button Content="{Binding OkText, Mode=OneTime}" Width="80" Margin="2" IsDefault="True" Command="{Binding ExecuteCommand, Mode=OneTime}" />
+            <Button Content="{Binding CancelText, Mode=OneTime}" Width="80" Margin="2" IsCancel="True" Command="{Binding CloseCommand, Mode=OneTime}" />
         </StackPanel>
     </Grid>
 </UserControl>

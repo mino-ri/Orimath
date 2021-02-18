@@ -24,7 +24,7 @@ type DragFoldTool(workspace: IWorkspace) =
         for layer in paper.Layers do layer.AddLines([ line ])
 
     interface ITool with
-        member _.Name = "折り線"
+        member _.Name = "{basic/Tool.Folding}Folding"
         member _.ShortcutKey = "Ctrl+F"
         member _.Icon = Orimath.Basics.Internal.getIcon "fold"
         member _.OnActivated() =

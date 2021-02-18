@@ -11,8 +11,11 @@ let Plugin = "plugins";
 [<Literal>]
 let Global = "global";
 
-let settingDirectory = 
+let settingDirectory =
     Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Settings")
+
+let languageDirectory =
+    Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), "Languages")
 
 let getSettingPath fileName =
     Path.Combine(settingDirectory, fileName + ".sssl")
@@ -37,3 +40,16 @@ let load fileName : 'T option =
         with ex ->
             Debug.Print(ex.ToString())
             None
+
+let internal loadLanguages (code: string) =
+    try
+        Directory.GetFiles(languageDirectory, $"*.{code.ToLowerInvariant()}.sssl")
+        |> Seq.choose (fun path ->
+            try Some(Path.GetFileName(path).Split('.').[0], SsslObject.Load(path))
+            with ex ->
+                Debug.Print(ex.ToString())
+                None)
+        |> Map
+    with ex ->
+        Debug.Print(ex.ToString())
+        Map.empty

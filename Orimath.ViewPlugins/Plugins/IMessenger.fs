@@ -22,3 +22,4 @@ type IMessenger =
     abstract member GetEffectCommand : effect: IEffect -> ICommand
     abstract member SaveSetting : name: string * model: 'T -> unit
     abstract member LoadSetting : name: string -> 'T option
+    abstract member LocalizeWord : text: string -> string

@@ -20,7 +20,6 @@
 | --- | --- | --- | --- | --- |
 | Windows 10 | .NET5 | > 60MB | > 5.4MB | 指定なし |
 
-
 ## 使い方
 
 [マニュアル(日本語)](https://github.com/mino-ri/Orimath/blob/master/Documents/ja/manual.md)
@@ -47,3 +46,7 @@ Please download from following link and unzip it.
 | OS | Framework | Memory | Storage | CPU |
 | --- | --- | --- | --- | --- |
 | Windows 10 | .NET5 | > 60MB | > 5.4MB | unspecified |
+
+## How to use
+
+[Manual(English)](https://github.com/mino-ri/Orimath/blob/master/Documents/en/manual.md)

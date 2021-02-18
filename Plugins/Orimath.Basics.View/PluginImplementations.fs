@@ -4,7 +4,8 @@ open Orimath.Plugins
 open Orimath.Basics
 open Orimath.Basics.View.ViewModels
 
-[<DisplayName("コマンド: 紙の新規作成"); Description("「新しい紙」「リセット」コマンドを含みます。")>]
+[<DisplayName("{basic/NewPaper.Name}Command: New paper")>]
+[<Description("{basic/NewPaper.Desc}New paper and reset command")>]
 type NewPaperPlugin() =
     interface IViewPlugin with
         member _. Execute(args: ViewPluginArgs) =
@@ -17,7 +18,8 @@ type NewPaperPlugin() =
                 viewPath "NewPaperDialogControl")
 
 
-[<DisplayName("ビュー: 折り紙"); Description("メイン描画領域。このプラグインを削除すると、折り紙本体が表示されなくなります。")>]
+[<DisplayName("{basic/PaperView.Name}View: Origami")>]
+[<Description("{basic/PaperView.Desc}Main workspace. Please do not disable this plugin.")>]
 type BasicViewPlugin() =
     interface IViewPlugin with
         member _. Execute(args: ViewPluginArgs) =
@@ -25,7 +27,8 @@ type BasicViewPlugin() =
             args.Messenger.RegisterView(ViewPane.Main, typeof<WorkspaceViewModel>, viewPath "PaperControl")
 
 
-[<DisplayName("ビュー: ツールバー"); Description("画面上部の各種機能が並んだツールバー。")>]
+[<DisplayName("{basic/ToolBar.Name}View: Tool bar")>]
+[<Description("{basic/ToolBar.Desc}Tool bar for execute commands.")>]
 type EffectViewPlugin() =
     interface IViewPlugin with
         member _. Execute(args: ViewPluginArgs) =
@@ -33,15 +36,17 @@ type EffectViewPlugin() =
             args.Messenger.RegisterView(ViewPane.Top, typeof<EffectListViewModel>, viewPath "EffectListControl")
 
 
-[<DisplayName("ビュー: ツールボックス"); Description("画面左のツール切り替えボックス。")>]
+[<DisplayName("{basic/ToolBox.Name}View: Tool box")>]
+[<Description("{basic/ToolBox.Desc}Tool box for switch tools.")>]
 type ToolViewPlugin() =
     interface IViewPlugin with
         member _. Execute(args: ViewPluginArgs) =
-            args.Messenger.AddViewModel(ToolListViewModel(args.Workspace, args.Dispatcher))
+            args.Messenger.AddViewModel(ToolListViewModel(args.Messenger, args.Workspace, args.Dispatcher))
             args.Messenger.RegisterView(ViewPane.Side, typeof<ToolListViewModel>, viewPath "ToolListControl")
 
 
-[<DisplayName("ビュー: 計測"); Description("選択中の点・線の情報を表示します。")>]
+[<DisplayName("{basic/MeasurementView.Name}View: Measurement")>]
+[<Description("{basic/MeasurementView.Desc}View mathematical infomations of selected points or lines.")>]
 type MeasureViewPlugin() =
     interface IViewPlugin with
         member _. Execute(args: ViewPluginArgs) =
@@ -49,7 +54,8 @@ type MeasureViewPlugin() =
             args.Messenger.RegisterView(ViewPane.Side, typeof<MeasureViewModel>, viewPath "MeasureControl")
 
 
-[<DisplayName("ビュー: 展開図"); Description("展開図を表示します。")>]
+[<DisplayName("{basic/CreasePatternView.Name}View: Crease pattern(CP)")>]
+[<Description("{basic/CreasePatternView.Desc}View crease patterns.")>]
 type CreasePatternViewPlugin() =
     interface IViewPlugin with
         member _. Execute(args: ViewPluginArgs) =
@@ -59,7 +65,8 @@ type CreasePatternViewPlugin() =
                 viewPath "CreasePatternControl")
 
 
-[<DisplayName("ビュー: 折り図"); Description("メインビューの上に折り図を表示します。対応しているツールの操作時に折り図風の図が表示されます。")>]
+[<DisplayName("{basic/DiagramView.Name}View: Diagram")>]
+[<Description("{basic/DiagramView.Desc}View diagram over the main view.")>]
 type FoldingInstructionPlugin() =
     interface IViewPlugin with
         member _. Execute(args: ViewPluginArgs) =

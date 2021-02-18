@@ -1,0 +1,68 @@
+﻿{
+  "BasicCommands": {
+    "Name": "コマンド: 基本機能",
+    "Desc": "アンドゥ・リドゥなど基本的な操作を含みます。"
+  },
+  "Folding": {
+    "Name": "ツール: 折り線",
+    "Desc": "ドラッグ操作で折線をつけるツール。"
+  },
+  "Measurement": {
+    "Name": "ツール: 計測",
+    "Desc": "ドラッグ操作で角度と距離を測るツール。"
+  },
+  "NewPaper": {
+    "Name": "コマンド: 紙の新規作成",
+    "Desc": "「新しい紙」「リセット」コマンドを含みます。"
+  },
+  "PaperView": {
+    "Name": "ビュー: 折り紙",
+    "Desc": "メイン描画領域。このプラグインを削除すると、折り紙本体が表示されなくなります。"
+  },
+  "ToolBar": {
+    "Name": "ビュー: ツールバー",
+    "Desc": "画面上部の各種機能が並んだツールバー。"
+  },
+  "ToolBox": {
+    "Name": "ビュー: ツールボックス",
+    "Desc": "画面左のツール切り替えボックス。"
+  },
+  "MeasurementView": {
+    "Name": "ビュー: 計測",
+    "Desc": "選択中の点・線の情報を表示します。"
+  },
+  "CreasePatternView": {
+    "Name": "ビュー: 展開図",
+    "Desc": "展開図を表示します。"
+  },
+  "DiagramView": {
+    "Name": "ビュー: 折り図",
+    "Desc": "メインビューの上に折り図を表示します。対応しているツールの操作時に折り図風の図が表示されます。"
+  },
+  "Effect": {
+    "Undo": "元に戻す",
+    "Redo": "やり直し",
+    "TurnVertically": "縦に裏返す",
+    "TurnHorizontally": "横に裏返す",
+    "RotateRight": "右に90°回転",
+    "RotateLeft": "左に90°回転",
+    "UnfoldAll": "すべて開く",
+    "Reset": "リセット",
+    "NewPaper": "新しい紙"
+  },
+  "Tool": {
+    "Measurement": "計測",
+    "Folding": "折り線/折り返し"
+  },
+  "Dialog": {
+    "NewPaper": {
+      "Square": "正方形",
+      "Rectangle": "長方形",
+      "Width": "幅: ",
+      "Height": "高さ: ",
+      "Polygon": "多角形",
+      "Regular": "正",
+      "Gon": "角形"
+    }
+  }
+}

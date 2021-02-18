@@ -35,8 +35,8 @@ type NewPaperExecutor(workspace: IWorkspace) =
 
     member this.ResetEffect =
         { new IEffect with
-            member _.MenuHieralchy = [| "編集" |]
-            member _.Name = "すべて削除"
+            member _.MenuHieralchy = [| "{Menu.Edit}Edit" |]
+            member _.Name = "{basic/Effect.Reset}Reset"
             member _.ShortcutKey = "Ctrl+Delete"
             member _.Icon = Internal.getIcon "delete"
             member _.CanExecute = upcast Prop.ctrue
@@ -44,8 +44,8 @@ type NewPaperExecutor(workspace: IWorkspace) =
 
     member this.NewPaperEffect =
         { new IParametricEffect with
-            member _.MenuHieralchy = [| "編集" |]
-            member _.Name = "新しい紙"
+            member _.MenuHieralchy = [| "{Menu.Edit}Edit" |]
+            member _.Name = "{basic/Effect.NewPaper}New paper"
             member _.ShortcutKey = "Ctrl+N"
             member _.Icon = Internal.getIcon "new_paper"
             member _.CanExecute = upcast Prop.ctrue

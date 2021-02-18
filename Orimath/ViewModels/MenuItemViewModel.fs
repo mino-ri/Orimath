@@ -23,13 +23,11 @@ type MenuItemViewModel
     member _.IconStream = iconStream
 
     new(name: string) = MenuItemViewModel(name, null, "", null, null)
-    
-    new(name: string, command: ICommand) = MenuItemViewModel(name, null, "", command, null)
 
     new(effect: IEffect, messenger: IMessenger) =
         let shortcutKey, shortcutKeyText =
             match Internal.convertToKeyGesture effect.ShortcutKey with
             | Some(sk) -> sk, effect.ShortcutKey
             | None -> null, ""
-        MenuItemViewModel(effect.Name, shortcutKey, shortcutKeyText,
+        MenuItemViewModel(Language.GetWord(effect.Name), shortcutKey, shortcutKeyText,
             messenger.GetEffectCommand(effect), effect.Icon)

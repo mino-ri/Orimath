@@ -18,7 +18,7 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <Label Grid.Row="0" Grid.ColumnSpan="2" Content="バージョン情報" />
+        <Label Grid.Row="0" Grid.ColumnSpan="2" Content="{Binding Title, Mode=OneTime}" />
         <Image Grid.Row="1" Grid.Column="0" Margin="12" Source="icon_ho.ico" Width="64" Height="64" />
         <Grid Grid.Row="1" Grid.Column="1">
             <Grid.RowDefinitions>
@@ -37,7 +37,8 @@
                      IsReadOnly="True" Text="{Binding Version, Mode=OneTime}" />
             <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Text="©2021 豊穣ミノリ all rights reserved." VerticalAlignment="Center" />
         </Grid>
-        <Button Grid.Row="2" Grid.ColumnSpan="2" Width="80" Margin="2" HorizontalAlignment="Right" Content="OK"
+        <Button Grid.Row="2" Grid.ColumnSpan="2" Width="80" Margin="2" HorizontalAlignment="Right"
+                Content="{Binding OkText, Mode=OneTime}"
                 IsDefault="True" Command="{Binding CloseCommand, Mode=OneTime}" />
     </Grid>
 </UserControl>

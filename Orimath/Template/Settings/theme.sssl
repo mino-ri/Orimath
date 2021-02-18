@@ -1,0 +1,110 @@
+﻿"Orimath.Themes.ThemeBrushesSource" {
+  "Control": "Orimath.Themes.ThemeBrushSource" {
+    "Normal": (
+      "#FF287950",
+      "#FFFFFFFF",
+      "#FF1A5135"
+    ),
+    "Hovered": (
+      "#FF35A16B",
+      "#FFFFFFFF",
+      "#FF1A5135"
+    ),
+    "Highlight": (
+      "#FFFF9900",
+      "#FFFFFFFF",
+      "#FFA86400"
+    ),
+    "Disabled": (
+      "#FFA6A6A6",
+      "#FFD9D9D9",
+      "#FF7F7F7F"
+    ),
+    "Alternated": (
+      "#FFE81123",
+      "#FFFFFFFF",
+      "#FF8A0000"
+    )
+  },
+  "Workspace": "Orimath.Themes.ThemeBrushSource" {
+    "Normal": (
+      "#FFF3F3F3",
+      "#FF000000",
+      "#FF287950"
+    ),
+    "Hovered": (
+      "#FFE6E6E6",
+      "#FF000000",
+      "#FF35A16B"
+    ),
+    "Highlight": (
+      "#FFFFD79B",
+      "#FF000000",
+      "#FFA86400"
+    ),
+    "Disabled": (
+      "#FFF3F3F3",
+      "#FFA6A6A6",
+      "#FFA6A6A6"
+    ),
+    "Alternated": (
+      "#FFFFFFFF",
+      "#FF000000",
+      "#FF287950"
+    )
+  },
+  "Input": "Orimath.Themes.ThemeBrushSource" {
+    "Normal": (
+      "#FFFFFFFF",
+      "#FF000000",
+      "#FF287950"
+    ),
+    "Hovered": (
+      "#FFFFFFFF",
+      "#FF000000",
+      "#FF35A16B"
+    ),
+    "Highlight": (
+      "#FFFFFFFF",
+      "#FF000000",
+      "#FFFF9900"
+    ),
+    "Disabled": (
+      "#FFF3F3F3",
+      "#FFA6A6A6",
+      "#FFA6A6A6"
+    ),
+    "Alternated": (
+      null,
+      null,
+      null
+    )
+  },
+  "ScrollBar": "Orimath.Themes.ThemeBrushSource" {
+    "Normal": (
+      "#FFF3F3F3",
+      "#FFD9D9D9",
+      null
+    ),
+    "Hovered": (
+      "#FFF3F3F3",
+      "#FFBEBEBE",
+      null
+    ),
+    "Highlight": (
+      "#FFF3F3F3",
+      "#FFBEBEBE",
+      null
+    ),
+    "Disabled": (
+      "#FFF3F3F3",
+      "#FFE6E6E6",
+      null
+    ),
+    "Alternated": (
+      null,
+      null,
+      null
+    )
+  }
+}

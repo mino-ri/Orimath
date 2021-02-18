@@ -8,8 +8,8 @@ type UITestEffect(messenger: IMessenger, dispatcher: IDispatcher, setting: UITes
     let viewModel = lazy(ControlListViewModel(messenger, setting))
 
     interface IEffect with
-        member val MenuHieralchy = [| "デバッグ" |]
-        member _.Name = "UIテストを開く"
+        member val MenuHieralchy = [| "{Menu.Debug}Debug" |]
+        member _.Name = "UI control list"
         member _.ShortcutKey = ""
         member _.Icon = null
         member _.CanExecute: IGetProp<bool> = upcast Prop.ctrue
@@ -19,8 +19,8 @@ type UITestEffect(messenger: IMessenger, dispatcher: IDispatcher, setting: UITes
 type ThemeEditorEffect(messenger: IMessenger) =
     let mutable viewModel = None
     interface IParametricEffect with
-        member val MenuHieralchy = [| "デバッグ" |]
-        member _.Name = "テーマカラーの編集"
+        member val MenuHieralchy = [| "{Menu.Debug}Debug" |]
+        member _.Name = "Theme color editor"
         member _.ShortcutKey = ""
         member _.Icon = null
         member _.CanExecute: IGetProp<bool> = upcast Prop.ctrue

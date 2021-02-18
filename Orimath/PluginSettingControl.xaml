@@ -44,7 +44,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Label Grid.Row="0" Content="プラグインの設定" />
+        <Label Grid.Row="0" Content="{Binding Title, Mode=OneTime}" />
         <TabControl Grid.Row="1"
                     ItemsSource="{Binding Pages, Mode=OneTime}"
                     SelectedIndex="0">
@@ -55,8 +55,8 @@
             </TabControl.ItemContainerStyle>
         </TabControl>
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="OK" Width="80" Margin="2" IsDefault="True" Command="{Binding SaveCommand, Mode=OneTime}" />
-            <Button Content="キャンセル" Width="80" Margin="2" IsCancel="True" Command="{Binding CloseCommand, Mode=OneTime}" />
+            <Button Content="{Binding OkText, Mode=OneTime}" Width="80" Margin="2" IsDefault="True" Command="{Binding SaveCommand, Mode=OneTime}" />
+            <Button Content="{Binding CancelText, Mode=OneTime}" Width="80" Margin="2" IsCancel="True" Command="{Binding CloseCommand, Mode=OneTime}" />
         </StackPanel>
     </Grid>
 </UserControl>

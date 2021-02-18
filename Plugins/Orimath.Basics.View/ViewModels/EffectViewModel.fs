@@ -6,13 +6,13 @@ open Orimath.Plugins
 type EffectViewModel(effect: IEffect, messenger: IMessenger) =
     inherit NotifyPropertyChanged()
     member val EffectCommand = messenger.GetEffectCommand(effect)
-    member _.Name = effect.Name
+    member _.Name = messenger.LocalizeWord(effect.Name)
     member _.ShortcutKey = effect.ShortcutKey
     member _.IconStream = effect.Icon
     member _.ToolTip =
         if String.IsNullOrWhiteSpace(effect.ShortcutKey)
-        then effect.Name
-        else $"%s{effect.Name} (%s{effect.ShortcutKey})"
+        then messenger.LocalizeWord(effect.Name)
+        else $"%s{messenger.LocalizeWord(effect.Name)} (%s{effect.ShortcutKey})"
 
 
 type EffectListViewModel(workspace: IWorkspace, messenger: IMessenger) =
