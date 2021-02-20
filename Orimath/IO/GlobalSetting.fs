@@ -2,17 +2,20 @@
 open System
 open System.ComponentModel.DataAnnotations
 
-[<Sealed>]
-type GlobalSetting() =
-    [<Display(Name = "{PaperSize}Paper size")>]
-    [<Range(1, 5000)>]
-    member val ViewSize = 512 with get, set
+[<ReferenceEquality; NoComparison>]
+type GlobalSetting =
+    {
+        [<Display(Name = "{PaperSize}Paper size")>]
+        [<Range(1, 5000)>]
+        mutable ViewSize: int
+        [<Editable(false)>]
+        mutable Height: float
+        [<Editable(false)>]
+        mutable Width: float
+    }
+    with
 
-    [<Editable(false)>]
-    member val Height = 600.0 with get, set
-
-    [<Editable(false)>]
-    member val Width = 800.0 with get, set
+    static member CreateDefault() = { ViewSize = 512; Height = 600.0; Width = 800.0 }
 
     member this.Clone() = this.MemberwiseClone() :?> GlobalSetting
 

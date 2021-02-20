@@ -9,7 +9,7 @@ open Orimath.Controls
 open Orimath.Plugins
 open Orimath.Internal
 open ApplicativeProperty
-open Sssl
+open SsslFSharp
 
 [<AbstractClass>]
 type PluginSettingPageViewModel() =
@@ -87,7 +87,7 @@ type PluginLoadSettingViewModel(messenger: IMessenger) =
             [| for x in plugins do if x.IsEnabled.Value then x.FullName |]
         for configurable in PluginExecutor.configurablePlugins do
             PluginExecutor.setting.Settings.[configurable.GetType().ToString()] <-
-                SsslObject.ConvertFrom(configurable.Setting)
+                Sssl.convertFromObj configurable.SettingType configurable.Setting
         PluginExecutor.saveSetting()
         messenger.CloseDialog()
 

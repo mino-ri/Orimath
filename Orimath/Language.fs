@@ -1,9 +1,9 @@
 ﻿namespace Orimath
 open Orimath.Internal
-open Sssl
+open SsslFSharp
 
 [<Sealed>]
-type Language private (settings: Map<string, SsslObject>) =
+type Language private (settings: Map<string, Sssl>) =
     member private _.ResolvePath(path: string) =
         let source, local =
             match path.Split('/') with
@@ -16,11 +16,11 @@ type Language private (settings: Map<string, SsslObject>) =
             let local = local.Split('.') |> List.ofArray
             let rec resolvePath sssl local =
                 match sssl, local with
-                | SsslString(value), [] -> Some(value)
-                | SsslRecord(record), (head :: tail) ->
-                    match record.TryGetValue(head) with
-                    | BoolNone -> None
-                    | BoolSome(sssl) -> resolvePath sssl tail
+                | Sssl.String(value), [] -> Some(value)
+                | Sssl.Record _ as record, (head :: tail) ->
+                    match record.TryGetByName(head) with
+                    | None -> None
+                    | Some(sssl) -> resolvePath sssl tail
                 | _ -> None
             resolvePath sssl local)
 

@@ -23,7 +23,7 @@ type WorkspaceViewModel(workspace: IWorkspace) =
     let effectParameterCreator = Dictionary<Type, obj -> obj>()
     let preViewModels = ObservableCollection<obj>()
     let mutable systemEffects = array.Empty()
-    let mutable setting = GlobalSetting()
+    let mutable setting = GlobalSetting.CreateDefault()
     let mutable initialized = false
     let dialog = Prop.value (null: obj)
 
@@ -64,7 +64,7 @@ type WorkspaceViewModel(workspace: IWorkspace) =
 
     member this.LoadSetting() =
         let createViewModel () = box <| PluginSettingViewModel(this, dispatcher)
-        setting <- Settings.load Settings.Global |> Option.defaultWith GlobalSetting
+        setting <- Settings.load Settings.Global |> Option.defaultWith GlobalSetting.CreateDefault
         this.ViewSize <- float(setting.ViewSize) * 2.0
         systemEffects <- [|
             GlobalSettingEffect(setting) :> IEffect

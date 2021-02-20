@@ -1,5 +1,5 @@
-﻿"Orimath.IO.GlobalSetting" {
+﻿{
   "ViewSize": 512,
-  "Height": nan,
-  "Width": nan
+  "Height": 600,
+  "Width": 800
 }

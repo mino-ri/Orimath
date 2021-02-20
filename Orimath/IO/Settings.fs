@@ -2,8 +2,7 @@
 open System.Diagnostics
 open System.IO
 open System.Reflection
-open Orimath.Internal
-open Sssl
+open SsslFSharp
 
 [<Literal>]
 let Plugin = "plugins";
@@ -24,19 +23,19 @@ let save fileName target =
     if not (Directory.Exists(settingDirectory)) then
         ignore (Directory.CreateDirectory(settingDirectory))
 
-    match SsslConverter.Default.TryConvertFrom(target) with
-    | BoolSome(sssl) ->
+    match Sssl.tryConvertFrom target with
+    | Some(sssl) ->
         // todo: リトライ処理などを入れる
-        try sssl.Save(getSettingPath fileName)
+        try Sssl.saveToFile SsslFormat.Default (getSettingPath fileName) sssl
         with ex -> Debug.Print(ex.ToString())
-    | BoolNone -> ()
+    | None -> ()
 
 let load fileName : 'T option =
     let path = getSettingPath fileName
     if not (File.Exists(path)) then
         None
     else
-        try Some(SsslConverter.Default.ConvertTo<_>(SsslObject.Load(path)))
+        try Some(Sssl.convertTo (Sssl.loadFromFile path))
         with ex ->
             Debug.Print(ex.ToString())
             None
@@ -45,7 +44,7 @@ let internal loadLanguages (code: string) =
     try
         Directory.GetFiles(languageDirectory, $"*.{code.ToLowerInvariant()}.sssl")
         |> Seq.choose (fun path ->
-            try Some(Path.GetFileName(path).Split('.').[0], SsslObject.Load(path))
+            try Some(Path.GetFileName(path).Split('.').[0], Sssl.loadFromFile path)
             with ex ->
                 Debug.Print(ex.ToString())
                 None)

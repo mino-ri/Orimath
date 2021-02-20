@@ -5,14 +5,14 @@ open System.IO
 open System.Reflection
 open Orimath
 open Orimath.IO
-open Sssl
+open SsslFSharp
 open Orimath.Internal
 
 let mutable loadedPluginTypes = Type.EmptyTypes
 
 let mutable loadedViewPluginTypes = Type.EmptyTypes
 
-let mutable setting = PluginSetting()
+let mutable setting = PluginSetting.CreateDefault()
 
 let mutable configurablePlugins = List<IConfigurablePlugin>()
 
@@ -40,7 +40,7 @@ let private loadSetting (types: Type[]) =
     match Settings.load Settings.Plugin with
     | Some(s) -> setting <- s
     | None ->
-        setting <- PluginSetting()
+        setting <- PluginSetting.CreateDefault()
         setting.PluginOrder <-
             Array.append (getFullNames<IPlugin> types) (getFullNames<IViewPlugin> types)
         saveSetting()
@@ -51,14 +51,16 @@ let private setSetting (plugin: obj) fullName (setting: PluginSetting) =
     | :? IConfigurablePlugin as configurable ->
         configurablePlugins.Add(configurable)
         setting.Settings.TryGetValue(fullName)
-        |> BoolOption.bind (fun sssl -> sssl.TryConvertTo(configurable.SettingType))
-        |> BoolOption.filter (isNull >> not)
+        |> BoolOption.toOption
+        |> Option.bind (Sssl.tryConvertToObj configurable.SettingType)
+        |> Option.filter (isNull >> not)
         |> function
-        | BoolSome(targetSetting) -> configurable.Setting <- targetSetting
-        | BoolNone ->
+        | Some(targetSetting) -> configurable.Setting <- targetSetting
+        | None ->
             if isNull configurable.Setting then
                 configurable.Setting <- createInstance configurable.SettingType
-            setting.Settings.[fullName] <- SsslObject.ConvertFrom(configurable.Setting)
+            setting.Settings.[fullName] <-
+                Sssl.convertFromObj configurable.SettingType configurable.Setting
     | _ -> ()
 
 let private executeCore (setting: PluginSetting) args viewArgs =

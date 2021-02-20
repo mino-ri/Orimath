@@ -1,13 +1,17 @@
 ﻿namespace Orimath.IO
 open System
 open System.Collections.Generic
-open Sssl
+open SsslFSharp
 
-[<Sealed>]
-type PluginSetting() =
-    member val PluginOrder = array.Empty<string>() with get, set
+[<ReferenceEquality; NoComparison>]
+type PluginSetting =
+    {
+        mutable PluginOrder: string[]
+        mutable Settings: Dictionary<string, Sssl>
+    }
+    with
 
-    member val Settings = Dictionary<string, SsslObject>() with get, set
+    static member CreateDefault() = { PluginOrder = array.Empty(); Settings = Dictionary() }
 
     member this.Clone() = this.MemberwiseClone() :?> PluginSetting
 

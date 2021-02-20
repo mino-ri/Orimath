@@ -1,110 +1,30 @@
-﻿"Orimath.Themes.ThemeBrushesSource" {
-  "Control": "Orimath.Themes.ThemeBrushSource" {
-    "Normal": (
-      "#FF287950",
-      "#FFFFFFFF",
-      "#FF1A5135"
-    ),
-    "Hovered": (
-      "#FF35A16B",
-      "#FFFFFFFF",
-      "#FF1A5135"
-    ),
-    "Highlight": (
-      "#FFFF9900",
-      "#FFFFFFFF",
-      "#FFA86400"
-    ),
-    "Disabled": (
-      "#FFA6A6A6",
-      "#FFD9D9D9",
-      "#FF7F7F7F"
-    ),
-    "Alternated": (
-      "#FFE81123",
-      "#FFFFFFFF",
-      "#FF8A0000"
-    )
+﻿{
+  "Control": {
+    "Alternated": ( "#FFE81123", "#FFFFFFFF", "#FF1A5135" ),
+    "Disabled": ( "#FFA6A6A6", "#FFD9D9D9", "#FF7F7F7F" ),
+    "Highlight": ( "#FFFF9900", "#FFFFFFFF", "#FFA86400" ),
+    "Hovered": ( "#FF35A16B", "#FFFFFFFF", "#FF1A5135" ),
+    "Normal": ( "#FF287950", "#FFFFFFFF", "#FF1A5135" )
   },
-  "Workspace": "Orimath.Themes.ThemeBrushSource" {
-    "Normal": (
-      "#FFF3F3F3",
-      "#FF000000",
-      "#FF287950"
-    ),
-    "Hovered": (
-      "#FFE6E6E6",
-      "#FF000000",
-      "#FF35A16B"
-    ),
-    "Highlight": (
-      "#FFFFD79B",
-      "#FF000000",
-      "#FFA86400"
-    ),
-    "Disabled": (
-      "#FFF3F3F3",
-      "#FFA6A6A6",
-      "#FFA6A6A6"
-    ),
-    "Alternated": (
-      "#FFFFFFFF",
-      "#FF000000",
-      "#FF287950"
-    )
+  "Input": {
+    "Alternated": ( null, null, null ),
+    "Disabled": ( "#FFF3F3F3", "#FFA6A6A6", "#FFA6A6A6" ),
+    "Highlight": ( "#FFFFFFFF", "#FF000000", "#FFFF9900" ),
+    "Hovered": ( "#FFFFFFFF", "#FF000000", "#FF35A16B" ),
+    "Normal": ( "#FFFFFFFF", "#FF000000", "#FF287950" )
   },
-  "Input": "Orimath.Themes.ThemeBrushSource" {
-    "Normal": (
-      "#FFFFFFFF",
-      "#FF000000",
-      "#FF287950"
-    ),
-    "Hovered": (
-      "#FFFFFFFF",
-      "#FF000000",
-      "#FF35A16B"
-    ),
-    "Highlight": (
-      "#FFFFFFFF",
-      "#FF000000",
-      "#FFFF9900"
-    ),
-    "Disabled": (
-      "#FFF3F3F3",
-      "#FFA6A6A6",
-      "#FFA6A6A6"
-    ),
-    "Alternated": (
-      null,
-      null,
-      null
-    )
+  "ScrollBar": {
+    "Alternated": ( null, null, null ),
+    "Disabled": ( "#FFF3F3F3", "#FFE6E6E6", null ),
+    "Highlight": ( "#FFF3F3F3", "#FFBEBEBE", null ),
+    "Hovered": ( "#FFF3F3F3", "#FFBEBEBE", null ),
+    "Normal": ( "#FFF3F3F3", "#FFD9D9D9", null )
   },
-  "ScrollBar": "Orimath.Themes.ThemeBrushSource" {
-    "Normal": (
-      "#FFF3F3F3",
-      "#FFD9D9D9",
-      null
-    ),
-    "Hovered": (
-      "#FFF3F3F3",
-      "#FFBEBEBE",
-      null
-    ),
-    "Highlight": (
-      "#FFF3F3F3",
-      "#FFBEBEBE",
-      null
-    ),
-    "Disabled": (
-      "#FFF3F3F3",
-      "#FFE6E6E6",
-      null
-    ),
-    "Alternated": (
-      null,
-      null,
-      null
-    )
+  "Workspace": {
+    "Alternated": ( "#FFFFFFFF", "#FF000000", "#FF287950" ),
+    "Disabled": ( "#FFF3F3F3", "#FFA6A6A6", "#FFA6A6A6" ),
+    "Highlight": ( "#FFFFD79B", "#FF000000", "#FFA86400" ),
+    "Hovered": ( "#FFE6E6E6", "#FF000000", "#FF35A16B" ),
+    "Normal": ( "#FFF3F3F3", "#FF000000", "#FF287950" )
   }
 }
