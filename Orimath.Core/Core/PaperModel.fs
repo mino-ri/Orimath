@@ -8,8 +8,9 @@ open ApplicativeProperty.PropOperators
 type PaperModel internal () as this =
     let mutable changeBlockDeclared = false
     let mutable changeBlockDisabled = false
-    let undoOprStack = Stack<PaperOpr>()
-    let redoOprStack = Stack<PaperOpr>()
+    let changeBlockOprs = ResizeArray()
+    let undoOprStack = Stack<PaperOprBlock>()
+    let redoOprStack = Stack<PaperOprBlock>()
     let selectedLayers = createArrayProp<ILayerModel>()
     let selectedEdges = createArrayProp<Edge>()
     let selectedPoints = createArrayProp<Point>()
@@ -38,11 +39,11 @@ type PaperModel internal () as this =
     member _.ChangeBlockDeclared = changeBlockDeclared
 
     member internal _.PushUndoOpr(opr: PaperOpr) =
-        if not changeBlockDisabled then undoOprStack.Push(opr)
+        if not changeBlockDisabled then changeBlockOprs.Add(opr)
 
     member _.GetSnapShot() =
         layerModels
-        |> Seq.map(fun lm -> lm.GetSnapShot())
+        |> Seq.map (fun lm -> lm.GetSnapShot())
         |> Paper.Create
 
     member _.ResetSelection() =
@@ -59,67 +60,56 @@ type PaperModel internal () as this =
         if this.CanUndo.Value && not this.ChangeBlockDeclared then
             this.ResetSelection()
             use __ = this.BeginUndo()
-            redoOprStack.Push(BeginChangeBlock)
-            let rec recSelf() =
-                let opr = undoOprStack.Pop()
-                if opr = BeginChangeBlock then
-                    ()
-                else
-                    redoOprStack.Push(opr)
-                    match opr with
-                    | BeginChangeBlock -> failwith "想定しない動作です。"
-                    | Clear(oldLayers, _) -> this.ClearRaw(oldLayers)
-                    | LayerAddition(_, layers) -> this.RemoveLayers(layers.Length)
-                    | LayerRemoving(_, layers) -> this.AddLayersRaw(layers)
-                    | LayerReplace(index, oldLayer, _) -> this.ReplaceLayerRaw(index, oldLayer)
-                    | LineAddition(layerIndex, _, lines) ->
-                        layerModels.[layerIndex].RemoveLines(lines.Length)
-                    | LineRemoving(layerIndex, _, lines) ->
-                        layerModels.[layerIndex].AddLinesRaw(lines)
-                    | PointAddition(layerIndex, _, points) ->
-                        layerModels.[layerIndex].RemovePoints(points.Length)
-                    | PointRemoving(layerIndex, _, points) ->
-                        layerModels.[layerIndex].AddPoints(points)
-                    recSelf()
-            recSelf()
+            let oprBlock = undoOprStack.Pop()
+            redoOprStack.Push(oprBlock)
+            for i = oprBlock.Operations.Length - 1 downto 0 do
+                match oprBlock.Operations.[i] with
+                | Clear(oldLayers, _) -> this.ClearRaw(oldLayers)
+                | LayerAddition(_, layers) -> this.RemoveLayers(layers.Length)
+                | LayerRemoving(_, layers) -> this.AddLayersRaw(layers)
+                | LayerReplace(index, oldLayer, _) -> this.ReplaceLayerRaw(index, oldLayer)
+                | LineAddition(layerIndex, _, lines) ->
+                    layerModels.[layerIndex].RemoveLines(lines.Length)
+                | LineRemoving(layerIndex, _, lines) ->
+                    layerModels.[layerIndex].AddLinesRaw(lines)
+                | PointAddition(layerIndex, _, points) ->
+                    layerModels.[layerIndex].RemovePoints(points.Length)
+                | PointRemoving(layerIndex, _, points) ->
+                    layerModels.[layerIndex].AddPoints(points)
 
     member this.Redo() =
         if this.CanRedo.Value && not this.ChangeBlockDeclared then
             this.ResetSelection()
             use __ = this.BeginUndo()
-            undoOprStack.Push(BeginChangeBlock)
-            let rec recSelf() =
-                let opr = redoOprStack.Pop()
-                if opr = BeginChangeBlock then
-                    ()
-                else
-                    undoOprStack.Push(opr)
-                    match opr with
-                    | BeginChangeBlock -> failwith "想定しない動作です。"
-                    | Clear(_, newLayers) -> this.ClearRaw(newLayers)
-                    | LayerAddition(_, layers) -> this.AddLayersRaw(layers)
-                    | LayerRemoving(_, layers) -> this.RemoveLayers(layers.Length)
-                    | LayerReplace(index, _, newLayer) -> this.ReplaceLayerRaw(index, newLayer)
-                    | LineAddition(layerIndex, _, lines) ->
-                        layerModels.[layerIndex].AddLinesRaw(lines)
-                    | LineRemoving(layerIndex, _, lines) ->
-                        layerModels.[layerIndex].RemoveLines(lines.Length)
-                    | PointAddition(layerIndex, _, points) ->
-                        layerModels.[layerIndex].AddPoints(points)
-                    | PointRemoving(layerIndex, _, points) ->
-                        layerModels.[layerIndex].RemovePoints(points.Length)
-                    recSelf()
-            recSelf()
+            let oprBlock = redoOprStack.Pop()
+            undoOprStack.Push(oprBlock)
+            for opr in oprBlock.Operations do
+                match opr with
+                | Clear(_, newLayers) -> this.ClearRaw(newLayers)
+                | LayerAddition(_, layers) -> this.AddLayersRaw(layers)
+                | LayerRemoving(_, layers) -> this.RemoveLayers(layers.Length)
+                | LayerReplace(index, _, newLayer) -> this.ReplaceLayerRaw(index, newLayer)
+                | LineAddition(layerIndex, _, lines) ->
+                    layerModels.[layerIndex].AddLinesRaw(lines)
+                | LineRemoving(layerIndex, _, lines) ->
+                    layerModels.[layerIndex].RemoveLines(lines.Length)
+                | PointAddition(layerIndex, _, points) ->
+                    layerModels.[layerIndex].AddPoints(points)
+                | PointRemoving(layerIndex, _, points) ->
+                    layerModels.[layerIndex].RemovePoints(points.Length)
 
-    member this.BeginChange() =
+    member this.BeginChange(tag: obj) =
         if changeBlockDeclared then invalidOp "既に変更ブロックが定義されています。"
         redoOprStack.Clear()
         changeBlockDeclared <- true
-        undoOprStack.Push(BeginChangeBlock)
+        changeBlockOprs.Clear()
         { new IDisposable with
             member _.Dispose() =
-                if undoOprStack.Peek() = BeginChangeBlock then
-                    ignore (undoOprStack.Pop())
+                if changeBlockOprs.Count > 0 then
+                    undoOprStack.Push({
+                        Tag = tag
+                        Operations = changeBlockOprs.ToArray()
+                    })
                 changeBlockDeclared <- false
                 this.UpdateCanUndo() }
 
@@ -153,6 +143,7 @@ type PaperModel internal () as this =
     member _.ClearUndoStack() =
         undoOprStack.Clear()
         redoOprStack.Clear()
+        this.UpdateCanUndo()
 
     member private this.AddLayersRaw(layers) =
         if layers <> [] then
@@ -196,7 +187,7 @@ type PaperModel internal () as this =
         member this.GetSnapShot() = upcast this.GetSnapShot()
         member this.Undo() = this.Undo()
         member this.Redo() = this.Redo()
-        member this.BeginChange() = this.BeginChange()
+        member this.BeginChange(tag) = this.BeginChange(tag)
         member this.Clear() = this.Clear()
         member this.Clear(paper) = this.Clear(paper)
         member this.ClearUndoStack() = this.ClearUndoStack()

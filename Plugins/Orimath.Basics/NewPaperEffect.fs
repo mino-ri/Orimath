@@ -17,12 +17,14 @@ type NewPaperExecutor(workspace: IWorkspace) =
         match this.NewPaperType with
         | NewPaperType.Square ->
             workspace.ClearPaper([| workspace.CreateLayerFromSize(1.0, 1.0, LayerType.BackSide) |])
+            workspace.Paper.ClearUndoStack()
         | NewPaperType.Rectangle(width, height) ->
             let (w, h) =
                 if width >= height
                 then 1.0, height / width
                 else width / height, 1.0
             workspace.ClearPaper([| workspace.CreateLayerFromSize(w, h, LayerType.BackSide) |])
+            workspace.Paper.ClearUndoStack()
         | NewPaperType.RegularPolygon(number) when 3 <= number && number <= 12 ->
             let unit = Math.PI / float number
             let size = 0.5
@@ -31,6 +33,7 @@ type NewPaperExecutor(workspace: IWorkspace) =
                 { X = 0.5 + sin (unit * float i) * size; Y = 0.5 - cos (unit * float i) * size }
             ]
             workspace.ClearPaper([| workspace.CreateLayerFromPolygon(vertexes, LayerType.BackSide) |])
+            workspace.Paper.ClearUndoStack()
         | _ -> ()
 
     member this.ResetEffect =

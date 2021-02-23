@@ -18,7 +18,7 @@ type IPaperModel =
     abstract member GetSnapShot : unit -> IPaper
     abstract member Undo : unit -> unit
     abstract member Redo : unit -> unit
-    abstract member BeginChange : unit -> IDisposable
+    abstract member BeginChange : tag: obj -> IDisposable
     abstract member Clear : unit -> unit
     abstract member Clear : paper: IPaper -> unit
     abstract member ClearUndoStack : unit -> unit
@@ -30,10 +30,10 @@ type IPaperModel =
 [<Extension>]
 type PaperModelExtensions =
     [<Extension>]
-    static member TryBeginChange(paper: IPaperModel) =
+    static member TryBeginChange(paper: IPaperModel, tag: obj) =
         if paper.ChangeBlockDeclared
         then { new IDisposable with member _.Dispose() = () }
-        else paper.BeginChange()
+        else paper.BeginChange(tag)
 
     [<Extension>]
     static member IsSelected(paper: IPaperModel, point) =

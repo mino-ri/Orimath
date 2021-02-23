@@ -3,7 +3,6 @@ open Orimath.Plugins
 open ApplicativeProperty
 
 type internal PaperOpr =
-    | BeginChangeBlock
     | Clear of before: ILayerModel list * after: ILayerModel list
     | LayerAddition of index: int * layers: ILayerModel list
     | LayerRemoving of index: int * layers: ILayerModel list
@@ -14,7 +13,12 @@ type internal PaperOpr =
     | PointRemoving of layerIndex: int * index: int * points: Point list
 
 
-and internal IInternalPaperModel =
+type internal PaperOprBlock =
+    { Tag: obj
+      Operations: PaperOpr[] }
+
+
+type internal IInternalPaperModel =
     inherit IPaperModel
     abstract member PushUndoOpr : opr: PaperOpr -> unit
 
