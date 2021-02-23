@@ -2,6 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+
+    <InformationalVersion>0.6-beta.0</InformationalVersion>
+    <Company>Hojo Origami</Company>
+    <Authors>豊穣ミノリ</Authors>
+    <Copyright>© 2021 豊穣ミノリ</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

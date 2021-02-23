@@ -5,7 +5,11 @@
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <Win32Resource>.\icon.res</Win32Resource>
+    
     <InformationalVersion>0.6-beta.0</InformationalVersion>
+    <Company>Hojo Origami</Company>
+    <Authors>豊穣ミノリ</Authors>
+    <Copyright>© 2021 豊穣ミノリ</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -61,12 +65,6 @@
     <Reference Include="SsslFSharp">
       <HintPath>..\Libraries\SsslFSharp.dll</HintPath>
     </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Update="VersionInfoControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </Resource>
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
