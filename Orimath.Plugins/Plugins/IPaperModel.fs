@@ -12,7 +12,7 @@ type IPaperModel =
     abstract member SelectedLayers : IProp<ILayerModel[]>
     abstract member SelectedEdges : IProp<Edge[]>
     abstract member SelectedPoints : IProp<Point[]>
-    abstract member SelectedLines : IProp<LineSegment[]>
+    abstract member SelectedCreases : IProp<Crease[]>
     abstract member ChangeBlockDeclared : bool
 
     abstract member GetSnapShot : unit -> IPaper
@@ -40,8 +40,8 @@ type PaperModelExtensions =
         Array.contains point paper.SelectedPoints.Value
 
     [<Extension>]
-    static member IsSelected(paper: IPaperModel, line) =
-        Array.contains line paper.SelectedLines.Value
+    static member IsSelected(paper: IPaperModel, crease) =
+        Array.contains crease paper.SelectedCreases.Value
 
     [<Extension>]
     static member IsSelected(paper: IPaperModel, edge) =

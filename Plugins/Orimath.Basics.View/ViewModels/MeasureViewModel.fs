@@ -12,7 +12,7 @@ type MeasureViewModel(paper: IPaperModel, pointConverter: IViewPointConverter, d
         paper.SelectedPoints |> mapArray (fun p -> PointViewModel(p, pointConverter))
 
     member val SelectedLines =
-        paper.SelectedLines |> mapArray (fun l -> LineViewModel(l, pointConverter))
+        paper.SelectedCreases |> mapArray (fun c -> LineViewModel(c, pointConverter))
 
     member val SelectedEdges =
         paper.SelectedEdges |> mapArray (fun e -> EdgeViewModel(e, pointConverter))

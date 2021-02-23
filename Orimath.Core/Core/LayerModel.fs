@@ -7,8 +7,8 @@ type internal PaperOpr =
     | LayerAddition of index: int * layers: ILayerModel list
     | LayerRemoving of index: int * layers: ILayerModel list
     | LayerReplace of layerIndex: int * before: ILayerModel * after: ILayerModel
-    | LineAddition of layerIndex: int * index: int * lines: LineSegment list
-    | LineRemoving of layerIndex: int * index: int * lines: LineSegment list
+    | LineAddition of layerIndex: int * index: int * lines: Crease list
+    | LineRemoving of layerIndex: int * index: int * lines: Crease list
     | PointAddition of layerIndex: int * index: int * points: Point list
     | PointRemoving of layerIndex: int * index: int * points: Point list
 
@@ -24,10 +24,10 @@ type internal IInternalPaperModel =
 
 
 and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Layer) =
-    let layerLines = ReactiveCollection<LineSegment>(init.Lines)
+    let layerCreases = ReactiveCollection<Crease>(init.Creases)
     let layerPoints = ReactiveCollection<Point>(init.Points)
     
-    do layerLines.Add(function
+    do layerCreases.Add(function
         | CollectionChange.Add(index, lines) ->
             parent.PushUndoOpr(LineAddition(layerIndex, index, asList lines))
         | CollectionChange.Remove(index, lines) ->
@@ -41,39 +41,45 @@ and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Lay
         | _ -> ())
 
     member _.Edges = init.Edges
-    member _.Lines = layerLines :> IReactiveCollection<_>
+    member _.Creases = layerCreases :> IReactiveCollection<_>
     member _.Points = layerPoints :> IReactiveCollection<_>
     member _.LayerType = init.LayerType
 
     member _.GetSnapShot() =
         Layer.Create(
-            init.Edges, layerLines, layerPoints,
+            init.Edges, layerCreases, layerPoints,
             init.LayerType, init.OriginalEdges, init.Matrix)
 
-    member this.AddLineCore(segs, addCross) =
-        let lines = [ for l in segs do if not (Layer.hasSeg l this) then l ]
-        if lines <> [] then
-            let points = if addCross then Layer.crossesAll lines this else []
+    member this.AddLineCore(segs: seq<Crease>, addCross) =
+        let creases = [ for l in segs do if not (Layer.hasSeg l.Segment this) then l ]
+        if creases <> [] then
+            let points = if addCross then Layer.crossesAllCrease creases this else []
             use __ = parent.TryBeginChange()
-            layerLines.AddRange(lines)
+            layerCreases.AddRange(creases)
             layerPoints.AddRange(points)
 
-    member this.AddLinesRaw(lines) =
-        this.AddLineCore(Seq.collect (flip Layer.clip this) lines, false)
+    member this.AddCreasesRaw(lines) =
+        this.AddLineCore(Seq.collect (flip Layer.clip this >> Crease.ofSegs CreaseType.Crease) lines, false)
 
-    member this.AddLinesRaw(segs) =
-        this.AddLineCore(Seq.collect (flip Layer.clipSeg this) segs, false)
+    member this.AddCreasesRaw(segs) =
+        this.AddLineCore(Seq.collect (flip Layer.clipSeg this >> Crease.ofSegs CreaseType.Crease) segs, false)
 
-    member this.AddLines(lines) =
-        this.AddLineCore(Seq.collect (flip Layer.clip this) lines, true)
+    member this.AddCreasesRaw(creases) =
+        this.AddLineCore(Seq.collect (flip Layer.clipCrease this) creases, false)
 
-    member this.AddLines(segs) =
-        this.AddLineCore(Seq.collect (flip Layer.clipSeg this) segs, true)
+    member this.AddCreases(lines) =
+        this.AddLineCore(Seq.collect (flip Layer.clip this >> Crease.ofSegs CreaseType.Crease) lines, true)
 
-    member _.RemoveLines(count) =
+    member this.AddCreases(segs) =
+        this.AddLineCore(Seq.collect (flip Layer.clipSeg this >> Crease.ofSegs CreaseType.Crease) segs, true)
+
+    member this.AddCreases(creases) =
+        this.AddLineCore(Seq.collect (flip Layer.clipCrease this) creases, true)
+
+    member _.RemoveCreases(count) =
         if count > 0 then
             use __ = parent.TryBeginChange()
-            layerLines.RemoveTail(count)
+            layerCreases.RemoveTail(count)
 
     member this.AddPoints(points) =
         let points = [
@@ -91,20 +97,22 @@ and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Lay
 
     interface ILayer with
         member this.Edges = upcast this.Edges
-        member this.Lines = upcast this.Lines
+        member this.Creases = upcast this.Creases
         member this.Points = upcast this.Points
         member _.LayerType = init.LayerType
         member _.OriginalEdges = upcast init.OriginalEdges
         member _.Matrix = init.Matrix
 
     interface ILayerModel with
-        member this.Lines = this.Lines
+        member this.Creases = this.Creases
         member this.Points = this.Points
         member this.GetSnapShot() = upcast (this.GetSnapShot())
-        member this.AddLines(lines: seq<Line>) = this.AddLines(lines)
-        member this.AddLines(lines: seq<LineSegment>) = this.AddLines(lines)
-        member this.AddLinesRaw(lines: seq<Line>) = this.AddLinesRaw(lines)
-        member this.AddLinesRaw(lines: seq<LineSegment>) = this.AddLinesRaw(lines)
-        member this.RemoveLines(count) = this.RemoveLines(count)
+        member this.AddCreases(lines: seq<Line>) = this.AddCreases(lines)
+        member this.AddCreases(segs: seq<LineSegment>) = this.AddCreases(segs)
+        member this.AddCreases(creases: seq<Crease>) = this.AddCreases(creases)
+        member this.AddCreasesRaw(lines: seq<Line>) = this.AddCreasesRaw(lines)
+        member this.AddCreasesRaw(segs: seq<LineSegment>) = this.AddCreasesRaw(segs)
+        member this.AddCreasesRaw(creases: seq<Crease>) = this.AddCreasesRaw(creases)
+        member this.RemoveCreases(count) = this.RemoveCreases(count)
         member this.AddPoints(points) = this.AddPoints(points)
         member this.RemovePoints(count) = this.RemovePoints(count)

@@ -14,8 +14,8 @@ type MeasureTool(workspace: IWorkspace) =
         | _ -> None
     let (|LineOrEdge|_|) (dt: OperationTarget) =
         match dt.Target with
-        | DisplayTarget.Line(line) -> Some(line.Line, dt.Point)
-        | DisplayTarget.Edge(edge) -> Some(edge.Line.Line, dt.Point)
+        | DisplayTarget.Crease(crease) -> Some(crease.Line, dt.Point)
+        | DisplayTarget.Edge(edge) -> Some(edge.Line, dt.Point)
         | _ -> None
 
     member _.GetDistanceLine(source, target) =
@@ -38,7 +38,7 @@ type MeasureTool(workspace: IWorkspace) =
     member _.ClearSelection() =
         paper.SelectedLayers .<- array.Empty()
         paper.SelectedPoints .<- array.Empty()
-        paper.SelectedLines .<- array.Empty()
+        paper.SelectedCreases .<- array.Empty()
         paper.SelectedEdges .<- array.Empty()
 
     interface ITool with
@@ -85,10 +85,16 @@ type MeasureTool(workspace: IWorkspace) =
             paper.SelectedLayers .<- array.Empty()
             paper.SelectedPoints .<- array.Empty()
             paper.SelectedEdges .<- array.Empty()
-            paper.SelectedLines .<- 
-                if modifier.HasFlag(OperationModifier.Shift)
-                then Array.append paper.SelectedLines.Value (Option.toArray (this.GetDistanceLine(source, target)))
-                else Option.toArray (this.GetDistanceLine(source, target))
+            paper.SelectedCreases .<- 
+                if modifier.HasFlag(OperationModifier.Shift) then
+                    this.GetDistanceLine(source, target)
+                    |> Option.map (Crease.ofSeg CreaseType.Draft)
+                    |> Option.toArray
+                    |> Array.append paper.SelectedCreases.Value
+                else
+                    this.GetDistanceLine(source, target)
+                    |> Option.map (Crease.ofSeg CreaseType.Draft)
+                    |> Option.toArray
             instruction.Lines .<- array.Empty()
 
     interface IFoldingInstructionTool with

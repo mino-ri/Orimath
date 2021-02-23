@@ -15,15 +15,15 @@ type LayerViewModel(layer: ILayerModel, pointConverter: IViewPointConverter, dis
             (fun p -> PointViewModel(p, pointConverter, layer)),
             ignore)
     let lines =
-        new AttachedObservableCollection<LineSegment, LineViewModel>(
+        new AttachedObservableCollection<Crease, LineViewModel>(
             dispatcher,
-            layer.Lines,
-            (fun l -> LineViewModel(l, pointConverter, layer)),
+            layer.Creases,
+            (fun c -> LineViewModel(c, pointConverter, layer)),
             ignore)
 
     member _.Source = layer
     member val Edges = [| for e in layer.Edges -> EdgeViewModel(e, pointConverter, layer) |]
-    member val Vertexes = PointCollection(seq { for e in layer.Edges -> pointConverter.ModelToView(e.Line.Point1) })
+    member val Vertexes = PointCollection(seq { for e in layer.Edges -> pointConverter.ModelToView(e.Segment.Point1) })
     member _.Lines = lines :> ObservableCollection<_>
     member _.Points = points :> ObservableCollection<_>
     member _.LayerType = layer.LayerType

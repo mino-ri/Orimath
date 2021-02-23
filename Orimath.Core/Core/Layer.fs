@@ -3,14 +3,14 @@ open Orimath.Core.NearlyEquatable
 
 type Layer private
     (edges: Edge list,
-     lines: LineSegment list,
+     creases: Crease list,
      points: Point list,
      layerType: LayerType,
      originalEdges: Edge list,
      matrix: Matrix
     ) =
     member _.Edges = edges
-    member _.Lines = lines
+    member _.Creases = creases
     member _.Points = points
     member _.LayerType = layerType
     member _.OriginalEdges = originalEdges
@@ -18,7 +18,7 @@ type Layer private
 
     interface ILayer with
         member _.Edges = upcast edges
-        member _.Lines = upcast lines
+        member _.Creases = upcast creases
         member _.Points = upcast points
         member _.LayerType = layerType
         member _.OriginalEdges = upcast originalEdges
@@ -27,22 +27,22 @@ type Layer private
     /// 指定した要素をもつレイヤーを生成します。
     static member Create
         (edges: seq<Edge>,
-         lines: seq<LineSegment>,
+         creases: seq<Crease>,
          points: seq<Point>,
          layerType,
          originalEdges: seq<Edge>,
          matrix: Matrix
         ) =
         let edges = asList edges
-        let lines = asList lines
+        let creases = asList creases
         let points = asList points
         let originalEdges = asList originalEdges
         let rec isValidEdge (head: Edge) (edges: Edge list) =
             match edges with
-            | [ e ] -> e.Line.Point2 =~ head.Line.Point1
+            | [ e ] -> e.Segment.Point2 =~ head.Segment.Point1
             // 末尾最適化用に一応 if で分岐
             | e1 :: ((e2 :: _) as tail) ->
-                if e1.Line.Point2 <>~ e2.Line.Point1 then false else isValidEdge head tail
+                if e1.Segment.Point2 <>~ e2.Segment.Point1 then false else isValidEdge head tail
             | [] -> failwith "想定しない動作"
         if edges.Length < 3 then
             invalidArg (nameof edges) "多角形の辺は3以上でなければなりません。"
@@ -57,7 +57,7 @@ type Layer private
         //     invalidArg (nameof(lines)) "レイヤー内に含まれていない線分があります。"
         // if not (points |> List.forall(fun p -> LayerExtensions.ContainsCore(edges, p))) then
         //     invalidArg (nameof(points)) "レイヤー内に含まれていない点があります。"
-        Layer(edges, lines, points, layerType, originalEdges, matrix)
+        Layer(edges, creases, points, layerType, originalEdges, matrix)
 
     /// 指定した高さと幅を持つ長方形のレイヤーを生成します。
     static member FromSize(width, height, layerType) =
@@ -78,10 +78,10 @@ type Layer private
             invalidArg (nameof vertexes) "多角形の頂点は3以上でなければなりません。"
         let rec createEdges (head: Point) (points: Point list) (acm: Edge list) =
             match points with
-            | [ p ] -> { Line = LineSegment.FromPoints(head, p).Value; Inner = false } :: acm
+            | [ p ] -> { Segment = LineSegment.FromPoints(head, p).Value; Inner = false } :: acm
             | p1 :: ((p2 :: _) as tail) ->
                 createEdges head tail
-                    ({ Line = LineSegment.FromPoints(p2, p1).Value; Inner = false } :: acm)
+                    ({ Segment = LineSegment.FromPoints(p2, p1).Value; Inner = false } :: acm)
             | [] -> acm
         let edges = createEdges vertexes.Head vertexes []
         Layer(edges, [], vertexes, layerType, edges, Matrix.Identity)
@@ -90,5 +90,5 @@ type Layer private
         match source with
         | :? Layer as ly -> ly
         | _ ->
-            Layer(asList source.Edges, asList source.Lines, asList source.Points,
+            Layer(asList source.Edges, asList source.Creases, asList source.Points,
                 source.LayerType, asList source.OriginalEdges, source.Matrix)

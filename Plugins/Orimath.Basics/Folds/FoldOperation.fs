@@ -31,23 +31,23 @@ module internal FoldOperation =
 
     let (|LineOrEdge|_|) (dt: OperationTarget) =
         match dt.Target with
-        | DisplayTarget.Line(line) -> Some(line, dt.Point)
-        | DisplayTarget.Edge(edge) -> Some(edge.Line, dt.Point)
+        | DisplayTarget.Crease(crease) -> Some(crease.Segment, dt.Point)
+        | DisplayTarget.Edge(edge) -> Some(edge.Segment, dt.Point)
         | _ -> None
 
     let (|LineOrEdge2|_|) (dt: OperationTarget) =
         match dt.Target with
-        | DisplayTarget.Line(line) -> Some(line, false)
-        | DisplayTarget.Edge(edge) -> Some(edge.Line, true)
+        | DisplayTarget.Crease(crease) -> Some(crease.Segment, false)
+        | DisplayTarget.Edge(edge) -> Some(edge.Segment, true)
         | _ -> None
 
     let getPass (paper: IPaperModel) =
         let passPoint = Array.tryItem 0 paper.SelectedPoints.Value
         let passLine =
             if paper.SelectedEdges.Value.Length > 0
-            then Some(paper.SelectedEdges.Value.[0].Line, true)
-            elif paper.SelectedLines.Value.Length > 0
-            then Some(paper.SelectedLines.Value.[0], false)
+            then Some(paper.SelectedEdges.Value.[0].Segment, true)
+            elif paper.SelectedCreases.Value.Length > 0
+            then Some(paper.SelectedCreases.Value.[0].Segment, false)
             else None
         passPoint, passLine
 

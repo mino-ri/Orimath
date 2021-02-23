@@ -21,7 +21,7 @@ module LayerType =
 
 type ILayer =
     abstract member Edges : IReadOnlyList<Edge>
-    abstract member Lines : IReadOnlyList<LineSegment>
+    abstract member Creases : IReadOnlyList<Crease>
     abstract member Points : IReadOnlyList<Point>
     abstract member LayerType : LayerType
     abstract member OriginalEdges : IReadOnlyList<Edge>
@@ -49,14 +49,17 @@ module Layer =
 
     /// このレイヤーに、指定した線分と同じ線分が存在するか判断します。
     let hasSeg (seg: LineSegment) (layer: ILayer) =
-        layer.Edges |> Seq.exists (fun e -> e.Line.Line =~ seg.Line) ||
-        layer.Lines |> Seq.exists (LineSegment.containsSeg seg)
+        layer.Edges |> Seq.exists (fun e -> e.Line =~ seg.Line) ||
+        layer.Creases |> Seq.exists (fun c -> LineSegment.containsSeg seg c.Segment)
 
     /// このレイヤーの範囲内に収まるように、指定された直線をカットします。
     let clip line (layer: ILayer) = Edge.clip line (asList layer.Edges)
 
     /// このレイヤーの範囲内に収まるように、指定された線分をカットします。
     let clipSeg line (layer: ILayer) = Edge.clipSeg line (asList layer.Edges)
+
+    /// このレイヤーの範囲内に収まるように、指定された線分をカットします。
+    let clipCrease crease (layer: ILayer) = Edge.clipCrease crease (asList layer.Edges)
 
     /// このレイヤーに、指定した直線と同じ線分が存在するか判断します。
     let hasLine line layer = clip line layer |> Seq.forall (flip hasSeg layer)
@@ -81,9 +84,9 @@ module Layer =
     let private appendCross seg points (layer: ILayer) =
         let mutable points = points
         for edge in layer.Edges do
-            points <- tryAddPoint points (LineSegment.cross edge.Line seg) layer
-        for layerLine in layer.Lines do
-            points <- tryAddPoint points (LineSegment.cross layerLine seg) layer
+            points <- tryAddPoint points (LineSegment.cross edge.Segment seg) layer
+        for crease in layer.Creases do
+            points <- tryAddPoint points (LineSegment.cross crease.Segment seg) layer
         points
             
     /// このレイヤー内の全ての折線と、指定した線分との交点を取得します。
@@ -106,11 +109,15 @@ module Layer =
             | _ -> points
         recSelf (asList segs) []
 
+    /// このレイヤー内の全ての折線と、指定した全ての線分との交点を取得します。
+    let crossesAllCrease (creases: seq<Crease>) layer =
+        crossesAll (creases |> Seq.map (fun c -> c.Segment)) layer
+
     /// このレイヤーの OriginalEdges を辺として持ち、点・折線を持たないレイヤーを取得します。
     let original (layer: ILayer) =
         { new ILayer with
             member _.Edges = layer.OriginalEdges
-            member _.Lines = upcast []
+            member _.Creases = upcast []
             member _.Points = upcast []
             member _.LayerType = layer.LayerType
             member _.OriginalEdges = layer.OriginalEdges

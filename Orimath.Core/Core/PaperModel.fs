@@ -14,7 +14,7 @@ type PaperModel internal () as this =
     let selectedLayers = createArrayProp<ILayerModel>()
     let selectedEdges = createArrayProp<Edge>()
     let selectedPoints = createArrayProp<Point>()
-    let selectedLines = createArrayProp<LineSegment>()
+    let selectedCreases = createArrayProp<Crease>()
     let layerModels = ReactiveCollection<ILayerModel>()
     let canUndo = Prop.value false
     let canRedo = Prop.value false
@@ -35,7 +35,7 @@ type PaperModel internal () as this =
     member _.SelectedLayers = selectedLayers
     member _.SelectedEdges = selectedEdges
     member _.SelectedPoints = selectedPoints
-    member _.SelectedLines = selectedLines
+    member _.SelectedCreases = selectedCreases
     member _.ChangeBlockDeclared = changeBlockDeclared
 
     member internal _.PushUndoOpr(opr: PaperOpr) =
@@ -50,7 +50,7 @@ type PaperModel internal () as this =
         selectedLayers .<- array.Empty()
         selectedEdges .<- array.Empty()
         selectedPoints .<- array.Empty()
-        selectedLines .<- array.Empty()
+        selectedCreases .<- array.Empty()
 
     member private _.UpdateCanUndo() =
         canUndo .<- (undoOprStack.Count > 0)
@@ -68,10 +68,10 @@ type PaperModel internal () as this =
                 | LayerAddition(_, layers) -> this.RemoveLayers(layers.Length)
                 | LayerRemoving(_, layers) -> this.AddLayersRaw(layers)
                 | LayerReplace(index, oldLayer, _) -> this.ReplaceLayerRaw(index, oldLayer)
-                | LineAddition(layerIndex, _, lines) ->
-                    layerModels.[layerIndex].RemoveLines(lines.Length)
-                | LineRemoving(layerIndex, _, lines) ->
-                    layerModels.[layerIndex].AddLinesRaw(lines)
+                | LineAddition(layerIndex, _, creases) ->
+                    layerModels.[layerIndex].RemoveCreases(creases.Length)
+                | LineRemoving(layerIndex, _, creases) ->
+                    layerModels.[layerIndex].AddCreasesRaw(creases)
                 | PointAddition(layerIndex, _, points) ->
                     layerModels.[layerIndex].RemovePoints(points.Length)
                 | PointRemoving(layerIndex, _, points) ->
@@ -89,10 +89,10 @@ type PaperModel internal () as this =
                 | LayerAddition(_, layers) -> this.AddLayersRaw(layers)
                 | LayerRemoving(_, layers) -> this.RemoveLayers(layers.Length)
                 | LayerReplace(index, _, newLayer) -> this.ReplaceLayerRaw(index, newLayer)
-                | LineAddition(layerIndex, _, lines) ->
-                    layerModels.[layerIndex].AddLinesRaw(lines)
-                | LineRemoving(layerIndex, _, lines) ->
-                    layerModels.[layerIndex].RemoveLines(lines.Length)
+                | LineAddition(layerIndex, _, creases) ->
+                    layerModels.[layerIndex].AddCreasesRaw(creases)
+                | LineRemoving(layerIndex, _, creases) ->
+                    layerModels.[layerIndex].RemoveCreases(creases.Length)
                 | PointAddition(layerIndex, _, points) ->
                     layerModels.[layerIndex].AddPoints(points)
                 | PointRemoving(layerIndex, _, points) ->
@@ -182,7 +182,7 @@ type PaperModel internal () as this =
         member this.SelectedLayers = upcast this.SelectedLayers
         member this.SelectedEdges = upcast this.SelectedEdges
         member this.SelectedPoints = upcast this.SelectedPoints
-        member this.SelectedLines = upcast this.SelectedLines
+        member this.SelectedCreases = upcast this.SelectedCreases
 
         member this.GetSnapShot() = upcast this.GetSnapShot()
         member this.Undo() = this.Undo()

@@ -31,22 +31,22 @@ type SelectorTool(workspace: IWorkspace) =
             | DisplayTarget.Layer(l) ->
                 workspace.Paper.SelectedLayers .<- [| l |]
                 workspace.Paper.SelectedEdges .<- Array.empty
-                workspace.Paper.SelectedLines .<- Array.empty
+                workspace.Paper.SelectedCreases .<- Array.empty
                 workspace.Paper.SelectedPoints .<- Array.empty
             | DisplayTarget.Edge(e) ->
                 workspace.Paper.SelectedLayers .<- Array.empty
                 workspace.Paper.SelectedEdges .<- [| e |]
-                workspace.Paper.SelectedLines .<- Array.empty
+                workspace.Paper.SelectedCreases .<- Array.empty
                 workspace.Paper.SelectedPoints .<- Array.empty
-            | DisplayTarget.Line(l) ->
+            | DisplayTarget.Crease(l) ->
                 workspace.Paper.SelectedLayers .<- Array.empty
                 workspace.Paper.SelectedEdges .<- Array.empty
-                workspace.Paper.SelectedLines .<- [| l |]
+                workspace.Paper.SelectedCreases .<- [| l |]
                 workspace.Paper.SelectedPoints .<- Array.empty
             | DisplayTarget.Point(p) ->
                 workspace.Paper.SelectedLayers .<- Array.empty
                 workspace.Paper.SelectedEdges .<- Array.empty
-                workspace.Paper.SelectedLines .<- Array.empty
+                workspace.Paper.SelectedCreases .<- Array.empty
                 workspace.Paper.SelectedPoints .<- [| p |]
 
     interface ITool with

@@ -10,7 +10,7 @@ type private LayerSource =
     { Edges: Edge list
       OriginalEdges: Edge list
       Points: Point list
-      Lines: LineSegment list }
+      Creases: Crease list }
 
 
 [<ReferenceEquality; NoComparison>]
@@ -80,13 +80,18 @@ let private splitLine foldLine (target: LineSegment) =
         Some(LineSegment.FromPoints(target.Point1, cross).Value)
     | _ -> None, None
 
-let private splitLines foldLine (layer: ILayer) =
-    layer.Lines |> chooseUnzip (splitLine foldLine)
+let private splitCrease foldLine (target: Crease) =
+    let positive, negative = splitLine foldLine target.Segment
+    positive |> Option.map (fun l -> { target with Segment = l }),
+    negative |> Option.map (fun l -> { target with Segment = l })
+
+let private splitCreases foldLine (layer: ILayer) =
+    layer.Creases |> chooseUnzip (splitCrease foldLine)
 
 let private splitEdge foldLine (target: Edge) =
-    let positive, negative = splitLine foldLine target.Line
-    positive |> Option.map (fun l -> { target with Line = l }),
-    negative |> Option.map (fun l -> { target with Line = l })
+    let positive, negative = splitLine foldLine target.Segment
+    positive |> Option.map (fun l -> { target with Segment = l }),
+    negative |> Option.map (fun l -> { target with Segment = l })
 
 let private splitEdges foldLine layer =
     let mutable crossed = false
@@ -98,12 +103,12 @@ let private splitEdges foldLine layer =
             match Layer.clipBound foldLine layer with
             | Some(a, b) ->
                 swapWhen
-                    (LineSegment.containsPoint a edge.Line = positiveToNegative)
+                    (LineSegment.containsPoint a edge.Segment = positiveToNegative)
                     (LineSegment.FromPoints(b, a))
                     (LineSegment.FromPoints(a, b))
             | None -> None, None
-        positiveEdge |> Option.iter (fun e -> positiveEdges.Add({ Line = e; Inner = true }))
-        negativeEdge |> Option.iter (fun e -> negativeEdges.Add({ Line = e; Inner = true }))
+        positiveEdge |> Option.iter (fun e -> positiveEdges.Add({ Segment = e; Inner = true }))
+        negativeEdge |> Option.iter (fun e -> negativeEdges.Add({ Segment = e; Inner = true }))
     for edge in layer.Edges do
         match splitEdge foldLine edge with
         | Some(positive), None ->
@@ -125,7 +130,7 @@ let private splitEdges foldLine layer =
             else
                 crossed <- true
                 // 正 → 負に突入
-                if positive.Line.Point2 = negative.Line.Point1 then
+                if positive.Segment.Point2 = negative.Segment.Point1 then
                     positiveEdges.Add(positive)
                     cross edge true
                     negativeEdges.Add(negative)
@@ -151,7 +156,7 @@ let private splitOriginalEdges foldLine positiveEdgesCount (layer: ILayer) =
     | true, true ->
         let edgeSign =
             edges1
-            |> Seq.map (fun e -> Line.distSign (e.Line.Point1 * layer.Matrix) foldLine)
+            |> Seq.map (fun e -> Line.distSign (e.Segment.Point1 * layer.Matrix) foldLine)
             |> Seq.find ((<>) 0)
         if edgeSign > 0 then edges1, edges2 else edges2, edges1
 
@@ -160,14 +165,14 @@ let private splitLayerCore foldLine layer =
     let positiveEdges, negativeEdges = splitEdges foldLine layer
     let originalPositiveEdges, originalNegativeEdges = splitOriginalEdges foldLine positiveEdges.Count layer
     let positivePoints, negativePoints = splitPoints foldLine layer
-    let positiveLines, negativeLines = splitLines foldLine layer
+    let positiveCreases, negativeCreases = splitCreases foldLine layer
     let positive =
         if positiveEdges.Count >= 3 then
             Some {
                 Edges = Seq.toList positiveEdges
                 OriginalEdges = Seq.toList originalPositiveEdges
                 Points = Seq.toList positivePoints
-                Lines = Seq.toList positiveLines
+                Creases = Seq.toList positiveCreases
             }
         else
             None
@@ -177,7 +182,7 @@ let private splitLayerCore foldLine layer =
                 Edges = Seq.toList negativeEdges
                 OriginalEdges = Seq.toList originalNegativeEdges
                 Points = Seq.toList negativePoints
-                Lines = Seq.toList negativeLines
+                Creases = Seq.toList negativeCreases
             }
         else
             None
@@ -187,15 +192,15 @@ let private createLayer (workspace: IWorkspace) foldLine (layer: ILayer) turnOve
     if not turnOver then
         workspace.CreateLayer(
             source.Edges,
-            source.Lines,
+            source.Creases,
             source.Points,
             layer.LayerType,
             source.OriginalEdges,
             layer.Matrix)
     else
         workspace.CreateLayer(
-            source.Edges |> Seq.map (fun e -> { e with Line = LineSegment.reflectBy foldLine e.Line }),
-            source.Lines |> Seq.map (LineSegment.reflectBy foldLine),
+            source.Edges |> Seq.map (Edge.reflectBy foldLine),
+            source.Creases |> Seq.map (Crease.reflectBy foldLine),
             source.Points |> Seq.map (Point.reflectBy foldLine),
             LayerType.turnOver layer.LayerType,
             source.OriginalEdges,
@@ -214,7 +219,7 @@ let private isContacted originalEdges1 originalEdges2 =
     exists {
         let! e1 = originalEdges1 |> Seq.filter (fun e -> e.Inner)
         let! e2 = originalEdges2 |> Seq.filter (fun e -> e.Inner)
-        return e1.Line =~ e2.Line
+        return e1.Segment =~ e2.Segment
     }
 
 let isPositiveStatic foldLine dynamicPoint =
@@ -257,8 +262,8 @@ let private getTargetLayersCore (paper: IPaperModel) foldLine dynamicPoint targe
     let getLayer t = layers |> Seq.find (fun sl -> sl.Original = t.Layer)
     let contains (layer: ILayerModel) (target: OperationTarget) =
         match target.Target with
-        | DisplayTarget.Edge(e) -> Layer.clipSeg e.Line layer |> Seq.isEmpty |> not
-        | DisplayTarget.Line(l) -> Layer.clipSeg l layer |> Seq.isEmpty |> not
+        | DisplayTarget.Edge(e) -> Layer.clipSeg e.Segment layer |> Seq.isEmpty |> not
+        | DisplayTarget.Crease(c) -> Layer.clipCrease c layer |> Seq.isEmpty |> not
         | DisplayTarget.Point(p) -> Layer.containsPoint p layer
         | _ -> false
     let firstLayers =

@@ -92,7 +92,7 @@ type OpenAllEffect(workspace: IWorkspace) =
                     seq {
                         for ly in layers do
                         for e in ly.OriginalEdges do
-                        if not e.Inner then e.Line
+                        if not e.Inner then e.Segment
                     }
                     |> LineSegment.merge
                     |> ResizeArray
@@ -112,8 +112,8 @@ type OpenAllEffect(workspace: IWorkspace) =
                 seq {
                     for layer in layers do
                     let inv = layer.Matrix.Invert()
-                    yield! seq { for e in layer.Edges -> e.Line * inv }
-                    yield! seq { for x in layer.Lines -> x * inv }
+                    yield! seq { for e in layer.Edges -> e.Segment * inv }
+                    yield! seq { for x in layer.Creases -> x.Segment * inv }
                 }
                 |> LineSegment.merge
-            workspace.Paper.Layers.[0].AddLines(lines)
+            workspace.Paper.Layers.[0].AddCreases(lines)

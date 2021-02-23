@@ -21,7 +21,7 @@ type DragFoldTool(workspace: IWorkspace) =
             | _ -> None)
 
     member _.MakeCrease(line: Line) =
-        for layer in paper.Layers do layer.AddLines([ line ])
+        for layer in paper.Layers do layer.AddCreases([ line ])
 
     interface ITool with
         member _.Name = "{basic/Tool.Folding}Folding"
@@ -30,7 +30,7 @@ type DragFoldTool(workspace: IWorkspace) =
         member _.OnActivated() =
             paper.SelectedLayers .<- array.Empty()
             paper.SelectedPoints .<- array.Empty()
-            paper.SelectedLines .<- array.Empty()
+            paper.SelectedCreases .<- array.Empty()
             paper.SelectedEdges .<- array.Empty()
         member _.OnDeactivated() = ()
 
@@ -38,11 +38,11 @@ type DragFoldTool(workspace: IWorkspace) =
         member _.OnClick(target, modifier) =
             if modifier.HasFlag(OperationModifier.RightButton) then
                 match target.Target with
-                | DisplayTarget.Line(line) ->
+                | DisplayTarget.Crease(crease) ->
                     let dynamicPoint = paper.SelectedPoints.Value |> Array.tryHead
                     if modifier.HasFlag(OperationModifier.Ctrl)
-                    then FoldBack.foldBackFirst workspace line.Line dynamicPoint []
-                    else FoldBack.foldBack workspace line.Line dynamicPoint
+                    then FoldBack.foldBackFirst workspace crease.Line dynamicPoint []
+                    else FoldBack.foldBack workspace crease.Line dynamicPoint
                 | _ -> ()
             else
                 let clearOther = not (modifier.HasFlag(OperationModifier.Shift))
@@ -51,23 +51,23 @@ type DragFoldTool(workspace: IWorkspace) =
                     paper.SelectedPoints .<-
                         if paper.IsSelected(point) then array.Empty() else [| point |]
                     if clearOther then
-                        paper.SelectedLines .<- array.Empty()
+                        paper.SelectedCreases .<- array.Empty()
                         paper.SelectedEdges .<- array.Empty()
-                | DisplayTarget.Line(line) ->
-                    paper.SelectedLines .<-
-                        if paper.IsSelected(line) then array.Empty() else [| line |]
+                | DisplayTarget.Crease(crease) ->
+                    paper.SelectedCreases .<-
+                        if paper.IsSelected(crease) then array.Empty() else [| crease |]
                     paper.SelectedEdges .<- array.Empty()
                     if clearOther then
                         paper.SelectedPoints .<- array.Empty()
                 | DisplayTarget.Edge(edge) ->
-                    paper.SelectedLines .<- array.Empty()
+                    paper.SelectedCreases .<- array.Empty()
                     paper.SelectedEdges .<-
                         if paper.IsSelected(edge) then array.Empty() else [| edge |]
                     if clearOther then
                         paper.SelectedPoints .<- array.Empty()
                 | _ ->
                     paper.SelectedPoints .<- array.Empty()
-                    paper.SelectedLines .<- array.Empty()
+                    paper.SelectedCreases .<- array.Empty()
                     paper.SelectedEdges .<- array.Empty()
 
     interface IDragTool with
@@ -118,8 +118,9 @@ type DragFoldTool(workspace: IWorkspace) =
                 match modifier.HasFlag(OperationModifier.Shift), modifier.HasFlag(OperationModifier.Ctrl) with
                 | false, false -> this.MakeCrease(line)
                 | false, true ->
-                    for l in FoldBack.getTargetLayers workspace line (this.GetSourcePoint(opr, line)) [source; target] do
-                        l.AddLines([ line ])
+                    for l in FoldBack.getTargetLayers workspace line
+                        (this.GetSourcePoint(opr, line)) [source; target] do
+                        l.AddCreases([ line ])
                 | true, false -> FoldBack.foldBack workspace line (this.GetSourcePoint(opr, line))
                 | true, true -> FoldBack.foldBackFirst workspace line (this.GetSourcePoint(opr, line)) [source; target]
             | None -> ()

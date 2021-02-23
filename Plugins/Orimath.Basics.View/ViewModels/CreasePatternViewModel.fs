@@ -32,16 +32,16 @@ type CreasePatternViewModel(paper: IPaperModel, dispatcher: IDispatcher) =
                    layers
                    |> Seq.take i
                    |> Seq.collect (fun l -> l.OriginalEdges)
-                   |> Seq.forall (fun e -> not e.Inner || edge.Line <>~ e.Line) 
+                   |> Seq.forall (fun e -> not e.Inner || edge.Segment <>~ e.Segment) 
                 if isTopEdge then
                     yield CreasePatternLineViewModel(
-                        edge.Line,
+                        edge.Segment,
                         pointConverter,
                         if layers.[i].LayerType = LayerType.BackSide
                         then InstructionColor.Blue
                         else InstructionColor.Red)
             else
-                yield CreasePatternLineViewModel(edge.Line, pointConverter, InstructionColor.Black)
+                yield CreasePatternLineViewModel(edge.Segment, pointConverter, InstructionColor.Black)
         }))
         |> ignore
 
