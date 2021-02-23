@@ -1,4 +1,5 @@
 ﻿namespace Orimath.Core
+open System
 open Orimath.Plugins
 open ApplicativeProperty
 
@@ -13,15 +14,10 @@ type internal PaperOpr =
     | PointRemoving of layerIndex: int * index: int * points: Point list
 
 
-type internal PaperOprBlock =
-    { Tag: obj
-      Operations: PaperOpr[] }
-
-
 type internal IInternalPaperModel =
     inherit IPaperModel
     abstract member PushUndoOpr : opr: PaperOpr -> unit
-
+    abstract member TryBeginChange : tag: obj -> IDisposable
 
 and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Layer) =
     let layerCreases = ReactiveCollection<Crease>(init.Creases)
@@ -54,7 +50,7 @@ and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Lay
         let creases = [ for l in segs do if not (Layer.hasSeg l.Segment this) then l ]
         if creases <> [] then
             let points = if addCross then Layer.crossesAllCrease creases this else []
-            use __ = parent.TryBeginChange()
+            use __ = parent.TryBeginChange(null)
             layerCreases.AddRange(creases)
             layerPoints.AddRange(points)
 
@@ -78,7 +74,7 @@ and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Lay
 
     member _.RemoveCreases(count) =
         if count > 0 then
-            use __ = parent.TryBeginChange()
+            use __ = parent.TryBeginChange(null)
             layerCreases.RemoveTail(count)
 
     member this.AddPoints(points) =
@@ -87,12 +83,12 @@ and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Lay
             if Layer.containsPoint p this && not (Layer.hasPoint p this) then p
         ]
         if points <> [] then
-            use __ = parent.TryBeginChange()
+            use __ = parent.TryBeginChange(null)
             layerPoints.AddRange(points)
 
     member _.RemovePoints(count) =
         if count > 0 then
-            use __ = parent.TryBeginChange()
+            use __ = parent.TryBeginChange(null)
             layerPoints.RemoveTail(count)
 
     interface ILayer with

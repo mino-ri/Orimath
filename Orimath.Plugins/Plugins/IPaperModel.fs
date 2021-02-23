@@ -13,12 +13,13 @@ type IPaperModel =
     abstract member SelectedEdges : IProp<Edge[]>
     abstract member SelectedPoints : IProp<Point[]>
     abstract member SelectedCreases : IProp<Crease[]>
-    abstract member ChangeBlockDeclared : bool
 
     abstract member GetSnapShot : unit -> IPaper
     abstract member Undo : unit -> unit
     abstract member Redo : unit -> unit
     abstract member BeginChange : tag: obj -> IDisposable
+    abstract member UndoSnapShots : seq<IPaper * obj>
+    abstract member RedoSnapShots : seq<IPaper * obj>
     abstract member Clear : unit -> unit
     abstract member Clear : paper: IPaper -> unit
     abstract member ClearUndoStack : unit -> unit
@@ -29,12 +30,6 @@ type IPaperModel =
 
 [<Extension>]
 type PaperModelExtensions =
-    [<Extension>]
-    static member TryBeginChange(paper: IPaperModel, tag: obj) =
-        if paper.ChangeBlockDeclared
-        then { new IDisposable with member _.Dispose() = () }
-        else paper.BeginChange(tag)
-
     [<Extension>]
     static member IsSelected(paper: IPaperModel, point) =
         Array.contains point paper.SelectedPoints.Value

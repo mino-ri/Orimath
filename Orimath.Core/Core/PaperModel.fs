@@ -6,45 +6,36 @@ open ApplicativeProperty
 open ApplicativeProperty.PropOperators
 
 type PaperModel internal () as this =
-    let mutable changeBlockDeclared = false
-    let mutable changeBlockDisabled = false
-    let changeBlockOprs = ResizeArray()
-    let undoOprStack = Stack<PaperOprBlock>()
-    let redoOprStack = Stack<PaperOprBlock>()
     let selectedLayers = createArrayProp<ILayerModel>()
     let selectedEdges = createArrayProp<Edge>()
     let selectedPoints = createArrayProp<Point>()
     let selectedCreases = createArrayProp<Crease>()
     let layerModels = ReactiveCollection<ILayerModel>()
-    let canUndo = Prop.value false
-    let canRedo = Prop.value false
+    let undoStack = UndoStack()
 
     do layerModels.Add(function
         | CollectionChange.Add(index, layers) ->
-            this.PushUndoOpr(LayerAddition(index, asList layers))
+            undoStack.PushUndoOpr(LayerAddition(index, asList layers))
         | CollectionChange.Remove(index, layers) ->
-            this.PushUndoOpr(LayerRemoving(index, asList layers))
+            undoStack.PushUndoOpr(LayerRemoving(index, asList layers))
         | CollectionChange.Replace(index, oldLayer, newLayer) ->
-            this.PushUndoOpr(LayerReplace(index, oldLayer, newLayer))
+            undoStack.PushUndoOpr(LayerReplace(index, oldLayer, newLayer))
         | CollectionChange.Reset(odlLayers, newLayers) ->
-            this.PushUndoOpr(Clear(asList odlLayers, asList newLayers)))
+            undoStack.PushUndoOpr(Clear(asList odlLayers, asList newLayers)))
+    do undoStack.OnUndo.Add(this.Undo)
+    do undoStack.OnRedo.Add(this.Redo)
 
     member _.Layers = layerModels :> IReadOnlyList<ILayerModel>
-    member val CanUndo = Prop.asGet canUndo
-    member val CanRedo = Prop.asGet canRedo
     member _.SelectedLayers = selectedLayers
     member _.SelectedEdges = selectedEdges
     member _.SelectedPoints = selectedPoints
     member _.SelectedCreases = selectedCreases
-    member _.ChangeBlockDeclared = changeBlockDeclared
-
-    member internal _.PushUndoOpr(opr: PaperOpr) =
-        if not changeBlockDisabled then changeBlockOprs.Add(opr)
 
     member _.GetSnapShot() =
         layerModels
         |> Seq.map (fun lm -> lm.GetSnapShot())
         |> Paper.Create
+        :> IPaper
 
     member _.ResetSelection() =
         selectedLayers .<- array.Empty()
@@ -52,84 +43,55 @@ type PaperModel internal () as this =
         selectedPoints .<- array.Empty()
         selectedCreases .<- array.Empty()
 
-    member private _.UpdateCanUndo() =
-        canUndo .<- (undoOprStack.Count > 0)
-        canRedo .<- (redoOprStack.Count > 0)
+    member private this.Undo(oprBlock) =
+        this.ResetSelection()
+        for i = oprBlock.Operations.Length - 1 downto 0 do
+            match oprBlock.Operations.[i] with
+            | Clear(oldLayers, _) -> this.ClearRaw(oldLayers)
+            | LayerAddition(_, layers) -> this.RemoveLayers(layers.Length)
+            | LayerRemoving(_, layers) -> this.AddLayersRaw(layers)
+            | LayerReplace(index, oldLayer, _) -> this.ReplaceLayerRaw(index, oldLayer)
+            | LineAddition(layerIndex, _, creases) ->
+                layerModels.[layerIndex].RemoveCreases(creases.Length)
+            | LineRemoving(layerIndex, _, creases) ->
+                layerModels.[layerIndex].AddCreasesRaw(creases)
+            | PointAddition(layerIndex, _, points) ->
+                layerModels.[layerIndex].RemovePoints(points.Length)
+            | PointRemoving(layerIndex, _, points) ->
+                layerModels.[layerIndex].AddPoints(points)
 
-    member this.Undo() =
-        if this.CanUndo.Value && not this.ChangeBlockDeclared then
-            this.ResetSelection()
-            use __ = this.BeginUndo()
-            let oprBlock = undoOprStack.Pop()
-            redoOprStack.Push(oprBlock)
-            for i = oprBlock.Operations.Length - 1 downto 0 do
-                match oprBlock.Operations.[i] with
-                | Clear(oldLayers, _) -> this.ClearRaw(oldLayers)
-                | LayerAddition(_, layers) -> this.RemoveLayers(layers.Length)
-                | LayerRemoving(_, layers) -> this.AddLayersRaw(layers)
-                | LayerReplace(index, oldLayer, _) -> this.ReplaceLayerRaw(index, oldLayer)
-                | LineAddition(layerIndex, _, creases) ->
-                    layerModels.[layerIndex].RemoveCreases(creases.Length)
-                | LineRemoving(layerIndex, _, creases) ->
-                    layerModels.[layerIndex].AddCreasesRaw(creases)
-                | PointAddition(layerIndex, _, points) ->
-                    layerModels.[layerIndex].RemovePoints(points.Length)
-                | PointRemoving(layerIndex, _, points) ->
-                    layerModels.[layerIndex].AddPoints(points)
+    member private this.Redo(oprBlock) =
+        this.ResetSelection()
+        for opr in oprBlock.Operations do
+            match opr with
+            | Clear(_, newLayers) -> this.ClearRaw(newLayers)
+            | LayerAddition(_, layers) -> this.AddLayersRaw(layers)
+            | LayerRemoving(_, layers) -> this.RemoveLayers(layers.Length)
+            | LayerReplace(index, _, newLayer) -> this.ReplaceLayerRaw(index, newLayer)
+            | LineAddition(layerIndex, _, creases) ->
+                layerModels.[layerIndex].AddCreasesRaw(creases)
+            | LineRemoving(layerIndex, _, creases) ->
+                layerModels.[layerIndex].RemoveCreases(creases.Length)
+            | PointAddition(layerIndex, _, points) ->
+                layerModels.[layerIndex].AddPoints(points)
+            | PointRemoving(layerIndex, _, points) ->
+                layerModels.[layerIndex].RemovePoints(points.Length)
 
-    member this.Redo() =
-        if this.CanRedo.Value && not this.ChangeBlockDeclared then
-            this.ResetSelection()
-            use __ = this.BeginUndo()
-            let oprBlock = redoOprStack.Pop()
-            undoOprStack.Push(oprBlock)
-            for opr in oprBlock.Operations do
-                match opr with
-                | Clear(_, newLayers) -> this.ClearRaw(newLayers)
-                | LayerAddition(_, layers) -> this.AddLayersRaw(layers)
-                | LayerRemoving(_, layers) -> this.RemoveLayers(layers.Length)
-                | LayerReplace(index, _, newLayer) -> this.ReplaceLayerRaw(index, newLayer)
-                | LineAddition(layerIndex, _, creases) ->
-                    layerModels.[layerIndex].AddCreasesRaw(creases)
-                | LineRemoving(layerIndex, _, creases) ->
-                    layerModels.[layerIndex].RemoveCreases(creases.Length)
-                | PointAddition(layerIndex, _, points) ->
-                    layerModels.[layerIndex].AddPoints(points)
-                | PointRemoving(layerIndex, _, points) ->
-                    layerModels.[layerIndex].RemovePoints(points.Length)
-
-    member this.BeginChange(tag: obj) =
-        if changeBlockDeclared then invalidOp "既に変更ブロックが定義されています。"
-        redoOprStack.Clear()
-        changeBlockDeclared <- true
-        changeBlockOprs.Clear()
-        { new IDisposable with
-            member _.Dispose() =
-                if changeBlockOprs.Count > 0 then
-                    undoOprStack.Push({
-                        Tag = tag
-                        Operations = changeBlockOprs.ToArray()
-                    })
-                changeBlockDeclared <- false
-                this.UpdateCanUndo() }
-
-    member private this.BeginUndo() =
-        if changeBlockDeclared then invalidOp "変更ブロックが定義されているため、Undoを開始できません。"
-        changeBlockDeclared <- true
-        changeBlockDisabled <- true
-        { new IDisposable with
-            member _.Dispose() =
-                changeBlockDeclared <- false
-                changeBlockDisabled <- false
-                this.UpdateCanUndo() }
+    member this.BeginChange(tag) =
+        undoStack.BeginChange(this.GetSnapShot(), tag)
+        
+    member this.TryBeginChange(tag: obj) =
+        if undoStack.ChangeBlockDeclared || undoStack.ChangeBlockDisabled
+        then { new IDisposable with member _.Dispose() = () }
+        else this.BeginChange(tag)
 
     member private this.ClearRaw(layers: ILayerModel list) =
-        use __ = this.TryBeginChange()
+        use __ = this.TryBeginChange(null)
         layerModels.Reset(layers)
 
     member this.Clear(paper: IPaper) =
         this.ResetSelection()
-        use __ = this.TryBeginChange()
+        use __ = this.TryBeginChange(null)
         let layers =
             paper.Layers
             |> Seq.mapi (fun index ly -> LayerModel(this, index, Layer.AsLayer(ly)) :> ILayerModel)
@@ -137,17 +99,13 @@ type PaperModel internal () as this =
         this.ClearRaw(layers)
 
     member this.Clear() =
+        use __ = undoStack.DisableChangeBlock()
         this.Clear(Paper.FromSize(1.0, 1.0))
-        this.ClearUndoStack()
-
-    member _.ClearUndoStack() =
-        undoOprStack.Clear()
-        redoOprStack.Clear()
-        this.UpdateCanUndo()
+        undoStack.ClearUndoStack()
 
     member private this.AddLayersRaw(layers) =
         if layers <> [] then
-            use __ = this.TryBeginChange()
+            use __ = this.TryBeginChange(null)
             layerModels.AddRange(layers)
 
     member this.AddLayers(layers: seq<ILayer>) =
@@ -160,11 +118,11 @@ type PaperModel internal () as this =
 
     member this.RemoveLayers(count: int) =
         if count > 0 then
-            use __ = this.TryBeginChange()
+            use __ = this.TryBeginChange(null)
             layerModels.RemoveTail(count)
 
     member private this.ReplaceLayerRaw(index: int, newLayer) =
-        use __ = this.TryBeginChange()
+        use __ = this.TryBeginChange(null)
         layerModels.Replace(index, newLayer)
 
     member this.ReplaceLayer(index: int, newLayer: ILayer) =
@@ -174,23 +132,25 @@ type PaperModel internal () as this =
         member _.Layers = layerModels :> IReadOnlyList<ILayerModel> :?> IReadOnlyList<ILayer>
 
     interface IInternalPaperModel with
-        member this.PushUndoOpr(opr) = this.PushUndoOpr(opr)
         member _.Layers = upcast layerModels
-        member this.CanUndo = this.CanUndo
-        member this.CanRedo = this.CanRedo
-        member this.ChangeBlockDeclared = this.ChangeBlockDeclared
+        member _.PushUndoOpr(opr) = undoStack.PushUndoOpr(opr)
+        member _.CanUndo = undoStack.CanUndo
+        member _.CanRedo = undoStack.CanRedo
         member this.SelectedLayers = upcast this.SelectedLayers
         member this.SelectedEdges = upcast this.SelectedEdges
         member this.SelectedPoints = upcast this.SelectedPoints
         member this.SelectedCreases = upcast this.SelectedCreases
 
-        member this.GetSnapShot() = upcast this.GetSnapShot()
-        member this.Undo() = this.Undo()
-        member this.Redo() = this.Redo()
+        member this.GetSnapShot() = this.GetSnapShot()
+        member _.Undo() = undoStack.Undo()
+        member _.Redo() = undoStack.Redo()
+        member _.UndoSnapShots = undoStack.UndoTags
+        member _.RedoSnapShots = undoStack.RedoTags
+        member _.ClearUndoStack() = undoStack.ClearUndoStack()
         member this.BeginChange(tag) = this.BeginChange(tag)
+        member this.TryBeginChange(tag) = this.TryBeginChange(tag)
         member this.Clear() = this.Clear()
         member this.Clear(paper) = this.Clear(paper)
-        member this.ClearUndoStack() = this.ClearUndoStack()
         member this.AddLayers(layers) = this.AddLayers(layers)
         member this.RemoveLayers(count) = this.RemoveLayers(count)
         member this.ReplaceLayer(index, newLayer) = this.ReplaceLayer(index, newLayer)
