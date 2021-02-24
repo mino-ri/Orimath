@@ -23,3 +23,14 @@ type IWorkspace with
 
     member ws.ClearPaper(layers) =
         ws.Paper.Clear(ws.CreatePaper(layers))
+
+type OperationModifier with
+    member m.IsNone = m = OperationModifier.None
+
+    member m.HasRightButton = m.HasFlag(OperationModifier.RightButton)
+
+    member m.HasShift = m.HasFlag(OperationModifier.Shift)
+
+    member m.HasCtrl = m.HasFlag(OperationModifier.Ctrl)
+
+    member m.HasAlt = m.HasFlag(OperationModifier.Alt)

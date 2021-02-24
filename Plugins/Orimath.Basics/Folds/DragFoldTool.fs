@@ -6,22 +6,41 @@ open FoldOperation
 open ApplicativeProperty.PropOperators
 
 type DragFoldTool(workspace: IWorkspace) =
+    let center = { X = 0.5; Y = 0.5 }
     let paper = workspace.Paper
     let instruction = InstructionWrapper(paper)
+    let mutable selectedPointIndex = 0
+    let mutable selectedLineIndex = 0
 
-    member private _.GetSourcePoint(opr, chosen) =
-        getSourcePoint opr
-        |> Option.orElseWith (fun () -> Array.tryHead paper.SelectedPoints.Value)
-        |> Option.orElseWith (fun () ->
-            match opr with
-            | Axiom1 _ -> FoldBack.getGeneralDynamicPoint paper chosen
-            | Axiom4(seg, _, isEdge) ->
-                FoldBack.getPerpendicularDynamicPoint seg chosen isEdge
-                |> Option.orElseWith (fun () -> FoldBack.getGeneralDynamicPoint paper chosen)
-            | _ -> None)
+    member private _.Selection =
+        let point =
+            match paper.SelectedPoints.Value with
+            | [| point |] -> Some(OprPoint(point, selectedPointIndex))
+            | _ -> None
+        let line =
+            match paper.SelectedCreases.Value, paper.SelectedEdges.Value with
+            | [| crease |], _ -> Some(OprLine(crease.Segment, center, false, selectedLineIndex))
+            | _, [| edge |] -> Some(OprLine(edge.Segment, center, true, selectedLineIndex))
+            | _ -> None
+        point, line
 
-    member _.MakeCrease(line: Line) =
-        for layer in paper.Layers do layer.AddCreases([ line ])
+    member private _.Fold(operation) =
+        let method = operation.Method
+        match chooseLine (getLines method) method with
+        | Some(line) ->
+            use __ = paper.BeginChange(operation)
+            match operation.CreaseType, operation.IsFrontOnly with
+            | CreaseType.ValleyFold, false ->
+                FoldBack.foldBack workspace line (getSourcePoint method |> List.tryHead)
+            | CreaseType.ValleyFold, true ->
+                FoldBack.foldBackFirst workspace line method
+            | _, true ->
+                for l in FoldBack.getTargetLayers paper line method do
+                    (l :?> ILayerModel).AddCreases([ line ])
+            | _, false ->
+                for layer in paper.Layers do layer.AddCreases([ line ])
+        | None -> ()
+        instruction.ResetAll()
 
     interface ITool with
         member _.Name = "{basic/Tool.Folding}Folding"
@@ -35,34 +54,47 @@ type DragFoldTool(workspace: IWorkspace) =
         member _.OnDeactivated() = ()
 
     interface IClickTool with
-        member _.OnClick(target, modifier) =
-            if modifier.HasFlag(OperationModifier.RightButton) then
+        member this.OnClick(target, modifier) =
+            if modifier.HasRightButton then
                 match target.Target with
                 | DisplayTarget.Crease(crease) ->
-                    let dynamicPoint = paper.SelectedPoints.Value |> Array.tryHead
-                    if modifier.HasFlag(OperationModifier.Ctrl)
-                    then FoldBack.foldBackFirst workspace crease.Line dynamicPoint []
-                    else FoldBack.foldBack workspace crease.Line dynamicPoint
+                    this.Fold({
+                        Method =
+                            Axiom1(fst this.Selection,
+                                OprPoint(crease.Point1, target.Layer.Index),
+                                OprPoint(crease.Point2, target.Layer.Index))
+                        CreaseType = CreaseType.ValleyFold
+                        IsFrontOnly = modifier.HasCtrl
+                    })
                 | _ -> ()
             else
-                let clearOther = not (modifier.HasFlag(OperationModifier.Shift))
+                let clearOther = not modifier.HasShift
                 match target.Target with
                 | DisplayTarget.Point(point) ->
-                    paper.SelectedPoints .<-
-                        if paper.IsSelected(point) then array.Empty() else [| point |]
+                    if paper.IsSelected(point) then
+                        paper.SelectedPoints .<- array.Empty()
+                    else
+                        paper.SelectedPoints .<- [| point |]
+                        selectedPointIndex <- target.Layer.Index
                     if clearOther then
                         paper.SelectedCreases .<- array.Empty()
                         paper.SelectedEdges .<- array.Empty()
                 | DisplayTarget.Crease(crease) ->
-                    paper.SelectedCreases .<-
-                        if paper.IsSelected(crease) then array.Empty() else [| crease |]
+                    if paper.IsSelected(crease) then
+                        paper.SelectedCreases .<- array.Empty()
+                    else
+                        paper.SelectedCreases .<- [| crease |]
+                        selectedLineIndex <- target.Layer.Index
                     paper.SelectedEdges .<- array.Empty()
                     if clearOther then
                         paper.SelectedPoints .<- array.Empty()
                 | DisplayTarget.Edge(edge) ->
+                    if paper.IsSelected(edge) then
+                        paper.SelectedEdges .<- array.Empty()
+                    else
+                        paper.SelectedEdges .<- [| edge |]
+                        selectedLineIndex <- target.Layer.Index
                     paper.SelectedCreases .<- array.Empty()
-                    paper.SelectedEdges .<-
-                        if paper.IsSelected(edge) then array.Empty() else [| edge |]
                     if clearOther then
                         paper.SelectedPoints .<- array.Empty()
                 | _ ->
@@ -77,27 +109,15 @@ type DragFoldTool(workspace: IWorkspace) =
             | _ -> false
 
         member this.DragEnter(source, target, modifier) =
-            let opr = getOperation paper source target modifier
-            let lines, chosen =
-                match opr with
-                | NoOperation ->
-                    getLines (getOperation paper source target (modifier ||| OperationModifier.Alt)),
-                    None
-                | _ ->
-                    let lines = getLines opr
-                    lines, chooseLine lines opr
-            match chosen with
-            | Some(c) ->
-                let targetLayers =
-                    if modifier.HasFlag(OperationModifier.Ctrl) then
-                        FoldBack.getTargetLayers workspace c (this.GetSourcePoint(opr, c)) [source; target] :> seq<_>
-                    else
-                        paper.Layers :> seq<_>
-                instruction.SetLines(targetLayers, lines, chosen)
-                instruction.SetArrow(c, opr, modifier.HasFlag(OperationModifier.Shift))
-            | None ->
-                instruction.SetLines(paper.Layers, lines, chosen)
-                instruction.ResetArrows()
+            let selectedPoint, selectedLine = this.Selection
+            let opr, previewOnly =
+                match source.Target, target.Target with
+                | DisplayTarget.Layer _, _
+                | _, DisplayTarget.Layer _ when not modifier.HasAlt ->
+                    let modifier = modifier ||| OperationModifier.Alt
+                    getFoldOperation paper selectedPoint selectedLine source target modifier, true
+                | _ -> getFoldOperation paper selectedPoint selectedLine source target modifier, false
+            instruction.Set(opr, previewOnly)
             match target with
             | FreePoint true _ | LineOrEdge _ -> true
             | _ -> false
@@ -108,23 +128,13 @@ type DragFoldTool(workspace: IWorkspace) =
             | FreePoint true _ | LineOrEdge _ -> true
             | _ -> false
 
-        member this.DragOver(source, target, modifier) = (this :> IDragTool).DragEnter(source, target, modifier)
+        member this.DragOver(source, target, modifier) =
+            (this :> IDragTool).DragEnter(source, target, modifier)
 
         member this.Drop(source, target, modifier) =
-            let opr = getOperation paper source target modifier
-            match chooseLine (getLines opr) opr with
-            | Some(line) ->
-                use __ = paper.BeginChange()
-                match modifier.HasFlag(OperationModifier.Shift), modifier.HasFlag(OperationModifier.Ctrl) with
-                | false, false -> this.MakeCrease(line)
-                | false, true ->
-                    for l in FoldBack.getTargetLayers workspace line
-                        (this.GetSourcePoint(opr, line)) [source; target] do
-                        l.AddCreases([ line ])
-                | true, false -> FoldBack.foldBack workspace line (this.GetSourcePoint(opr, line))
-                | true, true -> FoldBack.foldBackFirst workspace line (this.GetSourcePoint(opr, line)) [source; target]
-            | None -> ()
-            instruction.ResetAll()
+            let selectedPoint, selectedLine = this.Selection
+            getFoldOperation paper selectedPoint selectedLine source target modifier
+            |> this.Fold
 
     interface IFoldingInstructionTool with
         member _.FoldingInstruction = instruction.Instruction

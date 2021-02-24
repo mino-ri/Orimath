@@ -36,6 +36,7 @@ and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Lay
             parent.PushUndoOpr(PointRemoving(layerIndex, index, asList points))
         | _ -> ())
 
+    member _.Index = layerIndex
     member _.Edges = init.Edges
     member _.Creases = layerCreases :> IReactiveCollection<_>
     member _.Points = layerPoints :> IReactiveCollection<_>
@@ -100,6 +101,7 @@ and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Lay
         member _.Matrix = init.Matrix
 
     interface ILayerModel with
+        member this.Index = this.Index
         member this.Creases = this.Creases
         member this.Points = this.Points
         member this.GetSnapShot() = upcast (this.GetSnapShot())

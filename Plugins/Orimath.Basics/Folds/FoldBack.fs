@@ -15,7 +15,8 @@ type private LayerSource =
 
 [<ReferenceEquality; NoComparison>]
 type private SplittedLayer =
-    { Original: ILayerModel
+    { Index: int
+      Original: ILayer
       Static: LayerSource option
       Dynamic: LayerSource option
       mutable IsTarget: bool }
@@ -31,28 +32,6 @@ let private chooseUnzip (f: 'T -> 'U1 option * 'U2 option) (source: seq<'T>) =
         Option.iter leftResult.Add left
         Option.iter rightResult.Add right
     leftResult, rightResult
-
-let getGeneralDynamicPoint (paper: IPaper) (foldLine: Line) =
-    option {
-        let! first, last = Paper.clipBoundBy paper foldLine
-        let middle = (first + last) / 2.0
-        let! point1, point2 = Paper.clipBoundBy paper (Fold.axiom4 foldLine middle)
-        let point = if middle.GetDistance(point1) <= middle.GetDistance(point2) then point1 else point2
-        if not (Line.contains point foldLine) then
-            return point
-    }
-
-let getPerpendicularDynamicPoint (line: LineSegment) (foldLine: Line) (isEdge: bool) =
-    option {
-        if not isEdge then
-            let p1 = Line.signedDist line.Point1 foldLine
-            let p2 = Line.signedDist line.Point2 foldLine
-            if sign p1 <> sign p2 then
-                let p = if abs p1 < abs p2 then line.Point1 else line.Point2
-                let reflected = Point.reflectBy foldLine p
-                if p <>~ reflected then
-                    return p
-    }
 
 let private splitPoints foldLine layer =
     let positivePoints = ResizeArray()
@@ -224,7 +203,7 @@ let private isContacted originalEdges1 originalEdges2 =
 
 let isPositiveStatic foldLine dynamicPoint =
     match dynamicPoint with
-    | Some(point) -> not (Line.isPositiveSide point foldLine)
+    | Some(OprPoint(point, _)) -> not (Line.isPositiveSide point foldLine)
     | None -> Line.isPositiveSide center foldLine
 
 let private clusterLayers (layers: SplittedLayer[]) =
@@ -249,32 +228,31 @@ let foldBack (workspace: IWorkspace) line dynamicPoint =
         workspace.Paper.Layers |> chooseUnzip (splitLayer workspace line positiveStatic)
     workspace.Paper.Clear(workspace.CreatePaper(Seq.append staticLayers (Seq.rev dynamicLayers)))
 
-let private getTargetLayersCore (paper: IPaperModel) foldLine dynamicPoint targets =
+let private getTargetLayersCore (paper: IPaper) foldLine method =
+    let hintPoints = FoldOperation.getSourcePoint method
     let layers =
         paper.Layers
-        |> Seq.map (fun layer ->
+        |> Seq.mapi (fun index layer ->
             let positive, negative = splitLayerCore foldLine layer
-            if isPositiveStatic foldLine dynamicPoint
-            then { Original = layer; Static = positive; Dynamic = negative; IsTarget = false }
-            else { Original = layer; Static = negative; Dynamic = positive; IsTarget = false })
+            if isPositiveStatic foldLine (List.tryHead hintPoints)
+            then { Index = index; Original = layer; Static = positive; Dynamic = negative; IsTarget = false }
+            else { Index = index; Original = layer; Static = negative; Dynamic = positive; IsTarget = false })
         |> Seq.rev
         |> Seq.toArray
-    let getLayer t = layers |> Seq.find (fun sl -> sl.Original = t.Layer)
-    let contains (layer: ILayerModel) (target: OperationTarget) =
-        match target.Target with
-        | DisplayTarget.Edge(e) -> Layer.clipSeg e.Segment layer |> Seq.isEmpty |> not
-        | DisplayTarget.Crease(c) -> Layer.clipCrease c layer |> Seq.isEmpty |> not
-        | DisplayTarget.Point(p) -> Layer.containsPoint p layer
-        | _ -> false
     let firstLayers =
-        match targets |> List.map getLayer |> List.filter (fun l -> l.Dynamic.IsSome) with
+        [
+            for OprPoint(_, index) in hintPoints do
+            let l = layers |> Seq.find (fun sl -> sl.Index = index)
+            if l.Dynamic.IsSome then l
+        ]
+        |> function
         | [] ->
             layers
             |> Array.tryFind (fun item -> item.Static.IsSome && item.Dynamic.IsSome)
             |> Option.toList
         | [ t ] -> [ t ]
         | ts ->
-            match ts |> Seq.tryFind (fun t -> List.forall (contains t.Original) targets) with
+            match ts |> Seq.tryFind (fun t -> FoldOperation.isContained t.Original method) with
             | Some(t) -> [ t ]
             | None -> ts
     if firstLayers.IsEmpty then
@@ -305,15 +283,15 @@ let private getTargetLayersCore (paper: IPaperModel) foldLine dynamicPoint targe
         setDynamicLayers firstLayers
         Some(layers)
 
-let foldBackFirst (workspace: IWorkspace) foldLine dynamicPoint targets =
-    match getTargetLayersCore workspace.Paper foldLine dynamicPoint targets with
+let foldBackFirst (workspace: IWorkspace) foldLine method =
+    match getTargetLayersCore workspace.Paper foldLine method with
     | Some(layers) ->
         let staticLaters =
             layers
             |> Seq.choose (fun l ->
                 if l.IsTarget
                 then Option.map (createLayer workspace foldLine l.Original false) l.Static
-                else Some(upcast l.Original))
+                else Some(l.Original))
         let dynamicLayers =
             layers
             |> Seq.choose (fun l ->
@@ -323,7 +301,7 @@ let foldBackFirst (workspace: IWorkspace) foldLine dynamicPoint targets =
         workspace.Paper.Clear(workspace.CreatePaper(Seq.append (Seq.rev staticLaters) dynamicLayers))
     | None -> ()
 
-let getTargetLayers (workspace: IWorkspace) foldLine dynamicPoint targets =
-    match getTargetLayersCore workspace.Paper foldLine dynamicPoint targets with
+let getTargetLayers paper foldLine method =
+    match getTargetLayersCore paper foldLine method with
     | Some(ls) -> [| for s in ls do if s.IsTarget then s.Original |]
     | None -> array.Empty()

@@ -4,6 +4,7 @@ open ApplicativeProperty
 
 type ILayerModel =
     inherit ILayer
+    abstract member Index : int
     abstract member Creases : IReactiveCollection<Crease>
     abstract member Points : IReactiveCollection<Point>
 

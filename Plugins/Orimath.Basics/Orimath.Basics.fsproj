@@ -20,6 +20,7 @@
   
   <ItemGroup>
     <Compile Include="Internal.fs" />
+    <Compile Include="Folds\OperationTypes.fs" />
     <Compile Include="Folds\Fold.fs" />
     <Compile Include="Folds\FoldOperation.fs" />
     <Compile Include="Folds\FoldBack.fs" />
