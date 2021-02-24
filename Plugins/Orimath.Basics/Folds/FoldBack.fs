@@ -86,8 +86,8 @@ let private splitEdges foldLine layer =
                     (LineSegment.FromPoints(b, a))
                     (LineSegment.FromPoints(a, b))
             | None -> None, None
-        positiveEdge |> Option.iter (fun e -> positiveEdges.Add({ Segment = e; Inner = true }))
-        negativeEdge |> Option.iter (fun e -> negativeEdges.Add({ Segment = e; Inner = true }))
+        iter { let! e = positiveEdge in positiveEdges.Add({ Segment = e; Inner = true }) }
+        iter { let! e = negativeEdge in negativeEdges.Add({ Segment = e; Inner = true }) }
     for edge in layer.Edges do
         match splitEdge foldLine edge with
         | Some(positive), None ->
@@ -208,18 +208,20 @@ let isPositiveStatic foldLine dynamicPoint =
 
 let private clusterLayers (layers: SplittedLayer[]) =
     let clusteredLayers = ResizeArray<SplittedLayer list>()
-    for layer in layers do
-        layer.Dynamic |> Option.iter (fun dl ->
-            clusteredLayers
-            |> Seq.tryFindIndex (fun cluster ->
-                exists {
-                    let! cl = cluster
-                    let! c = cl.Dynamic
-                    return isContacted dl.OriginalEdges c.OriginalEdges
-                })
-            |> function
-            | Some(i) -> clusteredLayers.[i] <- layer :: clusteredLayers.[i]
-            | None -> clusteredLayers.Add([layer]))
+    iter {
+        let! layer = layers
+        let! dl = layer.Dynamic
+        clusteredLayers
+        |> Seq.tryFindIndex (fun cluster ->
+            exists {
+                let! cl = cluster
+                let! c = cl.Dynamic
+                return isContacted dl.OriginalEdges c.OriginalEdges
+            })
+        |> function
+        | Some(i) -> clusteredLayers.[i] <- layer :: clusteredLayers.[i]
+        | None -> clusteredLayers.Add([ layer ])
+    }
     clusteredLayers
 
 let foldBack (workspace: IWorkspace) line dynamicPoint =

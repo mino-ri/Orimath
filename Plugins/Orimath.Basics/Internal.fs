@@ -20,6 +20,8 @@ let transform (workspace: IWorkspace) (matrix: Matrix) reverse =
                 layer.Matrix * matrix))
     workspace.Paper.Clear(workspace.CreatePaper(if reverse then Seq.rev newLayers else newLayers))
 
+let swapWhen cond a b = if cond then b, a else a, b
+
 type ExistsBuilder() =
     member inline _.Bind(m, f) = Option.exists f m
     member inline _.Bind(m, f) = List.exists f m
@@ -30,12 +32,24 @@ type ExistsBuilder() =
 
 let exists = ExistsBuilder()
 
-let swapWhen cond a b = if cond then b, a else a, b
+type IterBuilder() =
+    member inline _.Bind(m, f) = Option.iter f m
+    member inline _.Bind(m, f) = List.iter f m
+    member inline _.Bind(m, f) = Array.iter f m
+    member inline _.Bind(m, f) = Seq.iter f m
+    member inline _.Zero() = ()
+
+let iter = IterBuilder()
 
 type OptionBuilder() =
     member inline _.Bind(m, f) = Option.bind f m
     member inline _.Zero() = None
+    member inline _.Yield(x) = Some(x)
+    member inline _.YieldFrom(x: _ option) = x
     member inline _.Return(x) = Some(x)
     member inline _.ReturnFrom(x: _ option) = x
+    member inline _.Delay(f: unit -> _ option) = f
+    member inline _.Run(f: unit -> _ option) = f()
+    member inline _.Combine(a, b) = Option.orElseWith b a
 
 let option = OptionBuilder()

@@ -64,22 +64,20 @@ let getFoldMethod paper selectedPoint selectedLine source target passFold free =
     if passFold then
         match source, target with
         | FreePoint free (point1), FreePoint free (point2) ->
-            let hintPoint =
-                selectedPoint
-                |> Option.orElseWith (fun () -> option {
-                    let! foldLine = Fold.axiom1 point1.Point point2.Point
-                    return! getGeneralDynamicPoint paper foldLine
-                })
+            let hintPoint = option {
+                yield! selectedPoint
+                let! foldLine = Fold.axiom1 point1.Point point2.Point
+                yield! getGeneralDynamicPoint paper foldLine
+            }
             Axiom1(hintPoint, point1, point2)
         | FreePoint free (point), LineOrEdge(line)
         | LineOrEdge(line), FreePoint free (point) ->
-            let hintPoint =
-                selectedPoint
-                |> Option.orElseWith (fun () ->
-                    let foldLine = Fold.axiom4 line.Line point.Point
-                    getPerpendicularDynamicPoint line foldLine
-                    |> Option.orElseWith (fun () ->
-                        getGeneralDynamicPoint paper foldLine))
+            let hintPoint = option {
+                yield! selectedPoint
+                let foldLine = Fold.axiom4 line.Line point.Point
+                yield! getPerpendicularDynamicPoint line foldLine
+                yield! getGeneralDynamicPoint paper foldLine
+            }
             Axiom4(hintPoint, line, point)
         | _ -> NoOperation
     else
