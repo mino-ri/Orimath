@@ -12,16 +12,17 @@ type PaperModel internal () as this =
     let selectedCreases = createArrayProp<Crease>()
     let layerModels = ReactiveCollection<ILayerModel>()
     let undoStack = UndoStack()
-
+    let snapShotLayers layers = [for ly in layers -> Layer.snapShot ly]
+    let castSeq layers = layers :> seq<Layer> :?> seq<ILayer>
     do layerModels.Add(function
         | CollectionChange.Add(index, layers) ->
-            undoStack.PushUndoOpr(LayerAddition(index, asList layers))
+            undoStack.PushUndoOpr(LayerAddition(index, snapShotLayers layers))
         | CollectionChange.Remove(index, layers) ->
-            undoStack.PushUndoOpr(LayerRemoving(index, asList layers))
+            undoStack.PushUndoOpr(LayerRemoving(index, snapShotLayers layers))
         | CollectionChange.Replace(index, oldLayer, newLayer) ->
-            undoStack.PushUndoOpr(LayerReplace(index, oldLayer, newLayer))
-        | CollectionChange.Reset(odlLayers, newLayers) ->
-            undoStack.PushUndoOpr(Clear(asList odlLayers, asList newLayers)))
+            undoStack.PushUndoOpr(LayerReplace(index, Layer.snapShot oldLayer, Layer.snapShot newLayer))
+        | CollectionChange.Reset(oldLayers, newLayers) ->
+            undoStack.PushUndoOpr(Clear(snapShotLayers oldLayers, snapShotLayers newLayers)))
     do undoStack.OnUndo.Add(this.Undo)
     do undoStack.OnRedo.Add(this.Redo)
 
@@ -30,12 +31,6 @@ type PaperModel internal () as this =
     member _.SelectedEdges = selectedEdges
     member _.SelectedPoints = selectedPoints
     member _.SelectedCreases = selectedCreases
-
-    member _.GetSnapShot() =
-        layerModels
-        |> Seq.map (fun lm -> lm.GetSnapShot())
-        |> Paper.Create
-        :> IPaper
 
     member _.ResetSelection() =
         selectedLayers .<- array.Empty()
@@ -47,10 +42,10 @@ type PaperModel internal () as this =
         this.ResetSelection()
         for i = oprBlock.Operations.Length - 1 downto 0 do
             match oprBlock.Operations.[i] with
-            | Clear(oldLayers, _) -> this.ClearRaw(oldLayers)
+            | Clear(oldLayers, _) -> this.Clear(castSeq oldLayers)
             | LayerAddition(_, layers) -> this.RemoveLayers(layers.Length)
-            | LayerRemoving(_, layers) -> this.AddLayersRaw(layers)
-            | LayerReplace(index, oldLayer, _) -> this.ReplaceLayerRaw(index, oldLayer)
+            | LayerRemoving(_, layers) -> this.AddLayers(castSeq layers)
+            | LayerReplace(index, oldLayer, _) -> this.ReplaceLayer(index, oldLayer)
             | LineAddition(layerIndex, _, creases) ->
                 layerModels.[layerIndex].RemoveCreases(creases.Length)
             | LineRemoving(layerIndex, _, creases) ->
@@ -64,10 +59,10 @@ type PaperModel internal () as this =
         this.ResetSelection()
         for opr in oprBlock.Operations do
             match opr with
-            | Clear(_, newLayers) -> this.ClearRaw(newLayers)
-            | LayerAddition(_, layers) -> this.AddLayersRaw(layers)
+            | Clear(_, newLayers) -> this.Clear(castSeq newLayers)
+            | LayerAddition(_, layers) -> this.AddLayers(castSeq layers)
             | LayerRemoving(_, layers) -> this.RemoveLayers(layers.Length)
-            | LayerReplace(index, _, newLayer) -> this.ReplaceLayerRaw(index, newLayer)
+            | LayerReplace(index, _, newLayer) -> this.ReplaceLayer(index, newLayer)
             | LineAddition(layerIndex, _, creases) ->
                 layerModels.[layerIndex].AddCreasesRaw(creases)
             | LineRemoving(layerIndex, _, creases) ->
@@ -78,7 +73,7 @@ type PaperModel internal () as this =
                 layerModels.[layerIndex].RemovePoints(points.Length)
 
     member this.BeginChange(tag) =
-        undoStack.BeginChange(this.GetSnapShot(), tag)
+        undoStack.BeginChange(Paper.snapShot this, tag)
         
     member this.TryBeginChange(tag: obj) =
         if undoStack.ChangeBlockDeclared || undoStack.ChangeBlockDisabled
@@ -89,18 +84,20 @@ type PaperModel internal () as this =
         use __ = this.TryBeginChange(null)
         layerModels.Reset(layers)
 
+    member private this.Clear(layers: seq<ILayer>) =
+        layers
+        |> Seq.mapi (fun index ly -> LayerModel(this, index, Layer.snapShot ly) :> ILayerModel)
+        |> Seq.toList
+        |> this.ClearRaw
+
     member this.Clear(paper: IPaper) =
         this.ResetSelection()
         use __ = this.TryBeginChange(null)
-        let layers =
-            paper.Layers
-            |> Seq.mapi (fun index ly -> LayerModel(this, index, Layer.AsLayer(ly)) :> ILayerModel)
-            |> Seq.toList
-        this.ClearRaw(layers)
+        this.Clear(paper.Layers)
 
     member this.Clear() =
         use __ = undoStack.DisableChangeBlock()
-        this.Clear(Paper.FromSize(1.0, 1.0))
+        this.Clear(Paper.fromSize 1.0 1.0)
         undoStack.ClearUndoStack()
 
     member private this.AddLayersRaw(layers) =
@@ -112,7 +109,7 @@ type PaperModel internal () as this =
         let layers =
             layers
             |> Seq.mapi (fun index ly ->
-                LayerModel(this, layerModels.Count + index, Layer.AsLayer(ly)) :> ILayerModel)
+                LayerModel(this, layerModels.Count + index, Layer.snapShot ly) :> ILayerModel)
             |> Seq.toList
         this.AddLayersRaw(layers)
 
@@ -126,7 +123,7 @@ type PaperModel internal () as this =
         layerModels.Replace(index, newLayer)
 
     member this.ReplaceLayer(index: int, newLayer: ILayer) =
-        this.ReplaceLayerRaw(index, LayerModel(this, index, Layer.AsLayer(newLayer)))
+        this.ReplaceLayerRaw(index, LayerModel(this, index, Layer.snapShot newLayer))
 
     interface IPaper with
         member _.Layers = layerModels :> IReadOnlyList<ILayerModel> :?> IReadOnlyList<ILayer>
@@ -141,7 +138,6 @@ type PaperModel internal () as this =
         member this.SelectedPoints = upcast this.SelectedPoints
         member this.SelectedCreases = upcast this.SelectedCreases
 
-        member this.GetSnapShot() = this.GetSnapShot()
         member _.Undo() = undoStack.Undo()
         member _.Redo() = undoStack.Redo()
         member _.UndoSnapShots = undoStack.UndoTags

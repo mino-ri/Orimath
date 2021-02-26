@@ -4,10 +4,10 @@ open Orimath.Plugins
 open ApplicativeProperty
 
 type internal PaperOpr =
-    | Clear of before: ILayerModel list * after: ILayerModel list
-    | LayerAddition of index: int * layers: ILayerModel list
-    | LayerRemoving of index: int * layers: ILayerModel list
-    | LayerReplace of layerIndex: int * before: ILayerModel * after: ILayerModel
+    | Clear of before: Layer list * after: Layer list
+    | LayerAddition of index: int * layers: Layer list
+    | LayerRemoving of index: int * layers: Layer list
+    | LayerReplace of layerIndex: int * before: Layer * after: Layer
     | LineAddition of layerIndex: int * index: int * lines: Crease list
     | LineRemoving of layerIndex: int * index: int * lines: Crease list
     | PointAddition of layerIndex: int * index: int * points: Point list
@@ -19,7 +19,8 @@ type internal IInternalPaperModel =
     abstract member PushUndoOpr : opr: PaperOpr -> unit
     abstract member TryBeginChange : tag: obj -> IDisposable
 
-and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Layer) =
+and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: ILayer) =
+    let edges = asList init.Edges
     let layerCreases = ReactiveCollection<Crease>(init.Creases)
     let layerPoints = ReactiveCollection<Point>(init.Points)
     
@@ -37,15 +38,14 @@ and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Lay
         | _ -> ())
 
     member _.Index = layerIndex
-    member _.Edges = init.Edges
+    member _.Edges = edges
     member _.Creases = layerCreases :> IReactiveCollection<_>
     member _.Points = layerPoints :> IReactiveCollection<_>
     member _.LayerType = init.LayerType
 
     member _.GetSnapShot() =
-        Layer.Create(
-            init.Edges, layerCreases, layerPoints,
-            init.LayerType, init.OriginalEdges, init.Matrix)
+        Layer.create edges layerCreases layerPoints
+            init.LayerType init.OriginalEdges init.Matrix
 
     member this.AddLineCore(segs: seq<Crease>, addCross) =
         let creases = [ for l in segs do if not (Layer.hasSeg l.Segment this) then l ]
@@ -93,18 +93,17 @@ and LayerModel internal (parent: IInternalPaperModel, layerIndex: int, init: Lay
             layerPoints.RemoveTail(count)
 
     interface ILayer with
-        member this.Edges = upcast this.Edges
+        member _.Edges = upcast edges
         member this.Creases = upcast this.Creases
         member this.Points = upcast this.Points
         member _.LayerType = init.LayerType
-        member _.OriginalEdges = upcast init.OriginalEdges
+        member _.OriginalEdges = init.OriginalEdges
         member _.Matrix = init.Matrix
 
     interface ILayerModel with
         member this.Index = this.Index
         member this.Creases = this.Creases
         member this.Points = this.Points
-        member this.GetSnapShot() = upcast (this.GetSnapShot())
         member this.AddCreases(lines: seq<Line>) = this.AddCreases(lines)
         member this.AddCreases(segs: seq<LineSegment>) = this.AddCreases(segs)
         member this.AddCreases(creases: seq<Crease>) = this.AddCreases(creases)

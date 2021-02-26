@@ -51,12 +51,12 @@ let private splitLine foldLine (target: LineSegment) =
     | -1, -1 | -1, 0 | 0, -1 -> None, Some(target)
     | 1, -1 ->
         let cross = Line.cross foldLine target.Line |> Option.get
-        Some(LineSegment.FromPoints(target.Point1, cross).Value),
-        Some(LineSegment.FromPoints(cross, target.Point2).Value)
+        LineSegment.FromPoints(target.Point1, cross),
+        LineSegment.FromPoints(cross, target.Point2)
     | -1, 1 ->
         let cross = Line.cross foldLine target.Line |> Option.get
-        Some(LineSegment.FromPoints(cross, target.Point2).Value),
-        Some(LineSegment.FromPoints(target.Point1, cross).Value)
+        LineSegment.FromPoints(cross, target.Point2),
+        LineSegment.FromPoints(target.Point1, cross)
     | _ -> None, None
 
 let private splitCrease foldLine (target: Crease) =
@@ -167,32 +167,34 @@ let private splitLayerCore foldLine layer =
             None
     positive, negative
 
-let private createLayer (workspace: IWorkspace) foldLine (layer: ILayer) turnOver source =
+let private createLayer foldLine (layer: ILayer) turnOver source =
     if not turnOver then
-        workspace.CreateLayer(
-            source.Edges,
-            source.Creases,
-            source.Points,
-            layer.LayerType,
-            source.OriginalEdges,
-            layer.Matrix)
+        Layer.create
+            source.Edges
+            source.Creases
+            source.Points
+            layer.LayerType
+            source.OriginalEdges
+            layer.Matrix
+        :> ILayer
     else
-        workspace.CreateLayer(
-            source.Edges |> Seq.map (Edge.reflectBy foldLine),
-            source.Creases |> Seq.map (Crease.reflectBy foldLine),
-            source.Points |> Seq.map (Point.reflectBy foldLine),
-            LayerType.turnOver layer.LayerType,
-            source.OriginalEdges,
-            layer.Matrix * Matrix.OfReflection(foldLine))
+        Layer.create
+            (source.Edges |> Seq.map (Edge.reflectBy foldLine))
+            (source.Creases |> Seq.map (Crease.reflectBy foldLine))
+            (source.Points |> Seq.map (Point.reflectBy foldLine))
+            (LayerType.turnOver layer.LayerType)
+            source.OriginalEdges
+            (layer.Matrix * Matrix.OfReflection(foldLine))
+        :> ILayer
 
 // returns static-side, dynamic-side
-let private splitLayer workspace foldLine isPositiveStatic layer =
+let private splitLayer foldLine isPositiveStatic layer =
     let positive, negative = splitLayerCore foldLine layer
     if isPositiveStatic
-    then Option.map (createLayer workspace foldLine layer false) positive,
-         Option.map (createLayer workspace foldLine layer true) negative
-    else Option.map (createLayer workspace foldLine layer false) negative,
-         Option.map (createLayer workspace foldLine layer true) positive
+    then Option.map (createLayer foldLine layer false) positive,
+         Option.map (createLayer foldLine layer true) negative
+    else Option.map (createLayer foldLine layer false) negative,
+         Option.map (createLayer foldLine layer true) positive
 
 let private isContacted originalEdges1 originalEdges2 =
     exists {
@@ -227,8 +229,8 @@ let private clusterLayers (layers: SplittedLayer[]) =
 let foldBack (workspace: IWorkspace) line dynamicPoint =
     let positiveStatic = isPositiveStatic line dynamicPoint
     let staticLayers, dynamicLayers =
-        workspace.Paper.Layers |> chooseUnzip (splitLayer workspace line positiveStatic)
-    workspace.Paper.Clear(workspace.CreatePaper(Seq.append staticLayers (Seq.rev dynamicLayers)))
+        workspace.Paper.Layers |> chooseUnzip (splitLayer line positiveStatic)
+    workspace.ClearPaper(Seq.append staticLayers (Seq.rev dynamicLayers))
 
 let private getTargetLayersCore (paper: IPaper) foldLine method =
     let hintPoints = FoldOperation.getSourcePoint method
@@ -292,15 +294,15 @@ let foldBackFirst (workspace: IWorkspace) foldLine method =
             layers
             |> Seq.choose (fun l ->
                 if l.IsTarget
-                then Option.map (createLayer workspace foldLine l.Original false) l.Static
+                then Option.map (createLayer foldLine l.Original false) l.Static
                 else Some(l.Original))
         let dynamicLayers =
             layers
             |> Seq.choose (fun l ->
                 if l.IsTarget
-                then Option.map (createLayer workspace foldLine l.Original true) l.Dynamic
+                then Option.map (createLayer foldLine l.Original true) l.Dynamic
                 else None)
-        workspace.Paper.Clear(workspace.CreatePaper(Seq.append (Seq.rev staticLaters) dynamicLayers))
+        workspace.ClearPaper(Seq.append (Seq.rev staticLaters) dynamicLayers)
     | None -> ()
 
 let getTargetLayers paper foldLine method =

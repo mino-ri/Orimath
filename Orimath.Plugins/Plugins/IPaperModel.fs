@@ -14,12 +14,11 @@ type IPaperModel =
     abstract member SelectedPoints : IProp<Point[]>
     abstract member SelectedCreases : IProp<Crease[]>
 
-    abstract member GetSnapShot : unit -> IPaper
     abstract member Undo : unit -> unit
     abstract member Redo : unit -> unit
     abstract member BeginChange : tag: obj -> IDisposable
-    abstract member UndoSnapShots : seq<IPaper * obj>
-    abstract member RedoSnapShots : seq<IPaper * obj>
+    abstract member UndoSnapShots : seq<Paper * obj>
+    abstract member RedoSnapShots : seq<Paper * obj>
     abstract member Clear : unit -> unit
     abstract member Clear : paper: IPaper -> unit
     abstract member ClearUndoStack : unit -> unit

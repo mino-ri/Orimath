@@ -1,6 +1,5 @@
 ﻿namespace Orimath.Plugins
 open System.Collections.Generic
-open Orimath.Core
 open ApplicativeProperty
 
 type IWorkspace =
@@ -10,11 +9,4 @@ type IWorkspace =
     abstract member CurrentTool : IProp<ITool>
     abstract member AddTool : tool: ITool -> unit
     abstract member AddEffect : effect: IEffect -> unit
-
     abstract member Initialize : unit -> unit
-    abstract member CreatePaper : layers: seq<ILayer> -> IPaper
-    abstract member CreateLayer :
-        edges: seq<Edge> * creases: seq<Crease> * points: seq<Point> *
-        layerType: LayerType * originalEdges: seq<Edge> * matrix: Matrix -> ILayer
-    abstract member CreateLayerFromSize : width: float * height: float * layerType: LayerType -> ILayer
-    abstract member CreateLayerFromPolygon : vertexes: seq<Point> * layerType: LayerType -> ILayer

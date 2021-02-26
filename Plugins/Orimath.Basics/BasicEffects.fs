@@ -106,8 +106,8 @@ type OpenAllEffect(workspace: IWorkspace) =
                     currentPoint <- if target.Point1 =~ currentPoint then target.Point2 else target.Point1
                     points.Add(currentPoint)
                     edges.RemoveAt(index)
-                workspace.CreateLayerFromPolygon(points, LayerType.BackSide)
-            workspace.Paper.Clear(workspace.CreatePaper([joinedLayer]))
+                Layer.fromPolygon points LayerType.BackSide
+            workspace.ClearPaper([joinedLayer])
             let lines = 
                 seq {
                     for layer in layers do

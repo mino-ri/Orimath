@@ -2,13 +2,15 @@
 open System.Runtime.CompilerServices
 open NearlyEquatable
 
-type LineSegment internal (line: Line, p1: Point, p2: Point) =
-    member _.Line = line
-    member _.Point1 = p1
-    member _.Point2 = p2
-    member _.Length = (p1 - p2).Norm
+type LineSegment = internal LineSegment of line: Line * p1: Point * p2: Point with
+    member this.Line = match this with LineSegment(line, _, _) -> line
+    member this.Point1 = match this with LineSegment(_, p1, _) -> p1
+    member this.Point2 = match this with LineSegment(_, _, p2) -> p2
+    member this.Length = (this.Point1 - this.Point2).Norm
 
-    override _.ToString() = System.String.Format("{0}, {1}", p1, p2)
+    override this.ToString() =
+        match this with
+        | LineSegment(_, p1, p2) -> System.String.Format("{0}, {1}", p1, p2)
 
     interface INearlyEquatable<LineSegment> with
         member this.NearlyEquals(other, margin) =

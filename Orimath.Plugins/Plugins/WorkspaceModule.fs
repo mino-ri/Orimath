@@ -1,6 +1,7 @@
 ﻿[<AutoOpen>]
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Orimath.Plugins.Workspace
+open Orimath.Core
 
 let private tryCastTool<'T when 'T :> ITool> (o: ITool) =
     match o with
@@ -21,8 +22,7 @@ type IWorkspace with
 
     member ws.TryGetEffect() : #IEffect option = Seq.tryPick tryCastEffect ws.Effects
 
-    member ws.ClearPaper(layers) =
-        ws.Paper.Clear(ws.CreatePaper(layers))
+    member ws.ClearPaper(layers) = ws.Paper.Clear(Paper.create layers)
 
 type OperationModifier with
     member m.IsNone = m = OperationModifier.None

@@ -5,7 +5,30 @@ type IPaper =
     abstract member Layers : IReadOnlyList<ILayer>
 
 
+type Paper = internal Paper of layers: Layer list
+    with
+    member this.Layers = match this with Paper(layers) -> layers
+    interface IPaper with
+        member this.Layers =
+            match this with
+            | Paper(layer) -> layer :> IReadOnlyList<Layer> :?> IReadOnlyList<ILayer>
+
+
 module Paper =
+    let create (layers: seq<ILayer>) =
+        let layers = [ for l in layers -> Layer.snapShot l ]
+        if layers.Length < 1
+        then invalidArg (nameof(layers)) "少なくとも1つのレイヤーが必要です。"
+        else Paper(layers)
+
+    let fromSize width height =
+        Paper [ Layer.fromSize width height LayerType.BackSide ]
+
+    let snapShot (source: IPaper) =
+        match source with
+        | :? Paper as paper -> paper
+        | _ -> create source.Layers
+
     /// この紙の範囲内に収まるように、指定された直線をカットします。
     let clipBy (paper: IPaper) line =
         let mutable result = []

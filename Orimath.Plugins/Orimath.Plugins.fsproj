@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Core\InternalModule.fs" />
+    <Compile Include="Core\Internal.fs" />
     <Compile Include="Core\NearlyEquatable.fs" />
     <Compile Include="Core\Point.fs" />
     <Compile Include="Core\Line.fs" />

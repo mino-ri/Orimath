@@ -11,7 +11,7 @@ type Workspace() as this =
     let mutable initialized = false
     do currentTool
         |> Observable.pairwise
-        |> Observable.add(fun (newValue, oldValue) ->
+        |> Observable.add (fun (newValue, oldValue) ->
             oldValue.OnDeactivated()
             newValue.OnActivated())
 
@@ -41,12 +41,4 @@ type Workspace() as this =
         member this.Tools = this.Tools
         member this.Effects = this.Effects
         member this.CurrentTool = upcast this.CurrentTool
-
         member this.Initialize() = this.Initialize()
-        member _.CreatePaper(layers) = upcast Paper.Create(layers)
-        member _.CreateLayer(edges, lines, points, layerType, originalEdges, matrix) =
-            upcast Layer.Create(edges, lines, points, layerType, originalEdges, matrix)
-        member _.CreateLayerFromSize(width, height, layerType) =
-            upcast Layer.FromSize(width, height, layerType)
-        member _.CreateLayerFromPolygon(vertexes, layerType) =
-            upcast Layer.FromPolygon(vertexes, layerType)

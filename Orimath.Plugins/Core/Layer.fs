@@ -28,8 +28,92 @@ type ILayer =
     abstract member Matrix : Matrix
 
 
+type Layer =
+    internal
+    | Layer of edges: Edge list
+             * creases: Crease list
+             * points: Point list
+             * layerType: LayerType
+             * originalEdges: Edge list
+             * matrix: Matrix
+    member this.Edges = match this with Layer(edge, _, _, _, _, _) -> edge
+    member this.Creases = match this with Layer(_, crease, _, _, _, _) -> crease
+    member this.Points = match this with Layer(_, _, points, _, _, _) -> points
+    member this.LayerType = match this with Layer(_, _, _, layerType, _, _) -> layerType
+    member this.OriginalEdges = match this with Layer(_, _, _, _, originalEdges, _) -> originalEdges
+    member this.Matrix = match this with Layer(_, _, _, _, _, matrix) -> matrix
+    interface ILayer with
+        member this.Edges = upcast this.Edges
+        member this.Creases = upcast this.Creases
+        member this.Points = upcast this.Points
+        member this.LayerType = this.LayerType
+        member this.OriginalEdges = upcast this.OriginalEdges
+        member this.Matrix = this.Matrix
+
+
 [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
 module Layer =
+    /// 指定した要素をもつレイヤーを生成します。
+    let create edges creases points layerType originalEdges matrix =
+        let edges = asList edges
+        let creases = asList creases
+        let points = asList points
+        let originalEdges = asList originalEdges
+        let rec isValidEdge (head: Edge) (edges: Edge list) =
+            match edges with
+            | [ e ] -> e.Segment.Point2 =~ head.Segment.Point1
+            // 末尾最適化用に一応 if で分岐
+            | e1 :: ((e2 :: _) as tail) ->
+                if e1.Segment.Point2 <>~ e2.Segment.Point1 then false else isValidEdge head tail
+            | [] -> failwith "想定しない動作"
+        if edges.Length < 3 then
+            invalidArg (nameof edges) "多角形の辺は3以上でなければなりません。"
+        if not (isValidEdge edges.Head edges) then
+            invalidArg (nameof edges) "多角形の辺は閉じている必要があります。"
+        if originalEdges.Length < 3 then
+            invalidArg (nameof originalEdges) "多角形の辺は3以上でなければなりません。"
+        if not (isValidEdge originalEdges.Head originalEdges) then
+            invalidArg (nameof originalEdges) "多角形の辺は閉じている必要があります。"
+        // if not (lines |> List.forall(fun l -> LayerExtensions.ContainsCore(edges, l.Point1) &&
+        //     LayerExtensions.ContainsCore(edges, l.Point2))) then
+        //     invalidArg (nameof(lines)) "レイヤー内に含まれていない線分があります。"
+        // if not (points |> List.forall(fun p -> LayerExtensions.ContainsCore(edges, p))) then
+        //     invalidArg (nameof(points)) "レイヤー内に含まれていない点があります。"
+        Layer(edges, creases, points, layerType, originalEdges, matrix)
+
+    /// 指定した頂点を持つ多角形のレイヤーを生成します。
+    let fromPolygon (vertexes: seq<Point>) layerType =
+        let vertexes = asList vertexes
+        if vertexes.Length < 3 then
+            invalidArg (nameof vertexes) "多角形の頂点は3以上でなければなりません。"
+        let rec createEdges (head: Point) (points: Point list) (acm: Edge list) =
+            match points with
+            | [ p ] -> { Segment = LineSegment.FromPoints(head, p).Value; Inner = false } :: acm
+            | p1 :: ((p2 :: _) as tail) ->
+                createEdges head tail
+                    ({ Segment = LineSegment.FromPoints(p2, p1).Value; Inner = false } :: acm)
+            | [] -> acm
+        let edges = createEdges vertexes.Head vertexes []
+        Layer(edges, [], vertexes, layerType, edges, Matrix.Identity)
+
+    /// 指定した高さと幅を持つ長方形のレイヤーを生成します。
+    let fromSize width height layerType =
+        if width <= 0.0 then
+            invalidArg (nameof width) "紙の幅または高さを0以下にすることはできません。"
+        if height <= 0.0 then
+            invalidArg (nameof height) "紙の幅または高さを0以下にすることはできません。"
+        let p0 = { X = 0.5 - width / 2.0; Y = 0.5 - height / 2.0 }
+        let p1 = { X = 0.5 + width / 2.0; Y = 0.5 - height / 2.0 }
+        let p2 = { X = 0.5 + width / 2.0; Y = 0.5 + height / 2.0 }
+        let p3 = { X = 0.5 - width / 2.0; Y = 0.5 + height / 2.0 }
+        fromPolygon [ p0; p1; p2; p3 ] layerType
+
+    let snapShot (layer: ILayer) =
+        match layer with
+        | :? Layer as ly -> ly
+        | _ ->
+            Layer(asList layer.Edges, asList layer.Creases, asList layer.Points,
+                layer.LayerType, asList layer.OriginalEdges, layer.Matrix)
 
     /// このレイヤーの領域に指定した点が含まれているか判断します。
     let containsPoint point (layer: ILayer) = Edge.containsPoint point (asList layer.Edges)
@@ -115,10 +199,4 @@ module Layer =
 
     /// このレイヤーの OriginalEdges を辺として持ち、点・折線を持たないレイヤーを取得します。
     let original (layer: ILayer) =
-        { new ILayer with
-            member _.Edges = layer.OriginalEdges
-            member _.Creases = upcast []
-            member _.Points = upcast []
-            member _.LayerType = layer.LayerType
-            member _.OriginalEdges = layer.OriginalEdges
-            member _.Matrix = Matrix.Identity }
+        Layer(asList layer.OriginalEdges, [], [], layer.LayerType, asList layer.OriginalEdges, Matrix.Identity)

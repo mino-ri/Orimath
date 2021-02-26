@@ -16,8 +16,6 @@
 
   <ItemGroup>
     <Compile Include="Core\Internal.fs" />
-    <Compile Include="Core\Layer.fs" />
-    <Compile Include="Core\Paper.fs" />
     <Compile Include="Core\UndoStack.fs" />
     <Compile Include="Core\LayerModel.fs" />
     <Compile Include="Core\PaperModel.fs" />

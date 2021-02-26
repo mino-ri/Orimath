@@ -11,14 +11,15 @@ let transform (workspace: IWorkspace) (matrix: Matrix) reverse =
     let newLayers =
         workspace.Paper.Layers
         |> Seq.map (fun layer ->
-            workspace.CreateLayer(
-                layer.Edges |> Seq.map (fun e -> { e with Segment = e.Segment * matrix }),
-                layer.Creases |> Seq.map (fun c -> { c with Segment = c.Segment * matrix }),
-                layer.Points |> Seq.map (fun p -> p * matrix),
-                getLayerType layer.LayerType,
-                layer.OriginalEdges,
-                layer.Matrix * matrix))
-    workspace.Paper.Clear(workspace.CreatePaper(if reverse then Seq.rev newLayers else newLayers))
+            Layer.create
+                (layer.Edges |> Seq.map (fun e -> { e with Segment = e.Segment * matrix }))
+                (layer.Creases |> Seq.map (fun c -> { c with Segment = c.Segment * matrix }))
+                (layer.Points |> Seq.map (fun p -> p * matrix))
+                (getLayerType layer.LayerType)
+                layer.OriginalEdges
+                (layer.Matrix * matrix)
+            :> ILayer)
+    workspace.ClearPaper(if reverse then Seq.rev newLayers else newLayers)
 
 let swapWhen cond a b = if cond then b, a else a, b
 

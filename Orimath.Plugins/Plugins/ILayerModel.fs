@@ -8,7 +8,6 @@ type ILayerModel =
     abstract member Creases : IReactiveCollection<Crease>
     abstract member Points : IReactiveCollection<Point>
 
-    abstract member GetSnapShot : unit -> ILayer
     abstract member AddCreases : lines: seq<Line> -> unit
     abstract member AddCreases : lines: seq<LineSegment> -> unit
     abstract member AddCreases : lines: seq<Crease> -> unit
