@@ -5,7 +5,7 @@
              xmlns:vm="clr-namespace:Orimath.Basics.View.ViewModels;assembly=Orimath.Basics.View"
              xmlns:ctrl="clr-namespace:Orimath.Basics.View.Controls;assembly=Orimath.Basics.View"
              mc:Ignorable="d"
-             Margin="-136,0,0,0"
+             Margin="-136,0,0,18"
              VerticalContentAlignment="Bottom"
              d:DataContext="{d:DesignData Type={x:Type vm:CreasePatternViewModel}}">
     <UserControl.Resources>
