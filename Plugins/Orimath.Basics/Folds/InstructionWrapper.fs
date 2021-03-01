@@ -3,6 +3,7 @@ open Orimath.Core
 open Orimath.Core.NearlyEquatable
 open Orimath.Combination
 open ApplicativeProperty.PropOperators
+open Orimath.Basics.Internal
 open FoldOperation
 
 module internal Instruction =
@@ -69,10 +70,18 @@ module internal Instruction =
             |> Option.bind (fun point -> tryCreateReflectArrow point.Point center)
             |> Option.toArray,
             array.Empty()
-        | Axiom2(RawPoint(point1), RawPoint(point2)) -> [| createArrow point1 point2 center |], array.Empty()
+        | Axiom2(RawPoint(point1), RawPoint(point2)) ->
+            [| createArrow point1 point2 center |], array.Empty()
+        | Axiom2P(HintPoint(point2), RawPoint(point1), dir) ->
+            let pStart, pEnd = swapByDir dir point1 point2
+            [| createArrow pStart pEnd center |], array.Empty()
         | Axiom3(OprLine(line1, point, _, _), RawLine(line2)) ->
             let center = Line.cross line1.Line line2 |> Option.defaultValue center
             tryCreateReflectArrow point center |> Option.toArray, array.Empty()
+        | Axiom3P(_, RawPoint(point), dir) ->
+            let reflected = Point.reflectBy chosen point
+            let pStart, pEnd = swapByDir dir point reflected
+            [| createArrow pStart pEnd center |], array.Empty()
         | Axiom4(hint, pass, _) ->
             let hint = Option.map FoldOperation.(|RawPoint|) hint
             let arrows = createPerpendicularArrows pass chosen hint
@@ -83,6 +92,16 @@ module internal Instruction =
             let pStart, pEnd = swapByDir dir point reflected
             [| createArrow pStart pEnd pass |],
             [| createPoint reflected |]
+        | Axiom5M(passCandidates, _, RawPoint(point), dir) ->
+            let reflected = Point.reflectBy chosen point
+            let pStart, pEnd = swapByDir dir point reflected
+            match List.tryFind (fun (RawPoint p) -> Line.contains p chosen) passCandidates with
+            | Some(RawPoint(pass)) ->
+                [| createArrow pStart pEnd pass |],
+                [| createPoint reflected; createPoint pass |]
+            | None ->
+                [| createArrow pStart pEnd center |],
+                [| createPoint reflected |]
         | Axiom6(_, RawPoint(point1), _, RawPoint(point2), dir) ->
             let reflected1 = Point.reflectBy chosen point1
             let reflected2 = Point.reflectBy chosen point2
@@ -103,10 +122,6 @@ module internal Instruction =
             if pass.IsEdge
             then [| createPoint reflected |]
             else Array.append (arrowsToPoint perpendicularArrows) [| createPoint reflected |]
-        | AxiomP(_, RawPoint(point), dir) ->
-            let reflected = Point.reflectBy chosen point
-            let pStart, pEnd = swapByDir dir point reflected
-            [| createArrow pStart pEnd center |], array.Empty()
 
     let getLineAndArrow paper opr previewOnly =
         let lines = FoldOperation.getLines opr.Method

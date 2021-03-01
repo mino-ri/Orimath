@@ -111,12 +111,11 @@ type DragFoldTool(workspace: IWorkspace) =
         member this.DragEnter(source, target, modifier) =
             let selectedPoint, selectedLine = this.Selection
             let opr, previewOnly =
-                match source.Target, target.Target with
-                | DisplayTarget.Layer _, _
-                | _, DisplayTarget.Layer _ when not modifier.HasAlt ->
+                match getFoldOperation paper selectedPoint selectedLine source target modifier with
+                | { Method = NoOperation } when not modifier.HasAlt ->
                     let modifier = modifier ||| OperationModifier.Alt
                     getFoldOperation paper selectedPoint selectedLine source target modifier, true
-                | _ -> getFoldOperation paper selectedPoint selectedLine source target modifier, false
+                | opr -> opr, false
             instruction.Set(opr, previewOnly)
             match target with
             | FreePoint true _ | LineOrEdge _ -> true

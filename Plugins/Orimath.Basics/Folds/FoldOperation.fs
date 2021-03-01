@@ -86,7 +86,18 @@ let getFoldMethod paper selectedPoint selectedLine source target passFold free =
             | Some(pass), None -> Axiom5(pass, line, point, direction)
             | None, Some(pass) -> Axiom7(pass, line, point, direction)
             | Some(point1), Some(line1) -> Axiom6(line1, point1, line, point, direction)
-            | _ -> AxiomP(line, point, direction)
+            | _ ->
+                if free then
+                    Axiom2P(line, point, direction)
+                elif direction = FoldDirection.PointToLine then
+                    let passCandidates = [
+                        for p in paper.Layers.[point.LayerIndex].Points do
+                            if p <> point.Point then
+                                OprPoint(p, point.LayerIndex)
+                    ]
+                    Axiom5M(passCandidates, line, point, direction)
+                else
+                    Axiom3P(line, point, direction)
         match source, target with
         | FreePoint free (point1), FreePoint free (point2) -> Axiom2(point1, point2)
         | LineOrEdge(line1), LineOrEdge(line2) -> Axiom3(line1, line2)
@@ -111,8 +122,17 @@ let getLines opr =
     | Axiom5(RawPoint(pass), RawLine(line), RawPoint(point), _) -> Fold.axiom5 pass line point
     | Axiom6(RawLine(line1), RawPoint(point1), RawLine(line2), RawPoint(point2), _) ->
         Fold.axiom6 line1 point1 line2 point2
-    | Axiom7(RawLine(pass), RawLine(line), RawPoint(point), _) -> Fold.axiom7 pass line point |> Option.toList
-    | AxiomP(RawLine(line), RawPoint(point), _) -> Fold.axiomP line point |> Option.toList
+    | Axiom7(RawLine(pass), RawLine(line), RawPoint(point), _) ->
+        Fold.axiom7 pass line point |> Option.toList
+    | Axiom2P(HintPoint(point1), RawPoint(point2), _) -> Fold.axiom2 point1 point2 |> Option.toList
+    | Axiom3P(RawLine(line), RawPoint(point), _) -> Fold.axiomP line point |> Option.toList
+    | Axiom5M(passCandidates, line, RawPoint(point), _) ->
+        [
+            for RawPoint(pass) in passCandidates do
+            for l in Fold.axiom5 pass line.Line point do
+                if LineSegment.containsPoint (Point.reflectBy l point) line.Segment then
+                    yield l
+        ]
 
 let chooseLine (lines: Line list) opr =
     match lines with
@@ -133,7 +153,8 @@ let chooseLine (lines: Line list) opr =
                     then Some(lines.[0])
                     else Some(lines.[1])
         | Axiom5(_, HintPoint(point1), RawPoint(point2), _)
-        | Axiom6(_, _, HintPoint(point1), RawPoint(point2), _) ->
+        | Axiom6(_, _, HintPoint(point1), RawPoint(point2), _)
+        | Axiom5M(_, HintPoint(point1), RawPoint(point2), _) ->
             Some(lines |> List.minBy (fun line -> Point.dist point1 (Point.reflectBy line point2)))
         | _ -> Some(lines.[0])
 
@@ -147,7 +168,9 @@ let getSourcePoint method =
     | Axiom5(_, HintOprPoint(lp), p, dir)
     | Axiom6(_, _, HintOprPoint(lp), p, dir)
     | Axiom7(_, HintOprPoint(lp), p, dir)
-    | AxiomP(HintOprPoint(lp), p, dir) ->
+    | Axiom2P(HintOprPoint(lp), p, dir)
+    | Axiom3P(HintOprPoint(lp), p, dir)
+    | Axiom5M(_, HintOprPoint(lp), p, dir) ->
         match dir with
         | FoldDirection.LineToPoint -> [ lp; p ]
         | _ -> [ p; lp ]
@@ -164,5 +187,7 @@ let isContained layer method =
     | Axiom5(_, RawSegment(seg), RawPoint(point), _)
     | Axiom6(_, _, RawSegment(seg), RawPoint(point), _)
     | Axiom7(_, RawSegment(seg), RawPoint(point), _)
-    | AxiomP(RawSegment(seg), RawPoint(point), _) ->
+    | Axiom2P(RawSegment(seg), RawPoint(point), _)
+    | Axiom3P(RawSegment(seg), RawPoint(point), _)
+    | Axiom5M(_, RawSegment(seg), RawPoint(point), _) ->
         Layer.containsPoint point layer && Layer.containsSeg seg layer
