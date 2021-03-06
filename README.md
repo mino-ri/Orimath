@@ -1,7 +1,7 @@
 [English](#Orimath)
 
 # Orimath (おります)
-![Orimath: origami simulator](https://repository-images.githubusercontent.com/257803170/ea00bb80-7e1d-11eb-994f-88165b8231d1)
+![Orimath: origami simulator](https://repository-images.githubusercontent.com/257803170/ee3ede80-7eda-11eb-8898-0ae61660c3e2)
 
 
 数学と創作のための折り紙シミュレータ
@@ -29,7 +29,7 @@
 ---
 
 # Orimath
-![Orimath: origami simulator](https://repository-images.githubusercontent.com/257803170/ea00bb80-7e1d-11eb-994f-88165b8231d1)
+![Orimath: origami simulator](https://repository-images.githubusercontent.com/257803170/ee3ede80-7eda-11eb-8898-0ae61660c3e2)
 
 Origami simulator for mathemiticians & creators
 
