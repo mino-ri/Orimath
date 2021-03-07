@@ -8,8 +8,8 @@ type internal PaperOpr =
     | LayerAddition of index: int * layers: Layer list
     | LayerRemoving of index: int * layers: Layer list
     | LayerReplace of layerIndex: int * before: Layer * after: Layer
-    | LineAddition of layerIndex: int * index: int * lines: Crease list
-    | LineRemoving of layerIndex: int * index: int * lines: Crease list
+    | LineAddition of layerIndex: int * index: int * creases: Crease list
+    | LineRemoving of layerIndex: int * index: int * creases: Crease list
     | PointAddition of layerIndex: int * index: int * points: Point list
     | PointRemoving of layerIndex: int * index: int * points: Point list
 

@@ -85,6 +85,7 @@ type WorkspaceViewModel(workspace: IWorkspace) =
                 float(setting.ViewSize) * 1.5)
         PluginExecutor.ExecutePlugins({
             Workspace = workspace
+            FileManager = FileManager(dispatcher, workspace)
             Messenger = this
             Dispatcher = dispatcher
             PointConverter = pointConverter

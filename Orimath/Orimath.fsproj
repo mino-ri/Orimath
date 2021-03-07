@@ -26,6 +26,7 @@
     <Compile Include="IO\GlobalSetting.fs" />
     <Compile Include="IO\PluginSetting.fs" />
     <Compile Include="IO\Settings.fs" />
+    <Compile Include="IO\FileManager.fs" />
     <Compile Include="Plugins\PluginExecutor.fs" />
     <Compile Include="ViewModels\OrimathDispatcher.fs" />
     <Compile Include="ViewModels\EnumValueViewModel.fs" />

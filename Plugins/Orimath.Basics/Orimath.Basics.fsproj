@@ -27,6 +27,7 @@
     <Compile Include="Folds\InstructionWrapper.fs" />
     <Compile Include="Folds\DragFoldTool.fs" />
     <Compile Include="BasicEffects.fs" />
+    <Compile Include="FileEffects.fs" />
     <Compile Include="NewPaperEffect.fs" />
     <Compile Include="MeasureTool.fs" />
     <Compile Include="PluginImplementations.fs" />

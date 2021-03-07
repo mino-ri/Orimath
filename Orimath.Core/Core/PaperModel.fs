@@ -5,6 +5,11 @@ open Orimath.Plugins
 open ApplicativeProperty
 open ApplicativeProperty.PropOperators
 
+
+type internal PaperModelSnapShot =
+    { Paper: Paper
+      UndoStack: UndoItem<Paper * obj, PaperOpr>[] }
+
 type PaperModel internal () as this =
     let selectedLayers = createArrayProp<ILayerModel>()
     let selectedEdges = createArrayProp<Edge>()
@@ -125,6 +130,18 @@ type PaperModel internal () as this =
     member this.ReplaceLayer(index: int, newLayer: ILayer) =
         this.ReplaceLayerRaw(index, LayerModel(this, index, Layer.snapShot newLayer))
 
+    member this.GetRawUndoItems() =
+        box {
+            Paper = Paper.snapShot this
+            UndoStack = undoStack.GetRawUndoItems()
+        }
+
+    member this.SetRawUndoItems(rawItems: obj) =
+        let rawItems = rawItems :?> PaperModelSnapShot
+        use __ = undoStack.DisableChangeBlock()
+        this.Clear(rawItems.Paper)
+        undoStack.SetRawUndoItems(rawItems.UndoStack)
+
     interface IPaper with
         member _.Layers = layerModels :> IReadOnlyList<ILayerModel> :?> IReadOnlyList<ILayer>
 
@@ -142,6 +159,9 @@ type PaperModel internal () as this =
         member _.Redo() = undoStack.Redo()
         member _.UndoSnapShots = undoStack.UndoTags
         member _.RedoSnapShots = undoStack.RedoTags
+        member _.RawUndoItemType = typeof<PaperModelSnapShot>
+        member this.GetRawUndoItems() = this.GetRawUndoItems()
+        member this.SetRawUndoItems(rawItems: obj) = this.SetRawUndoItems(rawItems)
         member _.ClearUndoStack() = undoStack.ClearUndoStack()
         member this.BeginChange(tag) = this.BeginChange(tag)
         member this.TryBeginChange(tag) = this.TryBeginChange(tag)

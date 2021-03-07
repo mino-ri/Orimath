@@ -79,7 +79,7 @@ let private executeCore (setting: PluginSetting) args viewArgs =
             viewPlugin.Execute(viewArgs))
 
 let ExecutePlugins (viewArgs: ViewPluginArgs) =
-    let args = { Workspace = viewArgs.Workspace }
+    let args = { Workspace = viewArgs.Workspace; FileManager = viewArgs.FileManager }
     let types = loadPluginTypes()
     let setting = loadSetting types
     loadedPluginTypes <- types |> Array.filter typeof<IPlugin>.IsAssignableFrom

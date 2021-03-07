@@ -3,7 +3,8 @@ open System
 
 [<NoComparison; ReferenceEquality>]
 type PluginArgs =
-    { Workspace: IWorkspace }
+    { Workspace: IWorkspace
+      FileManager: IFileManager }
 
 
 type IPlugin =

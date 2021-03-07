@@ -51,13 +51,22 @@ type UndoStack<'Tag, 'Operation>() =
                 this.UpdateCanUndo()
         }
 
+    member _.GetRawUndoItems() = undoOprStack.ToArray()
+
+    member this.SetRawUndoItems(src: _[]) =
+        undoOprStack.Clear()
+        redoOprStack.Clear()
+        for i = src.Length - 1 downto 0 do
+            undoOprStack.Push(src.[i])
+        this.UpdateCanUndo()
+
     member _.UndoTags = seq { for s in undoOprStack -> s.Tag }
 
     member _.RedoTags = seq { for s in redoOprStack -> s.Tag }
 
     /// 一次的に変更ブロックを無効にします。
     member this.DisableChangeBlock() =
-        if changeBlockDeclared then invalidOp "変更ブロックが定義されているため、Undoを開始できません。"
+        if changeBlockDeclared then invalidOp "変更ブロックが定義されているため、変更ブロックを無効にできません。"
         changeBlockDeclared <- true
         changeBlockDisabled <- true
         { new IDisposable with

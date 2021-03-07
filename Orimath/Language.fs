@@ -1,5 +1,4 @@
 ﻿namespace Orimath
-open Orimath.Internal
 open SsslFSharp
 
 [<Sealed>]

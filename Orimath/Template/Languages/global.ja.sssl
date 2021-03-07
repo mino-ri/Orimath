@@ -4,10 +4,15 @@
   "Ok": "OK",
   "Cancel": "キャンセル",
   "Menu": {
+    "File": "ファイル",
     "Edit": "編集",
     "Settings": "設定",
     "Debug": "デバッグ",
     "Help": "ヘルプ"
+  },
+  "DialogTitle": {
+    "OpenFile": "開く",
+    "SaveFile": "保存",
   },
   "SystemCommand": {
     "VersionInfo": "バージョン情報",

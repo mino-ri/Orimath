@@ -19,6 +19,9 @@ type IPaperModel =
     abstract member BeginChange : tag: obj -> IDisposable
     abstract member UndoSnapShots : seq<Paper * obj>
     abstract member RedoSnapShots : seq<Paper * obj>
+    abstract member RawUndoItemType : Type
+    abstract member GetRawUndoItems : unit -> obj
+    abstract member SetRawUndoItems : obj -> unit
     abstract member Clear : unit -> unit
     abstract member Clear : paper: IPaper -> unit
     abstract member ClearUndoStack : unit -> unit
