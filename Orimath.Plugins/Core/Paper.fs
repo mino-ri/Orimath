@@ -50,6 +50,6 @@ module Paper =
 
     /// この紙の範囲内に収まるように指定された直線をカットし、その両端の位置を返します。
     let clipBoundBy paper line =
-        match clipBy paper line with
+        match clipBy paper line |> LineSegment.merge |> Seq.toList with
         | [] -> None
-        | segments -> Some((List.last segments).Point1, segments.Head.Point2)
+        | segments -> Some(segments.Head.Point1, (List.last segments).Point2)

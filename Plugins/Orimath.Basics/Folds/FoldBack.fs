@@ -72,64 +72,38 @@ let private splitEdge foldLine (target: Edge) =
     positive |> Option.map (fun l -> { target with Segment = l }),
     negative |> Option.map (fun l -> { target with Segment = l })
 
-let private splitEdges foldLine layer =
-    let mutable crossed = false
-    let mutable isPositive = None
-    let positiveEdges = ResizeArray()
-    let negativeEdges = ResizeArray()
-    let cross (edge: Edge) positiveToNegative =
-        let positiveEdge, negativeEdge =
-            match Layer.clipBound foldLine layer with
-            | Some(a, b) ->
-                swapWhen
-                    (LineSegment.containsPoint a edge.Segment = positiveToNegative)
-                    (LineSegment.FromPoints(b, a))
-                    (LineSegment.FromPoints(a, b))
-            | None -> None, None
-        iter { let! e = positiveEdge in positiveEdges.Add({ Segment = e; Inner = true }) }
-        iter { let! e = negativeEdge in negativeEdges.Add({ Segment = e; Inner = true }) }
-    for edge in layer.Edges do
-        match splitEdge foldLine edge with
-        | Some(positive), None ->
-            if not crossed && isPositive = Some(false) then
-                crossed <- true
-                cross edge false
-            positiveEdges.Add(positive)
-            isPositive <- Some(true)
-        | None, Some(negative) ->
-            if not crossed && isPositive = Some(true) then
-                crossed <- true
-                cross edge true
-            negativeEdges.Add(negative)
-            isPositive <- Some(false)
-        | Some(positive), Some(negative) ->
-            if crossed then
-                positiveEdges.Add(positive)
-                negativeEdges.Add(negative)
-            else
-                crossed <- true
-                // 正 → 負に突入
-                if positive.Segment.Point2 = negative.Segment.Point1 then
-                    positiveEdges.Add(positive)
-                    cross edge true
-                    negativeEdges.Add(negative)
-                    isPositive <- Some(false)
-                // 負 → 正に突入
+let private splitEdges foldLine (layer: ILayer) =
+    let rec recSelf positiveEdges negativeEdges index =
+        let positive, negative = splitEdge foldLine layer.Edges.[index]
+        let addEdge (edge: Edge option) (edges: Edge list) =
+            match edge, edges with
+            | Some(e), [] -> [ e ]
+            | Some(e), head :: _ ->
+                if e.Point2 =~ head.Point1 then e :: edges
                 else
-                    negativeEdges.Add(negative)
-                    cross edge false
-                    positiveEdges.Add(positive)
-                    isPositive <- Some(true)
-        | None, None ->
-            crossed <- true
-            positiveEdges.Add(edge)
-            negativeEdges.Add(edge)
-    positiveEdges, negativeEdges
+                    let newEdge = { Segment = LineSegment.FromPoints(e.Point2, head.Point1).Value; Inner = true }
+                    e :: newEdge :: edges
+            | None, _ -> edges
+        let positiveEdges = addEdge positive positiveEdges
+        let negativeEdges = addEdge negative negativeEdges
+        if index <= 0 then
+            let addFirstEdge (edges: Edge list) =
+                if edges.Length < 2 then edges
+                else
+                    let head, last = edges.[0], List.last edges
+                    if head.Point1 =~ last.Point2 then edges
+                    else
+                        let newEdge = { Segment = LineSegment.FromPoints(last.Point2, head.Point1).Value; Inner = true }
+                        newEdge :: edges
+            addFirstEdge positiveEdges, addFirstEdge negativeEdges
+        else
+            recSelf positiveEdges negativeEdges (index - 1)
+    recSelf [] [] (layer.Edges.Count - 1)
 
 let private splitOriginalEdges foldLine positiveEdgesCount (layer: ILayer) =
     let foldLineInOrigin = layer.Matrix.MultiplyInv(foldLine)
     let edges1, edges2 = splitEdges foldLineInOrigin (Layer.original layer)
-    match positiveEdgesCount >= 3, edges1.Count >= 3 with
+    match positiveEdgesCount >= 3, edges1.Length >= 3 with
     | false, false -> edges1, edges2
     | true, false | false, true -> edges2, edges1
     | true, true ->
@@ -142,13 +116,13 @@ let private splitOriginalEdges foldLine positiveEdgesCount (layer: ILayer) =
 // returns positive-side, negative-side
 let private splitLayerCore foldLine layer =
     let positiveEdges, negativeEdges = splitEdges foldLine layer
-    let originalPositiveEdges, originalNegativeEdges = splitOriginalEdges foldLine positiveEdges.Count layer
+    let originalPositiveEdges, originalNegativeEdges = splitOriginalEdges foldLine positiveEdges.Length layer
     let positivePoints, negativePoints = splitPoints foldLine layer
     let positiveCreases, negativeCreases = splitCreases foldLine layer
     let positive =
-        if positiveEdges.Count >= 3 then
+        if positiveEdges.Length >= 3 then
             Some {
-                Edges = Seq.toList positiveEdges
+                Edges = positiveEdges
                 OriginalEdges = Seq.toList originalPositiveEdges
                 Points = Seq.toList positivePoints
                 Creases = Seq.toList positiveCreases
@@ -156,9 +130,9 @@ let private splitLayerCore foldLine layer =
         else
             None
     let negative =
-        if negativeEdges.Count >= 3 then
+        if negativeEdges.Length >= 3 then
             Some {
-                Edges = Seq.toList negativeEdges
+                Edges = negativeEdges
                 OriginalEdges = Seq.toList originalNegativeEdges
                 Points = Seq.toList negativePoints
                 Creases = Seq.toList negativeCreases

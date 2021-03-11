@@ -41,9 +41,13 @@ module internal Instruction =
             let reflected = Point.reflectBy chosen point
             if point =~ reflected then None
             else Some(createArrow point reflected center)
-        let createPerpendicularArrows pass chosen hintPoint =
-            FoldOperation.getPerpendicularDynamicPoint pass chosen
-            |> Option.bind (fun (RawPoint(point)) ->
+        let createPerpendicularArrows pass chosen hintPoint useHintPoint =
+            option {
+                if useHintPoint then yield! hintPoint
+                let! (RawPoint(point)) = FoldOperation.getPerpendicularDynamicPoint pass chosen
+                yield point
+            }
+            |> Option.bind (fun point ->
                 let reflected = Point.reflectBy chosen point
                 if point =~ reflected then None
                 else
@@ -84,7 +88,7 @@ module internal Instruction =
             [| createArrow pStart pEnd center |], array.Empty()
         | Axiom4(hint, pass, _) ->
             let hint = Option.map FoldOperation.(|RawPoint|) hint
-            let arrows = createPerpendicularArrows pass chosen hint
+            let arrows = createPerpendicularArrows pass chosen hint true
             arrows,
             if pass.IsEdge then array.Empty() else arrowsToPoint arrows
         | Axiom5(RawPoint(pass), _, RawPoint(point), dir) ->
@@ -117,7 +121,7 @@ module internal Instruction =
         | Axiom7(pass, _, RawPoint(point), dir) ->
             let reflected = Point.reflectBy chosen point
             let pStart, pEnd = swapByDir dir point reflected
-            let perpendicularArrows = createPerpendicularArrows pass chosen (Some(pStart))
+            let perpendicularArrows = createPerpendicularArrows pass chosen (Some(pStart)) false
             Array.append perpendicularArrows [| createArrow pStart pEnd center |],
             if pass.IsEdge
             then [| createPoint reflected |]

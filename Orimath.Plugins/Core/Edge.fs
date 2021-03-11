@@ -20,13 +20,29 @@ module Edge =
         let rec recSelf acm (edges: Edge list) =
             match edges with
             | head :: tail ->
-                let p1 = head.Segment.Point1
-                let p2 = head.Segment.Point2
+                let p1 = head.Point1
+                let p2 = head.Point2
                 if LineSegment.containsPoint point head.Segment then
                     true
                 else
                     if (p1.Y <= point.Y && point.Y < p2.Y || p2.Y <= point.Y && point.Y < p1.Y) &&
                         point.X < Line.getX point.Y head.Segment.Line
+                    then recSelf (acm + 1) tail
+                    else recSelf acm tail
+            | [] -> acm % 2 = 1
+        recSelf 0 edges
+
+    let containsPoint2 point (edges: LineSegment list) =
+        let rec recSelf acm (edges: LineSegment list) =
+            match edges with
+            | head :: tail ->
+                let p1 = head.Point1
+                let p2 = head.Point2
+                if LineSegment.containsPoint point head then
+                    true
+                else
+                    if (p1.Y <= point.Y && point.Y < p2.Y || p2.Y <= point.Y && point.Y < p1.Y) &&
+                        point.X < Line.getX point.Y head.Line
                     then recSelf (acm + 1) tail
                     else recSelf acm tail
             | [] -> acm % 2 = 1

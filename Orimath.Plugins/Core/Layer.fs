@@ -74,11 +74,11 @@ module Layer =
             invalidArg (nameof originalEdges) "多角形の辺は3以上でなければなりません。"
         if not (isValidEdge originalEdges.Head originalEdges) then
             invalidArg (nameof originalEdges) "多角形の辺は閉じている必要があります。"
-        // if not (lines |> List.forall(fun l -> LayerExtensions.ContainsCore(edges, l.Point1) &&
-        //     LayerExtensions.ContainsCore(edges, l.Point2))) then
-        //     invalidArg (nameof(lines)) "レイヤー内に含まれていない線分があります。"
-        // if not (points |> List.forall(fun p -> LayerExtensions.ContainsCore(edges, p))) then
-        //     invalidArg (nameof(points)) "レイヤー内に含まれていない点があります。"
+        if not (creases |> List.forall (fun (c: Crease) ->
+            Edge.containsPoint c.Point1 edges && Edge.containsPoint c.Point2 edges)) then
+            invalidArg (nameof creases) "レイヤー内に含まれていない線分があります。"
+        if not (points |> List.forall (flip Edge.containsPoint edges)) then
+            invalidArg (nameof points) "レイヤー内に含まれていない点があります。"
         Layer(edges, creases, points, layerType, originalEdges, matrix)
 
     /// 指定した頂点を持つ多角形のレイヤーを生成します。
@@ -154,10 +154,10 @@ module Layer =
         else Some(segments.[0].Point1, (Array.last segments).Point2)
 
     /// このレイヤーの範囲内に収まるように指定された直線をカットし、その両端の位置を返します。
-    let clipBound line layer = clip line layer |> Seq.toArray |> clipBoundCore
+    let clipBound line layer = clip line layer |> LineSegment.merge |> Seq.toArray |> clipBoundCore
         
     /// このレイヤーの範囲内に収まるように指定された線分をカットし、その両端の位置を返します。
-    let clipBoundSeg seg layer = clipSeg seg layer |> Seq.toArray |> clipBoundCore
+    let clipBoundSeg seg layer = clipSeg seg layer |> LineSegment.merge |> Seq.toArray |> clipBoundCore
  
     let private tryAddPoint points addingPoint layer =
         match addingPoint with

@@ -32,7 +32,7 @@ let getGeneralDynamicPoint (paper: IPaperModel) (foldLine: Line) =
         let! first, last = Paper.clipBoundBy paper foldLine
         let middle = (first + last) / 2.0
         let! point1, point2 = Paper.clipBoundBy paper (Fold.axiom4 foldLine middle)
-        let point = if middle.GetDistance(point1) <= middle.GetDistance(point2) then point1 else point2
+        let point = if Point.dist middle point1 <= Point.dist middle point2 then point1 else point2
         if not (Line.contains point foldLine) then
             let! layer = Seq.tryFind (Layer.containsPoint point) paper.Layers
             return OprPoint(point, layer.Index)
