@@ -19,6 +19,7 @@ type ViewDeclaration =
 type WorkspaceViewModel(workspace: IWorkspace) =
     inherit NotifyPropertyChanged()
     let dispatcher = OrimathDispatcher()
+    let fileManager = FileManager(dispatcher, workspace)
     let effectCommands = Dictionary<IEffect, ICommand>()
     let effectParameterCreator = Dictionary<Type, obj -> obj>()
     let preViewModels = ObservableCollection<obj>()
@@ -85,7 +86,7 @@ type WorkspaceViewModel(workspace: IWorkspace) =
                 float(setting.ViewSize) * 1.5)
         PluginExecutor.ExecutePlugins({
             Workspace = workspace
-            FileManager = FileManager(dispatcher, workspace)
+            FileManager = fileManager
             Messenger = this
             Dispatcher = dispatcher
             PointConverter = pointConverter

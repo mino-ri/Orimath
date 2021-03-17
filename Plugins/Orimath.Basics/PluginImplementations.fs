@@ -7,7 +7,8 @@ open Orimath.Plugins
 type BasicPlugin() =
     interface IPlugin with
         member _.Execute(args) =
-            args.Workspace.AddEffect(LoadEffect(args.FileManager))
+            args.Workspace.AddEffect(OpenEffect(args.FileManager))
+            args.Workspace.AddEffect(SaveAsEffect(args.FileManager))
             args.Workspace.AddEffect(SaveEffect(args.FileManager))
             args.Workspace.AddEffect(UndoEffect(args.Workspace))
             args.Workspace.AddEffect(RedoEffect(args.Workspace))

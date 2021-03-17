@@ -14,7 +14,9 @@ type IWorkspace =
 
 
 type IFileManager =
+    abstract member PaperFilePath : IGetProp<string option>
     abstract member SavePaper : unit -> Async<unit>
+    abstract member SavePaperAs : unit -> Async<unit>
     abstract member LoadPaper : unit -> Async<unit>
     abstract member SaveObject<'T> : fileTypeName: string * filter: string * object: 'T -> Async<unit>
     abstract member LoadObject<'T> : fileTypeName: string * filter: string -> Async<'T option>
