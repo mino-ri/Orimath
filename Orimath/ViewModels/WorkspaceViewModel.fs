@@ -19,7 +19,7 @@ type ViewDeclaration =
 type WorkspaceViewModel(workspace: IWorkspace) =
     inherit NotifyPropertyChanged()
     let dispatcher = OrimathDispatcher()
-    let fileManager = FileManager(dispatcher, workspace)
+    let fileManager = FileManager(dispatcher, workspace) :> IFileManager
     let effectCommands = Dictionary<IEffect, ICommand>()
     let effectParameterCreator = Dictionary<Type, obj -> obj>()
     let preViewModels = ObservableCollection<obj>()
@@ -39,6 +39,10 @@ type WorkspaceViewModel(workspace: IWorkspace) =
     member val Dialog = Prop.asGet dialog
     member val HasDialog = isNotNull <|. dialog
     member val HasNotDialog = isNull <|. dialog
+    member val FileName =
+        fileManager.PaperFilePath .|> function
+        | Some(path) -> System.IO.Path.GetFileName path
+        | None -> ""
     member val RootEnable =
         (dispatcher.IsExecuting, dialog) ||> Prop.map2 (fun exec d -> not exec && isNull d)
     member val CloseDialogCommand =

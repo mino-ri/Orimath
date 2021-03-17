@@ -95,19 +95,24 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Menu Grid.Row="0" ItemsSource="{Binding MenuItems}"
-                           IsEnabled="{Binding HasNotDialog.Value}">
-            <Menu.ItemContainerStyle>
-                <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource {x:Type MenuItem}}">
-                    <Setter Property="Header" Value="{Binding Name, Mode=OneTime}" />
-                    <Setter Property="Icon" Value="{Binding IconStream, Converter={StaticResource IconImageConverter}, Mode=OneTime}" />
-                    <Setter Property="Command" Value="{Binding Command, Mode=OneTime}" />
-                    <Setter Property="ItemsSource" Value="{Binding Children, Mode=OneTime}" />
-                    <Setter Property="InputGestureText" Value="{Binding ShortcutKeyText, Mode=OneTime}" />
-                    <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
-                </Style>
-            </Menu.ItemContainerStyle>
-        </Menu>
+        <DockPanel Grid.Row="0">
+            <Label DockPanel.Dock="Right" Content="{Binding FileName.Value, Mode=OneWay}"
+                   Padding="6,4,144,4"
+                   VerticalContentAlignment="Center" />
+            <Menu ItemsSource="{Binding MenuItems}"
+                  IsEnabled="{Binding HasNotDialog.Value}">
+                <Menu.ItemContainerStyle>
+                    <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource {x:Type MenuItem}}">
+                        <Setter Property="Header" Value="{Binding Name, Mode=OneTime}" />
+                        <Setter Property="Icon" Value="{Binding IconStream, Converter={StaticResource IconImageConverter}, Mode=OneTime}" />
+                        <Setter Property="Command" Value="{Binding Command, Mode=OneTime}" />
+                        <Setter Property="ItemsSource" Value="{Binding Children, Mode=OneTime}" />
+                        <Setter Property="InputGestureText" Value="{Binding ShortcutKeyText, Mode=OneTime}" />
+                        <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
+                    </Style>
+                </Menu.ItemContainerStyle>
+            </Menu>
+        </DockPanel>
         <DockPanel Grid.Row="1" IsEnabled="{Binding HasNotDialog.Value}">
             <ItemsControl DockPanel.Dock="Top"
                           ItemsSource="{Binding TopViewModels, Mode=OneWay}" />

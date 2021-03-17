@@ -1653,7 +1653,7 @@
             <Setter Property="FontSize" Value="{DynamicResource {x:Static SystemFonts.MenuFontSizeKey}}" />
             <Setter Property="FontStyle" Value="{DynamicResource {x:Static SystemFonts.MenuFontStyleKey}}" />
             <Setter Property="FontWeight" Value="{DynamicResource {x:Static SystemFonts.MenuFontWeightKey}}" />
-            <Setter Property="Padding" Value="30,0,138,0" />
+            <Setter Property="Padding" Value="30,0" />
             <Setter Property="MinHeight" Value="26" />
             <Setter Property="ItemsPanel">
                 <Setter.Value>
