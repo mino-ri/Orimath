@@ -12,7 +12,7 @@ type FileManager(dispatcher: IDispatcher, workspace: IWorkspace) =
     let mutable paperFilePath = Prop.value None
 
     member private _.ShowDialogCore(dialog: #FileDialog, fileTypeName, filter, callback) =
-        dialog.Filter <- $"%s{fileTypeName} (%s{filter})|%s{filter}"
+        dialog.Filter <- $"%s{Language.GetWord(fileTypeName)} (%s{filter})|%s{filter}"
         dialog.FileName <- filter
         dialog.DefaultExt <- filter.Split('.') |> Array.tryLast |> Option.defaultValue ""
         let ok = dialog.ShowDialog()
@@ -122,7 +122,7 @@ type FileManager(dispatcher: IDispatcher, workspace: IWorkspace) =
                         option {
                             let! path = path
                             let file = File.Create(path)
-                            return file :> Stream
+                            return file
                         }
                         |> callback)
                 with ex -> onError ex)
@@ -134,7 +134,7 @@ type FileManager(dispatcher: IDispatcher, workspace: IWorkspace) =
                         option {
                             let! path = path
                             let file = File.Create(path)
-                            return file :> Stream
+                            return file
                         }
                         |> callback)
                 with ex -> onError ex)

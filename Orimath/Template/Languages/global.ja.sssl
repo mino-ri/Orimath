@@ -20,5 +20,11 @@
     "PluginSettings": "プラグインの設定",
     "EnabilityAndOrder": "ON/OFFと読み込み順",
     "Help": "ヘルプの表示..."
+  },
+  "FileType": {
+    "Png": {
+      "FileName": "Pngフォーマット",
+      "EffectName": "Png形式で出力"
+    }
   }
 }

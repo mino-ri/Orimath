@@ -3,6 +3,7 @@ open System.ComponentModel
 open Orimath.Plugins
 open Orimath.Basics
 open Orimath.Basics.View.ViewModels
+open Orimath.Basics.View.Export
 
 [<DisplayName("{basic/NewPaper.Name}Command: New paper")>]
 [<Description("{basic/NewPaper.Desc}New paper and reset command")>]
@@ -74,3 +75,39 @@ type FoldingInstructionPlugin() =
                 FoldingInstructionViewModel(args.Workspace, args.Dispatcher, args.PointConverter))
             args.Messenger.RegisterView(ViewPane.Main, typeof<FoldingInstructionViewModel>,
                 viewPath "FoldingInstructionControl")
+
+
+type PngExportPluginSetting =
+    { Margin: int
+      PaperSize: int }
+
+
+[<DisplayName("{basic/PngExport.Name}Command: Png export")>]
+[<Description("{basic/PngExport.Desc}Export in png format.")>]
+type PngExportPlugin() =
+    inherit ConfigurablePluginBase<PngExportPluginSetting>({ Margin = 128; PaperSize = 512 })
+    interface IViewPlugin with
+        member this.Execute(args: ViewPluginArgs) =
+            let exporter =
+                { new IImageExporter with
+                    member _.FileTypeName = "{FileType.Png.FileName}png image"
+                    member _.Extension = "png"
+                    member _.Export(stream, paper) =
+                        let margin = this.Setting.Margin
+                        let paperSize = this.Setting.PaperSize
+                        let imageSize = paperSize + margin * 2
+                        async {
+                            let drawPaper (exporter: VisualExporter) =
+                                let context =
+                                    ExportContext(
+                                        exporter,
+                                        ViewPointConverter(
+                                            float paperSize, float -paperSize,
+                                            float margin, float (paperSize + margin)))
+                                context.DrawPaper(paper)
+                            VisualExporter.SavePngToStream(stream, imageSize, imageSize, drawPaper)
+                        }
+                    member _.ShortcutKey = "ctrl+P"
+                    member _.EffectName = "{FileType.Png.EffectName}png export..."
+                }
+            args.Workspace.AddEffect(ExportEffect(args.FileManager, args.Workspace, exporter))

@@ -19,6 +19,11 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Null.fs" />
     <Compile Include="Internal.fs" />
+    <Compile Include="Export\ShapeExporter.fs" />
+    <Compile Include="Export\Drawing.fs" />
+    <Compile Include="Export\ExportContext.fs" />
+    <Compile Include="Export\VisualExporter.fs" />
+    <Compile Include="Export\SvgExporter.fs" />
     <Compile Include="ViewModels\NewPaperDialogViewModel.fs" />
     <Compile Include="ViewModels\InstructionPointViewModel.fs" />
     <Compile Include="ViewModels\InstructionLineViewModel.fs" />
