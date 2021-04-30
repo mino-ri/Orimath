@@ -39,9 +39,13 @@
     "Name": "ビュー: 折り図",
     "Desc": "メインビューの上に折り図を表示します。対応しているツールの操作時に折り図風の図が表示されます。"
   },
-  "PngExport": {
+  "ImageExport": {
     "Name": "コマンド: png出力",
     "Desc": "Png形式で現在の折り紙を出力します。"
+  },
+  "InstructionList": {
+    "Name": "コマンド: ここまでの折り図を表示",
+    "Desc": "現在の状態に至るまでの全ての折り図を表示します。"
   },
   "Effect": {
     "Open": "開く...",
@@ -55,7 +59,8 @@
     "RotateLeft": "左に90°回転",
     "UnfoldAll": "すべて開く",
     "Reset": "リセット",
-    "NewPaper": "新しい紙"
+    "NewPaper": "新しい紙",
+    "InstructionList": "ここまでの折り図を表示",
   },
   "Tool": {
     "Measurement": "計測",

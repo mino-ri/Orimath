@@ -25,6 +25,10 @@
     "Png": {
       "FileName": "Pngフォーマット",
       "EffectName": "Png形式で出力"
-    }
+    },
+    "Svg": {
+      "FileName": "Svgフォーマット",
+      "EffectName": "Svg形式で出力"
+    },
   }
 }

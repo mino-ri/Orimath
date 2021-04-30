@@ -9,6 +9,8 @@ type ExportPen =
       Thickness: float
       DashArray: float list }
 
+    static member Solid(color, thickness) =
+        { Color = color; Thickness = thickness; DashArray = [] }
 
 [<Struct>]
 type ExportDecoration =

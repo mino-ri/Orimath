@@ -175,6 +175,20 @@ let getSourcePoint method =
         | FoldDirection.LineToPoint -> [ lp; p ]
         | _ -> [ p; lp ]
 
+let getInstructionPoint method =
+    match method with
+    | Axiom3 _
+    | Axiom3P _
+    | NoOperation -> []
+    | Axiom1(_, RawPoint(p1), RawPoint(p2))
+    | Axiom2(RawPoint(p1), RawPoint(p2))
+    | Axiom5(RawPoint(p1), _, RawPoint(p2), _)
+    | Axiom6(_, RawPoint(p1), _, RawPoint(p2), _) -> [ p1; p2 ]
+    | Axiom4(_, _, RawPoint(p))
+    | Axiom7(_, _, RawPoint(p), _)
+    | Axiom5M(_, _, RawPoint(p), _)
+    | Axiom2P(_, RawPoint(p), _) -> [ p ]
+
 let isContained layer method =
     match method with
     | NoOperation -> false

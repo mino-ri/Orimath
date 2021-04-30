@@ -1,20 +1,24 @@
 ﻿namespace Orimath.Basics.View.Export
 open System
-open System.IO
 open System.Windows.Media
 open System.Windows.Media.Imaging
 
 type VisualExporter(visual: DrawingVisual) =
     let dc = visual.RenderOpen()
 
-    static member SavePngToStream(stream, width, height, action) =
+    static member ExportPngToStream(stream, width, height, action) =
+        let bitmap = VisualExporter.ExportToBitmap(width, height, action)
+        let encoder = PngBitmapEncoder()
+        encoder.Frames.Add(BitmapFrame.Create(bitmap :> BitmapSource))
+        encoder.Save(stream)
+
+    static member ExportToBitmap(width, height, action) =
         let visual = DrawingVisual()
         using (new VisualExporter(visual)) action
         let bitmap = RenderTargetBitmap(width, height, 96.0, 96.0, PixelFormats.Pbgra32)
         bitmap.Render(visual)
-        let encoder = PngBitmapEncoder()
-        encoder.Frames.Add(BitmapFrame.Create(bitmap))
-        encoder.Save(stream)
+        bitmap.Freeze()
+        bitmap
 
     interface IShapeExporter with
         member _.AddLine(point1, point2, pen) =

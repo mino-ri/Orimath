@@ -19,6 +19,7 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Null.fs" />
     <Compile Include="Internal.fs" />
+    <Compile Include="UniversalColor.fs" />
     <Compile Include="Export\ShapeExporter.fs" />
     <Compile Include="Export\Drawing.fs" />
     <Compile Include="Export\ExportContext.fs" />
@@ -28,6 +29,7 @@
     <Compile Include="ViewModels\InstructionPointViewModel.fs" />
     <Compile Include="ViewModels\InstructionLineViewModel.fs" />
     <Compile Include="ViewModels\InstructionArrowViewModel.fs" />
+    <Compile Include="ViewModels\InstructionListDialogViewModel.fs" />
     <Compile Include="ViewModels\FoldingInstructionViewModel.fs" />
     <Compile Include="ViewModels\AttachedObservableCollection.fs" />
     <Compile Include="ViewModels\ScreenOperationTarget.fs" />
@@ -47,6 +49,7 @@
     <Compile Include="Controls\PolygonControl.fs" />
     <Compile Include="Controls\LineControl.fs" />
     <Compile Include="Controls\MouseHandler.fs" />
+    <Compile Include="InstructionListEffect.fs" />
     <Compile Include="PluginImplementations.fs" />
   </ItemGroup>
 
@@ -57,12 +60,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="defaultIcon.png" />
     <Resource Include="*.xaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Page Remove="CreasePatternControl.xaml" />
+    <Resource Include="defaultIcon.png" />
   </ItemGroup>
 
   <ItemGroup>

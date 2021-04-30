@@ -2,6 +2,7 @@
 open System.ComponentModel
 open Orimath.Plugins
 open Orimath.Basics
+open Orimath.Basics.Folds
 open Orimath.Basics.View.ViewModels
 open Orimath.Basics.View.Export
 
@@ -82,9 +83,9 @@ type PngExportPluginSetting =
       PaperSize: int }
 
 
-[<DisplayName("{basic/PngExport.Name}Command: Png export")>]
-[<Description("{basic/PngExport.Desc}Export in png format.")>]
-type PngExportPlugin() =
+[<DisplayName("{basic/ImageExport.Name}Command: Png export")>]
+[<Description("{basic/ImageExport.Desc}Export in png format.")>]
+type ImageExportPlugin() =
     inherit ConfigurablePluginBase<PngExportPluginSetting>({ Margin = 128; PaperSize = 512 })
     interface IViewPlugin with
         member this.Execute(args: ViewPluginArgs) =
@@ -104,10 +105,25 @@ type PngExportPlugin() =
                                         ViewPointConverter(
                                             float paperSize, float -paperSize,
                                             float margin, float (paperSize + margin)))
-                                context.DrawPaper(paper)
-                            VisualExporter.SavePngToStream(stream, imageSize, imageSize, drawPaper)
+                                match paper.UndoSnapShots |> Seq.tryHead with
+                                | Some(paper, (:? FoldOperation as opr)) ->
+                                    context.DrawPaper(paper)
+                                    context.DrawFoldOperation(paper, opr)
+                                | _ -> context.DrawPaper(paper)
+                            VisualExporter.ExportPngToStream(stream, imageSize, imageSize, drawPaper)
                         }
                     member _.ShortcutKey = "ctrl+P"
                     member _.EffectName = "{FileType.Png.EffectName}png export..."
                 }
             args.Workspace.AddEffect(ExportEffect(args.FileManager, args.Workspace, exporter))
+
+[<DisplayName("{basic/InstructionList.Name}Command: Show instructions")>]
+[<Description("{basic/InstructionList.Desc}Show folding instructions.")>]
+type InstructionListPlugin() =
+    inherit ConfigurablePluginBase<InstructionListSetting>({ Margin = 64; PaperSize = 256 })
+    interface IViewPlugin with
+        member this.Execute(args: ViewPluginArgs) =
+            args.Workspace.AddEffect(
+                InstructionListEffect(args.Workspace, args.Messenger, args.Dispatcher, this.Setting))
+            args.Messenger.RegisterView(ViewPane.Dialog, typeof<InstructionListDialogViewModel>,
+                viewPath "InstructionListDialogControl")

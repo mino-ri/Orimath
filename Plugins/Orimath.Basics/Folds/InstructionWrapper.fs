@@ -1,4 +1,5 @@
 ﻿namespace Orimath.Basics.Folds
+open System
 open Orimath.Core
 open Orimath.Core.NearlyEquatable
 open Orimath.Combination
@@ -6,7 +7,7 @@ open ApplicativeProperty.PropOperators
 open Orimath.Basics.Internal
 open FoldOperation
 
-module internal Instruction =
+module Instruction =
     let private center = { X = 0.5; Y = 0.5 }
 
     let private getLines layers lines chosen =
@@ -22,6 +23,15 @@ module internal Instruction =
         |> LineSegment.merge
         |> Seq.map mapping
         |> Seq.toArray
+
+    let private getChosenLine layers (_: seq<Line>) chosen =
+        match chosen with
+        | Some(chosen) ->
+            Seq.collect (Layer.clip chosen) layers
+            |> LineSegment.merge
+            |> Seq.map (fun l -> { Line = l; Color = InstructionColor.Blue })
+            |> Seq.toArray
+        | None -> Array.Empty()
 
     let private getArrow chosen method foldBack =
         let createArrow startPoint endPoint center =
@@ -127,9 +137,10 @@ module internal Instruction =
             then [| createPoint reflected |]
             else Array.append (arrowsToPoint perpendicularArrows) [| createPoint reflected |]
 
-    let getLineAndArrow paper opr previewOnly =
+    let getLineAndArrow paper opr previewOnly forDynamic =
         let lines = FoldOperation.getLines opr.Method
         let chosen = if previewOnly then None else FoldOperation.chooseLine lines opr.Method
+        let getLines = if forDynamic then getLines else getChosenLine
         match chosen with
         | Some(c) ->
             let targetLayers =
@@ -137,6 +148,12 @@ module internal Instruction =
                 then FoldBack.getTargetLayers paper c opr.Method :> seq<_>
                 else paper.Layers :> seq<_>
             let arrows, points = getArrow c opr.Method (opr.CreaseType = CreaseType.ValleyFold)
+            let points =
+                if forDynamic then
+                    points
+                else
+                    [| for p in getInstructionPoint opr.Method -> { Point = p; Color = InstructionColor.Brown } |]
+                    |> Array.append points
             getLines targetLayers lines chosen, arrows, points
         | None ->
             getLines paper.Layers lines chosen, array.Empty(), array.Empty()
@@ -152,7 +169,7 @@ type internal InstructionWrapper(paper: IPaper) =
         instruction.Points .<- array.Empty()
 
     member _.Set(opr, previewOnly) =
-        let lines, arrows, points = Instruction.getLineAndArrow paper opr previewOnly
+        let lines, arrows, points = Instruction.getLineAndArrow paper opr previewOnly true
         instruction.Lines .<- lines
         instruction.Arrows .<- arrows
         instruction.Points .<- points

@@ -108,9 +108,8 @@ type Arrow() =
             match ty with
             | ArrowType.Normal
             | ArrowType.ValleyFold ->
-                let isValey = ty = ArrowType.ValleyFold
                 context.BeginFigure(
-                    point (basePoint + normal * (arrowSize * cos60) + vertical * (arrowSize * sin60)), isValey, isValey)
+                    point (basePoint + normal * (arrowSize * cos60) + vertical * (arrowSize * sin60)), true, true)
                 context.LineTo(point basePoint, true, false)
                 context.LineTo(point (basePoint + normal * arrowSize), true, false)
                 if isBegin then
