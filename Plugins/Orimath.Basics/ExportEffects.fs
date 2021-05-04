@@ -1,6 +1,5 @@
 ﻿namespace Orimath.Basics
 open System.IO
-open Orimath.Core
 open Orimath.Plugins
 open ApplicativeProperty
 
@@ -10,6 +9,7 @@ type IImageExporter =
     abstract member Export : FileStream * IPaperModel -> Async<unit>
     abstract member ShortcutKey : string
     abstract member EffectName : string
+    abstract member Icon: Stream
 
 
 type ExportEffect(fileManager: IFileManager, workspace: IWorkspace, exporter: IImageExporter) =
@@ -17,7 +17,7 @@ type ExportEffect(fileManager: IFileManager, workspace: IWorkspace, exporter: II
         member val MenuHieralchy = [| "{Menu.File}File" |]
         member _.Name = exporter.EffectName
         member _.ShortcutKey = exporter.ShortcutKey
-        member _.Icon = Internal.getIcon $"save_%s{exporter.Extension}"
+        member _.Icon = exporter.Icon
         member _.CanExecute = upcast Prop.ctrue
         member _.Execute() =
             async {

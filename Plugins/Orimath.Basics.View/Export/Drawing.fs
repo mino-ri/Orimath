@@ -4,10 +4,10 @@ open System.Windows.Media
 let toMediaPen (pen: ExportPen) =
     let mediaPen = Pen(SolidColorBrush(pen.Color), pen.Thickness)
     mediaPen.DashStyle <- DashStyle(pen.DashArray, 0.0)
-    mediaPen.StartLineCap <- PenLineCap.Flat
-    mediaPen.EndLineCap <- PenLineCap.Flat
-    mediaPen.DashCap <- PenLineCap.Flat
-    mediaPen.LineJoin <- PenLineJoin.Miter
+    mediaPen.StartLineCap <- pen.LineCap
+    mediaPen.EndLineCap <- pen.LineCap
+    mediaPen.DashCap <- pen.DashCap
+    mediaPen.LineJoin <- pen.LineJoin
     mediaPen.Freeze()
     mediaPen
 

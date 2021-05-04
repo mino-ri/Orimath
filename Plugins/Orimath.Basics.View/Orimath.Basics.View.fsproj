@@ -16,6 +16,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Icons\*.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Null.fs" />
     <Compile Include="Internal.fs" />
@@ -43,6 +47,7 @@
     <Compile Include="ViewModels\EffectViewModel.fs" />
     <Compile Include="ViewModels\ToolViewModel.fs" />
     <Compile Include="ViewModels\CreasePatternViewModel.fs" />
+    <Compile Include="Controls\PixelScaleImage.fs" />
     <Compile Include="Controls\UniversalColorConverter.fs" />
     <Compile Include="Controls\IconImageConverter.fs" />
     <Compile Include="Controls\Arrow.fs" />
@@ -54,14 +59,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Orimath.Plugins\Orimath.Plugins.fsproj" />
-    <ProjectReference Include="..\..\Orimath.ViewPlugins\Orimath.ViewPlugins.fsproj" />
-    <ProjectReference Include="..\Orimath.Basics\Orimath.Basics.fsproj" />
+    <Resource Include="*.xaml" />
+    <Resource Include="defaultIcon.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="*.xaml" />
-    <Resource Include="defaultIcon.png" />
+    <ProjectReference Include="..\..\Orimath.Plugins\Orimath.Plugins.fsproj" />
+    <ProjectReference Include="..\..\Orimath.ViewPlugins\Orimath.ViewPlugins.fsproj" />
+    <ProjectReference Include="..\Orimath.Basics\Orimath.Basics.fsproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -41,11 +41,22 @@
   },
   "ImageExport": {
     "Name": "コマンド: png出力",
-    "Desc": "Png形式で現在の折り紙を出力します。"
+    "Desc": "Png形式で現在の折り紙を出力します。",
+    "Margin": "余白",
+    "PaperSize": "紙のサイズ"
   },
   "InstructionList": {
-    "Name": "コマンド: ここまでの折り図を表示",
-    "Desc": "現在の状態に至るまでの全ての折り図を表示します。"
+    "Name": "コマンド: 折り図を表示",
+    "Desc": "現在の状態に至るまでの全ての折り図を表示します。",
+    "Settings": "設定",
+    "Margin": "余白",
+    "PaperSize": "紙のサイズ",
+    "IndexFontSize": "番号のサイズ",
+    "IndexOffset": "番号の左上からの距離",
+    "ColumnCount": "出力時の列数",
+    "Regenerate": "再生成",
+    "ExportSinglePng": "単一のpng画像に出力",
+    "ExportSingleSvg": "単一のsvg画像に出力",
   },
   "Effect": {
     "Open": "開く...",
@@ -60,7 +71,7 @@
     "UnfoldAll": "すべて開く",
     "Reset": "リセット",
     "NewPaper": "新しい紙",
-    "InstructionList": "ここまでの折り図を表示",
+    "InstructionList": "折り図を表示..."
   },
   "Tool": {
     "Measurement": "計測",

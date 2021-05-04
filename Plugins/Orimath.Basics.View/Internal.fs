@@ -1,5 +1,6 @@
 ﻿[<AutoOpen>]
 module Orimath.Basics.View.Internal
+open System.Reflection
 open Orimath.Plugins
 open ApplicativeProperty
 
@@ -21,3 +22,6 @@ let subscribeOnUI (dispatcher: IDispatcher) callback observable =
     observable |> Observable.subscribe2 (fun item -> dispatcher.UI { callback item })
 
 let viewPath name = "/Orimath.Basics.View;component/" + name + ".xaml"
+
+let getIcon iconName =
+    Assembly.GetExecutingAssembly().GetManifestResourceStream($"Orimath.Basics.View.Icons.%s{iconName}.png")

@@ -87,27 +87,7 @@ type OpenAllEffect(workspace: IWorkspace) =
         member _.Execute() =
             use __ = workspace.Paper.BeginChange()
             let layers = workspace.Paper.Layers |> Seq.toArray
-            let joinedLayer =
-                let edges =
-                    seq {
-                        for ly in layers do
-                        for e in ly.OriginalEdges do
-                        if not e.Inner then e.Segment
-                    }
-                    |> LineSegment.merge
-                    |> ResizeArray
-                let points = ResizeArray()
-                let mutable currentPoint = edges.[0].Point1
-                while edges.Count > 0 do
-                    let index =
-                        edges
-                        |> Seq.findIndex (fun e -> e.Point1 =~ currentPoint || e.Point2 =~ currentPoint)
-                    let target = edges.[index]
-                    currentPoint <- if target.Point1 =~ currentPoint then target.Point2 else target.Point1
-                    points.Add(currentPoint)
-                    edges.RemoveAt(index)
-                Layer.fromPolygon points LayerType.BackSide
-            workspace.ClearPaper([joinedLayer])
+            workspace.ClearPaper([Layer.merge layers])
             let lines = 
                 seq {
                     for layer in layers do

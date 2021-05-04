@@ -200,3 +200,25 @@ module Layer =
     /// このレイヤーの OriginalEdges を辺として持ち、点・折線を持たないレイヤーを取得します。
     let original (layer: ILayer) =
         Layer(asList layer.OriginalEdges, [], [], layer.LayerType, asList layer.OriginalEdges, Matrix.Identity)
+
+    /// 指定されたレイヤーを開いた領域を結合した新しいレイヤーを生成します。
+    let merge (layers: seq<#ILayer>) =
+        let edges =
+            seq {
+                for ly in layers do
+                for e in ly.OriginalEdges do
+                if not e.Inner then e.Segment
+            }
+            |> LineSegment.merge
+            |> ResizeArray
+        let points = ResizeArray()
+        let mutable currentPoint = edges.[0].Point1
+        while edges.Count > 0 do
+            let index =
+                edges
+                |> Seq.findIndex (fun e -> e.Point1 =~ currentPoint || e.Point2 =~ currentPoint)
+            let target = edges.[index]
+            currentPoint <- if target.Point1 =~ currentPoint then target.Point2 else target.Point1
+            points.Add(currentPoint)
+            edges.RemoveAt(index)
+        fromPolygon points LayerType.BackSide

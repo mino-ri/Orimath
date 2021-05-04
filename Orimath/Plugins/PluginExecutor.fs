@@ -38,8 +38,11 @@ let getFullNames<'T>(types: Type[]) = [|
 
 let private loadSetting (types: Type[]) =
     match Settings.load Settings.Plugin with
-    | Some(s) -> setting <- s
-    | None ->
+    | Some(s) when isNotNull (box s) ->
+        setting <- s
+        if isNull setting.PluginOrder then setting.PluginOrder <- Array.Empty()
+        if isNull setting.Settings then setting.Settings <- Dictionary()
+    | _ ->
         setting <- PluginSetting.CreateDefault()
         setting.PluginOrder <-
             Array.append (getFullNames<IPlugin> types) (getFullNames<IViewPlugin> types)

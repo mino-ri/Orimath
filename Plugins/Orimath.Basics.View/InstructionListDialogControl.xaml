@@ -8,32 +8,150 @@
              mc:Ignorable="d"
              d:Height="450" d:Width="800"
              d:DataContext="{d:DesignData Type={x:Type vm:InstructionListDialogViewModel}}">
+    <UserControl.Resources>
+        <ControlTemplate TargetType="{x:Type CheckBox}" x:Key="OverlapCheckBoxTemplate">
+            <Grid Background="{TemplateBinding Background}"
+                  SnapsToDevicePixels="True">
+                <ContentPresenter Margin="{TemplateBinding Padding}"
+                                  Content="{TemplateBinding Content}" 
+                                  ContentTemplate="{TemplateBinding ContentTemplate}"
+                                  ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                  RecognizesAccessKey="True" />
+                <Border x:Name="Border"
+                        Width="14" Height="14"
+                        SnapsToDevicePixels="True"
+                        BorderThickness="1"
+                        Margin="4"
+                        VerticalAlignment="Top"
+                        HorizontalAlignment="Right"
+                        BorderBrush="{Binding Path=(th:ThemeBrush.Theme).Normal.Border, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}"
+                        Background="{Binding Path=(th:ThemeBrush.Theme).Normal.Background, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}">
+                    <Path Visibility="Collapsed"
+                          Width="10"
+                          Height="10"
+                          x:Name="CheckMark"
+                          SnapsToDevicePixels="False"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          StrokeLineJoin="Miter"
+                          Data="M 1,4 L 5,8 L 9,1"
+                          StrokeThickness="2"
+                          Stroke="{Binding Path=(th:ThemeBrush.Theme).Normal.Foreground, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                </Border>
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="Border" Property="BorderBrush" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Border, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                    <Setter TargetName="Border" Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Background, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                    <Setter TargetName="CheckMark" Property="Stroke" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Foreground, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                </Trigger>
+                <Trigger Property="IsKeyboardFocused" Value="True">
+                    <Setter TargetName="Border" Property="BorderBrush" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Border, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                    <Setter TargetName="Border" Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Background, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                    <Setter TargetName="CheckMark" Property="Stroke" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Foreground, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter TargetName="Border" Property="BorderBrush" Value="{Binding Path=(th:ThemeBrush.Theme).Highlight.Border, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                    <Setter TargetName="Border" Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Highlight.Background, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                    <Setter TargetName="CheckMark" Property="Stroke" Value="{Binding Path=(th:ThemeBrush.Theme).Highlight.Foreground, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter TargetName="Border" Property="BorderBrush" Value="{Binding Path=(th:ThemeBrush.Theme).Disabled.Border, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                    <Setter TargetName="Border" Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Disabled.Background, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                    <Setter TargetName="CheckMark" Property="Stroke" Value="{Binding Path=(th:ThemeBrush.Theme).Disabled.Foreground, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                </Trigger>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter TargetName="CheckMark" Property="Visibility" Value="Visible" />
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+    </UserControl.Resources>
     <Grid Margin="8" Background="{th:ThemeBrush Workspace.Normal.Background}"
           VerticalAlignment="Center">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Label Grid.Row="0" Content="{Binding Header, Mode=OneTime}" />
-        <ListBox Grid.Row="1" ItemsSource="{Binding Images, Mode=OneTime}"
-                 ScrollViewer.VerticalScrollBarVisibility="Auto"
-                 ScrollViewer.HorizontalScrollBarVisibility="Visible">
-            <ListBox.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <VirtualizingStackPanel Orientation="Horizontal"
-                                            CanHorizontallyScroll="True"
-                                            CanVerticallyScroll="False" />
-                </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <Image Width="{Binding Width, Mode=OneTime}"
-                        Height="{Binding Height, Mode=OneTime}"
-                        Source="{Binding Mode=OneTime}" />
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        <Button Grid.Row="2" Content="{Binding OkText, Mode=OneTime}" Width="80" Margin="2" IsDefault="True" Command="{Binding CloseCommand, Mode=OneTime}" />
+        <ScrollViewer Grid.Row="1"
+                      HorizontalScrollBarVisibility="Disabled"
+                      VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Images, Mode=OneTime}"
+                          Background="{th:ThemeBrush Workspace.Alternated.Background}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type vm:InstructionItemViewModel}">
+                        <CheckBox IsChecked="{Binding IsExportTarget.Value, Mode=TwoWay}"
+                                    Template="{StaticResource OverlapCheckBoxTemplate}"
+                                    HorizontalContentAlignment="Right"
+                                    VerticalContentAlignment="Top"
+                                    Margin="1"
+                                    Background="{th:ThemeBrush Workspace.Normal.Background}">
+                            <local:PixelScaleImage Source="{Binding Image.Value, Mode=OneWay}"
+                                                   Stretch="None" />
+                        </CheckBox>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+        <Expander Grid.Row="2" Header="{Binding SettingText, Mode=OneTime}">
+            <StackPanel Orientation="Horizontal">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="50" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Margin="2" Text="{Binding MarginText, Mode=OneTime}" />
+                    <TextBox Grid.Row="0" Grid.Column="1" Margin="2" Text="{Binding Margin.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Grid.Row="1" Grid.Column="0" Margin="2" Text="{Binding PaperSizeText, Mode=OneTime}" />
+                    <TextBox Grid.Row="1" Grid.Column="1" Margin="2" Text="{Binding PaperSize.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Grid.Row="2" Grid.Column="0" Margin="2" Text="{Binding IndexFontSizeText, Mode=OneTime}" />
+                    <TextBox Grid.Row="2" Grid.Column="1" Margin="2" Text="{Binding IndexFontSize.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Grid.Row="3" Grid.Column="0" Margin="2" Text="{Binding IndexOffsetText, Mode=OneTime}" />
+                    <TextBox Grid.Row="3" Grid.Column="1" Margin="2" Text="{Binding IndexOffset.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
+                        Margin="2"
+                        Content="{Binding RegenerateText, Mode=OneTime}"
+                        Command="{Binding UpdateImageCommand, Mode=OneTime}" />
+                </Grid>
+                <Grid Margin="24,0,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="50" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Margin="2" Text="{Binding ColumnCountText, Mode=OneTime}" />
+                    <TextBox Grid.Row="0" Grid.Column="1" Margin="2" Text="{Binding ColumnCount.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
+                            Margin="2"
+                            Content="{Binding ExportSinglePngText, Mode=OneTime}"
+                            Command="{Binding ExportSinglePngCommand, Mode=OneTime}" />
+                    <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
+                        Margin="2"
+                        Content="{Binding ExportSingleSvgText, Mode=OneTime}" />
+                </Grid>
+            </StackPanel>
+        </Expander>
+        <Button Grid.Row="3" Content="{Binding OkText, Mode=OneTime}" Width="80" Margin="2" IsDefault="True" Command="{Binding CloseCommand, Mode=OneTime}" />
     </Grid>
 </UserControl>

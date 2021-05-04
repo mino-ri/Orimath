@@ -43,6 +43,7 @@ type PluginItemSettingViewModel(plugin: IConfigurablePlugin, dispatcher: IDispat
         pluginType.GetCustomAttribute<DisplayNameAttribute>()
         |> Null.bind (fun att -> att.DisplayName)
         |> Null.defaultValue pluginType.Name
+        |> Language.GetWord
 
     override _.Header = header
     member val Content = SettingViewModel(plugin.Setting, dispatcher)

@@ -1,5 +1,7 @@
 ﻿namespace Orimath.Basics.View.Export
 open System
+open System.Globalization
+open System.Windows
 open System.Windows.Media
 open System.Windows.Media.Imaging
 
@@ -47,6 +49,18 @@ type VisualExporter(visual: DrawingVisual) =
         member _.AddEllipse(center, size, decoration) =
             let brush, pen = Drawing.toMediaDecoration decoration
             dc.DrawEllipse(brush, pen, center, size.Width, size.Height)
+
+        member _.AddText(text, point, size, color) =
+            let text =
+                FormattedText(
+                    text,
+                    CultureInfo.InvariantCulture,
+                    FlowDirection.LeftToRight,
+                    Typeface("Meiryo UI"),
+                    size,
+                    SolidColorBrush(color),
+                    1.0)
+            dc.DrawText(text, point)
 
     interface IDisposable with
         member _.Dispose() = (dc :> IDisposable).Dispose()

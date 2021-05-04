@@ -5,6 +5,7 @@ open Orimath.Basics
 open Orimath.Basics.Folds
 open Orimath.Basics.View.ViewModels
 open Orimath.Basics.View.Export
+open System.ComponentModel.DataAnnotations
 
 [<DisplayName("{basic/NewPaper.Name}Command: New paper")>]
 [<Description("{basic/NewPaper.Desc}New paper and reset command")>]
@@ -79,8 +80,15 @@ type FoldingInstructionPlugin() =
 
 
 type PngExportPluginSetting =
-    { Margin: int
-      PaperSize: int }
+    {
+        [<Display(Name = "{basic/ImageExport.Margin}Margin")>]
+        [<Range(1, 5000)>]
+        mutable Margin: int
+
+        [<Display(Name = "{basic/ImageExport.PaperSize}Paper size")>]
+        [<Range(1, 5000)>]
+        mutable PaperSize: int
+    }
 
 
 [<DisplayName("{basic/ImageExport.Name}Command: Png export")>]
@@ -97,33 +105,40 @@ type ImageExportPlugin() =
                         let margin = this.Setting.Margin
                         let paperSize = this.Setting.PaperSize
                         let imageSize = paperSize + margin * 2
+                        let drawPaper (exporter: VisualExporter) =
+                            let context =
+                                ExportContext(
+                                    exporter,
+                                    ViewPointConverter(
+                                        float paperSize, float -paperSize,
+                                        float margin, float (paperSize + margin)))
+                            match paper.UndoSnapShots |> Seq.tryHead with
+                            | Some(paper, (:? FoldOperation as opr)) ->
+                                context.DrawPaper(paper)
+                                context.DrawFoldOperation(paper, opr)
+                            | _ -> context.DrawPaper(paper)
                         async {
-                            let drawPaper (exporter: VisualExporter) =
-                                let context =
-                                    ExportContext(
-                                        exporter,
-                                        ViewPointConverter(
-                                            float paperSize, float -paperSize,
-                                            float margin, float (paperSize + margin)))
-                                match paper.UndoSnapShots |> Seq.tryHead with
-                                | Some(paper, (:? FoldOperation as opr)) ->
-                                    context.DrawPaper(paper)
-                                    context.DrawFoldOperation(paper, opr)
-                                | _ -> context.DrawPaper(paper)
                             VisualExporter.ExportPngToStream(stream, imageSize, imageSize, drawPaper)
                         }
-                    member _.ShortcutKey = "ctrl+P"
+                    member _.ShortcutKey = ""
                     member _.EffectName = "{FileType.Png.EffectName}png export..."
+                    member _.Icon = getIcon "export_png"
                 }
             args.Workspace.AddEffect(ExportEffect(args.FileManager, args.Workspace, exporter))
 
 [<DisplayName("{basic/InstructionList.Name}Command: Show instructions")>]
 [<Description("{basic/InstructionList.Desc}Show folding instructions.")>]
 type InstructionListPlugin() =
-    inherit ConfigurablePluginBase<InstructionListSetting>({ Margin = 64; PaperSize = 256 })
+    inherit ConfigurablePluginBase<InstructionListSetting>({
+            Margin = 64
+            PaperSize = 256
+            IndexOffset = 6
+            IndexFontSize = 16
+            ColumnCount = 4
+        })
     interface IViewPlugin with
         member this.Execute(args: ViewPluginArgs) =
             args.Workspace.AddEffect(
-                InstructionListEffect(args.Workspace, args.Messenger, args.Dispatcher, this.Setting))
+                InstructionListEffect(args.Workspace, args.Messenger, args.FileManager, args.Dispatcher, this.Setting))
             args.Messenger.RegisterView(ViewPane.Dialog, typeof<InstructionListDialogViewModel>,
                 viewPath "InstructionListDialogControl")

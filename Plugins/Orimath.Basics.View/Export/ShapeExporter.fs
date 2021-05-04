@@ -7,10 +7,20 @@ open Orimath.Plugins
 type ExportPen =
     { Color: Color
       Thickness: float
-      DashArray: float list }
+      DashArray: float list
+      LineCap: PenLineCap
+      DashCap: PenLineCap
+      LineJoin: PenLineJoin
+    }
 
     static member Solid(color, thickness) =
-        { Color = color; Thickness = thickness; DashArray = [] }
+        { Color = color
+          LineCap = PenLineCap.Round
+          DashCap = PenLineCap.Round
+          LineJoin = PenLineJoin.Round
+          Thickness = thickness
+          DashArray = []
+        }
 
 [<Struct>]
 type ExportDecoration =
@@ -33,3 +43,4 @@ type IShapeExporter =
     abstract member AddPolygon : points: seq<ScreenPoint> * decoration: ExportDecoration -> unit
     abstract member AddPath : startPoint: ScreenPoint * segments: seq<ExportPathSegment> * pen: ExportPen -> unit
     abstract member AddEllipse : center: ScreenPoint * size: Size * decoration: ExportDecoration -> unit
+    abstract member AddText : text: string * point: ScreenPoint * size: float * color: Color -> unit

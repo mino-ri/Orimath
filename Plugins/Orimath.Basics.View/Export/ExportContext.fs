@@ -7,6 +7,7 @@ open Orimath.Basics.Folds
 open Orimath.Core
 open Orimath.Plugins
 open Orimath.Combination
+open Orimath.Core.NearlyEquatable
 
 type ExportContext(exporter: IShapeExporter, pointConverter: IViewPointConverter) =
     static let sin60 = sin(Math.PI / 3.0)
@@ -36,14 +37,12 @@ type ExportContext(exporter: IShapeExporter, pointConverter: IViewPointConverter
     member _.DrawLayerBack(layer: ILayer) =
         exporter.AddPolygon(
             layer.Edges |> Seq.map (fun e -> pointConverter.ModelToView(e.Point1)),
-            { Stroke = ExportPen.Solid(Colors.Transparent, 0.0)
+            { Stroke = ExportPen.Solid(Colors.Black, 3.0)
               Fill = if layer.LayerType = LayerType.FrontSide then Colors.Bisque else Colors.White })
 
     member this.DrawLayer(layer: ILayer) =
         this.DrawLayerBack(layer)
-        layer.Edges |> Seq.iter this.DrawEdge
         layer.Creases |> Seq.iter this.DrawCrease
-        layer.Points |> Seq.iter this.DrawPoint
 
     member this.DrawPaper(paper: IPaper) =
         paper.Layers |> Seq.iter this.DrawLayer
@@ -51,7 +50,7 @@ type ExportContext(exporter: IShapeExporter, pointConverter: IViewPointConverter
     member _.DrawInstructionPoint(point: InstructionPoint) =
         exporter.AddEllipse(
             pointConverter.ModelToView(point.Point),
-            Size(12.0, 12.0),
+            Size(6.0, 6.0),
             { Stroke = ExportPen.Solid(Colors.Transparent, 0.0)
               Fill = UniversalColor.getColor point.Color })
 
@@ -60,6 +59,9 @@ type ExportContext(exporter: IShapeExporter, pointConverter: IViewPointConverter
             pointConverter.ModelToView(line.Line.Point1), 
             pointConverter.ModelToView(line.Line.Point2),
             { Color = UniversalColor.getColor line.Color
+              LineCap = PenLineCap.Flat
+              DashCap = PenLineCap.Flat
+              LineJoin = PenLineJoin.Miter
               Thickness = 3.0
               DashArray = [ 4.0; 2.0 ] })
 
@@ -87,6 +89,9 @@ type ExportContext(exporter: IShapeExporter, pointConverter: IViewPointConverter
         let distance = (point2 - point1).Length
         let pen =
             { Color = UniversalColor.getColor arrow.Color
+              LineCap = PenLineCap.Flat
+              DashCap = PenLineCap.Flat
+              LineJoin = PenLineJoin.Miter
               Thickness = 4.0
               DashArray = [] }
         let drawArrow ty (basePoint: Vector) (normal: Vector) (vertical: Vector) =
@@ -122,3 +127,25 @@ type ExportContext(exporter: IShapeExporter, pointConverter: IViewPointConverter
         lines |> Array.iter this.DrawInstructionLine
         points |> Array.iter this.DrawInstructionPoint
         arrows |> Array.iter this.DrawInstructionArrow
+
+    member this.DrawCreasePattern(paper: IPaper) =
+        this.DrawLayerBack(Layer.merge paper.Layers)
+        let layers = paper.Layers |> Seq.toArray
+        for i = 0 to layers.Length - 1 do
+            for edge in layers.[i].OriginalEdges do
+                if edge.Inner then
+                    let isTopEdge =
+                        layers
+                        |> Seq.take i
+                        |> Seq.collect (fun l -> l.OriginalEdges)
+                        |> Seq.forall (fun e -> not e.Inner || edge.Segment <>~ e.Segment) 
+                    if isTopEdge then
+                        let color =
+                            if layers.[i].LayerType = LayerType.BackSide
+                            then InstructionColor.Blue
+                            else InstructionColor.Red
+                        exporter.AddLine(
+                            pointConverter.ModelToView(edge.Point1),
+                            pointConverter.ModelToView(edge.Point2),
+                            ExportPen.Solid(UniversalColor.getColor(color), 2.0))
+    

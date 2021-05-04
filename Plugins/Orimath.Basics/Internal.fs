@@ -4,7 +4,7 @@ open Orimath.Core
 open Orimath.Plugins
 
 let getIcon iconName =
-    Assembly.GetExecutingAssembly().GetManifestResourceStream("Orimath.Basics.Icons." + iconName + ".png")
+    Assembly.GetExecutingAssembly().GetManifestResourceStream($"Orimath.Basics.Icons.%s{iconName}.png")
 
 let transform (workspace: IWorkspace) (matrix: Matrix) reverse =
     let getLayerType lt = if reverse then LayerType.turnOver lt else lt
