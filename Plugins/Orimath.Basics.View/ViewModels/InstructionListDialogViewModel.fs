@@ -64,11 +64,11 @@ type InstructionListDialogViewModel
     member _.CloseText = messenger.LocalizeWord("{Close}Close")
     member _.Images = images
     member _.CloseCommand = messenger.CloseDialogCommand
-    member _.Margin = margin
-    member _.PaperSize = paperSize
-    member _.IndexFontSize = indexFontSize
-    member _.IndexOffset = indexOffset
-    member _.ColumnCount = columnCount
+    member _.Margin = margin |> Prop.mapBoth id (max 0)
+    member _.PaperSize = paperSize |> Prop.mapBoth id (max 1)
+    member _.IndexFontSize = indexFontSize |> Prop.mapBoth id (max 1)
+    member _.IndexOffset = indexOffset |> Prop.mapBoth id (max 0)
+    member _.ColumnCount = columnCount |> Prop.mapBoth id (max 1)
 
     member _.UpdateImage(_: obj) =
         let imageSize = paperSize.Value + margin.Value * 2

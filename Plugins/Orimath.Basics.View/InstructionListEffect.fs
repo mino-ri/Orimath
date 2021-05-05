@@ -11,7 +11,7 @@ open ApplicativeProperty
 type InstructionListSetting =
     {
         [<Display(Name = "{basic/InstructionList.Margin}Margin")>]
-        [<Range(1, 5000)>]
+        [<Range(0, 5000)>]
         mutable Margin: int
 
         [<Display(Name = "{basic/InstructionList.PaperSize}Paper size")>]
@@ -23,7 +23,7 @@ type InstructionListSetting =
         mutable IndexFontSize: int
 
         [<Display(Name = "{basic/InstructionList.IndexOffset}Index offset")>]
-        [<Range(1, 5000)>]
+        [<Range(0, 5000)>]
         mutable IndexOffset: int
 
         [<Display(Name = "{basic/InstructionList.ColumnCount}Export columns count")>]

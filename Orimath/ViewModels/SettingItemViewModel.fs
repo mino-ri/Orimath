@@ -67,20 +67,28 @@ type RangeSettingItemViewModel<'T>
     member _.Minimum = min
     member _.Maximum = max
 
-    member this.Value
-        with get() = this.GetValue() : 'T
-        and set(v: 'T) =
-            this.SetValue(v)
-            this.OnPropertyChanged()
-
 
 type DoubleSettingItemViewModel(property: PropertyInfo, object: obj) =
     inherit RangeSettingItemViewModel<float>(property, object, Double.MinValue, Double.MaxValue)
 
+    member this.Value
+        with get() = this.GetValue() : float
+        and set(v: float) =
+            let value = if this.HasRange then Math.Clamp(v, this.Minimum, this.Maximum) else v
+            this.SetValue(value)
+            this.OnPropertyChanged()
+
 
 type Int32SettingItemViewModel(property: PropertyInfo, object: obj) =
     inherit RangeSettingItemViewModel<int>(property, object, Int32.MinValue, Int32.MaxValue)
-  
+ 
+    member this.Value
+        with get() = this.GetValue() : int
+        and set(v: int) =
+            let value = if this.HasRange then Math.Clamp(v, this.Minimum, this.Maximum) else v
+            this.SetValue(value)
+            this.OnPropertyChanged()
+ 
   
 type BooleanSettingItemViewModel(property: PropertyInfo, object: obj) =
     inherit SettingItemViewModel(property, object)

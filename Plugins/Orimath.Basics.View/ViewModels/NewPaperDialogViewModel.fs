@@ -43,8 +43,8 @@ type NewPaperDialogViewModel(messenger: IMessenger, dispatcher: IDispatcher, exe
     member _.IsSquareSelected = isSquareSelected
     member _.IsRectangleSelected = isRectangleSelected
     member _.IsPolygonSelected = isPolygonSelected
-    member _.Width = width
-    member _.Height = height
+    member _.Width = width |> Prop.mapBoth id (fun w -> if w <= 0.0 then 1.0 else w)
+    member _.Height = height |> Prop.mapBoth id (fun h -> if h <= 0.0 then 1.0 else h)
     member _.NumberOfPolygon = numberOfPolygon
 
     member val ExecuteCommand = Prop.ctrue |> Prop.command (fun _ ->
