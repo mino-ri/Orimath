@@ -42,6 +42,7 @@ type InstructionListDialogViewModel
 
     member val UpdateImageCommand = Prop.commands this.UpdateImage Prop.ctrue dispatcher.SyncContext
     member val ExportSinglePngCommand = Prop.commands this.ExportSinglePng Prop.ctrue dispatcher.SyncContext
+    member val ExportSingleSvgCommand = Prop.commands this.ExportSingleSvg Prop.ctrue dispatcher.SyncContext
     member _.Header = messenger.LocalizeWord("{basic/Effect.InstructionList}Show instructions...")
     member _.SettingText = messenger.LocalizeWord("{basic/InstructionList.Settings}Settings")
     member _.MarginText = messenger.LocalizeWord("{basic/InstructionList.Margin}Margin")
@@ -53,6 +54,10 @@ type InstructionListDialogViewModel
         messenger.LocalizeWord("{basic/InstructionList.ExportSinglePng}Export in single png file")
     member _.ExportSingleSvgText =
         messenger.LocalizeWord("{basic/InstructionList.ExportSingleSvg}Export in single svg file")
+    member _.ExportIndexedPngText =
+        messenger.LocalizeWord("{basic/InstructionList.ExportIndexedPng}Export in indexed png files")
+    member _.ExportIndexedSvgText =
+        messenger.LocalizeWord("{basic/InstructionList.ExportIndexedSvg}Export in indexed svg files")
     member _.RegenerateText = messenger.LocalizeWord("{basic/InstructionList.Regenerate}Regenerate")
     member _.OkText = messenger.LocalizeWord("{Ok}OK")
     member _.Images = images
@@ -81,14 +86,14 @@ type InstructionListDialogViewModel
             | [] -> ()
         updateImage images 1
 
-    member _.ExportSinglePng(_: obj) =
+    member private _.ExportSingleCore(exportCore) =
         dispatcher.Background {
             let imageSize = paperSize.Value + margin.Value * 2
             let modelIndexOffset = float (indexOffset.Value - margin.Value) / float paperSize.Value
             let length = images |> List.sumBy (fun image -> if image.IsExportTarget.Value then 1 else 0)
             let columns = columnCount.Value
             let rows = (length + columns - 1) / columns
-            let drawPaper (exporter: VisualExporter) =
+            let drawPaper (exporter: IShapeExporter) =
                 let rec recSelf (images: InstructionItemViewModel list) index =
                     match images with
                     | head :: tail when head.IsExportTarget.Value ->
@@ -103,12 +108,27 @@ type InstructionListDialogViewModel
                     | _ :: tail -> recSelf tail index
                     | [] -> ()
                 recSelf images 1
+            exportCore (imageSize * columns) (imageSize * rows) drawPaper
+        }
+
+    member this.ExportSinglePng(_: obj) =
+        this.ExportSingleCore(fun width height drawPaper ->
             async {
                 match! fileManager.SaveStream("{FileType.Png.FileName}png image", $"*.png") with
                 | Some(stream) ->
                     use str = stream
-                    VisualExporter.ExportPngToStream(str, imageSize * columns, imageSize * rows, drawPaper)
+                    VisualExporter.ExportPngToStream(str, width, height, drawPaper)
                 | _ -> return ()
             }
-            |> Async.RunSynchronously
-        }
+            |> Async.RunSynchronously)
+
+    member this.ExportSingleSvg(_: obj) =
+        this.ExportSingleCore(fun width height drawPaper ->
+            async {
+                match! fileManager.SaveStream("{FileType.Svg.FileName}svg image", $"*.svg") with
+                | Some(stream) ->
+                    use str = stream
+                    SvgExporter.ExportToStream(str, width, height, drawPaper)
+                | _ -> return ()
+            }
+            |> Async.RunSynchronously)

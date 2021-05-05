@@ -23,11 +23,11 @@
   },
   "FileType": {
     "Png": {
-      "FileName": "Pngフォーマット",
+      "FileName": "png画像",
       "EffectName": "Png形式で出力"
     },
     "Svg": {
-      "FileName": "Svgフォーマット",
+      "FileName": "svg画像",
       "EffectName": "Svg形式で出力"
     },
   }

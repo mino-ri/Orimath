@@ -97,34 +97,42 @@ type ImageExportPlugin() =
     inherit ConfigurablePluginBase<PngExportPluginSetting>({ Margin = 128; PaperSize = 512 })
     interface IViewPlugin with
         member this.Execute(args: ViewPluginArgs) =
-            let exporter =
+            let drawPaper paper (exporter: IShapeExporter) =
+                let margin = this.Setting.Margin
+                let paperSize = this.Setting.PaperSize
+                ExportContext(
+                    exporter,
+                    ViewPointConverter.FromMarginAndScale(float margin, float paperSize))
+                    .DrawPaper(paper)
+            let pngExporter =
                 { new IImageExporter with
                     member _.FileTypeName = "{FileType.Png.FileName}png image"
                     member _.Extension = "png"
                     member _.Export(stream, paper) =
-                        let margin = this.Setting.Margin
-                        let paperSize = this.Setting.PaperSize
-                        let imageSize = paperSize + margin * 2
-                        let drawPaper (exporter: VisualExporter) =
-                            let context =
-                                ExportContext(
-                                    exporter,
-                                    ViewPointConverter(
-                                        float paperSize, float -paperSize,
-                                        float margin, float (paperSize + margin)))
-                            match paper.UndoSnapShots |> Seq.tryHead with
-                            | Some(paper, (:? FoldOperation as opr)) ->
-                                context.DrawPaper(paper)
-                                context.DrawFoldOperation(paper, opr)
-                            | _ -> context.DrawPaper(paper)
+                        let imageSize =  this.Setting.PaperSize + this.Setting.Margin * 2
                         async {
-                            VisualExporter.ExportPngToStream(stream, imageSize, imageSize, drawPaper)
+                            VisualExporter.ExportPngToStream(stream, imageSize, imageSize, drawPaper paper)
                         }
                     member _.ShortcutKey = ""
-                    member _.EffectName = "{FileType.Png.EffectName}png export..."
+                    member _.EffectName = "{FileType.Png.EffectName}export in png format..."
                     member _.Icon = getIcon "export_png"
                 }
-            args.Workspace.AddEffect(ExportEffect(args.FileManager, args.Workspace, exporter))
+            let svgExporter =
+                { new IImageExporter with
+                    member _.FileTypeName = "{FileType.Svg.FileName}svg image"
+                    member _.Extension = "svg"
+                    member _.Export(stream, paper) =
+                        let imageSize =  this.Setting.PaperSize + this.Setting.Margin * 2
+                        async {
+                            SvgExporter.ExportToStream(stream, imageSize, imageSize, drawPaper paper)
+                        }
+                    member _.ShortcutKey = ""
+                    member _.EffectName = "{FileType.Svg.EffectName}export in svg format..."
+                    member _.Icon = getIcon "export_svg"
+                }
+            args.Workspace.AddEffect(ExportEffect(args.FileManager, args.Workspace, pngExporter))
+            args.Workspace.AddEffect(ExportEffect(args.FileManager, args.Workspace, svgExporter))
+
 
 [<DisplayName("{basic/InstructionList.Name}Command: Show instructions")>]
 [<Description("{basic/InstructionList.Desc}Show folding instructions.")>]

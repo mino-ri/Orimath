@@ -57,6 +57,8 @@
     "Regenerate": "再生成",
     "ExportSinglePng": "単一のpng画像に出力",
     "ExportSingleSvg": "単一のsvg画像に出力",
+    "ExportIndexedPng": "連番のpng画像に出力",
+    "ExportIndexedSvg": "連番のsvg画像に出力",
   },
   "Effect": {
     "Open": "開く...",

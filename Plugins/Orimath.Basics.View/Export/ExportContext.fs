@@ -12,8 +12,10 @@ open Orimath.Core.NearlyEquatable
 type ExportContext(exporter: IShapeExporter, pointConverter: IViewPointConverter) =
     static let sin60 = sin(Math.PI / 3.0)
     static let cos60 = cos(Math.PI / 3.0)
-    static let pointMargin = 8.0
-    static let arrowSize = 12.0
+    [<Literal>]
+    static let PointMargin = 8.0
+    [<Literal>]
+    static let ArrowSize = 12.0
 
     member _.DrawCrease(crease: Crease) =
         exporter.AddLine(
@@ -84,8 +86,8 @@ type ExportContext(exporter: IShapeExporter, pointConverter: IViewPointConverter
             if direction = SweepDirection.Clockwise
             then Vector(normal.Y, -normal.X)
             else Vector(-normal.Y, normal.X)
-        let point1 = v1 + normal * (pointMargin * sin60) + vertical * (pointMargin * cos60)
-        let point2 = v2 - normal * (pointMargin * sin60) + vertical * (pointMargin * cos60)
+        let point1 = v1 + normal * (PointMargin * sin60) + vertical * (PointMargin * cos60)
+        let point2 = v2 - normal * (PointMargin * sin60) + vertical * (PointMargin * cos60)
         let distance = (point2 - point1).Length
         let pen =
             { Color = UniversalColor.getColor arrow.Color
@@ -101,16 +103,16 @@ type ExportContext(exporter: IShapeExporter, pointConverter: IViewPointConverter
                 exporter.AddPolygon(
                     [
                         point basePoint
-                        point (basePoint + normal * arrowSize)
-                        point (basePoint + normal * (arrowSize * cos60) + vertical * (arrowSize * sin60))
+                        point (basePoint + normal * ArrowSize)
+                        point (basePoint + normal * (ArrowSize * cos60) + vertical * (ArrowSize * sin60))
                     ],
                     { Stroke = pen; Fill = pen.Color })
             | ArrowType.MountainFold ->
                 exporter.AddPath(
-                    point (basePoint + normal * (arrowSize * sin60) + vertical * (arrowSize * cos60)),
+                    point (basePoint + normal * (ArrowSize * sin60) + vertical * (ArrowSize * cos60)),
                     [
                         ExportPathSegment.Line(point
-                            (basePoint + normal * (arrowSize * 1.25 * cos60) + vertical * (arrowSize * 1.25 * sin60)))
+                            (basePoint + normal * (ArrowSize * 1.25 * cos60) + vertical * (ArrowSize * 1.25 * sin60)))
                         ExportPathSegment.Line(point basePoint)
                     ],
                     pen)

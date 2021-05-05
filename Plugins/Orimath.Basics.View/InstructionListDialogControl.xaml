@@ -147,8 +147,9 @@
                             Content="{Binding ExportSinglePngText, Mode=OneTime}"
                             Command="{Binding ExportSinglePngCommand, Mode=OneTime}" />
                     <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2"
-                        Margin="2"
-                        Content="{Binding ExportSingleSvgText, Mode=OneTime}" />
+                            Margin="2"
+                            Content="{Binding ExportSingleSvgText, Mode=OneTime}"
+                            Command="{Binding ExportSingleSvgCommand, Mode=OneTime}" />
                 </Grid>
             </StackPanel>
         </Expander>

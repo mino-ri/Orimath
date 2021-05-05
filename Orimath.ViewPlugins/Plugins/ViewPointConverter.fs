@@ -15,6 +15,9 @@ type ViewPointConverter(scaleX: float, scaleY: float, offsetX: float, offsetY: f
     member _.ViewToModel(point: ScreenPoint) =
         { X = (point.X - offsetX) / scaleX; Y = (point.Y - offsetY) / scaleY }
 
+    static member FromMarginAndScale(margin: float, scale: float) =
+        ViewPointConverter(scale, -scale, margin, (scale + margin))
+
     interface IViewPointConverter with
         member this.ModelToView(point) = this.ModelToView(point)
         member this.ViewToModel(point) = this.ViewToModel(point)
