@@ -127,6 +127,23 @@ type FileManager(dispatcher: IDispatcher, workspace: IWorkspace) =
                         |> callback)
                 with ex -> onError ex)
 
+        member this.SaveIndexedStream(fileTypeName, filter) =
+            Async.FromContinuations(fun (callback, onError, _) ->
+                try
+                    this.SavePath(fileTypeName, filter, fun path ->
+                        match path with
+                        | Some(path) ->
+                            callback (fun index ->
+                                Path.Combine(
+                                    Path.GetDirectoryName(path),
+                                    Path.GetFileNameWithoutExtension(path) +
+                                    $"_%03d{index}" +
+                                    Path.GetExtension(path))
+                                |> File.Create
+                                |> Some)
+                        | None -> callback (fun _ -> None))
+                with ex -> onError ex)
+
         member this.LoadStream(fileTypeName, filter) =
             Async.FromContinuations(fun (callback, onError, _) ->
                 try

@@ -21,4 +21,5 @@ type IFileManager =
     abstract member SaveObject<'T> : fileTypeName: string * filter: string * object: 'T -> Async<unit>
     abstract member LoadObject<'T> : fileTypeName: string * filter: string -> Async<'T option>
     abstract member SaveStream : fileTypeName: string * filter: string -> Async<FileStream option>
+    abstract member SaveIndexedStream : fileTypeName: string * filter: string -> Async<int -> FileStream option>
     abstract member LoadStream : fileTypeName: string * filter: string -> Async<FileStream option>
