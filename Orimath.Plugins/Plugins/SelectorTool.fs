@@ -65,3 +65,4 @@ type SelectorTool(workspace: IWorkspace) =
         member this.DragLeave(source, target, modifier) = this.DragLeave(source, target, modifier)
         member this.DragOver(source, target, modifier) = this.DragOver(source, target, modifier)
         member this.Drop(source, target, modifier) = this.Drop(source, target, modifier)
+        member _.CancelDrag(_, _) = ()

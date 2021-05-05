@@ -41,6 +41,7 @@ type IDragTool =
     abstract member DragLeave : source: OperationTarget * target: OperationTarget * modifier: OperationModifier -> bool
     abstract member DragOver : source: OperationTarget * target: OperationTarget * modifier: OperationModifier -> bool
     abstract member Drop : source: OperationTarget * target: OperationTarget * modifier: OperationModifier -> unit
+    abstract member CancelDrag : source: OperationTarget * modifier: OperationModifier -> unit
 
 
 type IEffect =

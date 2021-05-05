@@ -97,5 +97,7 @@ type MeasureTool(workspace: IWorkspace) =
                     |> Option.toArray
             instruction.Lines .<- array.Empty()
 
+        member _.CancelDrag(_, _) = ()
+
     interface IFoldingInstructionTool with
         member _.FoldingInstruction = instruction

@@ -135,5 +135,7 @@ type DragFoldTool(workspace: IWorkspace) =
             getFoldOperation paper selectedPoint selectedLine source target modifier
             |> this.Fold
 
+        member _.CancelDrag(_, _) = ()
+
     interface IFoldingInstructionTool with
         member _.FoldingInstruction = instruction.Instruction

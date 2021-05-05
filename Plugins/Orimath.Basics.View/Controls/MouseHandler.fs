@@ -133,7 +133,11 @@ type MouseHandler() =
             ctrl.Tag |> iterOf(fun brush -> ctrl.Foreground <- brush)
             // この中でドロップまで待機する
             ignore (DragDrop.DoDragDrop(ctrl, draggingGuid, DragDropEffects.Scroll))
-            draggingData <- None
+            match draggingData with
+            | Some(data) ->
+                this.Workspace.CancelDrag(data, getModifier pressed)
+                draggingData <- None
+            | None -> ()
             draggingSource <- null
             draggingGuid <- ""
             ctrl.ClearValue(Control.ForegroundProperty)
@@ -199,6 +203,7 @@ type MouseHandler() =
             if isValidDropSource(e.Data) && draggingData.IsSome then
                 this.Workspace.Drop(draggingData.Value, this.GetOperationTarget(e, dt), getModifier(pressed))
                 ctrl.ClearValue(Control.ForegroundProperty)
+                draggingData <- None
             e.Handled <- true
         | _ -> ()
 

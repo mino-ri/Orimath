@@ -45,3 +45,9 @@ type WorkspaceViewModel(workspace: IWorkspace, pointConverter: IViewPointConvert
         | :? IDragTool as tool ->
             dispatcher.Background { tool.Drop(toModelTarget(source), toModelTarget(target), modifier) }
         | _ -> ()
+
+    member _.CancelDrag(source, modifier) =
+        match workspace.CurrentTool.Value with
+        | :? IDragTool as tool ->
+            dispatcher.Background { tool.CancelDrag(toModelTarget(source), modifier) }
+        | _ -> ()
