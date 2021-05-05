@@ -91,8 +91,8 @@ type PngExportPluginSetting =
     }
 
 
-[<DisplayName("{basic/ImageExport.Name}Command: Png export")>]
-[<Description("{basic/ImageExport.Desc}Export in png format.")>]
+[<DisplayName("{basic/ImageExport.Name}Command: Image export")>]
+[<Description("{basic/ImageExport.Desc}Export in png/svg image.")>]
 type ImageExportPlugin() =
     inherit ConfigurablePluginBase<PngExportPluginSetting>({ Margin = 128; PaperSize = 512 })
     interface IViewPlugin with
@@ -135,7 +135,7 @@ type ImageExportPlugin() =
 
 
 [<DisplayName("{basic/InstructionList.Name}Command: Show instructions")>]
-[<Description("{basic/InstructionList.Desc}Show folding instructions.")>]
+[<Description("{basic/InstructionList.Desc}Show folding instructions and export in png/svg image.")>]
 type InstructionListPlugin() =
     inherit ConfigurablePluginBase<InstructionListSetting>({
             Margin = 64

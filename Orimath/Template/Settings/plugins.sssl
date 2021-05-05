@@ -2,6 +2,8 @@
   "PluginOrder": [
     "Orimath.Basics.BasicPlugin",
     "Orimath.Basics.View.NewPaperPlugin",
+    "Orimath.Basics.View.ImageExportPlugin",
+    "Orimath.Basics.View.InstructionListPlugin",
     "Orimath.Basics.FoldsPlugin",
     "Orimath.Basics.MeasurePlugin",
     "Orimath.Basics.View.BasicViewPlugin",
