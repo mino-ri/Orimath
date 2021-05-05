@@ -41,7 +41,7 @@ type InstructionListEffect
     interface IEffect with
         member val MenuHieralchy = [| "{Menu.Edit}Edit" |]
         member _.Name = "{basic/Effect.InstructionList}Show instructions..."
-        member _.ShortcutKey = ""
+        member _.ShortcutKey = "Ctrl+D"
         member _.Icon = getIcon "inst_list"
         member _.CanExecute = upcast Prop.ctrue
         member _.Execute() =

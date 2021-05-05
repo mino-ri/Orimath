@@ -6,6 +6,7 @@
     "Orimath.Basics.MeasurePlugin",
     "Orimath.Basics.View.BasicViewPlugin",
     "Orimath.Basics.View.EffectViewPlugin",
+    "Orimath.Basics.View.DragFoldNavigationPlugin",
     "Orimath.Basics.View.ToolViewPlugin",
     "Orimath.Basics.View.MeasureViewPlugin",
     "Orimath.Basics.View.CreasePatternViewPlugin",

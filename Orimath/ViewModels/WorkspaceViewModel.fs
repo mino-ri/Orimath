@@ -141,6 +141,9 @@ type WorkspaceViewModel(workspace: IWorkspace) =
         this.GetViewModelCollection(viewModelType)
         |> Null.iter (fun c ->
             for vm in c |> Seq.filter viewModelType.IsInstanceOfType |> Seq.toArray do
+                match vm with
+                | :? IDisposable as d -> d.Dispose()
+                | _ -> ()
                 ignore <| c.Remove(vm))
 
     member this.RemoveViewModel(viewModel: obj) =

@@ -150,3 +150,17 @@ type InstructionListPlugin() =
                 InstructionListEffect(args.Workspace, args.Messenger, args.FileManager, args.Dispatcher, this.Setting))
             args.Messenger.RegisterView(ViewPane.Dialog, typeof<InstructionListDialogViewModel>,
                 viewPath "InstructionListDialogControl")
+
+
+[<DisplayName("{basic/DragFoldNavigation.Name}View: Drag fold tool navigation")>]
+[<Description("{basic/DragFoldNavigation.Desc}Show drag fold tool navigation bar.")>]
+type DragFoldNavigationPlugin() =
+    interface IViewPlugin with
+        member _.Execute(args: ViewPluginArgs) =
+            args.Workspace.CurrentTool.Add(function
+                | :? DragFoldTool as tool ->
+                    args.Messenger.AddViewModel(
+                        new DragFoldNavigationViewModel(args.Messenger, args.Dispatcher, tool))
+                | _ -> args.Messenger.RemoveViewModel(typeof<DragFoldNavigationViewModel>))
+            args.Messenger.RegisterView(ViewPane.Top, typeof<DragFoldNavigationViewModel>,
+                viewPath "DragFoldNavigationControl")

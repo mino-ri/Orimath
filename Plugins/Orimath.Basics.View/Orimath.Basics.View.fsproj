@@ -35,6 +35,7 @@
     <Compile Include="ViewModels\InstructionArrowViewModel.fs" />
     <Compile Include="ViewModels\InstructionListDialogViewModel.fs" />
     <Compile Include="ViewModels\FoldingInstructionViewModel.fs" />
+    <Compile Include="ViewModels\DragFoldNavigationViewModel.fs" />
     <Compile Include="ViewModels\AttachedObservableCollection.fs" />
     <Compile Include="ViewModels\ScreenOperationTarget.fs" />
     <Compile Include="ViewModels\PointViewModel.fs" />
@@ -48,6 +49,7 @@
     <Compile Include="ViewModels\ToolViewModel.fs" />
     <Compile Include="ViewModels\CreasePatternViewModel.fs" />
     <Compile Include="Controls\PixelScaleImage.fs" />
+    <Compile Include="Controls\BooleanOptionToBrushConverter.fs" />
     <Compile Include="Controls\UniversalColorConverter.fs" />
     <Compile Include="Controls\IconImageConverter.fs" />
     <Compile Include="Controls\Arrow.fs" />

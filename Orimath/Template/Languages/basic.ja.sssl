@@ -4,8 +4,8 @@
     "Desc": "アンドゥ・リドゥなど基本的な操作を含みます。"
   },
   "Folding": {
-    "Name": "ツール: 折り線",
-    "Desc": "ドラッグ操作で折線をつけるツール。"
+    "Name": "ツール: 折り線/折り返し",
+    "Desc": "ドラッグ操作で折り線をつけるツール。"
   },
   "Measurement": {
     "Name": "ツール: 計測",
@@ -59,6 +59,22 @@
     "ExportSingleSvg": "単一のsvg画像に出力",
     "ExportIndexedPng": "連番のpng画像に出力",
     "ExportIndexedSvg": "連番のsvg画像に出力",
+  },
+  "DragFoldNavigation": {
+    "Name": "ビュー: 折り線/折り返しツール ナビゲーション",
+    "Desc": "「折り線/折り返しツール」使用時に操作のナビゲーションを表示します。",
+    "MouseButton": "マウスボタン",
+    "Overlap": "重ねて折る",
+    "Through": "通るように折る",
+    "Shift": "Shift",
+    "Crease": "折線",
+    "FoldBack": "折り返し",
+    "Ctrl": "Ctrl",
+    "All": "全て",
+    "FrontMost": "上1枚のみ",
+    "Alt": "Alt",
+    "Aligned": "基準折り",
+    "Free": "自由折り",
   },
   "Effect": {
     "Open": "開く...",

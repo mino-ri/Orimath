@@ -3,7 +3,14 @@ open Orimath.Core
 open Orimath.Combination
 open Orimath.Plugins
 open FoldOperation
+open ApplicativeProperty
 open ApplicativeProperty.PropOperators
+
+[<RequireQualifiedAccess>]
+type DragFoldState =
+    | Ready
+    | Dragging of through: bool * foldBack: bool * frontMost: bool * free : bool
+
 
 type DragFoldTool(workspace: IWorkspace) =
     let center = { X = 0.5; Y = 0.5 }
@@ -11,6 +18,17 @@ type DragFoldTool(workspace: IWorkspace) =
     let instruction = InstructionWrapper(paper)
     let mutable selectedPointIndex = 0
     let mutable selectedLineIndex = 0
+    let state = Prop.value DragFoldState.Ready
+
+    member _.UpdateState(modifier: OperationModifier) =
+        state .<-
+            DragFoldState.Dragging(
+                modifier.HasRightButton, modifier.HasShift,
+                modifier.HasCtrl, modifier.HasAlt)
+
+    member _.ResetState() = state .<- DragFoldState.Ready
+
+    member _.State = state
 
     member private _.Selection =
         let point =
@@ -103,12 +121,15 @@ type DragFoldTool(workspace: IWorkspace) =
                     paper.SelectedEdges .<- array.Empty()
 
     interface IDragTool with
-        member _.BeginDrag(source, _) =
+        member this.BeginDrag(source, modifier) =
             match source with
-            | FreePoint true _ | LineOrEdge _ -> true
+            | FreePoint true _ | LineOrEdge _ ->
+                this.UpdateState(modifier)
+                true
             | _ -> false
 
         member this.DragEnter(source, target, modifier) =
+            this.UpdateState(modifier)
             let selectedPoint, selectedLine = this.Selection
             let opr, previewOnly =
                 match getFoldOperation paper selectedPoint selectedLine source target modifier with
@@ -121,21 +142,24 @@ type DragFoldTool(workspace: IWorkspace) =
             | FreePoint true _ | LineOrEdge _ -> true
             | _ -> false
 
-        member _.DragLeave(_, target, _) =
+        member this.DragLeave(_, target, modifier) =
+            this.UpdateState(modifier)
             instruction.ResetAll()
             match target with
             | FreePoint true _ | LineOrEdge _ -> true
             | _ -> false
 
         member this.DragOver(source, target, modifier) =
+            this.UpdateState(modifier)
             (this :> IDragTool).DragEnter(source, target, modifier)
 
         member this.Drop(source, target, modifier) =
             let selectedPoint, selectedLine = this.Selection
             getFoldOperation paper selectedPoint selectedLine source target modifier
             |> this.Fold
+            this.ResetState()
 
-        member _.CancelDrag(_, _) = ()
+        member this.CancelDrag(_, _) = this.ResetState()
 
     interface IFoldingInstructionTool with
         member _.FoldingInstruction = instruction.Instruction

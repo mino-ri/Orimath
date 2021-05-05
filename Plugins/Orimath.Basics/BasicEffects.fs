@@ -1,7 +1,6 @@
 ﻿namespace Orimath.Basics
 open Orimath.Core
 open Orimath.Plugins
-open Orimath.Core.NearlyEquatable
 open ApplicativeProperty
 open ApplicativeProperty.PropOperators
 
@@ -81,7 +80,7 @@ type OpenAllEffect(workspace: IWorkspace) =
     interface IEffect with
         member val MenuHieralchy = [| "{Menu.Edit}Edit" |]
         member _.Name = "{basic/Effect.UnfoldAll}Unfold all"
-        member _.ShortcutKey = "Ctrl+E"
+        member _.ShortcutKey = "Ctrl+R"
         member _.Icon = Internal.getIcon "open_all"
         member _.CanExecute = canExecute
         member _.Execute() =
