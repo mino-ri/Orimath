@@ -4,7 +4,7 @@
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
 
-    <InformationalVersion>0.6-beta.0</InformationalVersion>
+    <InformationalVersion>1.0.0</InformationalVersion>
     <Company>Hojo Origami</Company>
     <Authors>豊穣ミノリ</Authors>
     <Copyright>© 2021 豊穣ミノリ</Copyright>
