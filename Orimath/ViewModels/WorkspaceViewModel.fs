@@ -16,9 +16,9 @@ type ViewDeclaration =
     | ViewType of Type
     | ViewUri of string
 
-type WorkspaceViewModel(workspace: IWorkspace) =
+type WorkspaceViewModel(workspace: IWorkspace) as this =
     inherit NotifyPropertyChanged()
-    let dispatcher = OrimathDispatcher()
+    let dispatcher = OrimathDispatcher(this)
     let fileManager = FileManager(dispatcher, workspace) :> IFileManager
     let effectCommands = Dictionary<IEffect, ICommand>()
     let effectParameterCreator = Dictionary<Type, obj -> obj>()
@@ -172,6 +172,8 @@ type WorkspaceViewModel(workspace: IWorkspace) =
 
     member _.CloseDialog() = dialog .<- null
 
+    member this.ShowMessage(message) = this.OpenDialog(MessageDialogViewModel(this, message))
+
     member _.GetEffectCommand(effect: IEffect) =
         match effectCommands.TryGetValue(effect) with
         | BoolSome(command) -> command
@@ -190,6 +192,7 @@ type WorkspaceViewModel(workspace: IWorkspace) =
         member this.SetEffectParameterViewModel(mapping) = this.SetEffectParameterViewModel(mapping)
         member this.CloseDialog() = this.CloseDialog()
         member this.OpenDialog(viewModel) = this.OpenDialog(viewModel)
+        member this.ShowMessage(message) = this.ShowMessage(message)
         member _.SaveSetting(name, model) = Settings.save name model
         member _.LoadSetting(name) = Settings.load name
         member _.LocalizeWord(text) = Language.GetWord(text)

@@ -79,6 +79,25 @@
         <DataTemplate DataType="{x:Type vm:VersionInfoViewModel}">
             <ContentControl Content="{core:Load Uri=/Orimath;component/VersionInfoControl.xaml}" />
         </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:MessageDialogViewModel}">
+            <Grid Margin="8" MaxWidth="600"
+                  Background="{th:ThemeBrush Workspace.Normal.Background}"
+                  VerticalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Label Grid.Row="0" Content="{Binding Header}" />
+                <TextBox Grid.Row="1" Grid.Column="1" BorderBrush="{x:Null}" Background="{x:Static Brushes.Transparent}"
+                         IsReadOnly="True" Text="{Binding Message, Mode=OneTime}" />
+                <Button Grid.Row="2" Width="80" Margin="2"
+                        Content="{Binding OkText, Mode=OneTime}"
+                        HorizontalAlignment="Center"
+                        IsDefault="True"
+                        Command="{Binding CloseCommand, Mode=OneTime}" />
+            </Grid>
+        </DataTemplate>
     </Window.Resources>
     <Window.InputBindings>
         <KeyBinding Gesture="Escape" Command="{Binding CloseDialogCommand, Mode=OneTime}" />

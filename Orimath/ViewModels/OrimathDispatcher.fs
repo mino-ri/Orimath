@@ -5,7 +5,7 @@ open Orimath.Plugins
 open ApplicativeProperty
 open ApplicativeProperty.PropOperators
 
-type OrimathDispatcher() =
+type OrimathDispatcher(messenger: IMessenger) =
     let processCount = Prop.value 0
     let uiDispatcher = Dispatcher.CurrentDispatcher
     let syncContext = DispatcherSynchronizationContext(uiDispatcher)
@@ -19,7 +19,9 @@ type OrimathDispatcher() =
             member _.Invoke(action) =
                 Prop.incr processCount
                 Async.Start(async {
-                    try action()
+                    try
+                        try action()
+                        with ex -> messenger.ShowMessage($"[%s{ex.GetType().Name}]\n%s{ex.Message}")
                     finally ui.Invoke(fun () -> Prop.decr processCount)
                 })
         }

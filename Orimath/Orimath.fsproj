@@ -28,6 +28,7 @@
     <Compile Include="IO\Settings.fs" />
     <Compile Include="IO\FileManager.fs" />
     <Compile Include="Plugins\PluginExecutor.fs" />
+    <Compile Include="ViewModels\MessageDialogViewModel.fs" />
     <Compile Include="ViewModels\OrimathDispatcher.fs" />
     <Compile Include="ViewModels\EnumValueViewModel.fs" />
     <Compile Include="ViewModels\SettingItemViewModel.fs" />
