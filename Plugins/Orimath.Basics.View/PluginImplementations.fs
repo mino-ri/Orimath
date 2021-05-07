@@ -114,7 +114,7 @@ type ImageExportPlugin() =
                             VisualExporter.ExportPngToStream(stream, imageSize, imageSize, drawPaper paper)
                         }
                     member _.ShortcutKey = ""
-                    member _.EffectName = "{FileType.Png.EffectName}export in png format..."
+                    member _.EffectName = "{FileType.Png.EffectName}Export in png image..."
                     member _.Icon = getIcon "export_png"
                 }
             let svgExporter =
@@ -127,7 +127,7 @@ type ImageExportPlugin() =
                             SvgExporter.ExportToStream(stream, imageSize, imageSize, drawPaper paper)
                         }
                     member _.ShortcutKey = ""
-                    member _.EffectName = "{FileType.Svg.EffectName}export in svg format..."
+                    member _.EffectName = "{FileType.Svg.EffectName}Export in svg image..."
                     member _.Icon = getIcon "export_svg"
                 }
             args.Workspace.AddEffect(ExportEffect(args.FileManager, args.Workspace, pngExporter))

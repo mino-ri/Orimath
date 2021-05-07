@@ -1,6 +1,6 @@
 # Orimath
 
-対応バージョン: 0.6-beta.0
+対応バージョン: 1.0.0
 
 * [概要](#概要)
 * [動作環境](#動作環境)
@@ -31,22 +31,15 @@ Orimath は数学に特化した *折り紙シミュレータ* です。実際�
 
 展開図・折り図制作を主目的としたソフトではありませんが、将来的に便利な機能を搭載する予定があります。
 
-### β版補足
-
-現在公開されているバージョンは **β版** です。
-β版ではファイルを保存・出力することができません。
-
-本リリース時には、プロジェクトの保存と読み込み、png・svg形式の出力、他ソフト連携形式での出力に対応する予定です。
-
 ## 動作環境
 
 | OS | フレームワーク | メモリ | ディスク容量 | CPU |
 | --- | --- | --- | --- | --- |
-| Windows 10 | .NET5 | > 60MB | > 5MB | 指定なし |
+| Windows 10 | .NET5 | > 128MB | > 6MB | 指定なし |
 
 # 画面の説明
 
-![画面の説明](https://github.com/mino-ri/Orimath/blob/master/Documents/Images/view2.png?raw=true)
+![画面の説明](../Images/view2.png?raw=true)
 
 ### ① 折り紙ビュー
 
@@ -58,7 +51,14 @@ Orimath は数学に特化した *折り紙シミュレータ* です。実際�
 
 ### ③ 計測ビュー
 
-折り紙ビューで選択している点や直線の数学的情報が表示されます。
+折り紙ビューで選択している点や直線の、左下を原点とし、紙の中央を(0.5, 0.5)とする座標系における数学的情報が表示されます。
+
+| 文字 | 意味 |
+| --- | --- |
+| *X, Y* | 選択している点の位置 |
+| *θ* | 選択している線の水平を0°とする左回りの角度 |
+| *d* | 選択している線の原点からの距離 |
+| *l* | 選択している線の長さ |
 
 ### ④ ツール
 
@@ -68,11 +68,15 @@ Orimath は数学に特化した *折り紙シミュレータ* です。実際�
 
 「元に戻す」「裏返す」などの操作を行うために使います。
 
+### ⑥ 操作ナビゲーション
+
+折り線/折り返しツールを使用する時に、どのキーがどの操作に対応するかが表示されます。
+
 # 操作方法
 
-## ![icon](https://github.com/mino-ri/Orimath/blob/master/Plugins/Orimath.Basics/Icons/fold.png?raw=true) 折り線/折り返しツール
+## ![icon](../../Plugins/Orimath.Basics/Icons/fold.png?raw=true) 折り線/折り返しツール
 
-![view](https://github.com/mino-ri/Orimath/blob/master/Documents/Images/view.png?raw=true)
+![view](../Images/view.png?raw=true)
 
 マウスの左右ボタンと、 `Ctrl` ・ `Shift` ・ `Alt` キーの組み合わせで操作します。折り線をつけたり、紙を折り返すことができます。
 
@@ -91,7 +95,7 @@ Orimath は数学に特化した *折り紙シミュレータ* です。実際�
 
 ### 折線をつける (ドラッグ)
 
-![view](https://github.com/mino-ri/Orimath/blob/master/Documents/Images/fold1.gif?raw=true)
+![view](../Images/fold1.gif?raw=true)
 
 紙のカドや辺、折線などにカーソルを合わせてマウスの左ボタンを押し、別の線や点にドラッグすると、青い点線と矢印が表示されます。青い点線が表示されている状態でマウスボタンを離すと、点線があった部分に折線がつきます。グレーの点線だけが表示されている状態でボタンを離しても折線はつきません。
 
@@ -99,26 +103,26 @@ Orimath は数学に特化した *折り紙シミュレータ* です。実際�
 
 ### 折り返す (Shiftキー)
 
-![view](https://github.com/mino-ri/Orimath/blob/master/Documents/Images/fold3.png?raw=true)
+![view](../Images/fold3.png?raw=true)
 
 `Shift` キーを押しながらドラッグすると、図のように片方向の青い矢印が表示されます。 `Shift` キーを押したままマウスボタンを離すと、矢印の向きに紙を折り返します。
 折り返す方向はドラッグする方向と同じになります。
 
 ### 手前の紙だけ折る (Ctrlキー)
 
-![view](https://github.com/mino-ri/Orimath/blob/master/Documents/Images/fold2.png?raw=true)
+![view](../Images/fold2.png?raw=true)
 
 `Ctrl` キーを押しながらドラッグすると、可能な限り手前にある紙だけを折ります。
 
 ### 手前の紙だけ折り返す (Ctrlキー + Shiftキー)
 
-![view](https://github.com/mino-ri/Orimath/blob/master/Documents/Images/fold4.png?raw=true)
+![view](../Images/fold4.png?raw=true)
 
 `Shift` キー(折り返す)と `Ctrl` キー(手前の紙だけ折る)を組み合わせることで、手前の紙だけを折り返すことができます。
 
 ### 基準をとらず自由に折る (Altキー)
 
-![view](https://github.com/mino-ri/Orimath/blob/master/Documents/Images/fold5.png?raw=true)
+![view](../Images/fold5.png?raw=true)
 
 Orimathでは通常 **きっちり基準をとった折り方** でなければ折線を確定させることができません。
 `Alt` キーを押すことでこの制約を無視し、いわゆる'ぐらい折り'ができるようになります。
@@ -131,13 +135,13 @@ Orimathでは通常 **きっちり基準をとった折り方** でなければ�
 
 #### 点と点を重ねるように折る
 
-![view](https://github.com/mino-ri/Orimath/blob/master/Documents/Images/axiom2.png?raw=true)
+![view](../Images/axiom2.png?raw=true)
 
 点から点に左ドラッグすると、2つの点を重ねるように折ります。
 
 #### 線と線を重ねるように折る
 
-![view](https://github.com/mino-ri/Orimath/blob/master/Documents/Images/axiom3.png?raw=true)
+![view](../Images/axiom3.png?raw=true)
 
 線から線に左ドラッグすると、2つの線を重ねるように折ります。
 
@@ -145,25 +149,25 @@ Orimathでは通常 **きっちり基準をとった折り方** でなければ�
 
 #### 点と線を重ねるように折る
 
-![view](https://github.com/mino-ri/Orimath/blob/master/Documents/Images/axiom8.png?raw=true)
+![view](../Images/axiom8.png?raw=true)
 
 点から線、または線から点にドラッグすると、それらを重ねるように折ります。この折り方にはバリエーションがあり、ドラッグ前に点や線を左クリックして選択しておくことで挙動が変わります。
 
 ---
 
-![view](https://github.com/mino-ri/Orimath/blob/master/Documents/Images/axiom5.png?raw=true)
+![view](../Images/axiom5.png?raw=true)
 
 事前に点を選択しておくと、 **その点を通るように** 折ります。
 
 ---
 
-![view](https://github.com/mino-ri/Orimath/blob/master/Documents/Images/axiom7.png?raw=true)
+![view](../Images/axiom7.png?raw=true)
 
 事前に線を選択しておくと、 **その線に垂直になるように** 折ります。
 
 ---
 
-![view](https://github.com/mino-ri/Orimath/blob/master/Documents/Images/axiom6.png?raw=true)
+![view](../Images/axiom6.png?raw=true)
 
 `Shift` キーを押しながらクリックすることで、点と線を1個ずつ選択することができます。この状態で点から線へとドラッグすると「選択した点と線」「ドラッグしている点と線」がそれぞれ重なるように折ります。
 
@@ -175,7 +179,7 @@ Orimathでは通常 **きっちり基準をとった折り方** でなければ�
 
 #### 2つの点を通るように折る
 
-![view](https://github.com/mino-ri/Orimath/blob/master/Documents/Images/axiom1.png?raw=true)
+![view](../Images/axiom1.png?raw=true)
 
 点から点に右ドラッグすると、2点を繋ぐような線で折ります。
 
@@ -183,13 +187,13 @@ Orimathでは通常 **きっちり基準をとった折り方** でなければ�
 
 #### 線に直線で、点を通るように折る
 
-![view](https://github.com/mino-ri/Orimath/blob/master/Documents/Images/axiom4.png?raw=true)
+![view](../Images/axiom4.png?raw=true)
 
 点から線、または線から点に右ドラッグすると、線に垂直で点を通るように折ります。
 
-## ![icon](https://github.com/mino-ri/Orimath/blob/master/Plugins/Orimath.Basics/Icons/measure.png?raw=true) 計測ツール
+## ![icon](../../Plugins/Orimath.Basics/Icons/measure.png?raw=true) 計測ツール
 
-![view](https://github.com/mino-ri/Orimath/blob/master/Documents/Images/measure.png?raw=true)
+![view](../Images/measure.png?raw=true)
 
 折り紙上の点や線をドラッグ操作で繋ぐことで、それらの距離や交点などを求めることができます。
 
@@ -197,43 +201,68 @@ Orimathでは通常 **きっちり基準をとった折り方** でなければ�
 
 画面上部に並んでいるボタンをクリックすることで、様々な操作を行うことができます。
 
-### ![icon](https://github.com/mino-ri/Orimath/blob/master/Plugins/Orimath.Basics/Icons/undo.png?raw=true) 元に戻す (Ctrl+Z)
+
+### ![icon](../../Plugins/Orimath.Basics/Icons/open_file.png?raw=true) 開く (Ctrl+O)
+
+.orimath 形式のファイルを開きます。
+
+### ![icon](../../Plugins/Orimath.Basics/Icons/save_file_as.png?raw=true) 名前をつけて保存 (Ctrl+Shift+S)
+
+現在の折り紙を .orimath 形式で新しく保存します。
+
+### ![icon](../../Plugins/Orimath.Basics/Icons/save_file.png?raw=true) 保存 (Ctrl+S)
+
+現在の折り紙を .orimath 形式で保存します。
+
+### ![icon](../../Plugins/Orimath.Basics/Icons/undo.png?raw=true) 元に戻す (Ctrl+Z)
 
 直前に行った操作を取り消します。
 
-### ![icon](https://github.com/mino-ri/Orimath/blob/master/Plugins/Orimath.Basics/Icons/redo.png?raw=true) やり直し (Ctrl+Y)
+### ![icon](../../Plugins/Orimath.Basics/Icons/redo.png?raw=true) やり直し (Ctrl+Y)
 
 「元に戻す」で取り消した内容をやり直します。
 
-### ![icon](https://github.com/mino-ri/Orimath/blob/master/Plugins/Orimath.Basics/Icons/rotate_l.png?raw=true) 左に90°回転 (Ctrl+←)
+### ![icon](../../Plugins/Orimath.Basics/Icons/rotate_l.png?raw=true) 左に90°回転 (Ctrl+←)
 
 紙全体を左に90°回転させます。
 
-### ![icon](https://github.com/mino-ri/Orimath/blob/master/Plugins/Orimath.Basics/Icons/rotate_r.png?raw=true) 右に90°回転 (Ctrl+→)
+### ![icon](../../Plugins/Orimath.Basics/Icons/rotate_r.png?raw=true) 右に90°回転 (Ctrl+→)
 
 紙全体を右に90°回転させます。
 
-### ![icon](https://github.com/mino-ri/Orimath/blob/master/Plugins/Orimath.Basics/Icons/turn_v.png?raw=true) 縦に裏返す (Ctrl+↑)
+### ![icon](../../Plugins/Orimath.Basics/Icons/turn_v.png?raw=true) 縦に裏返す (Ctrl+↑)
 
 紙全体を縦に裏返します。
 
-### ![icon](https://github.com/mino-ri/Orimath/blob/master/Plugins/Orimath.Basics/Icons/turn_h.png?raw=true) 横に裏返す (Ctrl+↓)
+### ![icon](../../Plugins/Orimath.Basics/Icons/turn_h.png?raw=true) 横に裏返す (Ctrl+↓)
 
 紙全体を横に裏返します。
 
-### ![icon](https://github.com/mino-ri/Orimath/blob/master/Plugins/Orimath.Basics/Icons/open_all.png?raw=true) すべて開く (Ctrl+E)
+### ![icon](../../Plugins/Orimath.Basics/Icons/open_all.png?raw=true) すべて開く (Ctrl+E)
 
 折りたたまれた紙を完全に開きます。また、紙を回転させている場合は初期の向きに戻ります。
 
-### ![icon](https://github.com/mino-ri/Orimath/blob/master/Plugins/Orimath.Basics/Icons/new_paper.png?raw=true) 新しい紙 (Ctrl+N)
+### ![icon](../../Plugins/Orimath.Basics/Icons/new_paper.png?raw=true) 新しい紙 (Ctrl+N)
 
 現在の紙を破棄して、新しい紙を作成します。
 
 このコマンドを使うと、折り紙を **正方形・長方形・正多角形** に変更することができます。
 
-### ![icon](https://github.com/mino-ri/Orimath/blob/master/Plugins/Orimath.Basics/Icons/delete.png?raw=true) リセット (Ctrl+Delete)
+### ![icon](../../Plugins/Orimath.Basics/Icons/delete.png?raw=true) リセット (Ctrl+Delete)
 
 全ての折り返しと折線を削除し、まっさらな紙に戻します。
+
+### ![icon](../../Plugins/Orimath.Basics.View/Icons/export_png.png?raw=true) png形式で出力
+
+現在の折り紙をpng画像として保存します。
+
+### ![icon](../../Plugins/Orimath.Basics.View/Icons/export_svg.png?raw=true) svg形式で出力
+
+現在の折り紙をsvg画像として保存します。
+
+### ![icon](../../Plugins/Orimath.Basics.View/Icons/inst_list.png?raw=true) 折り図を表示 (Ctrl+D)
+
+現在の状態に至るまでの折り図を表示します。折り図は、折り線/折り返しツールで操作時に表示されていたものと同じです。
 
 ## その他のメニュー
 

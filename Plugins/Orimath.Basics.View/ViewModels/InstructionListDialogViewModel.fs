@@ -53,13 +53,13 @@ type InstructionListDialogViewModel
     member _.IndexOffsetText = messenger.LocalizeWord("{basic/InstructionList.IndexOffset}Index offset")
     member _.ColumnCountText = messenger.LocalizeWord("{basic/InstructionList.ColumnCount}Export columns count")
     member _.ExportSinglePngText =
-        messenger.LocalizeWord("{basic/InstructionList.ExportSinglePng}Export in single png file")
+        messenger.LocalizeWord("{basic/InstructionList.ExportSinglePng}Export in a png image")
     member _.ExportSingleSvgText =
-        messenger.LocalizeWord("{basic/InstructionList.ExportSingleSvg}Export in single svg file")
+        messenger.LocalizeWord("{basic/InstructionList.ExportSingleSvg}Export in a svg image")
     member _.ExportIndexedPngText =
-        messenger.LocalizeWord("{basic/InstructionList.ExportIndexedPng}Export in indexed png files")
+        messenger.LocalizeWord("{basic/InstructionList.ExportIndexedPng}Export in indexed png images")
     member _.ExportIndexedSvgText =
-        messenger.LocalizeWord("{basic/InstructionList.ExportIndexedSvg}Export in indexed svg files")
+        messenger.LocalizeWord("{basic/InstructionList.ExportIndexedSvg}Export in indexed svg images")
     member _.RegenerateText = messenger.LocalizeWord("{basic/InstructionList.Regenerate}Regenerate")
     member _.CloseText = messenger.LocalizeWord("{Close}Close")
     member _.Images = images
