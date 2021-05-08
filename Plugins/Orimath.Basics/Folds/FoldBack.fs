@@ -57,6 +57,7 @@ let private splitLine foldLine (target: LineSegment) =
         let cross = Line.cross foldLine target.Line |> Option.get
         LineSegment.FromPoints(cross, target.Point2),
         LineSegment.FromPoints(target.Point1, cross)
+    // 0, 0
     | _ -> None, None
 
 let private splitCrease foldLine (target: Crease) =
@@ -68,9 +69,11 @@ let private splitCreases foldLine (layer: ILayer) =
     layer.Creases |> chooseUnzip (splitCrease foldLine)
 
 let private splitEdge foldLine (target: Edge) =
-    let positive, negative = splitLine foldLine target.Segment
-    positive |> Option.map (fun l -> { target with Segment = l }),
-    negative |> Option.map (fun l -> { target with Segment = l })
+    match splitLine foldLine target.Segment with
+    | None, None -> Some(target), Some(target)
+    | positive, negative ->
+        positive |> Option.map (fun l -> { target with Segment = l }),
+        negative |> Option.map (fun l -> { target with Segment = l })
 
 let private splitEdges foldLine (layer: ILayer) =
     let rec recSelf positiveEdges negativeEdges index =
