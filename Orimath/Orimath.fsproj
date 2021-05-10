@@ -6,7 +6,7 @@
     <UseWPF>true</UseWPF>
     <Win32Resource>.\icon.res</Win32Resource>
     
-    <InformationalVersion>1.0.1</InformationalVersion>
+    <InformationalVersion>1.0.2</InformationalVersion>
     <Company>Hojo Origami</Company>
     <Authors>豊穣ミノリ</Authors>
     <Copyright>© 2021 豊穣ミノリ</Copyright>
