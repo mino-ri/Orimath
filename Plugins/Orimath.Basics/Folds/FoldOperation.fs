@@ -189,14 +189,21 @@ let getInstructionPoint method =
     | Axiom5M(_, _, RawPoint(p), _)
     | Axiom2P(_, RawPoint(p), _) -> [ p ]
 
-let isContained layer method =
+let countContains layer method =
+    let count s = s |> Seq.sumBy (fun b -> if b then 1 else 0)
     match method with
-    | NoOperation -> false
+    | NoOperation -> 0
     | Axiom1(_, RawPoint(point1), RawPoint(point2))
     | Axiom2(RawPoint(point1), RawPoint(point2)) ->
-        Layer.containsAllPoint [ point1; point2 ] layer
+        count [
+            Layer.containsPoint point1 layer
+            Layer.containsPoint point2 layer
+        ]
     | Axiom3(RawSegment(seg1), RawSegment(seg2)) ->
-        Layer.containsAllSeg [ seg1; seg2 ] layer
+        count [
+            Layer.clip seg1.Line layer |> Seq.isEmpty |> not
+            Layer.clip seg2.Line layer |> Seq.isEmpty |> not
+        ]
     | Axiom4(_, RawSegment(seg), RawPoint(point))
     | Axiom5(_, RawSegment(seg), RawPoint(point), _)
     | Axiom6(_, _, RawSegment(seg), RawPoint(point), _)
@@ -204,4 +211,7 @@ let isContained layer method =
     | Axiom2P(RawSegment(seg), RawPoint(point), _)
     | Axiom3P(RawSegment(seg), RawPoint(point), _)
     | Axiom5M(_, RawSegment(seg), RawPoint(point), _) ->
-        Layer.containsPoint point layer && Layer.containsSeg seg layer
+        count [
+            Layer.containsPoint point layer
+            Layer.clip seg.Line layer |> Seq.isEmpty |> not
+        ]

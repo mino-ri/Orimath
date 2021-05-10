@@ -231,15 +231,40 @@ let private getTargetLayersCore (paper: IPaper) foldLine method =
             else { Index = index; Original = layer; Static = negative; Dynamic = positive; IsTarget = false })
         |> Seq.rev
         |> Seq.toArray
-    let firstLayer =
-        option {
-            return! option {
-                let! OprPoint(_, index) = hintPoint
-                let l = layers |> Seq.find (fun sl -> sl.Index = index)
-                if l.Dynamic.IsSome then return l
-            }
-            return! layers |> Array.tryFind (fun item -> item.Static.IsSome && item.Dynamic.IsSome)
+    // hintPoint を含むレイヤーのうち、最も適切なものを選択する
+    // 1.動平面上にかかっていること
+    // 2.hintPointを含んでいること
+    // 3.条件を満たすレイヤーが上に重なっていないこと
+    // 4.折りの基準とした要素をより多く含んでいるレイヤーを優先
+    // 5.内部的により上にあるレイヤーを優先
+    let firstLayer = option {
+        yield! option {
+            let! OprPoint(point, _) = hintPoint
+            let hintLayers =
+                layers
+                |> Array.filter (fun hintLayer ->
+                    Layer.containsPoint point hintLayer.Original &&
+                    hintLayer.Static.IsSome &&
+                    hintLayer.Dynamic.IsSome)
+            match hintLayers with
+            | [| layer |] -> return layer
+            | [||] -> return! None
+            | hintLayers ->
+                let hintLayers = hintLayers |> Array.filter (fun hintLayer ->
+                    hintLayers
+                    |> Array.forall (fun l ->
+                        l.Index <= hintLayer.Index ||
+                        not (Edge.areOverlap l.Dynamic.Value.Edges hintLayer.Dynamic.Value.Edges)))
+                match hintLayers with
+                | [| layer |] -> return layer
+                | [||] -> return! None
+                | hintLayers ->
+                    return
+                        hintLayers
+                        |> Array.maxBy (fun hintLayer -> FoldOperation.countContains hintLayer.Original method)
         }
+        yield! layers |> Array.tryFind (fun item -> item.Static.IsSome && item.Dynamic.IsSome)
+    }
     match firstLayer with
     | None -> None
     | Some(firstLayer) ->
