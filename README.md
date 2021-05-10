@@ -6,13 +6,13 @@
 
 数学と創作のための折り紙シミュレータ
 
-# 最新バージョン(v1.0.1)
+# 最新バージョン(v1.0.2)
 
 ## インストール方法
 
 下のリンクからダウンロードして解凍してください。
 
-[Orimath_1_0_1.zip](https://github.com/mino-ri/Orimath/releases/download/v1.0.1/Orimath_1_0_1.zip)
+[Orimath_1_0_2.zip](https://github.com/mino-ri/Orimath/releases/download/v1.0.2/Orimath_1_0_2.zip)
 
 ### 動作環境
 
@@ -33,13 +33,13 @@
 
 Origami simulator for mathemiticians & creators
 
-# Latest version (v1.0.1)
+# Latest version (v1.0.2)
 
 ## How to install
 
 Please download from following link and unzip it.
 
-[Orimath_1_0_1.zip](https://github.com/mino-ri/Orimath/releases/download/v1.0.1/Orimath_1_0_1.zip)
+[Orimath_1_0_2.zip](https://github.com/mino-ri/Orimath/releases/download/v1.0.2/Orimath_1_0_2.zip)
 
 ### System requirements
 
