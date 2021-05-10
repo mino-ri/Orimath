@@ -187,81 +187,83 @@ let isPositiveStatic foldLine dynamicPoint =
 
 let private clusterLayers (layers: SplittedLayer[]) =
     let clusteredLayers = ResizeArray<SplittedLayer list>()
-    iter {
-        let! layer = layers
-        let! dl = layer.Dynamic
-        clusteredLayers
-        |> Seq.tryFindIndex (fun cluster ->
-            exists {
-                let! cl = cluster
-                let! c = cl.Dynamic
-                return isContacted dl.OriginalEdges c.OriginalEdges
-            })
-        |> function
-        | Some(i) -> clusteredLayers.[i] <- layer :: clusteredLayers.[i]
-        | None -> clusteredLayers.Add([ layer ])
-    }
+    let added = Array.zeroCreate<bool> layers.Length
+    let rec addLayers index acm =
+        added.[index] <- true
+        let mutable newCluster = layers.[index] :: acm
+        match layers.[index].Dynamic with
+        | Some(dynamic) ->
+            for i = 0 to layers.Length - 1 do
+                let ok =
+                    not added.[i] && exists {
+                        let! target = layers.[i].Dynamic
+                        return isContacted dynamic.OriginalEdges target.OriginalEdges
+                    }
+                if ok then
+                    newCluster <- addLayers i newCluster
+        | None -> ()
+        newCluster
+    for i = 0 to layers.Length - 1 do
+        if not added.[i] then
+            clusteredLayers.Add(addLayers i [])
     clusteredLayers
 
-let foldBack (workspace: IWorkspace) line dynamicPoint =
+let splitPaper (workspace: IWorkspace) line dynamicPoint =
     let positiveStatic = isPositiveStatic line dynamicPoint
     let staticLayers, dynamicLayers =
         workspace.Paper.Layers |> chooseUnzip (splitLayer line positiveStatic)
-    workspace.ClearPaper(Seq.append staticLayers (Seq.rev dynamicLayers))
+    dynamicLayers.Reverse()
+    staticLayers, dynamicLayers
+
+let foldBack (workspace: IWorkspace) line dynamicPoint =
+    let staticLayers, dynamicLayers = splitPaper workspace line dynamicPoint
+    workspace.ClearPaper(Seq.append staticLayers dynamicLayers)
 
 let private getTargetLayersCore (paper: IPaper) foldLine method =
-    let hintPoints = FoldOperation.getSourcePoint method
+    let hintPoint = FoldOperation.getSourcePoint method |> List.tryHead
+    let isPositiveStatic = isPositiveStatic foldLine hintPoint
     let layers =
         paper.Layers
         |> Seq.mapi (fun index layer ->
             let positive, negative = splitLayerCore foldLine layer
-            if isPositiveStatic foldLine (List.tryHead hintPoints)
+            if isPositiveStatic
             then { Index = index; Original = layer; Static = positive; Dynamic = negative; IsTarget = false }
             else { Index = index; Original = layer; Static = negative; Dynamic = positive; IsTarget = false })
         |> Seq.rev
         |> Seq.toArray
-    let firstLayers =
-        [
-            for OprPoint(_, index) in hintPoints do
-            let l = layers |> Seq.find (fun sl -> sl.Index = index)
-            if l.Dynamic.IsSome then l
-        ]
-        |> function
-        | [] ->
-            layers
-            |> Array.tryFind (fun item -> item.Static.IsSome && item.Dynamic.IsSome)
-            |> Option.toList
-        | [ t ] -> [ t ]
-        | ts ->
-            match ts |> Seq.tryFind (fun t -> FoldOperation.isContained t.Original method) with
-            | Some(t) -> [ t ]
-            | None -> ts
-    if firstLayers.IsEmpty then
-        None
-    else
+    let firstLayer =
+        option {
+            return! option {
+                let! OprPoint(_, index) = hintPoint
+                let l = layers |> Seq.find (fun sl -> sl.Index = index)
+                if l.Dynamic.IsSome then return l
+            }
+            return! layers |> Array.tryFind (fun item -> item.Static.IsSome && item.Dynamic.IsSome)
+        }
+    match firstLayer with
+    | None -> None
+    | Some(firstLayer) ->
         let clusters = clusterLayers layers
-        let rec setDynamicLayers firstLayers =
-            for layer in firstLayers do
-                for l in Seq.find (List.contains layer) clusters do
-                    l.IsTarget <- true
+        let rec setDynamicLayers firstLayer =
+            for l in Seq.find (List.contains firstLayer) clusters do
+                l.IsTarget <- true
             let lastIndex = Array.findIndexBack (fun l -> l.IsTarget) layers
-            let targetLayers, otherLayers =
-                layers
-                |> Array.take (lastIndex + 1)
-                |> Array.partition (fun layer -> layer.IsTarget)
-            otherLayers
-            |> Array.tryFind (fun layer ->
-                exists {
+            // otherLayers は、自分より下のtargetLayersだけを確認する
+            layers.[..lastIndex]
+            |> Seq.indexed
+            |> Seq.tryFind (fun (i, layer) ->
+                not layer.IsTarget && exists {
                     let! otherLayer = layer.Dynamic
-                    let! targetLayer = targetLayers
-                    let! targetLayer = targetLayer.Dynamic
-                    return Edge.areOverlap otherLayer.Edges targetLayer.Edges
+                    let! targetLayer = layers.[i + 1..lastIndex]
+                    if targetLayer.IsTarget then
+                        let! targetLayer = targetLayer.Dynamic
+                        return Edge.areOverlap otherLayer.Edges targetLayer.Edges
                 })
             // 末尾最適化のため、Option.iter を使わない
             |> function
             | None -> ()
-            | Some(layer) -> setDynamicLayers [ layer ]
-        setDynamicLayers firstLayers
+            | Some(_, layer) -> setDynamicLayers layer
+        setDynamicLayers firstLayer
         Some(layers)
 
 let foldBackFirst (workspace: IWorkspace) foldLine method =

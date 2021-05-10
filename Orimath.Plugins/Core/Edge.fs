@@ -16,14 +16,14 @@ module Edge =
         let p2 = Point.reflectBy line edge.Segment.Point2
         { edge with Segment = LineSegment(Line.FromPoints(p1, p2).Value, p1, p2) }
 
-    let containsPoint point edges =
+    let private containsPointCore point edges withOnEdges =
         let rec recSelf acm (edges: Edge list) =
             match edges with
             | head :: tail ->
                 let p1 = head.Point1
                 let p2 = head.Point2
                 if LineSegment.containsPoint point head.Segment then
-                    true
+                    withOnEdges
                 else
                     if (p1.Y <= point.Y && point.Y < p2.Y || p2.Y <= point.Y && point.Y < p1.Y) &&
                         point.X < Line.getX point.Y head.Segment.Line
@@ -31,6 +31,10 @@ module Edge =
                     else recSelf acm tail
             | [] -> acm % 2 = 1
         recSelf 0 edges
+
+    let containsPoint point edges = containsPointCore point edges true
+
+    let containsPointWithoutOnEdges point edges = containsPointCore point edges false
 
     let containsPoint2 point (edges: LineSegment list) =
         let rec recSelf acm (edges: LineSegment list) =
@@ -88,6 +92,8 @@ module Edge =
 
     /// 2つのレイヤーに重なっている領域があるか判定します。
     let areOverlap edges1 edges2 =
+        edges1 |> Seq.exists (fun e1 -> containsPointWithoutOnEdges e1.Segment.Point1 edges2) ||
+        edges2 |> Seq.exists (fun e2 -> containsPointWithoutOnEdges e2.Segment.Point1 edges1) ||
         edges1 |> Seq.forall (fun e1 -> containsPoint e1.Segment.Point1 edges2) ||
         edges2 |> Seq.forall (fun e2 -> containsPoint e2.Segment.Point1 edges1) ||
         exists {
