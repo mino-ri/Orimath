@@ -1,12 +1,19 @@
 ﻿namespace Orimath.Basics.View.ViewModels
-open System
+open Orimath.Core
 open Orimath.Controls
 open Orimath.Plugins
 
 type WorkspaceViewModel(workspace: IWorkspace, pointConverter: IViewPointConverter, dispatcher: IDispatcher) =
     inherit NotifyPropertyChanged()
     let toModelTarget (target: ScreenOperationTarget) =
-        { Point = pointConverter.ViewToModel(target.Point)
+        let point = pointConverter.ViewToModel(target.Point)
+        let adjustedPoint =
+            match target.Target with
+            | DisplayTarget.Point(point) -> point
+            | DisplayTarget.Crease(crease) -> Line.perpFoot point crease.Line
+            | DisplayTarget.Edge(edge) -> Line.perpFoot point edge.Line
+            | DisplayTarget.Layer _ -> point
+        { Point = adjustedPoint
           Layer = target.Layer
           Target = target.Target }
 

@@ -19,38 +19,23 @@ module Edge =
     let private containsPointCore point edges withOnEdges =
         let rec recSelf acm (edges: Edge list) =
             match edges with
+            | [] ->
+                match acm with
+                | head :: tail -> tail |> List.forall ((=) head)
+                | [] -> true
+            | head :: _ when LineSegment.containsPoint point head.Segment ->
+                withOnEdges
             | head :: tail ->
-                let p1 = head.Point1
-                let p2 = head.Point2
-                if LineSegment.containsPoint point head.Segment then
-                    withOnEdges
-                else
-                    if (p1.Y <= point.Y && point.Y < p2.Y || p2.Y <= point.Y && point.Y < p1.Y) &&
-                        point.X < Line.getX point.Y head.Segment.Line
-                    then recSelf (acm + 1) tail
-                    else recSelf acm tail
-            | [] -> acm % 2 = 1
-        recSelf 0 edges
+                let v1 = point - head.Point1
+                let v2 = head.Point2 - head.Point1
+                let dot = v1.X * v2.Y - v2.X * v1.Y
+                let nextAcm = if dot =~~ 0.0 then acm else ((dot < 0.0) :: acm)
+                recSelf nextAcm tail
+        recSelf [] edges
 
     let containsPoint point edges = containsPointCore point edges true
 
     let containsPointWithoutOnEdges point edges = containsPointCore point edges false
-
-    let containsPoint2 point (edges: LineSegment list) =
-        let rec recSelf acm (edges: LineSegment list) =
-            match edges with
-            | head :: tail ->
-                let p1 = head.Point1
-                let p2 = head.Point2
-                if LineSegment.containsPoint point head then
-                    true
-                else
-                    if (p1.Y <= point.Y && point.Y < p2.Y || p2.Y <= point.Y && point.Y < p1.Y) &&
-                        point.X < Line.getX point.Y head.Line
-                    then recSelf (acm + 1) tail
-                    else recSelf acm tail
-            | [] -> acm % 2 = 1
-        recSelf 0 edges
 
     /// このレイヤーの領域に指定した線分が完全に含まれているか判断します。
     let containsSeg (seg: LineSegment) edges =
