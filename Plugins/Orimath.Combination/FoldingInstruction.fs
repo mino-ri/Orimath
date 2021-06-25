@@ -132,7 +132,11 @@ type InstructionPoint =
     { Point: Point
       Color: InstructionColor }
 
+
 type FoldingInstruction() =
     member val Lines = Internal.createArrayProp<InstructionLine>()
     member val Arrows = Internal.createArrayProp<InstructionArrow>()
     member val Points = Internal.createArrayProp<InstructionPoint>()
+
+
+type NoInstruction = NoInstruction

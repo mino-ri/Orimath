@@ -5,6 +5,7 @@ open Orimath.Basics.Folds
 open Orimath.Basics.View.Export
 open Orimath.Basics.View.ViewModels
 open Orimath.Plugins
+open Orimath.Combination
 open ApplicativeProperty
 
 [<ReferenceEquality; NoComparison>]
@@ -62,6 +63,7 @@ type InstructionListEffect
                 drawIndex "CP" indexOffset indexFontSize pointConverter exporter
             let images =
                 workspace.Paper.UndoSnapShots
+                |> Seq.filter (fun (_, tag) -> not (tag :? NoInstruction))
                 |> Seq.map (fun (paper, tag) ->
                     fun index indexFontSize indexOffset pointConverter exporter ->
                             let context = ExportContext(exporter, pointConverter)

@@ -39,7 +39,7 @@ type DragDraftLineTool(workspace: IWorkspace) =
         let method = operation.Method
         match chooseLine (getLines method) method with
         | Some(line) ->
-            use __ = paper.BeginChange(operation)
+            use __ = paper.BeginChange(NoInstruction)
             match operation.CreaseType, operation.IsFrontOnly with
             | _, true ->
                 for l in FoldBack.getTargetLayers paper line method do

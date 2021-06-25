@@ -18,10 +18,13 @@ type ExportContext(exporter: IShapeExporter, pointConverter: IViewPointConverter
     static let ArrowSize = 12.0
 
     member _.DrawCrease(crease: Crease) =
-        exporter.AddLine(
-            pointConverter.ModelToView(crease.Point1), 
-            pointConverter.ModelToView(crease.Point2),
-            ExportPen.Solid(Colors.Black, 2.0))
+        match crease.Type with
+        | CreaseType.Draft -> ()
+        | _ ->
+            exporter.AddLine(
+                pointConverter.ModelToView(crease.Point1), 
+                pointConverter.ModelToView(crease.Point2),
+                ExportPen.Solid(Colors.Black, 2.0))
 
     member _.DrawEdge(edge: Edge) =
         exporter.AddLine(
