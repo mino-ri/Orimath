@@ -4,12 +4,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vm="clr-namespace:Orimath.Basics.View.ViewModels;assembly=Orimath.Basics.View"
              xmlns:ctrl="clr-namespace:Orimath.Basics.View.Controls;assembly=Orimath.Basics.View"
+             xmlns:local="clr-namespace:Orimath.Basics.View.Controls;assembly=Orimath.Basics.View"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignData Type={x:Type vm:WorkspaceViewModel}}">
     <UserControl.Resources>
         <ctrl:MouseHandler x:Key="mouseHandler" />
         <SolidColorBrush x:Key="selectionColor" Color="#7FFF69B4" />
+        <local:UniversalColorConverter x:Key="CudConverter" />
         <ItemsPanelTemplate x:Key="CanvasItemsPanel">
             <Canvas />
         </ItemsPanelTemplate>
@@ -81,8 +83,13 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        <Style TargetType="{x:Type ctrl:LineControl}" BasedOn="{StaticResource {x:Type ctrl:LineControl}}"
+               x:Key="CreaseStyle">
+            <Setter Property="Foreground" Value="{Binding Color, Mode=OneTime, Converter={StaticResource CudConverter}}" />
+        </Style>
         <DataTemplate DataType="{x:Type vm:LineViewModel}" x:Key="LineTemplate">
-            <ctrl:LineControl ToolTip="{Binding Mode=OneTime}"
+            <ctrl:LineControl Style="{StaticResource CreaseStyle}"
+                              ToolTip="{Binding Mode=OneTime}"
                               X1="{Binding X1, Mode=OneTime}"
                               X2="{Binding X2, Mode=OneTime}"
                               Y1="{Binding Y1, Mode=OneTime}"

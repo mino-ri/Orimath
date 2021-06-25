@@ -105,12 +105,35 @@ let getFoldMethod paper selectedPoint selectedLine source target passFold free =
         | LineOrEdge(line), FreePoint free (point) -> lpOpr FoldDirection.LineToPoint line point
         | _ -> NoOperation
 
-let getFoldOperation paper selectedPoint selectedLine source target (modifier: OperationModifier) =
-    let passFold = modifier.HasRightButton
-    let free = modifier.HasAlt
+let private getFoldOperationCore paper selectedPoint selectedLine source target passFold free creaseType isFrontOnly =
     { Method = getFoldMethod paper selectedPoint selectedLine source target passFold free
-      CreaseType = if modifier.HasShift then CreaseType.ValleyFold else CreaseType.Crease
-      IsFrontOnly = modifier.HasCtrl }
+      CreaseType = creaseType
+      IsFrontOnly = isFrontOnly }
+
+let getFoldOperation paper selectedPoint selectedLine source target (modifier: OperationModifier) =
+    let creaseType = if modifier.HasShift then CreaseType.ValleyFold else CreaseType.Crease
+    getFoldOperationCore
+        paper selectedPoint selectedLine source target
+        modifier.HasRightButton modifier.HasAlt creaseType modifier.HasCtrl
+
+let getDraftFoldOperation paper selectedPoint selectedLine source target (modifier: OperationModifier) =
+    getFoldOperationCore
+        paper selectedPoint selectedLine source target
+        modifier.HasRightButton modifier.HasAlt CreaseType.Draft modifier.HasCtrl
+
+let getPreviewFoldOperation paper selectedPoint selectedLine source target (modifier: OperationModifier) =
+    match getFoldOperation paper selectedPoint selectedLine source target modifier with
+    | { Method = NoOperation } when not modifier.HasAlt ->
+        let modifier = modifier ||| OperationModifier.Alt
+        getFoldOperation paper selectedPoint selectedLine source target modifier, true
+    | opr -> opr, false
+
+let getPreviewDraftFoldOperation paper selectedPoint selectedLine source target (modifier: OperationModifier) =
+    match getDraftFoldOperation paper selectedPoint selectedLine source target modifier with
+    | { Method = NoOperation } when not modifier.HasAlt ->
+        let modifier = modifier ||| OperationModifier.Alt
+        getDraftFoldOperation paper selectedPoint selectedLine source target modifier, true
+    | opr -> opr, false
 
 let getLines opr =
     match opr with

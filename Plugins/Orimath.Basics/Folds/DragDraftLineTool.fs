@@ -6,13 +6,7 @@ open FoldOperation
 open ApplicativeProperty
 open ApplicativeProperty.PropOperators
 
-[<RequireQualifiedAccess>]
-type DragFoldState =
-    | Ready
-    | Dragging of through: bool * foldBack: bool * frontMost: bool * free : bool
-
-
-type DragFoldTool(workspace: IWorkspace) =
+type DragDraftLineTool(workspace: IWorkspace) =
     let center = { X = 0.5; Y = 0.5 }
     let paper = workspace.Paper
     let instruction = InstructionWrapper(paper)
@@ -47,21 +41,18 @@ type DragFoldTool(workspace: IWorkspace) =
         | Some(line) ->
             use __ = paper.BeginChange(operation)
             match operation.CreaseType, operation.IsFrontOnly with
-            | CreaseType.ValleyFold, false ->
-                FoldBack.foldBack workspace line (getSourcePoint method |> List.tryHead)
-            | CreaseType.ValleyFold, true ->
-                FoldBack.foldBackFirst workspace line method
             | _, true ->
                 for l in FoldBack.getTargetLayers paper line method do
-                    (l :?> ILayerModel).AddCreases([ line ])
+                    (l :?> ILayerModel).AddCreases(Layer.clip line l |> Crease.ofSegs operation.CreaseType)
             | _, false ->
-                for layer in paper.Layers do layer.AddCreases([ line ])
+                for layer in paper.Layers do
+                    layer.AddCreases(Layer.clip line layer |> Crease.ofSegs operation.CreaseType)
         | None -> ()
         instruction.ResetAll()
 
     interface ITool with
-        member _.Name = "{basic/Tool.Folding}Folding"
-        member _.ShortcutKey = "Ctrl+F"
+        member _.Name = "{basic/Tool.Draft}Draft line"
+        member _.ShortcutKey = "Ctrl+D"
         member _.Icon = Orimath.Basics.Internal.getIcon "fold"
         member _.OnActivated() =
             paper.SelectedLayers .<- array.Empty()
@@ -72,19 +63,7 @@ type DragFoldTool(workspace: IWorkspace) =
 
     interface IClickTool with
         member this.OnClick(target, modifier) =
-            if modifier.HasRightButton then
-                match target.Target with
-                | DisplayTarget.Crease(crease) ->
-                    this.Fold({
-                        Method =
-                            Axiom1(fst this.Selection,
-                                OprPoint(crease.Point1, target.Layer.Index),
-                                OprPoint(crease.Point2, target.Layer.Index))
-                        CreaseType = CreaseType.ValleyFold
-                        IsFrontOnly = modifier.HasCtrl
-                    })
-                | _ -> ()
-            else
+            if not modifier.HasRightButton then
                 selector.OnClick(target, modifier)
 
     interface IDragTool with
@@ -98,7 +77,7 @@ type DragFoldTool(workspace: IWorkspace) =
         member this.DragEnter(source, target, modifier) =
             this.UpdateState(modifier)
             let selectedPoint, selectedLine = this.Selection
-            let opr, previewOnly = getPreviewFoldOperation paper selectedPoint selectedLine source target modifier
+            let opr, previewOnly = getPreviewDraftFoldOperation paper selectedPoint selectedLine source target modifier
             instruction.Set(opr, previewOnly)
             match target with
             | FreePoint true _ | LineOrEdge _ -> true
@@ -117,7 +96,7 @@ type DragFoldTool(workspace: IWorkspace) =
 
         member this.Drop(source, target, modifier) =
             let selectedPoint, selectedLine = this.Selection
-            getFoldOperation paper selectedPoint selectedLine source target modifier
+            getDraftFoldOperation paper selectedPoint selectedLine source target modifier
             |> this.Fold
             this.ResetState()
 

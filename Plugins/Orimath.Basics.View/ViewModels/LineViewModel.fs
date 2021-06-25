@@ -5,6 +5,7 @@ open Orimath.Plugins
 open Orimath.Controls
 open Orimath.Basics.View
 open Orimath.Core.NearlyEquatable
+open Orimath.Combination
 
 type LineViewModel(crease: Crease, pointConverter: IViewPointConverter, ?layer: ILayerModel) =
     inherit NotifyPropertyChanged()
@@ -21,6 +22,10 @@ type LineViewModel(crease: Crease, pointConverter: IViewPointConverter, ?layer: 
     member _.Slope = !+(crease.Line.XFactor / crease.Line.YFactor)
     member _.Angle = !+(atan2 crease.Line.XFactor crease.Line.YFactor / Math.PI * 180.0) % 180.0
     member _.Length = crease.Length
+    member _.Color =
+        match crease.Type with
+        | CreaseType.Draft -> InstructionColor.LightGray
+        | _ -> InstructionColor.Black
    
     override _.ToString() = crease.ToString()
 

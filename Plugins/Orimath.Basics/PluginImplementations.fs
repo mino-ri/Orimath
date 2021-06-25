@@ -26,6 +26,13 @@ type FoldsPlugin() =
         member _.Execute(args) = args.Workspace.AddTool(Folds.DragFoldTool(args.Workspace))
 
 
+[<DisplayName("{basic/Draft.Name}Tool: Draft line")>]
+[<Description("{basic/Draft.Desc}Make draft lines by dragging")>]
+type DraftPlugin() =
+    interface IPlugin with
+        member _.Execute(args) = args.Workspace.AddTool(Folds.DragDraftLineTool(args.Workspace))
+
+
 [<DisplayName("{basic/Measurement.Name}Tool: Measurement")>]
 [<Description("{basic/Measurement.Desc}Measure angles and distances by dragging")>]
 type MeasurePlugin() =
