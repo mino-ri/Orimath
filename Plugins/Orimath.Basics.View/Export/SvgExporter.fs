@@ -11,6 +11,10 @@ type SvgExporter(root: XElement) =
     static let xattr name value = XAttribute(XName.Get(name), value)
     static let convertColor (color: Color) =
         if color.A = 0uy then "transparent" else $"#%02x{color.R}%02x{color.G}%02x{color.B}"
+    static let getFillColor (color: Color) =
+        if color.A = 0uy
+        then xattr "fill-opacity" 0
+        else xattr "fill" (convertColor color)
     static let getPenAttrs (pen: ExportPen) =
         [|
             xattr "stroke" (convertColor pen.Color)
@@ -57,7 +61,7 @@ type SvgExporter(root: XElement) =
         member _.AddPolygon(points, decoration) =
             root.Add(xelem "polygon" [|
                 xattr "points" <| String.concat " " (points |> Seq.map (fun p -> $"{p.X},{p.Y}"))
-                xattr "fill" (convertColor decoration.Fill)
+                getFillColor decoration.Fill
                 getPenAttrs decoration.Stroke
             |])
             
@@ -73,7 +77,7 @@ type SvgExporter(root: XElement) =
                         let sweep = if direction = SweepDirection.Clockwise then 1 else 0
                         $"A {size.Width} {size.Height} {rotationAngle} {large} {sweep} {x} {y}"
                 })
-                xattr "fill" "transparent"
+                xattr "fill-opacity" 0.0
                 getPenAttrs pen
             |])
 
@@ -83,7 +87,7 @@ type SvgExporter(root: XElement) =
                 xattr "cy" center.Y
                 xattr "rx" size.Width
                 xattr "ry" size.Height
-                xattr "fill" (convertColor decoration.Fill)
+                getFillColor decoration.Fill
                 getPenAttrs decoration.Stroke
             |])
 
@@ -91,7 +95,7 @@ type SvgExporter(root: XElement) =
             root.Add(xelem "text" [|
                 xattr "x" point.X
                 xattr "y" (point.Y + size)
-                xattr "fill" (convertColor color)
+                getFillColor color
                 xattr "font-family" "Meiryo UI"
                 xattr "font-size" size
                 text
