@@ -63,3 +63,6 @@ type Matrix with
         
     static member ( * ) (lineSegment: LineSegment, matrix: Matrix) =
         LineSegment.FromPoints(lineSegment.Point1 * matrix, lineSegment.Point2 * matrix).Value
+
+    static member ( * ) (crease: Crease, matrix: Matrix) =
+        { crease with Segment = crease.Segment * matrix }

@@ -157,10 +157,15 @@ type InstructionListPlugin() =
 type DragFoldNavigationPlugin() =
     interface IViewPlugin with
         member _.Execute(args: ViewPluginArgs) =
-            args.Workspace.CurrentTool.Add(function
+            args.Workspace.CurrentTool.Add(fun tool ->
+                args.Messenger.RemoveViewModel(typeof<DragFoldNavigationViewModel>)
+                match tool with
                 | :? DragFoldTool as tool ->
                     args.Messenger.AddViewModel(
                         new DragFoldNavigationViewModel(args.Messenger, args.Dispatcher, tool))
-                | _ -> args.Messenger.RemoveViewModel(typeof<DragFoldNavigationViewModel>))
-            args.Messenger.RegisterView(ViewPane.Top, typeof<DragFoldNavigationViewModel>,
+                | :? DragDraftLineTool as tool ->
+                    args.Messenger.AddViewModel(
+                        new DragFoldNavigationViewModel(args.Messenger, args.Dispatcher, tool))
+                | _ -> ())
+            args.Messenger.RegisterView(ViewPane.Bottom, typeof<DragFoldNavigationViewModel>,
                 viewPath "DragFoldNavigationControl")

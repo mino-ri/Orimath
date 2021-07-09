@@ -53,7 +53,7 @@ type DragDraftLineTool(workspace: IWorkspace) =
     interface ITool with
         member _.Name = "{basic/Tool.Draft}Draft line"
         member _.ShortcutKey = "Ctrl+D"
-        member _.Icon = Orimath.Basics.Internal.getIcon "fold"
+        member _.Icon = Orimath.Basics.Internal.getIcon "draft"
         member _.OnActivated() =
             paper.SelectedLayers .<- array.Empty()
             paper.SelectedPoints .<- array.Empty()

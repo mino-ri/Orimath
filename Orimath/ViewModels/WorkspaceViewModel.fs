@@ -32,6 +32,7 @@ type WorkspaceViewModel(workspace: IWorkspace) as this =
     member val ViewDefinitions = Dictionary<Type, ViewPane * ViewDeclaration>()
     member val MainViewModels = ObservableCollection<obj>()
     member val TopViewModels = ObservableCollection<obj>()
+    member val BottomViewModels = ObservableCollection<obj>()
     member val SideViewModels = ObservableCollection<obj>()
     member val MenuItems = ObservableCollection<MenuItemViewModel>()
     member val ToolGestures = Dictionary<KeyGesture, ITool>()
@@ -61,6 +62,7 @@ type WorkspaceViewModel(workspace: IWorkspace) as this =
                 match pane with
                 | ViewPane.Main -> this.MainViewModels
                 | ViewPane.Top -> this.TopViewModels
+                | ViewPane.Bottom -> this.BottomViewModels
                 | ViewPane.Side -> this.SideViewModels
                 | _ -> null
             | BoolNone -> null

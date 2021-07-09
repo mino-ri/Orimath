@@ -14,47 +14,82 @@ type DragFoldNavigationItemViewModel(header: string, falseText: string, trueText
     member _.Value = value
 
 
-type DragFoldNavigationViewModel(messenger: IMessenger, dispatcher: IDispatcher, tool: DragFoldTool) =
+type DragFoldNavigationViewModel(items: DragFoldNavigationItemViewModel[], onDispose: unit -> unit) =
     inherit NotifyPropertyChanged()
-    let isThrough = ValueProp<bool option>(None, dispatcher.SyncContext)
-    let isFoldBack = ValueProp<bool option>(None, dispatcher.SyncContext)
-    let isFrontMost = ValueProp<bool option>(None, dispatcher.SyncContext)
-    let isFree = ValueProp<bool option>(None, dispatcher.SyncContext)
-    let disconnector =
-        tool.State |> Observable.subscribe2 (function
-            | DragFoldState.Ready ->
-                isThrough .<- None
-                isFoldBack .<- None
-                isFrontMost .<- None
-                isFree .<- None
-            | DragFoldState.Dragging(through, foldBack, frontMost, free) ->
-                isThrough .<- Some(through)
-                isFoldBack .<- Some(foldBack)
-                isFrontMost .<- Some(frontMost)
-                isFree .<- Some(free))
+    member val Items = items
+    new(messenger: IMessenger, dispatcher: IDispatcher, tool: DragFoldTool) =
+        let isThrough = ValueProp<bool option>(None, dispatcher.SyncContext)
+        let isFoldBack = ValueProp<bool option>(None, dispatcher.SyncContext)
+        let isFrontMost = ValueProp<bool option>(None, dispatcher.SyncContext)
+        let isFree = ValueProp<bool option>(None, dispatcher.SyncContext)
+        let items = [|
+            DragFoldNavigationItemViewModel(
+                messenger.LocalizeWord("{basic/DragFoldNavigation.MouseButton}Mouse button"),
+                messenger.LocalizeWord("{basic/DragFoldNavigation.Overlap}overlap"),
+                messenger.LocalizeWord("{basic/DragFoldNavigation.Through}through"),
+                isThrough)
+            DragFoldNavigationItemViewModel(
+                messenger.LocalizeWord("{basic/DragFoldNavigation.Shift}Shift"),
+                messenger.LocalizeWord("{basic/DragFoldNavigation.Crease}crease"),
+                messenger.LocalizeWord("{basic/DragFoldNavigation.FoldBack}fold back"),
+                isFoldBack)
+            DragFoldNavigationItemViewModel(
+                messenger.LocalizeWord("{basic/DragFoldNavigation.Ctrl}Ctrl"),
+                messenger.LocalizeWord("{basic/DragFoldNavigation.All}all"),
+                messenger.LocalizeWord("{basic/DragFoldNavigation.FrontMost}front most"),
+                isFrontMost)
+            DragFoldNavigationItemViewModel(
+                messenger.LocalizeWord("{basic/DragFoldNavigation.Alt}Alt"),
+                messenger.LocalizeWord("{basic/DragFoldNavigation.Aligned}aligned"),
+                messenger.LocalizeWord("{basic/DragFoldNavigation.Free}free"),
+                isFree)
+        |]
+        let disconnector =
+            tool.State |> Observable.subscribe2 (function
+                | DragFoldState.Ready ->
+                    isThrough .<- None
+                    isFoldBack .<- None
+                    isFrontMost .<- None
+                    isFree .<- None
+                | DragFoldState.Dragging(through, foldBack, frontMost, free) ->
+                    isThrough .<- Some(through)
+                    isFoldBack .<- Some(foldBack)
+                    isFrontMost .<- Some(frontMost)
+                    isFree .<- Some(free))
+        new DragFoldNavigationViewModel(items, fun () -> disconnector.Dispose())
 
-    member val Items = [|
-        DragFoldNavigationItemViewModel(
-            messenger.LocalizeWord("{basic/DragFoldNavigation.MouseButton}Mouse button"),
-            messenger.LocalizeWord("{basic/DragFoldNavigation.Overlap}overlap"),
-            messenger.LocalizeWord("{basic/DragFoldNavigation.Through}through"),
-            isThrough)
-        DragFoldNavigationItemViewModel(
-            messenger.LocalizeWord("{basic/DragFoldNavigation.Shift}Shift"),
-            messenger.LocalizeWord("{basic/DragFoldNavigation.Crease}crease"),
-            messenger.LocalizeWord("{basic/DragFoldNavigation.FoldBack}fold back"),
-            isFoldBack)
-        DragFoldNavigationItemViewModel(
-            messenger.LocalizeWord("{basic/DragFoldNavigation.Ctrl}Ctrl"),
-            messenger.LocalizeWord("{basic/DragFoldNavigation.All}all"),
-            messenger.LocalizeWord("{basic/DragFoldNavigation.FrontMost}front most"),
-            isFrontMost)
-        DragFoldNavigationItemViewModel(
-            messenger.LocalizeWord("{basic/DragFoldNavigation.Alt}Alt"),
-            messenger.LocalizeWord("{basic/DragFoldNavigation.Aligned}aligned"),
-            messenger.LocalizeWord("{basic/DragFoldNavigation.Free}free"),
-            isFree)
-    |]
+    new(messenger: IMessenger, dispatcher: IDispatcher, tool: DragDraftLineTool) =
+        let isThrough = ValueProp<bool option>(None, dispatcher.SyncContext)
+        let isFrontMost = ValueProp<bool option>(None, dispatcher.SyncContext)
+        let isFree = ValueProp<bool option>(None, dispatcher.SyncContext)
+        let items = [|
+            DragFoldNavigationItemViewModel(
+                messenger.LocalizeWord("{basic/DragFoldNavigation.MouseButton}Mouse button"),
+                messenger.LocalizeWord("{basic/DragFoldNavigation.Overlap}overlap"),
+                messenger.LocalizeWord("{basic/DragFoldNavigation.Through}through"),
+                isThrough)
+            DragFoldNavigationItemViewModel(
+                messenger.LocalizeWord("{basic/DragFoldNavigation.Ctrl}Ctrl"),
+                messenger.LocalizeWord("{basic/DragFoldNavigation.All}all"),
+                messenger.LocalizeWord("{basic/DragFoldNavigation.FrontMost}front most"),
+                isFrontMost)
+            DragFoldNavigationItemViewModel(
+                messenger.LocalizeWord("{basic/DragFoldNavigation.Alt}Alt"),
+                messenger.LocalizeWord("{basic/DragFoldNavigation.Aligned}aligned"),
+                messenger.LocalizeWord("{basic/DragFoldNavigation.Free}free"),
+                isFree)
+        |]
+        let disconnector =
+            tool.State |> Observable.subscribe2 (function
+                | DragFoldState.Ready ->
+                    isThrough .<- None
+                    isFrontMost .<- None
+                    isFree .<- None
+                | DragFoldState.Dragging(through, foldBack, frontMost, free) ->
+                    isThrough .<- Some(through)
+                    isFrontMost .<- Some(frontMost)
+                    isFree .<- Some(free))
+        new DragFoldNavigationViewModel(items, fun () -> disconnector.Dispose())
 
     interface IDisposable with
-        member _.Dispose() = disconnector.Dispose()
+        member _.Dispose() = onDispose()

@@ -91,8 +91,8 @@ type OpenAllEffect(workspace: IWorkspace) =
                 seq {
                     for layer in layers do
                     let inv = layer.Matrix.Invert()
-                    yield! seq { for e in layer.Edges -> e.Segment * inv }
-                    yield! seq { for x in layer.Creases -> x.Segment * inv }
+                    yield! seq { for e in layer.Edges -> { Type = CreaseType.Crease; Segment = e.Segment * inv } }
+                    yield! seq { for x in layer.Creases -> x * inv }
                 }
-                |> LineSegment.merge
+                |> Crease.merge
             workspace.Paper.Layers.[0].AddCreases(lines)

@@ -5,8 +5,9 @@ open System.Windows.Input
 type ViewPane =
     | Main = 0
     | Top = 1
-    | Side = 2
-    | Dialog = 3
+    | Bottom = 2
+    | Side = 3
+    | Dialog = 4
 
 
 type IMessenger =

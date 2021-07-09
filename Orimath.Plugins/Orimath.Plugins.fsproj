@@ -20,8 +20,8 @@
     <Compile Include="Core\Point.fs" />
     <Compile Include="Core\Line.fs" />
     <Compile Include="Core\LineSegment.fs" />
-    <Compile Include="Core\Matrix.fs" />
     <Compile Include="Core\Crease.fs" />
+    <Compile Include="Core\Matrix.fs" />
     <Compile Include="Core\Edge.fs" />
     <Compile Include="Core\Layer.fs" />
     <Compile Include="Core\Paper.fs" />

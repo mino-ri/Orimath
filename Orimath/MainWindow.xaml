@@ -135,6 +135,8 @@
         <DockPanel Grid.Row="1" IsEnabled="{Binding HasNotDialog.Value}">
             <ItemsControl DockPanel.Dock="Top"
                           ItemsSource="{Binding TopViewModels, Mode=OneWay}" />
+            <ItemsControl DockPanel.Dock="Bottom"
+                          ItemsSource="{Binding BottomViewModels, Mode=OneWay}" />
             <ItemsControl DockPanel.Dock="Left"
                           ItemsSource="{Binding SideViewModels, Mode=OneWay}"
                           ItemsPanel="{StaticResource HorizontalItemsPanel}" />
