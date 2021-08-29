@@ -26,13 +26,6 @@ type FoldsPlugin() =
         member _.Execute(args) = args.Workspace.AddTool(Folds.DragFoldTool(args.Workspace))
 
 
-[<DisplayName("{basic/Draft.Name}Tool: Draft line")>]
-[<Description("{basic/Draft.Desc}Make draft lines by dragging")>]
-type DraftPlugin() =
-    interface IPlugin with
-        member _.Execute(args) = args.Workspace.AddTool(Folds.DragDraftLineTool(args.Workspace))
-
-
 [<DisplayName("{basic/Draft.Name}Tool: n-divide folding")>]
 [<Description("{basic/Draft.Desc}Make n-dividing draft lines by dragging")>]
 type DividePlugin() =

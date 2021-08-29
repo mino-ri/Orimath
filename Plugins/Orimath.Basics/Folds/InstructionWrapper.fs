@@ -137,7 +137,7 @@ module Instruction =
             then [| createPoint reflected |]
             else Array.append (arrowsToPoint perpendicularArrows) [| createPoint reflected |]
 
-    let getLineAndArrow paper opr previewOnly forDynamic =
+    let getLineAndArrow paper (opr: FoldOperation) previewOnly forDynamic =
         let lines = FoldOperation.getLines opr.Method
         let chosen = if previewOnly then None else FoldOperation.chooseLine lines opr.Method
         let getLines = if forDynamic then getLines else getChosenLine

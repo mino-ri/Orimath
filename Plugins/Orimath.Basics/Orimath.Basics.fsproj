@@ -23,11 +23,11 @@
     <Compile Include="Folds\OperationTypes.fs" />
     <Compile Include="Folds\Fold.fs" />
     <Compile Include="Folds\FoldOperation.fs" />
+    <Compile Include="Folds\DivideOperation.fs" />
     <Compile Include="Folds\FoldBack.fs" />
     <Compile Include="Folds\InstructionWrapper.fs" />
     <Compile Include="Folds\DisplayTargetSelector.fs" />
     <Compile Include="Folds\DragFoldTool.fs" />
-    <Compile Include="Folds\DragDraftLineTool.fs" />
     <Compile Include="Folds\DragDivideTool.fs" />
     <Compile Include="BasicEffects.fs" />
     <Compile Include="FileEffects.fs" />

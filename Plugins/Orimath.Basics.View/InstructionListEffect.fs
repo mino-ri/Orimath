@@ -70,6 +70,7 @@ type InstructionListEffect
                             context.DrawPaper(paper)
                             match tag with
                             | :? FoldOperation as opr -> context.DrawFoldOperation(paper, opr)
+                            | :? DivideOperation as opr -> context.DrawDivideOperation(paper, opr)
                             | _ -> ()
                             if index <> 0 then
                                 drawIndex (string index) indexOffset indexFontSize pointConverter exporter)

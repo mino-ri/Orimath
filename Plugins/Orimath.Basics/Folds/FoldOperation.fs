@@ -110,29 +110,20 @@ let private getFoldOperationCore paper selectedPoint selectedLine source target 
       CreaseType = creaseType
       IsFrontOnly = isFrontOnly }
 
-let getFoldOperation paper selectedPoint selectedLine source target (modifier: OperationModifier) =
-    let creaseType = if modifier.HasShift then CreaseType.ValleyFold else CreaseType.Crease
+let getFoldOperation paper selectedPoint selectedLine source target (modifier: OperationModifier) isDraft =
+    let creaseType =
+        if isDraft then CreaseType.Draft
+        elif modifier.HasShift then CreaseType.ValleyFold
+        else CreaseType.Crease
     getFoldOperationCore
         paper selectedPoint selectedLine source target
         modifier.HasRightButton modifier.HasAlt creaseType modifier.HasCtrl
 
-let getDraftFoldOperation paper selectedPoint selectedLine source target (modifier: OperationModifier) =
-    getFoldOperationCore
-        paper selectedPoint selectedLine source target
-        modifier.HasRightButton modifier.HasAlt CreaseType.Draft modifier.HasCtrl
-
-let getPreviewFoldOperation paper selectedPoint selectedLine source target (modifier: OperationModifier) =
-    match getFoldOperation paper selectedPoint selectedLine source target modifier with
+let getPreviewFoldOperation paper selectedPoint selectedLine source target (modifier: OperationModifier) isDraft =
+    match getFoldOperation paper selectedPoint selectedLine source target modifier isDraft with
     | { Method = NoOperation } when not modifier.HasAlt ->
         let modifier = modifier ||| OperationModifier.Alt
-        getFoldOperation paper selectedPoint selectedLine source target modifier, true
-    | opr -> opr, false
-
-let getPreviewDraftFoldOperation paper selectedPoint selectedLine source target (modifier: OperationModifier) =
-    match getDraftFoldOperation paper selectedPoint selectedLine source target modifier with
-    | { Method = NoOperation } when not modifier.HasAlt ->
-        let modifier = modifier ||| OperationModifier.Alt
-        getDraftFoldOperation paper selectedPoint selectedLine source target modifier, true
+        getFoldOperation paper selectedPoint selectedLine source target modifier isDraft, true
     | opr -> opr, false
 
 let getLines opr =

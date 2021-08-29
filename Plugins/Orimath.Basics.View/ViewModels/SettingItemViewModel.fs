@@ -42,14 +42,12 @@ type BooleanSettingItem(name: string, prop: DelegationProp<bool>) =
 
 
 type Int32SettingItem
-    (
-        name: string,
-        prop: DelegationProp<int>,
-        minimum: int,
-        maximum: int,
-        messenger: IMessenger,
-        dispatcher: IDispatcher
-    ) =
+    (name: string,
+     prop: DelegationProp<int>,
+     minimum: int,
+     maximum: int,
+     messenger: IMessenger,
+     dispatcher: IDispatcher) =
     inherit SettingItemViewModel(name)
     member _.Minimum = minimum
     member _.Maximum = maximum

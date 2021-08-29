@@ -37,3 +37,9 @@ type FoldOperation =
     { Method: FoldMethod
       CreaseType: CreaseType
       IsFrontOnly: bool }
+
+
+type DivideOperation =
+    { Method: FoldMethod
+      CreaseType: CreaseType
+      DivisionNumber: int }

@@ -133,6 +133,10 @@ type ExportContext(exporter: IShapeExporter, pointConverter: IViewPointConverter
         points |> Array.iter this.DrawInstructionPoint
         arrows |> Array.iter this.DrawInstructionArrow
 
+    member this.DrawDivideOperation(paper: IPaper, opr: DivideOperation) =
+        DivideOperation.getInstructionLines paper opr false false
+        |> Array.iter this.DrawInstructionLine
+
     member this.DrawCreasePattern(paper: IPaper) =
         this.DrawLayerBack(Layer.merge paper.Layers)
         let layers = paper.Layers |> Seq.toArray

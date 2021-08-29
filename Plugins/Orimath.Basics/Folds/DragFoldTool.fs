@@ -18,6 +18,7 @@ type DragFoldTool(workspace: IWorkspace) =
     let instruction = InstructionWrapper(paper)
     let state = Prop.value DragFoldState.Ready
     let selector = DisplayTargetSelector(workspace.Paper)
+    let draft = Prop.value false
 
     member _.UpdateState(modifier: OperationModifier) =
         state .<-
@@ -41,11 +42,12 @@ type DragFoldTool(workspace: IWorkspace) =
             | _ -> None
         point, line
 
-    member private _.Fold(operation) =
+    member private _.Fold(operation: FoldOperation) =
         let method = operation.Method
         match chooseLine (getLines method) method with
         | Some(line) ->
-            use __ = paper.BeginChange(operation)
+            let tag = if operation.CreaseType = CreaseType.Draft then box NoInstruction else box operation
+            use __ = paper.BeginChange(tag)
             match operation.CreaseType, operation.IsFrontOnly with
             | CreaseType.ValleyFold, false ->
                 FoldBack.foldBack workspace line (getSourcePoint method |> List.tryHead)
@@ -53,9 +55,14 @@ type DragFoldTool(workspace: IWorkspace) =
                 FoldBack.foldBackFirst workspace line method
             | _, true ->
                 for l in FoldBack.getTargetLayers paper line method do
-                    (l :?> ILayerModel).AddCreases([ line ])
+                    Layer.clip line l
+                    |> Crease.ofSegs operation.CreaseType
+                    |> (l :?> ILayerModel).AddCreases
             | _, false ->
-                for layer in paper.Layers do layer.AddCreases([ line ])
+                for layer in paper.Layers do
+                    Layer.clip line layer
+                    |> Crease.ofSegs operation.CreaseType
+                    |> layer.AddCreases
         | None -> ()
         instruction.ResetAll()
 
@@ -98,7 +105,8 @@ type DragFoldTool(workspace: IWorkspace) =
         member this.DragEnter(source, target, modifier) =
             this.UpdateState(modifier)
             let selectedPoint, selectedLine = this.Selection
-            let opr, previewOnly = getPreviewFoldOperation paper selectedPoint selectedLine source target modifier
+            let opr, previewOnly =
+                getPreviewFoldOperation paper selectedPoint selectedLine source target modifier draft.Value
             instruction.Set(opr, previewOnly)
             match target with
             | FreePoint true _ | LineOrEdge _ -> true
@@ -117,7 +125,7 @@ type DragFoldTool(workspace: IWorkspace) =
 
         member this.Drop(source, target, modifier) =
             let selectedPoint, selectedLine = this.Selection
-            getFoldOperation paper selectedPoint selectedLine source target modifier
+            getFoldOperation paper selectedPoint selectedLine source target modifier draft.Value
             |> this.Fold
             this.ResetState()
 
@@ -125,3 +133,7 @@ type DragFoldTool(workspace: IWorkspace) =
 
     interface IFoldingInstructionTool with
         member _.FoldingInstruction = instruction.Instruction
+
+    interface IExtendTool with
+        member _.ExtendSettings(ws) = 
+            ws.AddBooleanSetting("{basic/DragFold.Draft}draft", draft)

@@ -163,9 +163,6 @@ type DragFoldNavigationPlugin() =
                 | :? DragFoldTool as tool ->
                     args.Messenger.AddViewModel(
                         new DragFoldNavigationViewModel(args.Messenger, args.Dispatcher, tool))
-                | :? DragDraftLineTool as tool ->
-                    args.Messenger.AddViewModel(
-                        new DragFoldNavigationViewModel(args.Messenger, args.Dispatcher, tool))
                 | _ -> ())
             args.Messenger.RegisterView(ViewPane.Bottom, typeof<DragFoldNavigationViewModel>,
                 viewPath "DragFoldNavigationControl")
