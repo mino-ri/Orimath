@@ -135,3 +135,36 @@ let axiom7 (passLine: Line) (ontoLine: Line) ontoPoint =
         Some(Line.Create(-passLine.YFactor, passLine.XFactor, c))
 
 let axiomP (line: Line) point = axiom7 (Line.Create(line.YFactor, -line.XFactor, 0.0)) line point
+
+let divide (n: int) (line1: Line) (line2: Line) =
+    match Line.cross line1 line2 with
+    | None ->
+        if line1.Intercept = line2.Intercept then []
+        else
+            let delta = (line2.Intercept - line1.Intercept) / float n
+            [
+                [
+                    for i in [1 .. n - 1] do
+                    Line.Create(line1.XFactor, line2.YFactor, line1.Intercept + delta * float i)
+                ]
+            ]
+    | Some(cross) ->
+        let angle1 = line1.Angle
+        let angle2 = line2.Angle
+        let delta1 = (angle2 - angle1) / float n
+        let delta2 =
+            if angle1 > angle2
+            then (angle2 + System.Math.PI - angle1) / float n
+            else (angle2 - System.Math.PI - angle1) / float n
+        [
+            [
+                for i in [1 .. n - 1] do
+                let angle = angle1 + delta1 * float i
+                Line.FromFactorsAndPoint(cos angle, sin angle, cross)
+            ]
+            [
+                for i in [1 .. n - 1] do
+                let angle = angle1 + delta2 * float i
+                Line.FromFactorsAndPoint(cos angle, sin angle, cross)
+            ]
+        ]

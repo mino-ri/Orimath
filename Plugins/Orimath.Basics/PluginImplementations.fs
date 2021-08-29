@@ -33,6 +33,13 @@ type DraftPlugin() =
         member _.Execute(args) = args.Workspace.AddTool(Folds.DragDraftLineTool(args.Workspace))
 
 
+[<DisplayName("{basic/Draft.Name}Tool: n-divide folding")>]
+[<Description("{basic/Draft.Desc}Make n-dividing draft lines by dragging")>]
+type DividePlugin() =
+    interface IPlugin with
+        member _.Execute(args) = args.Workspace.AddTool(Folds.DragDivideTool(args.Workspace))
+
+
 [<DisplayName("{basic/Measurement.Name}Tool: Measurement")>]
 [<Description("{basic/Measurement.Desc}Measure angles and distances by dragging")>]
 type MeasurePlugin() =

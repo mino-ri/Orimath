@@ -1,6 +1,8 @@
 ﻿namespace Orimath.Plugins
 open System
 open System.Windows.Input
+open ApplicativeProperty
+
 
 type ViewPane =
     | Main = 0
@@ -11,6 +13,7 @@ type ViewPane =
 
 
 type IMessenger =
+    abstract member RootEnable : IGetProp<bool>
     abstract member AddViewModel : viewModel: obj -> unit
     abstract member RemoveViewModel : viewModelType: Type -> unit
     abstract member RemoveViewModel : viewModel: obj -> unit

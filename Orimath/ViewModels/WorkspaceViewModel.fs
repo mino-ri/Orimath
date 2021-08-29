@@ -182,6 +182,7 @@ type WorkspaceViewModel(workspace: IWorkspace) as this =
         | BoolNone -> null
 
     interface IMessenger with
+        member this.RootEnable = this.RootEnable
         member this.AddViewModel(viewModel) = this.AddViewModel(viewModel)
         member this.CloseDialogCommand = this.CloseDialogCommand
         member this.GetEffectCommand(effect) = this.GetEffectCommand(effect)

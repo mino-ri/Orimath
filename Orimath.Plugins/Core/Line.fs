@@ -7,6 +7,7 @@ type Line = private { A: float; B: float; C: float } with
     member this.YFactor = this.B
     member this.Intercept = this.C
     member this.Slope = !-(this.A / this.B)
+    member this.Angle = atan2 this.B this.A
     
     override this.ToString() =
         System.String.Format("[{0:0.#####}, {1:0.#####}, {2:0.#####}]", this.A, this.B, this.C)

@@ -173,3 +173,6 @@ type internal InstructionWrapper(paper: IPaper) =
         instruction.Lines .<- lines
         instruction.Arrows .<- arrows
         instruction.Points .<- points
+
+    member _.SetLines(lines) =
+        instruction.Lines .<- lines

@@ -48,6 +48,8 @@
     <Compile Include="ViewModels\EffectViewModel.fs" />
     <Compile Include="ViewModels\ToolViewModel.fs" />
     <Compile Include="ViewModels\CreasePatternViewModel.fs" />
+    <Compile Include="ViewModels\SettingItemViewModel.fs" />
+    <Compile Include="ViewModels\ExtendToolBarViewModel.fs" />
     <Compile Include="Controls\PixelScaleImage.fs" />
     <Compile Include="Controls\BooleanOptionToBrushConverter.fs" />
     <Compile Include="Controls\UniversalColorConverter.fs" />
@@ -62,6 +64,7 @@
 
   <ItemGroup>
     <Resource Include="*.xaml" />
+    <Page Remove="ExtendToolBarControl.xaml" />
     <Resource Include="defaultIcon.png" />
   </ItemGroup>
 

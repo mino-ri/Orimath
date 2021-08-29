@@ -169,3 +169,13 @@ type DragFoldNavigationPlugin() =
                 | _ -> ())
             args.Messenger.RegisterView(ViewPane.Bottom, typeof<DragFoldNavigationViewModel>,
                 viewPath "DragFoldNavigationControl")
+
+
+[<DisplayName("{basic/ExtendToolBar.Name}View: Extend tool bar")>]
+[<Description("{basic/ExtendToolBar.Desc}Show a tool bar dedicated to each tool.")>]
+type ExtendToolBarPlugin() =
+    interface IViewPlugin with
+        member _.Execute(args: ViewPluginArgs) =
+            args.Messenger.AddViewModel(ExtendToolBarViewModel(args.Messenger, args.Workspace, args.Dispatcher))
+            args.Messenger.RegisterView(ViewPane.Top, typeof<ExtendToolBarViewModel>,
+                viewPath "ExtendToolBarControl")

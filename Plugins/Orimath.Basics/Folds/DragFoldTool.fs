@@ -9,7 +9,7 @@ open ApplicativeProperty.PropOperators
 [<RequireQualifiedAccess>]
 type DragFoldState =
     | Ready
-    | Dragging of through: bool * foldBack: bool * frontMost: bool * free : bool
+    | Dragging of through: bool * foldBack: bool * frontMost: bool * free: bool
 
 
 type DragFoldTool(workspace: IWorkspace) =
