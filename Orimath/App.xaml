@@ -27,7 +27,22 @@
                        BasedOn="{x:Static th:ThemeBrushes.Workspace}"
                        Normal="Workspace.Alternated" />
 
-        <Style TargetType="{x:Type Button}">
+        <ControlTemplate TargetType="{x:Type ButtonBase}" x:Key="ButtonBaseTemplate">
+            <Border CornerRadius="{TemplateBinding ActualHeight, Converter={StaticResource HalfCornerRadius}}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    Background="{TemplateBinding Background}"
+                    Padding="{TemplateBinding Padding}"
+                    SnapsToDevicePixels="True">
+                <ContentPresenter Content="{TemplateBinding Content}"
+                                    ContentTemplate="{TemplateBinding ContentTemplate}"
+                                    ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+            </Border>
+        </ControlTemplate>
+        <Style TargetType="{x:Type ButtonBase}" x:Key="ButtonBaseStyle">
             <Setter Property="OverridesDefaultStyle" Value="True" />
             <Setter Property="th:ThemeBrush.Theme" Value="{x:Static th:ThemeBrushes.Control}" />
             <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
@@ -36,25 +51,7 @@
             <Setter Property="MinWidth" Value="60" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Border CornerRadius="{TemplateBinding ActualHeight, Converter={StaticResource HalfCornerRadius}}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                Background="{TemplateBinding Background}"
-                                Padding="{TemplateBinding Padding}"
-                                SnapsToDevicePixels="True">
-                            <ContentPresenter Content="{TemplateBinding Content}"
-                                              ContentTemplate="{TemplateBinding ContentTemplate}"
-                                              ContentStringFormat="{TemplateBinding ContentStringFormat}"
-                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
+            <Setter Property="Template" Value="{StaticResource ButtonBaseTemplate}" />
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
@@ -74,6 +71,8 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource ButtonBaseStyle}" />
+        <Style TargetType="{x:Type RepeatButton}" BasedOn="{StaticResource ButtonBaseStyle}" />
         <Style TargetType="{x:Type ToggleButton}">
             <Setter Property="OverridesDefaultStyle" Value="True" />
             <Setter Property="th:ThemeBrush.Theme" Value="{x:Static th:ThemeBrushes.Control}" />
@@ -83,25 +82,7 @@
             <Setter Property="MinWidth" Value="60" />
             <Setter Property="HorizontalContentAlignment" Value="Center" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ToggleButton}">
-                        <Border CornerRadius="{TemplateBinding ActualHeight, Converter={StaticResource HalfCornerRadius}}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                Background="{TemplateBinding Background}"
-                                Padding="{TemplateBinding Padding}"
-                                SnapsToDevicePixels="True">
-                            <ContentPresenter Content="{TemplateBinding Content}"
-                                              ContentTemplate="{TemplateBinding ContentTemplate}"
-                                              ContentStringFormat="{TemplateBinding ContentStringFormat}"
-                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
+            <Setter Property="Template" Value="{StaticResource ButtonBaseTemplate}" />
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Hovered.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
@@ -1150,7 +1131,7 @@
             <Setter Property="Foreground" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Foreground, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
             <Setter Property="Background" Value="{Binding Path=(th:ThemeBrush.Theme).Normal.Background, RelativeSource={RelativeSource Self}, Mode=OneWay}" />
             <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="Padding" Value="1" />
+            <Setter Property="Padding" Value="3,1" />
             <Setter Property="VerticalContentAlignment" Value="Center" />
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
             <Setter Property="ScrollViewer.CanContentScroll" Value="True" />

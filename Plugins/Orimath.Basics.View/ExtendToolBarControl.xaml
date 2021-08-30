@@ -4,7 +4,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:vm="clr-namespace:Orimath.Basics.View.ViewModels;assembly=Orimath.Basics.View"
              xmlns:ctrl="clr-namespace:Orimath.Basics.View.Controls;assembly=Orimath.Basics.View"
-             xmlns:th="clr-namespace:Orimath.Themes;assembly=Orimath.ViewPlugins"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="450"
              d:DataContext="{d:DesignData Type={x:Type vm:ExtendToolBarViewModel}}">
@@ -16,7 +15,8 @@
                         ToolTip="{Binding ToolTip, Mode=OneTime}"
                         Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" />
         </DataTemplate>
-        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}"
+        <Style TargetType="{x:Type RepeatButton}"
+               BasedOn="{StaticResource {x:Type RepeatButton}}"
                x:Key="NumericButton">
             <Setter Property="Width" Value="18" />
             <Setter Property="Height" Value="18" />
@@ -30,13 +30,13 @@
                         Margin="8,0">
                 <TextBlock Text="{Binding Name, Mode=OneTime}"
                            VerticalAlignment="Center" Margin="0,0,2,0" />
-                <Button Content="-"
-                        Command="{Binding DecrementCommand}"
-                        Style="{StaticResource NumericButton}" />
+                <RepeatButton Content="-"
+                              Command="{Binding DecrementCommand}"
+                              Style="{StaticResource NumericButton}" />
                 <TextBox Width="50" Text="{Binding Prop.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <Button Content="+"
-                        Command="{Binding IncrementCommand}"
-                        Style="{StaticResource NumericButton}" />
+                <RepeatButton Content="+"
+                              Command="{Binding IncrementCommand}"
+                              Style="{StaticResource NumericButton}" />
             </StackPanel>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:DoubleSettingItem}">
@@ -44,13 +44,25 @@
                         Margin="8,0">
                 <TextBlock Text="{Binding Name, Mode=OneTime}"
                            VerticalAlignment="Center" Margin="0,0,2,0" />
-                <Button Content="-"
-                        Command="{Binding DecrementCommand}"
-                        Style="{StaticResource NumericButton}" />
                 <TextBox Width="50" Text="{Binding Prop.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                <Button Content="+"
-                        Command="{Binding IncrementCommand}"
-                        Style="{StaticResource NumericButton}" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:StringSettingItem}">
+            <StackPanel Orientation="Horizontal"
+                        Margin="8,0">
+                <TextBlock Text="{Binding Name, Mode=OneTime}"
+                           VerticalAlignment="Center" Margin="0,0,2,0" />
+                <TextBox Width="50" Text="{Binding Prop.Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:EnumSettingItem}">
+            <StackPanel Orientation="Horizontal"
+                        Margin="8,0">
+                <TextBlock Text="{Binding Name, Mode=OneTime}"
+                           VerticalAlignment="Center" Margin="0,0,2,0" />
+                <ComboBox ItemsSource="{Binding Choices, Mode=OneTime}"
+                          SelectedItem="{Binding Prop.Value, Mode=TwoWay}"
+                          Width="100" />
             </StackPanel>
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:BooleanSettingItem}">
