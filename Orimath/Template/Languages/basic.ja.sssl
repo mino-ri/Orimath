@@ -5,7 +5,14 @@
   },
   "Folding": {
     "Name": "ツール: 折り線/折り返し",
-    "Desc": "ドラッグ操作で折り線をつけるツール。"
+    "Desc": "ドラッグ操作で折り線をつけるツール。",
+    "Draft": "下書き線"
+  },
+  "DragDivide": {
+    "Name": "ツール: n等分折り",
+    "Desc": "ドラッグ操作でn等分の折り線をつけるツール。",
+    "Draft": "下書き線",
+    "DivisionNumber": "分割数"
   },
   "Measurement": {
     "Name": "ツール: 計測",
@@ -76,6 +83,10 @@
     "Aligned": "基準折り",
     "Free": "自由折り",
   },
+  "ExtendToolBar": {
+    "Name": "ビュー: 拡張ツールバー",
+    "Desc": "各ツールに特化したツールバーを表示します。"
+  },
   "Effect": {
     "Open": "開く...",
     "SaveAs": "名前をつけて保存...",
@@ -93,7 +104,8 @@
   },
   "Tool": {
     "Measurement": "計測",
-    "Folding": "折り線/折り返し"
+    "Folding": "折り線/折り返し",
+    "DragDivide": "n等分折り線",
   },
   "Dialog": {
     "NewPaper": {

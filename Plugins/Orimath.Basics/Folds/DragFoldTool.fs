@@ -136,4 +136,4 @@ type DragFoldTool(workspace: IWorkspace) =
 
     interface IExtendTool with
         member _.ExtendSettings(ws) = 
-            ws.AddBooleanSetting("{basic/DragFold.Draft}draft", draft)
+            ws.AddBooleanSetting("{basic/Folding.Draft}draft", draft)

@@ -17,7 +17,7 @@ type DragDivideTool(workspace: IWorkspace) =
     interface ITool with
         member _.Name = "{basic/Tool.DragDivide}n-divide folding"
         member _.ShortcutKey = "Ctrl+D"
-        member _.Icon = Orimath.Basics.Internal.getIcon "draft"
+        member _.Icon = Orimath.Basics.Internal.getIcon "divide"
         member _.OnActivated() =
             paper.SelectedLayers .<- array.Empty()
             paper.SelectedPoints .<- array.Empty()
