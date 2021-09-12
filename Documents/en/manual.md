@@ -19,6 +19,7 @@ Tools and commands
   * [Ignore alignments and fold freely (Alt key)](#Ignore-alignments-and-fold-freely-Alt-key)
   * [Fold so that two elements overlap (Left drag)](#Fold-so-that-two-elements-overlap-Left-drag)
   * [Fold through the two elements (right drag)](#Fold-through-the-two-elements-right-drag)
+* [n-divide folding tool](#-n-divide-folding-tool)
 * [Measurement tool](#-Measurement-tool)
 * [Commands](#Commands)
 * [Other menu items](#Other-menu-items)
@@ -194,6 +195,13 @@ Drag right from point to point, to fold through the two points.
 
 Drag right from point to line or line to point, to fold through the point and perpendicular to the line.
 
+## ![icon](../../Plugins/Orimath.Basics/Icons/divide.png?raw=true) n-divide folding tool
+
+![view](../Images/divide.png?raw=true)
+
+By the operation like the folding tool, make creases that divide the area between two points or two lines into *n*-th.
+You can change *n* in the text box at the top of the window.
+
 ## ![icon](../../Plugins/Orimath.Basics/Icons/measure.png?raw=true) Measurement tool
 
 ![view](../Images/measure.png?raw=true)
@@ -203,7 +211,6 @@ By dragging points and lines on the paper, you can find their distances and inte
 ## Commands
 
 Click on the buttons lined up at the top of the window to perform operations.
-
 
 ### ![icon](../../Plugins/Orimath.Basics/Icons/open_file.png?raw=true) Open (Ctrl+O)
 
@@ -265,6 +272,10 @@ Export the current paper in a svg image.
 ### ![icon](../../Plugins/Orimath.Basics.View/Icons/inst_list.png?raw=true) Show instructions (Ctrl+D)
 
 Show the origami instructions of the current paper. Diagrams is the same as that is displayed on during the fold operation.
+
+### ![icon](../Images/check.png?raw=true) Draft
+
+When this check box is checked, **draft lines** will be added instead of creases. Draft lines are light gray, and not included in origami instructions.
 
 ## Other menu items
 
