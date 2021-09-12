@@ -63,11 +63,12 @@ type DragDivideTool(workspace: IWorkspace) =
                 let tag = if opr.CreaseType = CreaseType.Draft then box NoInstruction else box opr
                 use __ = paper.BeginChange(tag)
                 let chosens = chooseLine opr lines
-                for layer in paper.Layers do
-                    layer.AddCreases(
+                for layer in Seq.toArray paper.Layers do
+                    let creases =
                         chosens
                         |> Seq.collect (fun line -> Layer.clip line layer)
-                        |> Crease.ofSegs (if draft.Value then CreaseType.Draft else CreaseType.Crease))
+                        |> Crease.ofSegs (if draft.Value then CreaseType.Draft else CreaseType.Crease)
+                    paper.MergeCreases(layer, creases)
             instruction.ResetAll()
 
         member _.CancelDrag(_, _) = ()

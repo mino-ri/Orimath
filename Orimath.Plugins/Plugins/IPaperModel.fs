@@ -47,3 +47,16 @@ type PaperModelExtensions =
     [<Extension>]
     static member IsSelected(paper: IPaperModel, layer) =
         Array.contains layer paper.SelectedLayers.Value
+
+    [<Extension>]
+    static member MergeCreases(paper: IPaperModel, layer: ILayerModel, creases: seq<Crease>) =
+        let isNewCrease (crease: Crease) =
+            layer.Creases
+            |> Seq.forall (fun c -> not (LineSegment.hasIntersection crease.Segment c.Segment))
+        if creases |> Seq.forall isNewCrease then
+            layer.AddCreases(creases)
+        else
+            let index = layer.Index
+            let newLayer = Layer.create layer.Edges [] [] layer.LayerType layer.OriginalEdges layer.Matrix
+            paper.ReplaceLayer(index, newLayer)
+            paper.Layers.[index].AddCreases(Crease.merge (Seq.append layer.Creases creases))

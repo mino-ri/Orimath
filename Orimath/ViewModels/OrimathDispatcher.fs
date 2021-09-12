@@ -21,7 +21,12 @@ type OrimathDispatcher(messenger: IMessenger) =
                 Async.Start(async {
                     try
                         try action()
-                        with ex -> messenger.ShowMessage($"[%s{ex.GetType().Name}]\n%s{ex.Message}")
+                        with ex ->
+#if DEBUG
+                            messenger.ShowMessage($"[%s{ex.GetType().Name}]\n%s{ex.Message}\n{ex.StackTrace}")
+#else
+                            messenger.ShowMessage($"[%s{ex.GetType().Name}]\n%s{ex.Message}")
+#endif
                     finally ui.Invoke(fun () -> Prop.decr processCount)
                 })
         }

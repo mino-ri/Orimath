@@ -55,14 +55,12 @@ type DragFoldTool(workspace: IWorkspace) =
                 FoldBack.foldBackFirst workspace line method
             | _, true ->
                 for l in FoldBack.getTargetLayers paper line method do
-                    Layer.clip line l
-                    |> Crease.ofSegs operation.CreaseType
-                    |> (l :?> ILayerModel).AddCreases
+                    let creases = Layer.clip line l |> Crease.ofSegs operation.CreaseType
+                    paper.MergeCreases(l :?> ILayerModel, creases)
             | _, false ->
-                for layer in paper.Layers do
-                    Layer.clip line layer
-                    |> Crease.ofSegs operation.CreaseType
-                    |> layer.AddCreases
+                for layer in Seq.toArray paper.Layers do
+                    let creases = Layer.clip line layer |> Crease.ofSegs operation.CreaseType
+                    paper.MergeCreases(layer, creases)
         | None -> ()
         instruction.ResetAll()
 

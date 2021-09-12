@@ -32,25 +32,55 @@ module Crease =
         let result = ResizeArray<Crease>()
         for line, segs in grouped do
             let getD = if line.Value.YFactor = 0.0 then (fun s -> s.Y) else (fun s -> s.X)
+            let addTail lst target = target :: lst |> List.sortBy (fun (s: Crease) -> getD s.Point1)
+            let rec recSelf lst =
+                match lst with
+                | [] -> ()
+                | s :: tail ->
+                    let target =
+                        if result.Count = 0
+                        then Unchecked.defaultof<_>
+                        else result.[result.Count - 1]
+                    if result.Count = 0 || not (LineSegment.hasIntersection s.Segment target.Segment) then
+                        // 2つの線分に共通部分がない場合
+                        result.Add(s)
+                        recSelf tail
+                    elif getD target.Point2 >= getD s.Point2 then
+                        // 一方の線分が他方を完全に含んでいる場合
+                        if s.Type <= target.Type then
+                            recSelf tail
+                        else
+                            result.[result.Count - 1] <-
+                                { target with Segment = LineSegment(line.Value, target.Point1, s.Point1) }
+                            result.Add(s)
+                            { target with Segment = LineSegment(line.Value, s.Point2, target.Point2) }
+                            |> addTail tail
+                            |> recSelf
+                    elif s.Type = target.Type then
+                        // 2つの線分が同じタイプである場合
+                        result.[result.Count - 1] <-
+                            { target with Segment = LineSegment(line.Value, target.Point1, s.Point2) }
+                        recSelf tail
+                    elif target.Point2 =~ s.Point1 then
+                        // 2つの線分が1点で接している場合
+                        result.Add(s)
+                        recSelf tail
+                    elif s.Type < target.Type then
+                        // もとの線分のほうが優先度が高い場合
+                        { s with Segment = LineSegment(line.Value, target.Point2, s.Point2) }
+                        |> addTail tail
+                        |> recSelf
+                    else
+                        result.[result.Count - 1] <-
+                            { target with Segment = LineSegment(line.Value, target.Point1, s.Point1) }
+                        result.Add(s)
+                        recSelf tail
             segs
             |> Seq.map (fun c ->
                 if getD c.Point1 > getD c.Point2
-                then {c with Segment = LineSegment(line.Value, c.Point2, c.Point1) }
+                then { c with Segment = LineSegment(line.Value, c.Point2, c.Point1) }
                 else c)
             |> Seq.sortBy (fun s -> getD s.Point1)
-            |> Seq.iter (fun s ->
-                if result.Count > 0 && LineSegment.hasIntersection s.Segment result.[result.Count - 1].Segment then
-                    let target = result.[result.Count - 1]
-                    if getD s.Point2 > getD target.Point2 then
-                        let creaseType =
-                            match s.Type, target.Type with
-                            | a, b when a = b -> a
-                            | CreaseType.Crease, _
-                            | _, CreaseType.Crease -> CreaseType.Crease
-                            | c, _ -> c
-                        result.[result.Count - 1] <-
-                            { Type = creaseType
-                              Segment = LineSegment(line.Value, target.Point1, s.Point2) }
-                else
-                    result.Add(s))
+            |> Seq.toList
+            |> recSelf
         result :> seq<_>
