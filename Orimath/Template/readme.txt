@@ -2,7 +2,7 @@
 
 ■名前: Orimath
 ■読み方: おります
-■バージョン: 1.1.0
+■バージョン: 1.1.1
 ■種別: 折り紙シミュレータ
 ■製作者: 豊穣ミノリ
 　□Twitter: @hojo_origami
@@ -27,7 +27,7 @@ https://github.com/mino-ri/Orimath/blob/master/Documents/ja/manual.md
 
 
 ■Name: Orimath
-■Version: 1.1.0
+■Version: 1.1.1
 ■Type: Origami Simulator
 ■Author: 豊穣ミノリ (Hojo Minori)
 　□Twitter: @hojo_origami
