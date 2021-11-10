@@ -56,7 +56,7 @@ let chooseLine (opr: DivideOperation) (lines: Line list list) =
             match Fold.axiom1 point1 point2 with
             | None -> line1
             | Some(opLine) ->
-                match Line.cross opLine line1.[0] with
+                match Line.cross opLine line1[0] with
                 | None -> line1
                 | Some(cross) ->
                     let x1, x2 = if point1.X <= point2.X then point1.X, point2.X else point2.X, point1.X

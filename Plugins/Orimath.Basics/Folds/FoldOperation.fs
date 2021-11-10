@@ -54,9 +54,9 @@ let getPass (paper: IPaperModel) =
     let passPoint = Array.tryItem 0 paper.SelectedPoints.Value
     let passLine =
         if paper.SelectedEdges.Value.Length > 0
-        then Some(paper.SelectedEdges.Value.[0].Segment, true)
+        then Some(paper.SelectedEdges.Value[0].Segment, true)
         elif paper.SelectedCreases.Value.Length > 0
-        then Some(paper.SelectedCreases.Value.[0].Segment, false)
+        then Some(paper.SelectedCreases.Value[0].Segment, false)
         else None
     passPoint, passLine
 
@@ -91,7 +91,7 @@ let getFoldMethod paper selectedPoint selectedLine source target passFold free =
                     Axiom2P(line, point, direction)
                 elif direction = FoldDirection.PointToLine then
                     let passCandidates = [
-                        for p in paper.Layers.[point.LayerIndex].Points do
+                        for p in paper.Layers[point.LayerIndex].Points do
                             if p <> point.Point then
                                 OprPoint(p, point.LayerIndex)
                     ]
@@ -156,21 +156,21 @@ let chooseLine (lines: Line list) opr =
         match opr with
         | Axiom3(HintPoint(point1), HintPoint(point2)) ->
             match Fold.axiom1 point1 point2 with
-            | None -> Some(lines.[0])
+            | None -> Some(lines[0])
             | Some(opLine) ->
-                match Line.cross opLine lines.[0] with
-                | None -> Some(lines.[0])
+                match Line.cross opLine lines[0] with
+                | None -> Some(lines[0])
                 | Some(cross) ->
                     let x1, x2 = if point1.X <= point2.X then point1.X, point2.X else point2.X, point1.X
                     let y1, y2 = if point1.Y <= point2.Y then point1.Y, point2.Y else point2.Y, point1.Y
                     if x1 <=~ cross.X && cross.X <=~ x2 && y1 <=~ cross.Y && cross.Y <=~ y2
-                    then Some(lines.[0])
-                    else Some(lines.[1])
+                    then Some(lines[0])
+                    else Some(lines[1])
         | Axiom5(_, HintPoint(point1), RawPoint(point2), _)
         | Axiom6(_, _, HintPoint(point1), RawPoint(point2), _)
         | Axiom5M(_, HintPoint(point1), RawPoint(point2), _) ->
             Some(lines |> List.minBy (fun line -> Point.dist point1 (Point.reflectBy line point2)))
-        | _ -> Some(lines.[0])
+        | _ -> Some(lines[0])
 
 let getSourcePoint method =
     match method with

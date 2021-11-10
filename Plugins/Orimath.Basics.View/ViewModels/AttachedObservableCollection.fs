@@ -21,15 +21,15 @@ type AttachedObservableCollection<'Model, 'ViewModel>
                     for item in items do this.Add(mapping item)
                 else
                     for i = 0 to items.Count - 1 do
-                        this.Insert(index + i, mapping items.[i])
+                        this.Insert(index + i, mapping items[i])
             | CollectionChange.Remove(index, items) ->
                 let last = index + items.Count
                 for index = last - 1 downto index do
-                    onRemove(this.[index])
+                    onRemove(this[index])
                     this.RemoveAt(index)
             | CollectionChange.Replace(index, _, newItem) ->
-                onRemove(this.[index])
-                this.[index] <- mapping newItem
+                onRemove(this[index])
+                this[index] <- mapping newItem
             | CollectionChange.Reset(_, newItems) ->
                 this |> Seq.iter onRemove
                 this.Reset(newItems |> Seq.map mapping))

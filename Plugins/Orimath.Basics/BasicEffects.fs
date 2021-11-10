@@ -95,4 +95,4 @@ type OpenAllEffect(workspace: IWorkspace) =
                     yield! seq { for x in layer.Creases -> x * inv }
                 }
                 |> Crease.merge
-            workspace.Paper.Layers.[0].AddCreases(lines)
+            workspace.Paper.Layers[0].AddCreases(lines)

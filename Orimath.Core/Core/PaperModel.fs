@@ -46,19 +46,19 @@ type PaperModel internal () as this =
     member private this.Undo(oprBlock) =
         this.ResetSelection()
         for i = oprBlock.Operations.Length - 1 downto 0 do
-            match oprBlock.Operations.[i] with
+            match oprBlock.Operations[i] with
             | Clear(oldLayers, _) -> this.Clear(castSeq oldLayers)
             | LayerAddition(_, layers) -> this.RemoveLayers(layers.Length)
             | LayerRemoving(_, layers) -> this.AddLayers(castSeq layers)
             | LayerReplace(index, oldLayer, _) -> this.ReplaceLayer(index, oldLayer)
             | LineAddition(layerIndex, _, creases) ->
-                layerModels.[layerIndex].RemoveCreases(creases.Length)
+                layerModels[layerIndex].RemoveCreases(creases.Length)
             | LineRemoving(layerIndex, _, creases) ->
-                layerModels.[layerIndex].AddCreasesRaw(creases)
+                layerModels[layerIndex].AddCreasesRaw(creases)
             | PointAddition(layerIndex, _, points) ->
-                layerModels.[layerIndex].RemovePoints(points.Length)
+                layerModels[layerIndex].RemovePoints(points.Length)
             | PointRemoving(layerIndex, _, points) ->
-                layerModels.[layerIndex].AddPoints(points)
+                layerModels[layerIndex].AddPoints(points)
 
     member private this.Redo(oprBlock) =
         this.ResetSelection()
@@ -69,13 +69,13 @@ type PaperModel internal () as this =
             | LayerRemoving(_, layers) -> this.RemoveLayers(layers.Length)
             | LayerReplace(index, _, newLayer) -> this.ReplaceLayer(index, newLayer)
             | LineAddition(layerIndex, _, creases) ->
-                layerModels.[layerIndex].AddCreasesRaw(creases)
+                layerModels[layerIndex].AddCreasesRaw(creases)
             | LineRemoving(layerIndex, _, creases) ->
-                layerModels.[layerIndex].RemoveCreases(creases.Length)
+                layerModels[layerIndex].RemoveCreases(creases.Length)
             | PointAddition(layerIndex, _, points) ->
-                layerModels.[layerIndex].AddPoints(points)
+                layerModels[layerIndex].AddPoints(points)
             | PointRemoving(layerIndex, _, points) ->
-                layerModels.[layerIndex].RemovePoints(points.Length)
+                layerModels[layerIndex].RemovePoints(points.Length)
 
     member this.BeginChange(tag) =
         undoStack.BeginChange(Paper.snapShot this, tag)

@@ -98,7 +98,7 @@ type WorkspaceViewModel(workspace: IWorkspace) as this =
             PointConverter = pointConverter
         })
         for effect in Seq.append workspace.Effects systemEffects do
-            effectCommands.[effect] <-
+            effectCommands[effect] <-
                 match effect with
                 | :? IParametricEffect as parametric ->
                     (effect.CanExecute .&&. this.RootEnable, dispatcher.SyncContext)
@@ -111,7 +111,7 @@ type WorkspaceViewModel(workspace: IWorkspace) as this =
                     ||> Prop.commands (fun _ -> dispatcher.Background.Invoke(effect.Execute))
         for tool in workspace.Tools do
             Internal.convertToKeyGesture(tool.ShortcutKey)
-            |> Option.iter (fun gesture -> this.ToolGestures.[gesture] <- tool)
+            |> Option.iter (fun gesture -> this.ToolGestures[gesture] <- tool)
         workspace.Initialize()
         initialized <- true
 
@@ -154,13 +154,13 @@ type WorkspaceViewModel(workspace: IWorkspace) as this =
 
 
     member this.RegisterView(viewPane: ViewPane, viewModelType: Type, viewType: Type) =
-        this.ViewDefinitions.[viewModelType] <- (viewPane, ViewType(viewType))
+        this.ViewDefinitions[viewModelType] <- (viewPane, ViewType(viewType))
 
     member this.RegisterView(viewPane: ViewPane, viewModelType: Type, viewUri: string) =
-        this.ViewDefinitions.[viewModelType] <- (viewPane, ViewUri(viewUri))
+        this.ViewDefinitions[viewModelType] <- (viewPane, ViewUri(viewUri))
         
     member _.SetEffectParameterViewModel<'ViewModel>(mapping) =
-        effectParameterCreator.[typeof<'ViewModel>] <- fun p -> mapping (p :?> 'ViewModel)
+        effectParameterCreator[typeof<'ViewModel>] <- fun p -> mapping (p :?> 'ViewModel)
 
     member _.GetEffectParameterViewModel(parameter) =
         match effectParameterCreator.TryGetValue(parameter.GetType()) with

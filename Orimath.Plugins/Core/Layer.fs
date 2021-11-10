@@ -151,7 +151,7 @@ module Layer =
     let private clipBoundCore (segments: LineSegment[]) =
         if segments.Length = 0
         then None
-        else Some(segments.[0].Point1, (Array.last segments).Point2)
+        else Some(segments[0].Point1, (Array.last segments).Point2)
 
     /// このレイヤーの範囲内に収まるように指定された直線をカットし、その両端の位置を返します。
     let clipBound line layer = clip line layer |> LineSegment.merge |> Seq.toArray |> clipBoundCore
@@ -212,12 +212,12 @@ module Layer =
             |> LineSegment.merge
             |> ResizeArray
         let points = ResizeArray()
-        let mutable currentPoint = edges.[0].Point1
+        let mutable currentPoint = edges[0].Point1
         while edges.Count > 0 do
             let index =
                 edges
                 |> Seq.findIndex (fun e -> e.Point1 =~ currentPoint || e.Point2 =~ currentPoint)
-            let target = edges.[index]
+            let target = edges[index]
             currentPoint <- if target.Point1 =~ currentPoint then target.Point2 else target.Point1
             points.Add(currentPoint)
             edges.RemoveAt(index)

@@ -234,7 +234,7 @@ and BrushSetConverter() =
         match value with
         | :? string as str ->
             let parts = str.Split('.')
-            if parts.Length = 2 then Some(parts.[0], parts.[1]) else None
+            if parts.Length = 2 then Some(parts[0], parts[1]) else None
         | _ -> None
 
     override _.CanConvertFrom(context, sourceType) =

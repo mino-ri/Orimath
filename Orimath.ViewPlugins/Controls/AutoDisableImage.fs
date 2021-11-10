@@ -41,15 +41,15 @@ type AutoDisableImage() =
             let stride = (width * bitmap.Format.BitsPerPixel + 7) / 8
             bitmap.CopyPixels(pixels, stride, 0)
             for i in 0..4..pixels.Length - 1 do
-                let b = float pixels.[i]
-                let g = float pixels.[i + 1]
-                let r = float pixels.[i + 2]
+                let b = float pixels[i]
+                let g = float pixels[i + 1]
+                let r = float pixels[i + 2]
                 let gray = int (r * 0.298912 + g * 0.586611 + b * 0.114478)
                 let v = if gray > 255 then 255uy else byte gray
-                pixels.[i] <- v
-                pixels.[i + 1] <- v
-                pixels.[i + 2] <- v
-                pixels.[i + 3] <- byte (float pixels.[i + 3] * 0.75)
+                pixels[i] <- v
+                pixels[i + 1] <- v
+                pixels[i + 2] <- v
+                pixels[i + 3] <- byte (float pixels[i + 3] * 0.75)
             image.GraySource <-
                 BitmapSource.Create(width, height, bitmap.DpiX, bitmap.DpiY,
                                     PixelFormats.Bgra32, null, pixels, stride)

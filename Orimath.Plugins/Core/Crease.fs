@@ -40,7 +40,7 @@ module Crease =
                     let target =
                         if result.Count = 0
                         then Unchecked.defaultof<_>
-                        else result.[result.Count - 1]
+                        else result[result.Count - 1]
                     if result.Count = 0 || not (LineSegment.hasIntersection s.Segment target.Segment) then
                         // 2つの線分に共通部分がない場合
                         result.Add(s)
@@ -50,7 +50,7 @@ module Crease =
                         if s.Type <= target.Type then
                             recSelf tail
                         else
-                            result.[result.Count - 1] <-
+                            result[result.Count - 1] <-
                                 { target with Segment = LineSegment(line.Value, target.Point1, s.Point1) }
                             result.Add(s)
                             { target with Segment = LineSegment(line.Value, s.Point2, target.Point2) }
@@ -58,7 +58,7 @@ module Crease =
                             |> recSelf
                     elif s.Type = target.Type then
                         // 2つの線分が同じタイプである場合
-                        result.[result.Count - 1] <-
+                        result[result.Count - 1] <-
                             { target with Segment = LineSegment(line.Value, target.Point1, s.Point2) }
                         recSelf tail
                     elif target.Point2 =~ s.Point1 then
@@ -71,7 +71,7 @@ module Crease =
                         |> addTail tail
                         |> recSelf
                     else
-                        result.[result.Count - 1] <-
+                        result[result.Count - 1] <-
                             { target with Segment = LineSegment(line.Value, target.Point1, s.Point1) }
                         result.Add(s)
                         recSelf tail

@@ -57,7 +57,7 @@ type UndoStack<'Tag, 'Operation>() =
         undoOprStack.Clear()
         redoOprStack.Clear()
         for i = src.Length - 1 downto 0 do
-            undoOprStack.Push(src.[i])
+            undoOprStack.Push(src[i])
         this.UpdateCanUndo()
 
     member _.UndoTags = seq { for s in undoOprStack -> s.Tag }

@@ -149,7 +149,7 @@ let internal loadLanguages (code: string) =
     try
         Directory.GetFiles(languageDirectory, $"*.{code.ToLowerInvariant()}.sssl")
         |> Seq.choose (fun path ->
-            try Some(Path.GetFileName(path).Split('.').[0], Sssl.loadFromFile path)
+            try Some(Path.GetFileName(path).Split('.')[0], Sssl.loadFromFile path)
             with ex ->
                 Debug.Print(ex.ToString())
                 None)

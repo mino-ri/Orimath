@@ -77,7 +77,7 @@ let private splitEdge foldLine (target: Edge) =
 
 let private splitEdges foldLine (layer: ILayer) =
     let rec recSelf positiveEdges negativeEdges index =
-        let positive, negative = splitEdge foldLine layer.Edges.[index]
+        let positive, negative = splitEdge foldLine layer.Edges[index]
         let addEdge (edge: Edge option) (edges: Edge list) =
             match edge, edges with
             | Some(e), [] -> [ e ]
@@ -93,7 +93,7 @@ let private splitEdges foldLine (layer: ILayer) =
             let addFirstEdge (edges: Edge list) =
                 if edges.Length < 2 then edges
                 else
-                    let head, last = edges.[0], List.last edges
+                    let head, last = edges[0], List.last edges
                     if head.Point1 =~ last.Point2 then edges
                     else
                         let newEdge = { Segment = LineSegment.FromPoints(last.Point2, head.Point1).Value; Inner = true }
@@ -189,14 +189,14 @@ let private clusterLayers (layers: SplittedLayer[]) =
     let clusteredLayers = ResizeArray<SplittedLayer list>()
     let added = Array.zeroCreate<bool> layers.Length
     let rec addLayers index acm =
-        added.[index] <- true
-        let mutable newCluster = layers.[index] :: acm
-        match layers.[index].Dynamic with
+        added[index] <- true
+        let mutable newCluster = layers[index] :: acm
+        match layers[index].Dynamic with
         | Some(dynamic) ->
             for i = 0 to layers.Length - 1 do
                 let ok =
-                    not added.[i] && exists {
-                        let! target = layers.[i].Dynamic
+                    not added[i] && exists {
+                        let! target = layers[i].Dynamic
                         return isContacted dynamic.OriginalEdges target.OriginalEdges
                     }
                 if ok then
@@ -204,7 +204,7 @@ let private clusterLayers (layers: SplittedLayer[]) =
         | None -> ()
         newCluster
     for i = 0 to layers.Length - 1 do
-        if not added.[i] then
+        if not added[i] then
             clusteredLayers.Add(addLayers i [])
     clusteredLayers
 
@@ -274,12 +274,12 @@ let private getTargetLayersCore (paper: IPaper) foldLine method =
                 l.IsTarget <- true
             let lastIndex = Array.findIndexBack (fun l -> l.IsTarget) layers
             // otherLayers は、自分より下のtargetLayersだけを確認する
-            layers.[..lastIndex]
+            layers[..lastIndex]
             |> Seq.indexed
             |> Seq.tryFind (fun (i, layer) ->
                 not layer.IsTarget && exists {
                     let! otherLayer = layer.Dynamic
-                    let! targetLayer = layers.[i + 1..lastIndex]
+                    let! targetLayer = layers[i + 1..lastIndex]
                     if targetLayer.IsTarget then
                         let! targetLayer = targetLayer.Dynamic
                         return Edge.areOverlap otherLayer.Edges targetLayer.Edges

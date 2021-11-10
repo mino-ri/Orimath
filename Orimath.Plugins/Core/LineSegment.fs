@@ -92,10 +92,10 @@ module LineSegment =
                 else s)
             |> Seq.sortBy (fun s -> getD s.Point1)
             |> Seq.iter (fun s ->
-                if result.Count > 0 && hasIntersection s result.[result.Count - 1] then
-                    if getD s.Point2 > getD result.[result.Count - 1].Point2 then
-                        result.[result.Count - 1] <-
-                            LineSegment(line.Value, result.[result.Count - 1].Point1, s.Point2)
+                if result.Count > 0 && hasIntersection s result[result.Count - 1] then
+                    if getD s.Point2 > getD result[result.Count - 1].Point2 then
+                        result[result.Count - 1] <-
+                            LineSegment(line.Value, result[result.Count - 1].Point1, s.Point2)
                 else
                     result.Add(s))
         result :> seq<_>

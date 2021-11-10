@@ -9,7 +9,7 @@ type Language private (settings: Map<string, Sssl>) =
             | [| |] -> "global", ""
             | [| local |] -> "global", local
             | [| source; local |] -> source, local
-            | splitted -> splitted.[0], splitted.[1]
+            | splitted -> splitted[0], splitted[1]
         Map.tryFind source settings
         |> Option.bind (fun sssl ->
             let local = local.Split('.') |> List.ofArray
@@ -27,8 +27,8 @@ type Language private (settings: Map<string, Sssl>) =
         if isNull text then null
         elif text.StartsWith('{') && text.Contains('}') then
             let index = text.IndexOf('}')
-            let path = text.[1 .. index - 1]
-            this.ResolvePath(path) |> Option.defaultWith (fun () -> text.[index + 1 ..])
+            let path = text[1 .. index - 1]
+            this.ResolvePath(path) |> Option.defaultWith (fun () -> text[index + 1 ..])
         else
             text
 

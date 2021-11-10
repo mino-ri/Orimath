@@ -87,7 +87,7 @@ type PluginLoadSettingViewModel(messenger: IMessenger) =
         PluginExecutor.setting.PluginOrder <-
             [| for x in plugins do if x.IsEnabled.Value then x.FullName |]
         for configurable in PluginExecutor.configurablePlugins do
-            PluginExecutor.setting.Settings.[configurable.GetType().ToString()] <-
+            PluginExecutor.setting.Settings[configurable.GetType().ToString()] <-
                 Sssl.convertFromObj configurable.SettingType configurable.Setting
         PluginExecutor.saveSetting()
         messenger.CloseDialog()

@@ -60,4 +60,4 @@ type PaperModelExtensions =
             let points = layer.Edges |> Seq.map (fun e -> e.Point1)
             let newLayer = Layer.create layer.Edges [] points layer.LayerType layer.OriginalEdges layer.Matrix
             paper.ReplaceLayer(index, newLayer)
-            paper.Layers.[index].AddCreases(Crease.merge (Seq.append layer.Creases creases))
+            paper.Layers[index].AddCreases(Crease.merge (Seq.append layer.Creases creases))

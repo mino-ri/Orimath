@@ -26,7 +26,7 @@ type CreasePatternViewModel(paper: IPaperModel, dispatcher: IDispatcher) =
         lines.Reset(seq {
             let layers = paper.Layers |> Seq.toArray
             for i = 0 to layers.Length - 1 do
-            for edge in layers.[i].OriginalEdges do
+            for edge in layers[i].OriginalEdges do
             if edge.Inner then
                 let isTopEdge =
                    layers
@@ -37,7 +37,7 @@ type CreasePatternViewModel(paper: IPaperModel, dispatcher: IDispatcher) =
                     yield CreasePatternLineViewModel(
                         edge.Segment,
                         pointConverter,
-                        if layers.[i].LayerType = LayerType.BackSide
+                        if layers[i].LayerType = LayerType.BackSide
                         then InstructionColor.Blue
                         else InstructionColor.Red)
             else

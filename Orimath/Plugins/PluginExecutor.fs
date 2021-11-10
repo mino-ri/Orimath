@@ -62,7 +62,7 @@ let private setSetting (plugin: obj) fullName (setting: PluginSetting) =
         | None ->
             if isNull configurable.Setting then
                 configurable.Setting <- createInstance configurable.SettingType
-            setting.Settings.[fullName] <-
+            setting.Settings[fullName] <-
                 Sssl.convertFromObj configurable.SettingType configurable.Setting
     | _ -> ()
 

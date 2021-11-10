@@ -23,7 +23,7 @@ type UIListControl() =
 
     member this.ListBoxSelectionChanged(_: obj, e: SelectionChangedEventArgs) =
         if e.AddedItems.Count = 1 then
-            match e.AddedItems.[0], this.FindName("previewHost") with
+            match e.AddedItems[0], this.FindName("previewHost") with
             | (:? Type as t), (:? Border as previewHost) ->
                 try
                     let mutable ctrl = Activator.CreateInstance(t) :?> Control

@@ -141,7 +141,7 @@ type ExportContext(exporter: IShapeExporter, pointConverter: IViewPointConverter
         this.DrawLayerBack(Layer.merge paper.Layers)
         let layers = paper.Layers |> Seq.toArray
         for i = 0 to layers.Length - 1 do
-            for edge in layers.[i].OriginalEdges do
+            for edge in layers[i].OriginalEdges do
                 if edge.Inner then
                     let isTopEdge =
                         layers
@@ -150,7 +150,7 @@ type ExportContext(exporter: IShapeExporter, pointConverter: IViewPointConverter
                         |> Seq.forall (fun e -> not e.Inner || edge.Segment <>~ e.Segment) 
                     if isTopEdge then
                         let color =
-                            if layers.[i].LayerType = LayerType.BackSide
+                            if layers[i].LayerType = LayerType.BackSide
                             then InstructionColor.Blue
                             else InstructionColor.Red
                         exporter.AddLine(
