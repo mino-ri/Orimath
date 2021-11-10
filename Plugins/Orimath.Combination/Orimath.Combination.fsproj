@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
 
     <InformationalVersion>1.1.0</InformationalVersion>
     <Company>Hojo Origami</Company>
@@ -31,7 +31,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="copy $(TargetDir)$(TargetName).* $(ProjectDir)..\..\Orimath\bin\$(ConfigurationName)\net5.0-windows\Plugins\" />
+    <Exec Command="copy $(TargetDir)$(TargetName).* $(ProjectDir)..\..\Orimath\bin\$(ConfigurationName)\net6.0-windows\Plugins\" />
   </Target>
 
 </Project>
