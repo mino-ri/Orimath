@@ -3,10 +3,10 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
 
-    <InformationalVersion>1.1.1</InformationalVersion>
+    <InformationalVersion>1.1.2</InformationalVersion>
     <Company>Hojo Origami</Company>
     <Authors>豊穣ミノリ</Authors>
-    <Copyright>© 2021 豊穣ミノリ</Copyright>
+    <Copyright>© 2021-2022 豊穣ミノリ</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

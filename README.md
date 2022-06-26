@@ -6,19 +6,19 @@
 
 数学と創作のための折り紙シミュレータ
 
-# 最新バージョン(v1.1.1)
+# 最新バージョン(v1.1.2)
 
 ## インストール方法
 
 下のリンクからダウンロードして解凍してください。
 
-[Orimath_1_1_1.zip](https://github.com/mino-ri/Orimath/releases/download/v1.1.1/Orimath_1_1_1.zip)
+[Orimath_1_1_1.zip](https://github.com/mino-ri/Orimath/releases/download/v1.1.2/Orimath_1_1_2.zip)
 
 ### 動作環境
 
 | OS | フレームワーク | メモリ | ディスク容量 | CPU |
 | --- | --- | --- | --- | --- |
-| Windows 10 | .NET5 | > 128MB | > 6MB | 指定なし |
+| Windows 10 | .NET6 | > 128MB | > 6MB | 指定なし |
 
 ## 使い方
 
@@ -33,19 +33,19 @@
 
 Origami simulator for mathemiticians & creators
 
-# Latest version (v1.1.1)
+# Latest version (v1.1.2)
 
 ## How to install
 
 Please download from following link and unzip it.
 
-[Orimath_1_1_1.zip](https://github.com/mino-ri/Orimath/releases/download/v1.1.1/Orimath_1_1_1.zip)
+[Orimath_1_1_2.zip](https://github.com/mino-ri/Orimath/releases/download/v1.1.2/Orimath_1_1_2.zip)
 
 ### System requirements
 
 | OS | Framework | Memory | Storage | CPU |
 | --- | --- | --- | --- | --- |
-| Windows 10 | .NET5 | > 128MB | > 6MB | unspecified |
+| Windows 10 | .NET6 | > 128MB | > 6MB | unspecified |
 
 ## How to use
 
