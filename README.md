@@ -12,7 +12,7 @@
 
 下のリンクからダウンロードして解凍してください。
 
-[Orimath_1_1_1.zip](https://github.com/mino-ri/Orimath/releases/download/v1.1.2/Orimath_1_1_2.zip)
+[Orimath_1_1_2.zip](https://github.com/mino-ri/Orimath/releases/download/v1.1.2/Orimath_1_1_2.zip)
 
 ### 動作環境
 
