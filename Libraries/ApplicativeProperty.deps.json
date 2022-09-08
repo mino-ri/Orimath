@@ -1,66 +1,74 @@
 {
   "runtimeTarget": {
-    "name": ".NETCoreApp,Version=v6.0",
+    "name": ".NETStandard,Version=v2.0/",
     "signature": ""
   },
   "compilationOptions": {},
   "targets": {
-    ".NETCoreApp,Version=v6.0": {
+    ".NETStandard,Version=v2.0": {},
+    ".NETStandard,Version=v2.0/": {
       "ApplicativeProperty/1.0.0": {
         "dependencies": {
-          "FSharp.Core": "6.0.1"
+          "FSharp.Core": "6.0.5",
+          "NETStandard.Library": "2.0.3"
         },
         "runtime": {
           "ApplicativeProperty.dll": {}
         }
       },
-      "FSharp.Core/6.0.1": {
+      "FSharp.Core/6.0.5": {
         "runtime": {
-          "lib/netstandard2.1/FSharp.Core.dll": {
+          "lib/netstandard2.0/FSharp.Core.dll": {
             "assemblyVersion": "6.0.0.0",
-            "fileVersion": "6.0.121.52202"
+            "fileVersion": "6.0.522.27404"
           }
         },
         "resources": {
-          "lib/netstandard2.1/cs/FSharp.Core.resources.dll": {
+          "lib/netstandard2.0/cs/FSharp.Core.resources.dll": {
             "locale": "cs"
           },
-          "lib/netstandard2.1/de/FSharp.Core.resources.dll": {
+          "lib/netstandard2.0/de/FSharp.Core.resources.dll": {
             "locale": "de"
           },
-          "lib/netstandard2.1/es/FSharp.Core.resources.dll": {
+          "lib/netstandard2.0/es/FSharp.Core.resources.dll": {
             "locale": "es"
           },
-          "lib/netstandard2.1/fr/FSharp.Core.resources.dll": {
+          "lib/netstandard2.0/fr/FSharp.Core.resources.dll": {
             "locale": "fr"
           },
-          "lib/netstandard2.1/it/FSharp.Core.resources.dll": {
+          "lib/netstandard2.0/it/FSharp.Core.resources.dll": {
             "locale": "it"
           },
-          "lib/netstandard2.1/ja/FSharp.Core.resources.dll": {
+          "lib/netstandard2.0/ja/FSharp.Core.resources.dll": {
             "locale": "ja"
           },
-          "lib/netstandard2.1/ko/FSharp.Core.resources.dll": {
+          "lib/netstandard2.0/ko/FSharp.Core.resources.dll": {
             "locale": "ko"
           },
-          "lib/netstandard2.1/pl/FSharp.Core.resources.dll": {
+          "lib/netstandard2.0/pl/FSharp.Core.resources.dll": {
             "locale": "pl"
           },
-          "lib/netstandard2.1/pt-BR/FSharp.Core.resources.dll": {
+          "lib/netstandard2.0/pt-BR/FSharp.Core.resources.dll": {
             "locale": "pt-BR"
           },
-          "lib/netstandard2.1/ru/FSharp.Core.resources.dll": {
+          "lib/netstandard2.0/ru/FSharp.Core.resources.dll": {
             "locale": "ru"
           },
-          "lib/netstandard2.1/tr/FSharp.Core.resources.dll": {
+          "lib/netstandard2.0/tr/FSharp.Core.resources.dll": {
             "locale": "tr"
           },
-          "lib/netstandard2.1/zh-Hans/FSharp.Core.resources.dll": {
+          "lib/netstandard2.0/zh-Hans/FSharp.Core.resources.dll": {
             "locale": "zh-Hans"
           },
-          "lib/netstandard2.1/zh-Hant/FSharp.Core.resources.dll": {
+          "lib/netstandard2.0/zh-Hant/FSharp.Core.resources.dll": {
             "locale": "zh-Hant"
           }
+        }
+      },
+      "Microsoft.NETCore.Platforms/1.1.0": {},
+      "NETStandard.Library/2.0.3": {
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "1.1.0"
         }
       }
     }
@@ -71,12 +79,26 @@
       "serviceable": false,
       "sha512": ""
     },
-    "FSharp.Core/6.0.1": {
+    "FSharp.Core/6.0.5": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-VrFAiW8dEEekk+0aqlbvMNZzDvYXmgWZwAt68AUBqaWK8RnoEVUNglj66bZzhs4/U63q0EfXlhcEKnH1sTYLjw==",
-      "path": "fsharp.core/6.0.1",
-      "hashPath": "fsharp.core.6.0.1.nupkg.sha512"
+      "sha512": "sha512-FwdQVtpj34xt8vKyFUUeNIS+obWlEnSrSW7y1ivRVts/ZsrUsKyOd0bZehgFhWdnB/NBsa9DCWvNFMTO0XDFcg==",
+      "path": "fsharp.core/6.0.5",
+      "hashPath": "fsharp.core.6.0.5.nupkg.sha512"
+    },
+    "Microsoft.NETCore.Platforms/1.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-kz0PEW2lhqygehI/d6XsPCQzD7ff7gUJaVGPVETX611eadGsA3A877GdSlU0LRVMCTH/+P3o2iDTak+S08V2+A==",
+      "path": "microsoft.netcore.platforms/1.1.0",
+      "hashPath": "microsoft.netcore.platforms.1.1.0.nupkg.sha512"
+    },
+    "NETStandard.Library/2.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-st47PosZSHrjECdjeIzZQbzivYBJFv6P2nv4cj2ypdI204DO+vZ7l5raGMiX4eXMJ53RfOIg+/s4DHVZ54Nu2A==",
+      "path": "netstandard.library/2.0.3",
+      "hashPath": "netstandard.library.2.0.3.nupkg.sha512"
     }
   }
 }
