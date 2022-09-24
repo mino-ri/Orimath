@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <InformationalVersion>2.0.0</InformationalVersion>
+    <Company>Hojo Origami</Company>
+    <Authors>豊穣ミノリ</Authors>
+    <Copyright>© 2021-2022 豊穣ミノリ</Copyright>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Error.fs" />
+    <Compile Include="IOTypes.fs" />
+    <Compile Include="ApproximatelyEquatable.fs" />
+    <Compile Include="Positive.fs" />
+    <Compile Include="NonEmptyList.fs" />
+    <Compile Include="NotEqual.fs" />
+    <Compile Include="Seq.fs" />
+    <Compile Include="Result.fs" />
+    <Compile Include="Operators.fs" />
+    <Compile Include="Core\Point.fs" />
+    <Compile Include="Core\NonZeroPoint.fs" />
+    <Compile Include="Core\Line.fs" />
+    <Compile Include="Core\PointModule.fs" />
+    <Compile Include="Core\LineSegment.fs" />
+    <Compile Include="Core\Crease.fs" />
+    <Compile Include="Core\Edge.fs" />
+    <Compile Include="Core\Polygon.fs" />
+    <Compile Include="Core\Matrix.fs" />
+    <Compile Include="Core\Layer.fs" />
+    <Compile Include="Core\Paper.fs" />
+    <Compile Include="Models\LayerModel.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="ApplicativeProperty">
+      <HintPath>..\Libraries\ApplicativeProperty.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
