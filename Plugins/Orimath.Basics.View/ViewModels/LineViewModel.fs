@@ -19,8 +19,8 @@ type LineViewModel(crease: Crease, pointConverter: IViewPointConverter, ?layer: 
     member _.XFactor = crease.Line.XFactor
     member _.YFactor = !-crease.Line.YFactor
     member _.Intercept = crease.Line.Intercept
-    member _.Slope = !+(crease.Line.XFactor / crease.Line.YFactor)
-    member _.Angle = !+(atan2 crease.Line.XFactor crease.Line.YFactor / Math.PI * 180.0) % 180.0
+    member _.Slope = !+(crease.Line.XFactor / -crease.Line.YFactor)
+    member _.Angle = !+(atan2 crease.Line.XFactor -crease.Line.YFactor / Math.PI * 180.0) % 180.0
     member _.Length = crease.Length
     member _.Color =
         match crease.Type with

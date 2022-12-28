@@ -25,7 +25,7 @@ type NewPaperExecutor(workspace: IWorkspace) =
                 else width / height, 1.0
             workspace.ClearPaper([| Layer.fromSize w h LayerType.BackSide |])
             workspace.Paper.ClearUndoStack()
-        | NewPaperType.RegularPolygon(number) when 3 <= number && number <= 12 ->
+        | NewPaperType.RegularPolygon(number) when 3 <= number && number <= 32 ->
             let unit = Math.PI / float number
             let size = 0.5
             let vertexes = [

@@ -18,8 +18,8 @@ type EdgeViewModel(edge: Edge, pointConverter: IViewPointConverter, ?layer: ILay
     member _.XFactor = edge.Line.XFactor
     member _.YFactor = !-edge.Line.YFactor
     member _.Intercept = edge.Line.Intercept
-    member _.Slope = !+(edge.Line.XFactor / edge.Line.YFactor)
-    member _.Angle = !+(atan2 edge.Line.XFactor edge.Line.YFactor / Math.PI * 180.0) % 180.0
+    member _.Slope = !+(edge.Line.XFactor / -edge.Line.YFactor)
+    member _.Angle = !+(atan2 edge.Line.XFactor -edge.Line.YFactor / Math.PI * 180.0) % 180.0
     member _.Length = edge.Length
    
     override _.ToString() = edge.ToString()

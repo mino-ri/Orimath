@@ -28,7 +28,7 @@
                 <TextBlock DockPanel.Dock="Left" Width="20" TextAlignment="Right" Text="{Binding NumberOfPolygon.Value}" />
                 <TextBlock DockPanel.Dock="Left" Text="{Binding GonText, Mode=OneTime}" />
                 <Slider IsEnabled="{Binding IsPolygonSelected.Value}"
-                        Minimum="3" Maximum="12" SmallChange="1" LargeChange="1" Interval="1"
+                        Minimum="3" Maximum="32" SmallChange="1" LargeChange="1" Interval="1"
                         Value="{Binding NumberOfPolygon.Value}"
                         Margin="8,0" />
             </DockPanel>
