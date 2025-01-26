@@ -2,14 +2,14 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net9.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <Win32Resource>.\icon.res</Win32Resource>
-    
-    <InformationalVersion>1.1.2</InformationalVersion>
+
+    <InformationalVersion>1.2.0</InformationalVersion>
     <Company>Hojo Origami</Company>
     <Authors>豊穣ミノリ</Authors>
-    <Copyright>© 2021-2022 豊穣ミノリ</Copyright>
+    <Copyright>© 2021-2025 豊穣ミノリ</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
