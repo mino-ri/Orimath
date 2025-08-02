@@ -24,7 +24,7 @@
 
 [マニュアル(日本語)](https://github.com/mino-ri/Orimath/blob/master/Documents/ja/manual.md)
 
-[共通利用規約](https://twpf.jp/hojo_origami)
+[共通利用規約](https://mino-ri.github.io/profile.html)
 
 ---
 
@@ -50,3 +50,5 @@ Please download from following link and unzip it.
 ## How to use
 
 [Manual(English)](https://github.com/mino-ri/Orimath/blob/master/Documents/en/manual.md)
+
+[Terms of Use](https://mino-ri.github.io/profile.html)
